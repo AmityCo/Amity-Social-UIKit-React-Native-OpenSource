@@ -1,10 +1,9 @@
 export type User = {
-    userId: string;
-    avatar: string;
-    displayName: string;
+  userId: string;
+  avatar: string;
+  displayName: string;
 };
 export type UserGroup = {
-    title: string;
-    data: Amity.User[]
+  title: string;
+  data: Amity.User[];
 };
-
