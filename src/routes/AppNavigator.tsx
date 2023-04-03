@@ -20,7 +20,7 @@ export default function AppNavigator() {
   const Stack = createNativeStackNavigator<RootStackParamList>();
   const { isConnected } = useAuth();
   return (
-    <NavigationContainer>
+    <NavigationContainer independent={true}>
       {isConnected && (
         <Stack.Navigator
           screenOptions={{

@@ -8,6 +8,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 10,
     justifyContent: 'space-between',
+    backgroundColor: 'white',
   },
   avatar: {
     width: 35,

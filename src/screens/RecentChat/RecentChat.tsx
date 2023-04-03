@@ -2,7 +2,6 @@ import React, { ReactElement, useCallback, useRef } from 'react';
 
 import { View, FlatList, TouchableOpacity, Image } from 'react-native';
 
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { liveChannels } from '@amityco/ts-sdk';
 import ChatList, { IChatListProps } from '../../components/ChatList/index';
 import useAuth from '../../hooks/useAuth';
@@ -39,7 +38,7 @@ export default function RecentChat() {
   navigation.setOptions({
     // eslint-disable-next-line react/no-unstable-nested-components
     header: () => (
-      <SafeAreaView style={styles.topBar} edges={['top']}>
+      <View style={styles.topBar}>
         <CustomText style={styles.titleText}>Chat</CustomText>
         <TouchableOpacity
           onPress={() => {
@@ -51,7 +50,7 @@ export default function RecentChat() {
             source={require('../../../assets/icon/addChat.png')}
           />
         </TouchableOpacity>
-      </SafeAreaView>
+      </View>
     ),
     headerTitle: '',
   });

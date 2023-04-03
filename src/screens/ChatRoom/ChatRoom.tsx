@@ -154,7 +154,7 @@ const ChatRoom: ChatRoomScreenComponentType = ({ route }) => {
   navigation.setOptions({
     // eslint-disable-next-line react/no-unstable-nested-components
     header: () => (
-      <SafeAreaView style={styles.topBar} edges={['top']}>
+      <View style={styles.topBar} >
         <View style={styles.chatTitleWrap}>
           <TouchableOpacity onPress={handleBack}>
             <BackButton onPress={handleBack} />
@@ -210,7 +210,7 @@ const ChatRoom: ChatRoomScreenComponentType = ({ route }) => {
             source={require('../../../assets/icon/setting.png')}
           />
         </TouchableOpacity>
-      </SafeAreaView>
+      </View>
     ),
     headerTitle: '',
   });

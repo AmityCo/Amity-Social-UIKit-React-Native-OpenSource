@@ -10,6 +10,7 @@
   "files": [
     "src",
     "lib",
+    "assets",
     "!**/__tests__",
     "!**/__fixtures__",
     "!**/__mocks__",
@@ -77,7 +78,8 @@
   },
   "peerDependencies": {
     "react": "*",
-    "react-native": "*"
+    "react-native": "*",
+    "react-native-safe-area-context":"*"
   },
   "engines": {
     "node": ">= 16.0.0"
