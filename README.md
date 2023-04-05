@@ -1,31 +1,23 @@
-# @amityco/asc-react-native-ui-kit
+# Amity Ui-Kit for React native  (open-source)
 
-uikit
+## Getting started
 
-## Installation
+### Installation
 
-```sh
-npm install @amityco/asc-react-native-ui-kit
-```
+1. git clone git@github.com:AmityCo/Amity-Social-Cloud-UIKit-React-Native-OpenSource.git
+2. cd Amity-Social-Cloud-UIKit-React-Native-OpenSource
+3. npm pack
 
-## Usage
+This step will build the app and return amityco-asc-react-native-ui-kit-x.x.x.tgz.tgz file in inside the folder
 
-```js
-import { multiply } from '@amityco/asc-react-native-ui-kit';
+Then, inside another project, where need to use ui-kit:
 
-// ...
+1. npm install ./../asc-react-native-ui-kit/amityco-asc-react-native-ui-kit-0.1.0.tgz'
+2. npm install react-native-safe-area-context@4.4.1 --save
 
-const result = await multiply(3, 7);
-```
+### Documentation
 
-## Contributing
+Please refer to our online documentation at https://docs.amity.co or contact a Ui-Kit representative at **clientsolutiomns@amity.co** for support.
 
-See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow.
 
-## License
 
-MIT
-
----
-
-Made with [create-react-native-library](https://github.com/callstack/react-native-builder-bob)
