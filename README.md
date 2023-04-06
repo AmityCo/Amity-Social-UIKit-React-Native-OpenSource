@@ -13,7 +13,7 @@ This step will build the app and return amityco-asc-react-native-ui-kit-x.x.x.tg
 Then, inside another project, where need to use ui-kit:
 ```sh
 1. npm install ./../asc-react-native-ui-kit/amityco-asc-react-native-ui-kit-0.1.0.tgz'
-2. npm install react-native-safe-area-context@4.4.1 --save
+2. npm install react-native-safe-area-context@4.4.1 \ react-native-screens 
 ```
 ### Usage
 ```js
