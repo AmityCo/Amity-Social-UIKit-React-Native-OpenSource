@@ -15,6 +15,20 @@ Then, inside another project, where need to use ui-kit:
 1. npm install ./../asc-react-native-ui-kit/amityco-asc-react-native-ui-kit-0.1.0.tgz
 2. npm install react-native-safe-area-context@4.4.1 \ react-native-screens \ react-native-image-picker
 ```
+
+### Expo CLI Camera and Gallery Configuration
+
+```sh
+ expo install expo-image-picker \
+              expo-modules-core
+```
+
+### React Native CLI Camera and Gallery Configuration
+
+```sh
+ npm install react-native-image-picker
+              
+```
 ### Usage
 ```js
 import * as React from 'react';
