@@ -15,6 +15,7 @@ Then, inside another project, where need to use ui-kit:
 1. npm install ./../asc-react-native-ui-kit/amityco-asc-react-native-ui-kit-0.1.0.tgz
 2. npm install react-native-safe-area-context@4.4.1 \ react-native-screens \ react-native-image-picker
 ```
+Right now we only support react-native-safe-area-context v4.4.1 Please install this version to prevent conflict
 
 ### Expo CLI Camera and Gallery Configuration
 
