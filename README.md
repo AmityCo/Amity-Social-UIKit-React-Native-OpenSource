@@ -26,8 +26,7 @@ Then, inside another project, where need to use ui-kit:
 ### React Native CLI Camera and Gallery Configuration
 
 ```sh
- npm install react-native-image-picker
-              
+ npm install react-native-image-picker             
 ```
 ### Usage
 ```js
