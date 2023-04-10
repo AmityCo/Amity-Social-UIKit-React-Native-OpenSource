@@ -12,7 +12,6 @@ import {
   Platform,
   Keyboard,
   TouchableWithoutFeedback,
-  Dimensions,
 } from 'react-native';
 import CustomText from '../../components/CustomText';
 import styles from './styles';
@@ -48,6 +47,8 @@ import {
 import type { Action } from '../EditChatDetail/EditChatRoomDetail';
 import { uploadFile } from '../../providers/file-provider';
 import LoadingIndicator from '../../components/LoadingIndicator';
+import * as ImagePicker from 'expo-image-picker';
+import Constants from 'expo-constants';
 
 type ChatRoomScreenComponentType = React.FC<{
   route: RouteProp<RootStackParamList, 'ChatRoom'>;
@@ -59,6 +60,7 @@ const ChatRoom: ChatRoomScreenComponentType = ({ route }) => {
   const { chatReceiver, groupChat, channelId } = route.params;
   // console.log('groupChat: ', groupChat);
   // console.log('channelId: ', channelId);
+  console.log('test env', Constants.appOwnership);
   const { client } = useAuth();
   const [isScrollTop, setIsScrollTop] = useState(false);
   const [messages, setMessages] = useState<IMessage[]>([]);
@@ -75,29 +77,70 @@ const ChatRoom: ChatRoomScreenComponentType = ({ route }) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   // const [isVoiceMessage, setIsVoiceMessage] = useState<boolean>(false);
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
-  // const [cameraImage, setCameraImage] = useState(null);
-  // const [galleryImage, setGalleryImage] = useState(null);
   const [imageUri, setImageUri] = useState<string | undefined>();
   const imageUriRef = useRef(imageUri);
   const [unSubFunc, setUnSubFunc] = useState<any>();
   const [loadingImages, setLoadingImages] = useState<string[]>([]);
-  const [screenWidth, setScreenWidth] = useState(
-    Dimensions.get('window').width
-  );
-  console.log('screenWidth: ', screenWidth);
-  const [screenHeight, setScreenHeight] = useState(
-    Dimensions.get('window').height
-  );
-  console.log('screenHeight: ', screenHeight * 0.9);
 
-  useEffect(() => {
-    const onDimensionsChange = ({ window }: any) => {
-      setScreenWidth(window.width);
-      setScreenHeight(window.height);
-    };
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    if (Constants.appOwnership === 'expo') {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
 
-    Dimensions.addEventListener('change', onDimensionsChange);
-  }, []);
+      console.log(result);
+      console.log('result: ', result);
+
+      if (
+        !result.canceled &&
+        result.assets &&
+        result.assets.length > 0 &&
+        result.assets[0] !== null &&
+        result.assets[0]
+      ) {
+        imageUriRef.current = (result.assets[0] as Record<string, any>).uri;
+        setImageUri(result.assets[0].uri);
+      }
+    } else {
+      openImageGallery();
+    }
+  };
+  const pickCamera = async () => {
+    // No permissions request is necessary for launching the image library
+    if (Constants.appOwnership === 'expo') {
+      const permission = await ImagePicker.requestCameraPermissionsAsync();
+      console.log('permission: ', permission);
+      if (permission.granted) {
+        let result: ImagePicker.ImagePickerResult =
+          await ImagePicker.launchCameraAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+          });
+
+        console.log(result);
+        console.log('result: ', result);
+        if (
+          result.assets &&
+          result.assets.length > 0 &&
+          result.assets[0] !== null &&
+          result.assets[0]
+        ) {
+          imageUriRef.current = result && result.assets[0].uri;
+          setImageUri(result.assets[0].uri);
+          // do something with uri
+        }
+      }
+    } else {
+      openCamera();
+    }
+  };
+
   useEffect(() => {
     if (imageUri) {
       console.log('imageUri: ', imageUri);
@@ -130,6 +173,7 @@ const ChatRoom: ChatRoomScreenComponentType = ({ route }) => {
   }, [channelId]);
   const createImageMessage = async () => {
     const fileId = await uploadFile(imageUriRef.current as string);
+    console.log('fileId555: ', fileId);
     if (fileId) {
       const query = createQuery(createMessage, {
         subChannelId: channelId,
@@ -144,7 +188,6 @@ const ChatRoom: ChatRoomScreenComponentType = ({ route }) => {
         setImageUri('');
         console.log('create message success', message);
       });
-      // console.log('fileId: ', fileId);
     }
   };
   function handleBack() {
@@ -154,7 +197,7 @@ const ChatRoom: ChatRoomScreenComponentType = ({ route }) => {
   navigation.setOptions({
     // eslint-disable-next-line react/no-unstable-nested-components
     header: () => (
-      <View style={styles.topBar} >
+      <View style={styles.topBar}>
         <View style={styles.chatTitleWrap}>
           <TouchableOpacity onPress={handleBack}>
             <BackButton onPress={handleBack} />
@@ -284,7 +327,7 @@ const ChatRoom: ChatRoomScreenComponentType = ({ route }) => {
   function renderMessageImage(props: any) {
     const { currentMessage } = props;
     console.log('currentMessage: ', currentMessage.pending);
-    // console.log('currentMessage: ', currentMessage);
+
     return (
       <MessageImage
         {...props}
@@ -629,7 +672,7 @@ const ChatRoom: ChatRoomScreenComponentType = ({ route }) => {
             style={{ height: 180, flexDirection: 'row', marginVertical: 15 }}
           >
             <TouchableOpacity
-              onPress={openCamera}
+              onPress={pickCamera}
               style={{ marginHorizontal: 30 }}
             >
               <View style={styles.IconCircle}>
@@ -642,7 +685,7 @@ const ChatRoom: ChatRoomScreenComponentType = ({ route }) => {
             </TouchableOpacity>
             <TouchableOpacity
               disabled={loadingImages.length > 0}
-              onPress={openImageGallery}
+              onPress={pickImage}
               style={{ marginHorizontal: 20, alignItems: 'center' }}
             >
               <View style={styles.IconCircle}>

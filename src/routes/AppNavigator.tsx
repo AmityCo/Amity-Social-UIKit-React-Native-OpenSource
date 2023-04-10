@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unstable-nested-components */
 import { NavigationContainer } from '@react-navigation/native';
 
 import RecentChat from '../screens/RecentChat/RecentChat';
@@ -15,6 +16,7 @@ import { ChatRoomSetting } from '../screens/ChatDetail/ChatRoomSetting';
 import { EditChatRoomDetail } from '../screens/EditChatDetail/EditChatRoomDetail';
 import MemberDetail from '../screens/MemberDetail/MemberDetail';
 import useAuth from '../hooks/useAuth';
+// import ChatRoom2 from '../screens/ChatRoom 2/ChatRoom';
 
 export default function AppNavigator() {
   const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -56,7 +58,6 @@ export default function AppNavigator() {
             options={({ navigation }) => ({
               title: 'Chat',
               headerLeft: () => <Text>Chat</Text>,
-              // eslint-disable-next-line react/no-unstable-nested-components
               headerRight: () => (
                 <TouchableOpacity
                   onPress={() => {
@@ -73,7 +74,11 @@ export default function AppNavigator() {
             //  options={{ headerShown: false }}
             component={ChatRoom}
           />
-
+          {/* <Stack.Screen
+            name="ChatRoom2"
+            //  options={{ headerShown: false }}
+            component={ChatRoom2}
+          /> */}
           <Stack.Screen
             name="ChatDetail"
             component={ChatRoomSetting}

@@ -79,7 +79,7 @@
   "peerDependencies": {
     "react": "*",
     "react-native": "*",
-    "react-native-safe-area-context":"*"
+    "react-native-safe-area-context": "*"
   },
   "engines": {
     "node": ">= 16.0.0"
@@ -154,10 +154,13 @@
     ]
   },
   "dependencies": {
-    "@amityco/ts-sdk": "^0.0.1-beta.42.1",
+    "@amityco/ts-sdk": "^0.0.1-beta.42.3",
     "@react-navigation/native": "6.1.6",
     "@react-navigation/native-stack": "6.9.10",
     "@react-navigation/stack": "6.3.16",
+    "expo-constants": "^14.2.1",
+    "expo-image-picker": "^14.1.1",
+    "expo-modules-core": "^1.2.6",
     "i18next": "22.4.10",
     "moment": "2.29.4",
     "react-i18next": "12.1.5",

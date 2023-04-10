@@ -15,6 +15,7 @@ export default function App() {
   }, []);
 
   return (
+
     <AmityUiKitProvider
       apiKey="b3babb0b3a89f4341d31dc1a01091edcd70f8de7b23d697f"
       apiRegion="sg"
@@ -23,5 +24,6 @@ export default function App() {
     >
       <AppNavigator />
     </AmityUiKitProvider>
+
   );
 }
