@@ -4,10 +4,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F7F7F7',
-    padding: 10,
-  },
-  chatContainer: {
-    flex: 1,
   },
   chatBubble: {
     alignSelf: 'flex-start',
@@ -19,33 +15,48 @@ const styles = StyleSheet.create({
   },
   userBubble: {
     alignSelf: 'flex-end',
-    backgroundColor: '#DCF8C6',
+    backgroundColor: '#1054DE',
   },
   friendBubble: {
     alignSelf: 'flex-start',
-    backgroundColor: '#E0E0E0',
+    backgroundColor: '#EBECEF',
   },
-  chatText: {
+  chatUserText: {
     fontSize: 16,
+    color: 'white',
+  },
+  chatFriendText: {
+    fontSize: 16,
+    color: 'black',
   },
   chatTimestamp: {
-    fontSize: 12,
-    color: '#8A8A8A',
-    marginTop: 5,
-    textAlign: 'right',
+    fontSize: 13,
+    color: '#898E9E',
+    marginTop: 4,
   },
-  inputContainer: {
+  AllInputWrap: {
+    backgroundColor: '#FFFFFF',
+    width: '100%',
     flexDirection: 'row',
-    backgroundColor: '#FFF',
-    borderRadius: 20,
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
     paddingVertical: 5,
-    paddingHorizontal: 10,
-    alignItems: 'center',
+    height: 60,
+    alignItems: 'center'
   },
-  input: {
+  chatContainer: {
     flex: 1,
-    fontSize: 16,
-    color: '#000',
+    paddingHorizontal: 10,
+  },
+
+  input: {
+    backgroundColor: '#EBECEF',
+    borderRadius: 20,
+    fontSize: 15,
+    color: 'black',
+    width: '80%',
+    paddingHorizontal: 12,
+    paddingVertical: 10,
   },
   sendButton: {
     backgroundColor: '#1E90FF',
@@ -106,6 +117,10 @@ const styles = StyleSheet.create({
   chatTitleWrap: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  sendIcon: {
+    marginRight: 6,
+    padding: 8,
   },
 });
 

@@ -16,6 +16,7 @@ import { ChatRoomSetting } from '../screens/ChatDetail/ChatRoomSetting';
 import { EditChatRoomDetail } from '../screens/EditChatDetail/EditChatRoomDetail';
 import MemberDetail from '../screens/MemberDetail/MemberDetail';
 import useAuth from '../hooks/useAuth';
+import ChatRoom2 from '../screens/ChatRoom 2/ChatRoom';
 // import ChatRoom2 from '../screens/ChatRoom 2/ChatRoom';
 
 export default function AppNavigator() {
@@ -74,11 +75,11 @@ export default function AppNavigator() {
             //  options={{ headerShown: false }}
             component={ChatRoom}
           />
-          {/* <Stack.Screen
+          <Stack.Screen
             name="ChatRoom2"
             //  options={{ headerShown: false }}
             component={ChatRoom2}
-          /> */}
+          />
           <Stack.Screen
             name="ChatDetail"
             component={ChatRoomSetting}

@@ -11,6 +11,10 @@ import {
   Platform,
   Text,
   KeyboardAvoidingView,
+  FlatList,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
+  Keyboard,
 } from 'react-native';
 import CustomText from '../../components/CustomText';
 import styles from './styles';
@@ -22,8 +26,14 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import BackButton from '../../components/BackButton';
 
 import moment from 'moment';
-import { liveMessages } from '@amityco/ts-sdk';
+import {
+  createMessage,
+  createQuery,
+  liveMessages,
+  runQuery,
+} from '@amityco/ts-sdk';
 import useAuth from '../../hooks/useAuth';
+import LoadingIndicator from '../../components/LoadingIndicator';
 
 type ChatRoomScreenComponentType = React.FC<{
   route: RouteProp<RootStackParamList, 'ChatRoom'>;
@@ -54,18 +64,26 @@ const ChatRoom2: ChatRoomScreenComponentType = ({ route }) => {
   // console.log('client: ', client.userId);
   // const [isScrollTop, setIsScrollTop] = useState(false);
   const [messages, setMessages] = useState<IMessage[]>([]);
-  console.log('messages: ', messages);
+  // console.log('messages: ', messages);
   const [messagesData, setMessagesData] =
     useState<Amity.LiveCollection<Amity.Message>>();
+  const [isMessagesLoading, setIsMessagesLoading] = useState(false);
   // console.log('messagesData: ', messagesData);
-  // const [inputText, setInputText] = useState<string>('');
-  const { data: messagesArr = [] } = messagesData ?? {};
+  const {
+    data: messagesArr = [],
+    onNextPage,
+    hasNextPage,
+  } = messagesData ?? {};
 
+  // console.log('messagesArr: ', messagesArr);
   const [inputMessage, setInputMessage] = useState('');
   // const [loadingImages, setLoadingImages] = useState<string[]>([]);
   const [unSubFunc, setUnSubFunc] = useState<any>();
+  const [sortedMessages, setSortedMessages] = useState<IMessage[]>([]);
   const scrollViewRef = useRef(null);
-
+  const flatListRef = useRef(null);
+  const [scrollOffset, setScrollOffset] = useState(0);
+  const [scrollPosition, setScrollPosition] = useState(0);
   navigation.setOptions({
     // eslint-disable-next-line react/no-unstable-nested-components
     header: () => (
@@ -131,7 +149,7 @@ const ChatRoom2: ChatRoomScreenComponentType = ({ route }) => {
   });
   function onQueryMessages() {
     const unSubScribe = liveMessages(
-      { subChannelId: channelId, limit: 10 },
+      { subChannelId: channelId, limit: 15 },
       setMessagesData
     );
     console.log('channelId: ', channelId);
@@ -151,7 +169,7 @@ const ChatRoom2: ChatRoomScreenComponentType = ({ route }) => {
         const targetIndex: number | undefined =
           groupChat &&
           groupChat.users?.findIndex(
-            (groupChatItem) => item.creatorId == groupChatItem.userId
+            (groupChatItem) => item.creatorId === groupChatItem.userId
           );
         let avatarUrl = '';
         if (groupChat && targetIndex) {
@@ -192,85 +210,157 @@ const ChatRoom2: ChatRoomScreenComponentType = ({ route }) => {
         }
       });
       setMessages(formattedMessages);
+      setIsMessagesLoading(false);
     }
   }, [messagesArr]);
   const handleSend = () => {
     if (inputMessage.trim() === '') {
       return;
     }
-
-    // const newMessage = {
-    //   _id: ,
-    //   text: inputMessage.trim(),
-    //   user: {
-    //     _id: (client as Amity.Client).userId,
-    //     name: 'top',
-    //     avatar: '',
-    //   },
-    //   createdAt: new Date().toLocaleString(),
-    // };
-    // console.log('newMessage: ', newMessage);
-    // setMessages([...messages, newMessage]);
-    // setInputMessage('');
+    Keyboard.dismiss();
+    const query = createQuery(createMessage, {
+      subChannelId: channelId,
+      dataType: 'text',
+      data: {
+        text: inputMessage,
+      },
+    });
+    setInputMessage('');
+    scrollToBottom();
+    runQuery(query, ({ data: message }) => {
+      console.log('message created: ', message);
+    });
   };
 
-  function handleBack() {
+  function handleBack(): void {
     console.log('handleBack: ', handleBack);
     unSubFunc();
   }
-  const scrollToBottom = () => {
-    if (scrollViewRef && scrollViewRef.current) {
-      (scrollViewRef.current as Record<string, any>).scrollToEnd({
-        animated: true,
+
+  const loadNextMessages = () => {
+    if (flatListRef.current && hasNextPage && onNextPage) {
+      setIsMessagesLoading(true);
+      console.log('flatListRef.current: ', flatListRef.current);
+      console.log('scroll to top');
+      // Get the current scroll position and position index
+      const { offset, index } = flatListRef.current;
+
+      console.log('hasNextPage: ', hasNextPage);
+      onNextPage();
+      (flatListRef.current as Record<string, any>).scrollToOffset({
+        offset: 0,
+        animated: false,
       });
+
+      // Save the current scroll position and position index
+      setScrollOffset(offset);
+      setScrollPosition(index);
     }
   };
 
-  const sortedMessages = messages.sort((x, y) => {
-    return new Date(x.createdAt) > new Date(y.createdAt) ? 1 : -1;
-  });
-  console.log('sortedMessages: ', sortedMessages);
+  useEffect(() => {
+    console.log('messages: ', messages);
+    const sortedMessagesData: IMessage[] = messages.sort((x, y) => {
+      return new Date(x.createdAt) < new Date(y.createdAt) ? 1 : -1;
+    });
+    console.log('sortedMessagesData: ', sortedMessagesData);
+    const reOrderArr = sortedMessagesData;
+    setSortedMessages([...reOrderArr]);
+  }, [messages]);
+
+  const renderChatMessages = (message: IMessage) => {
+    return (
+      <View>
+        <View
+          key={message._id}
+          style={[
+            styles.chatBubble,
+            message?.user?._id === (client as Amity.Client).userId
+              ? styles.userBubble
+              : styles.friendBubble,
+          ]}
+        >
+          <Text
+            style={
+              message?.user?._id === (client as Amity.Client).userId
+                ? styles.chatUserText
+                : styles.chatFriendText
+            }
+          >
+            {message.text}
+          </Text>
+        </View>
+        <Text
+          style={[
+            styles.chatTimestamp,
+            {
+              alignSelf:
+                message?.user?._id === (client as Amity.Client).userId
+                  ? 'flex-end'
+                  : 'flex-start',
+            },
+          ]}
+        >
+          {moment(message.createdAt).format('hh:mm A')}
+        </Text>
+      </View>
+    );
+  };
+  const handlePress = () => {
+    Keyboard.dismiss();
+    // setIsExpanded(!isExpanded);
+  };
+  const scrollToBottom = () => {
+    if (flatListRef && flatListRef.current) {
+      (flatListRef.current as Record<string, any>).scrollToOffset({
+        animated: true,
+        offset: 0,
+      });
+    }
+  };
   return (
     <View style={styles.container}>
-      <ScrollView
-        style={styles.chatContainer}
-        ref={scrollViewRef}
-        onContentSizeChange={scrollToBottom}
-        onLayout={scrollToBottom}
-      >
-        {sortedMessages.map((message) => (
-          <View
-            key={message._id}
-            style={[
-              styles.chatBubble,
-              message?.user?._id === (client as Amity.Client).userId
-                ? styles.userBubble
-                : styles.friendBubble,
-            ]}
-          >
-            <Text style={styles.chatText}>{message.text}</Text>
-            <Text style={styles.chatTimestamp}>
-              {moment(message.createdAt).format('hh:mm A')}
-            </Text>
-          </View>
-        ))}
-      </ScrollView>
+      {isMessagesLoading && <LoadingIndicator />}
+      <View style={styles.chatContainer}>
+        <FlatList
+          data={sortedMessages}
+          renderItem={({ item }) => renderChatMessages(item)}
+          keyExtractor={(item) => item._id}
+          onEndReached={loadNextMessages}
+          onEndReachedThreshold={0.5}
+          inverted
+          ref={flatListRef}
+        />
+      </View>
+
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.select({ ios: 60, android: 100 })}
+        style={styles.AllInputWrap}
       >
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            value={inputMessage}
-            onChangeText={(text) => setInputMessage(text)}
-            placeholder="Type a message..."
-            placeholderTextColor="#8A8A8A"
-          />
-          <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
-            <Text style={styles.sendButtonText}>Send</Text>
+        <TextInput
+          style={styles.input}
+          value={inputMessage}
+          onChangeText={(text) => setInputMessage(text)}
+          placeholder="Type a message..."
+          placeholderTextColor="#8A8A8A"
+        />
+
+        {inputMessage.length > 0 ? (
+          <TouchableOpacity onPress={handleSend} style={styles.sendIcon}>
+            <Image
+              source={require('../../../assets/icon/send.png')}
+              style={{ width: 24, height: 24 }}
+            />
           </TouchableOpacity>
-        </View>
+        ) : (
+          <TouchableOpacity onPress={handlePress} style={styles.sendIcon}>
+            <Image
+              source={require('../../../assets/icon/plus.png')}
+              style={{ width: 20, height: 20 }}
+            />
+          </TouchableOpacity>
+        )}
       </KeyboardAvoidingView>
     </View>
   );

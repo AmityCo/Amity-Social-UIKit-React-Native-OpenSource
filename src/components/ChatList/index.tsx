@@ -85,7 +85,7 @@ const ChatList: React.FC<IChatListProps> = ({
       };
       console.log('chatReceiver: ', chatReceiver);
 
-      navigation.navigate('ChatRoom', {
+      navigation.navigate('ChatRoom2', {
         channelId: chatId,
         chatReceiver: chatReceiver,
       });
@@ -110,23 +110,13 @@ const ChatList: React.FC<IChatListProps> = ({
         memberCount: chatMemberNumber,
       };
       console.log('group====>: ', groupChat);
-      navigation.navigate('ChatRoom', {
+      navigation.navigate('ChatRoom2', {
         channelId: chatId,
         groupChat: groupChat,
       });
     }
   }, [groupChatObject]);
 
-  // const renderIcon = (type: string): React.ReactElement => {
-  //   // console.log('type: ', type);
-  //   if (type === 'community' || type === 'broadcast') {
-  //     return <PublicIcon width="23px" height="20px" />;
-  //   } else if (type == 'live') {
-  //     return <PrivateIcon width="23px" height="20px" />;
-  //   } else {
-  //     return <GroupIcon width="23px" height="20px" />;
-  //   }
-  // };
 
   return (
     // <View>
