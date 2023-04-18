@@ -11,7 +11,7 @@ import SelectMembers from '../screens/SelectMembers/SelectMembers';
 
 import ChatRoom from '../screens/ChatRoom/ChatRoom';
 import type { RootStackParamList } from './RouteParamList';
-import { Text, TouchableOpacity } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { ChatRoomSetting } from '../screens/ChatDetail/ChatRoomSetting';
 import { EditChatRoomDetail } from '../screens/EditChatDetail/EditChatRoomDetail';
 import MemberDetail from '../screens/MemberDetail/MemberDetail';
@@ -31,6 +31,7 @@ export default function AppNavigator() {
             contentStyle: {
               backgroundColor: 'white',
             },
+
             // headerShown: false,
           }}
         >
@@ -53,23 +54,7 @@ export default function AppNavigator() {
           })}
         /> */}
 
-          <Stack.Screen
-            name="RecentChat"
-            component={RecentChat}
-            options={({ navigation }) => ({
-              title: 'Chat',
-              headerLeft: () => <Text>Chat</Text>,
-              headerRight: () => (
-                <TouchableOpacity
-                  onPress={() => {
-                    navigation.navigate('SelectMembers');
-                  }}
-                >
-                  <Text>Create</Text>
-                </TouchableOpacity>
-              ),
-            })}
-          />
+          <Stack.Screen name="RecentChat" component={RecentChat} />
           <Stack.Screen
             name="ChatRoom"
             //  options={{ headerShown: false }}

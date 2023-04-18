@@ -41,7 +41,6 @@ const ChatList: React.FC<IChatListProps> = ({
   channelType,
   avatarFileId,
 }: IChatListProps) => {
-  console.log('chatName: ', chatName);
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const { client } = useAuth();
   const [oneOnOneChatObject, setOneOnOneChatObject] =
@@ -54,17 +53,13 @@ const ChatList: React.FC<IChatListProps> = ({
     channelType: string,
     chatMemberNumber: number
   ) => {
-    console.log('memberCount: ', chatMemberNumber);
-    console.log('Channel Id is:  ' + channelId);
-    // console.log('userId:' + client.userId);
     console.log('type:' + channelType);
     const query = createQuery(queryChannelMembers, {
       channelId: channelId,
     });
 
     runQuery(query, ({ data: members }) => {
-      // console.log('members: ', members);
-      if (chatMemberNumber == 2 && members) {
+      if (chatMemberNumber === 2 && members) {
         setOneOnOneChatObject(members);
       } else if (members) {
         setGroupChatObject(members);
@@ -116,7 +111,6 @@ const ChatList: React.FC<IChatListProps> = ({
       });
     }
   }, [groupChatObject]);
-
 
   return (
     // <View>

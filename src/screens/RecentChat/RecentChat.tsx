@@ -1,6 +1,12 @@
 import React, { ReactElement, useCallback, useRef } from 'react';
 
-import { View, FlatList, TouchableOpacity, Image } from 'react-native';
+import {
+  View,
+  FlatList,
+  TouchableOpacity,
+  Image,
+  SafeAreaView,
+} from 'react-native';
 
 import { liveChannels } from '@amityco/ts-sdk';
 import ChatList, { IChatListProps } from '../../components/ChatList/index';
@@ -19,14 +25,13 @@ export default function RecentChat() {
 
   const [channelObjects, setChannelObjects] = useState<IChatListProps[]>([]);
   const [loadChannel, setLoadChannel] = useState<boolean>(true);
-  console.log('channelObjects: ', channelObjects.length);
+  // const [unSubFunc, setUnSubFunc] = useState<any>();
+
   const flatListRef = useRef(null);
-  // const [channelOptions, setChannelOptions] = useState<Amity.RunQueryOptions<typeof queryChannels>>();
-  // const {loading, nextPage, error} = channelOptions ?? {};
 
   const [channelData, setChannelData] =
     useState<Amity.LiveCollection<Amity.Channel>>();
-  console.log('channelData length: ', channelData?.data);
+
   const {
     data: channels = [],
     onNextPage,
@@ -38,7 +43,7 @@ export default function RecentChat() {
   navigation.setOptions({
     // eslint-disable-next-line react/no-unstable-nested-components
     header: () => (
-      <View style={styles.topBar}>
+      <SafeAreaView style={styles.topBar}>
         <CustomText style={styles.titleText}>Chat</CustomText>
         <TouchableOpacity
           onPress={() => {
@@ -50,35 +55,25 @@ export default function RecentChat() {
             source={require('../../../assets/icon/addChat.png')}
           />
         </TouchableOpacity>
-      </View>
+      </SafeAreaView>
     ),
     headerTitle: '',
   });
 
-  useEffect(() => {
-    if (isConnected) {
-      // console.log('client test: ', client.userId);
-      onQueryChannel();
-    }
-    //
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isConnected]);
-
   const onQueryChannel = () => {
-    console.log('=======pass liveChannel========');
     liveChannels(
       { limit: 10, membership: 'member', sortBy: 'lastActivity' },
       (value) => {
-        // // console.log('value: ', value);
         setChannelData(value);
-
-        // if (value?.data.length > channelObjects.length) {
-        //   setChannelData(value);
-        // }
       }
     );
+    // setUnSubFunc(() => unSubScribe);
   };
-
+  useEffect(() => {
+    if (isConnected) {
+      onQueryChannel();
+    }
+  }, [isConnected]);
   useEffect(() => {
     if (channels.length > 0) {
       const formattedChannelObjects: IChatListProps[] = channels.map(
@@ -88,7 +83,7 @@ export default function RecentChat() {
           );
           const todayDate = moment(Date.now()).format('DD/MM/YYYY');
           let dateDisplay;
-          if (lastActivityDate == todayDate) {
+          if (lastActivityDate === todayDate) {
             dateDisplay = moment(item.lastActivity).format('hh:mm A');
           } else {
             dateDisplay = moment(item.lastActivity).format('DD/MM/YYYY');
@@ -98,7 +93,7 @@ export default function RecentChat() {
             chatId: item.channelId ?? '',
             chatName: item.displayName ?? '',
             chatMemberNumber: item.memberCount ?? 0,
-            unReadMessage: item.defaultSubChannelUnreadCount ?? 0, // change to defaultSubChannelUnreadCount later after product team fix this !!!!!!!!!
+            unReadMessage: item.unreadCount ?? 0,
             messageDate: dateDisplay ?? '',
             channelType: item.type ?? '',
             avatarFileId: item.avatarFileId,
@@ -107,24 +102,6 @@ export default function RecentChat() {
       );
       setChannelObjects([...formattedChannelObjects]);
       setLoadChannel(false);
-      //   if (
-      //     channelObjects.length > 0 &&
-      //     channels.length > channelObjects.length
-      //   ) {
-      //     const nextChannels = formattedChannelObjects.slice(
-      //       channelObjects.length,
-      //       formattedChannelObjects.length
-      //     );
-
-      //     console.log('nextChannels:pass========> ', nextChannels.length);
-      //     setChannelObjects([...channelObjects, ...nextChannels]);
-      //     setLoadChannel(false);
-      //   }
-      //   else if (channelObjects.length === 0) {
-      //     console.log('pass once');
-      //     setChannelObjects([...formattedChannelObjects]);
-      //     setLoadChannel(false);
-      //   }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [channelData]);
@@ -156,7 +133,6 @@ export default function RecentChat() {
     );
   }, [loadChannel, channelObjects, handleLoadMore]);
   const renderChatList = (item: IChatListProps): ReactElement => {
-    console.log('item==>: ', item);
     return (
       <ChatList
         key={item.chatId}
@@ -172,7 +148,7 @@ export default function RecentChat() {
   };
   const renderTabView = (): ReactElement => {
     return (
-      <View style={styles.tabView}>
+      <View style={[styles.tabView]}>
         <View style={styles.indicator}>
           <CustomText style={styles.tabViewTitle}>Recent</CustomText>
         </View>
@@ -183,7 +159,6 @@ export default function RecentChat() {
   return (
     <View>
       {renderTabView()}
-
       {renderRecentChat()}
     </View>
   );

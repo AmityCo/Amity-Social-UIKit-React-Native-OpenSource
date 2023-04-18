@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@amityco/ts-sdk@^0.0.1-beta.42.3":
-  version "0.0.1-beta.42.3"
-  resolved "https://registry.yarnpkg.com/@amityco/ts-sdk/-/ts-sdk-0.0.1-beta.42.3.tgz#d5c881036a588d525165eba5ad1d890d08105b76"
-  integrity sha512-DeeQYoMuB1BryY+sLwH3Nn5j6yE3Jct7B1WyK5PqIntWmMClPxxCHCilHLmxpHvcjsnGJLoaNDFOjQcOKp7D5Q==
+"@amityco/ts-sdk@^0.0.1-beta.43.1":
+  version "0.0.1-beta.43.1"
+  resolved "https://registry.yarnpkg.com/@amityco/ts-sdk/-/ts-sdk-0.0.1-beta.43.1.tgz#0051c46127efb213535ec071c510be0f910793ac"
+  integrity sha512-FDC3Ewq3p29br4NbBq6T93jPipVhlOUTcKHsPyJy9hNf8ngyDggmUflMdJTkB1edxNlA5XLo/N7QV6oZIKyLNg==
   dependencies:
     "@react-native-async-storage/async-storage" "^1.17.7"
     agentkeepalive "^4.2.1"
@@ -9013,6 +9013,11 @@ react-native-image-picker@5.1.0:
   resolved "https://registry.yarnpkg.com/react-native-image-picker/-/react-native-image-picker-5.1.0.tgz#78b84533a52a8e9704bacf6d18e7c979d9766271"
   integrity sha512-p506trG3PDSrdm+Yd0QolsnR3FtSe37gkP7OVsMa9UYwn1teaLGzhmx3QMZ4ZBwdV1AKBUFA5HF1ECAVSDTdQQ==
 
+react-native-image-viewing@^0.2.2:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/react-native-image-viewing/-/react-native-image-viewing-0.2.2.tgz#fb26e57d7d3d9ce4559a3af3d244387c0367242b"
+  integrity sha512-osWieG+p/d2NPbAyonOMubttajtYEYiRGQaJA54slFxZ69j1V4/dCmcrVQry47ktVKy8/qpFwCpW1eT6MH5T2Q==
+
 react-native-iphone-x-helper@1.3.1:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/react-native-iphone-x-helper/-/react-native-iphone-x-helper-1.3.1.tgz#20c603e9a0e765fd6f97396638bdeb0e5a60b010"
@@ -9039,6 +9044,11 @@ react-native-safe-area-context@4.4.1:
   version "4.4.1"
   resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-4.4.1.tgz#239c60b8a9a80eac70a38a822b04c0f1d15ffc01"
   integrity sha512-N9XTjiuD73ZpVlejHrUWIFZc+6Z14co1K/p1IFMkImU7+avD69F3y+lhkqA2hN/+vljdZrBSiOwXPkuo43nFQA==
+
+react-native-safe-area-context@^4.5.1:
+  version "4.5.1"
+  resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-4.5.1.tgz#6651d216b86ce84a8e9399220a1010d3902d7a2e"
+  integrity sha512-bKcwk6zZvyz+VLoG6Uia1oiYU1jSbv1ysjEKSRLsLtPcDsbixsTc0UgfrPqjZxNTPzvYLMcr8ufA90UQauN4mw==
 
 react-native-screens@3.20.0:
   version "3.20.0"

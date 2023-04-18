@@ -4,7 +4,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Image,
-  ScrollView,
   LogBox,
   TouchableOpacity,
   TextInput,
@@ -12,17 +11,15 @@ import {
   Text,
   KeyboardAvoidingView,
   FlatList,
-  NativeSyntheticEvent,
-  NativeScrollEvent,
   Keyboard,
 } from 'react-native';
+import ImageView from 'react-native-image-viewing';
 import CustomText from '../../components/CustomText';
 import styles from './styles';
 import { RouteProp, useNavigation } from '@react-navigation/native';
 import type { RootStackParamList } from '../../routes/RouteParamList';
 import type { StackNavigationProp } from '@react-navigation/stack';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-// import GroupChat from '../../../assets/icon/GroupChat.svg';
 import BackButton from '../../components/BackButton';
 
 import moment from 'moment';
@@ -33,8 +30,18 @@ import {
   runQuery,
 } from '@amityco/ts-sdk';
 import useAuth from '../../hooks/useAuth';
-import LoadingIndicator from '../../components/LoadingIndicator';
-
+import {
+  CameraOptions,
+  ImageLibraryOptions,
+  ImagePickerResponse,
+  launchCamera,
+  launchImageLibrary,
+} from 'react-native-image-picker';
+import * as ImagePicker from 'expo-image-picker';
+import Constants from 'expo-constants';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import type { Action } from '../EditChatDetail/EditChatRoomDetail';
+import { uploadFile } from '../../providers/file-provider';
 type ChatRoomScreenComponentType = React.FC<{
   route: RouteProp<RootStackParamList, 'ChatRoom'>;
   navigation: StackNavigationProp<RootStackParamList, 'ChatRoom'>;
@@ -52,104 +59,125 @@ interface IMessage {
     avatar: string;
   };
   image?: string;
+  messageType: string;
 }
 
 const ChatRoom2: ChatRoomScreenComponentType = ({ route }) => {
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
   const { chatReceiver, groupChat, channelId } = route.params;
-  // console.log('groupChat: ', groupChat);
-  // console.log('channelId: ', channelId);
   const { client } = useAuth();
-  // console.log('client: ', client.userId);
-  // const [isScrollTop, setIsScrollTop] = useState(false);
   const [messages, setMessages] = useState<IMessage[]>([]);
-  // console.log('messages: ', messages);
   const [messagesData, setMessagesData] =
     useState<Amity.LiveCollection<Amity.Message>>();
-  const [isMessagesLoading, setIsMessagesLoading] = useState(false);
-  // console.log('messagesData: ', messagesData);
+  // const [isMessagesLoading, setIsMessagesLoading] = useState(false);
+
   const {
     data: messagesArr = [],
     onNextPage,
     hasNextPage,
   } = messagesData ?? {};
 
-  // console.log('messagesArr: ', messagesArr);
   const [inputMessage, setInputMessage] = useState('');
   // const [loadingImages, setLoadingImages] = useState<string[]>([]);
   const [unSubFunc, setUnSubFunc] = useState<any>();
   const [sortedMessages, setSortedMessages] = useState<IMessage[]>([]);
-  const scrollViewRef = useRef(null);
   const flatListRef = useRef(null);
-  const [scrollOffset, setScrollOffset] = useState(0);
-  const [scrollPosition, setScrollPosition] = useState(0);
+  const [isExpanded, setIsExpanded] = useState<boolean>(false);
+  const [imageUri, setImageUri] = useState<string | undefined>();
+  const [visibleFullImage, setIsVisibleFullImage] = useState<boolean>(false);
+  const [fullImage, setFullImage] = useState<string>('');
+  const imageUriRef = useRef(imageUri);
+  const [loadingImages, setLoadingImages] = useState<string[]>([]);
+
+  const actions: Action[] = [
+    {
+      title: 'Take Image',
+      type: 'capture',
+      options: {
+        saveToPhotos: true,
+        mediaType: 'photo',
+        includeBase64: false,
+      },
+    },
+    {
+      title: 'Select Image',
+      type: 'library',
+      options: {
+        selectionLimit: 1,
+        mediaType: 'photo',
+        includeBase64: false,
+      },
+    },
+  ];
   navigation.setOptions({
     // eslint-disable-next-line react/no-unstable-nested-components
     header: () => (
-      <View style={styles.topBar}>
-        <View style={styles.chatTitleWrap}>
-          <TouchableOpacity onPress={handleBack}>
-            <BackButton onPress={handleBack} />
-          </TouchableOpacity>
+      <SafeAreaView edges={['top']}>
+        <View style={styles.topBar}>
+          <View style={styles.chatTitleWrap}>
+            <TouchableOpacity onPress={handleBack}>
+              <BackButton onPress={handleBack} />
+            </TouchableOpacity>
 
-          {chatReceiver ? (
-            <Image
-              style={styles.avatar}
-              source={
-                chatReceiver?.avatarFileId
-                  ? {
-                      uri: `https://api.amity.co/api/v3/files/${chatReceiver.avatarFileId}/download`,
-                    }
-                  : require('../../../assets/icon/Placeholder.png')
-              }
-            />
-          ) : groupChat?.avatarFileId ? (
-            <Image
-              style={styles.avatar}
-              source={{
-                uri: `https://api.amity.co/api/v3/files/${groupChat.avatarFileId}/download`,
-              }}
-            />
-          ) : (
-            <View style={styles.icon}>
-              {/* <GroupChat width={23} height={20} /> */}
+            {chatReceiver ? (
               <Image
-                style={styles.chatIcon}
-                source={require('../../../assets/icon/GroupChat.png')}
+                style={styles.avatar}
+                source={
+                  chatReceiver?.avatarFileId
+                    ? {
+                        uri: `https://api.amity.co/api/v3/files/${chatReceiver.avatarFileId}/download`,
+                      }
+                    : require('../../../assets/icon/Placeholder.png')
+                }
               />
-            </View>
-          )}
-          <View>
-            <CustomText style={styles.chatName} numberOfLines={1}>
-              {chatReceiver
-                ? chatReceiver?.displayName
-                : groupChat?.displayName}
-            </CustomText>
-            {groupChat && (
-              <CustomText style={styles.chatMember}>
-                {groupChat?.memberCount} members
-              </CustomText>
+            ) : groupChat?.avatarFileId ? (
+              <Image
+                style={styles.avatar}
+                source={{
+                  uri: `https://api.amity.co/api/v3/files/${groupChat.avatarFileId}/download`,
+                }}
+              />
+            ) : (
+              <View style={styles.icon}>
+                <Image
+                  style={styles.chatIcon}
+                  source={require('../../../assets/icon/GroupChat.png')}
+                />
+              </View>
             )}
+            <View>
+              <CustomText style={styles.chatName} numberOfLines={1}>
+                {chatReceiver
+                  ? chatReceiver?.displayName
+                  : groupChat?.displayName}
+              </CustomText>
+              {groupChat && (
+                <CustomText style={styles.chatMember}>
+                  {groupChat?.memberCount} members
+                </CustomText>
+              )}
+            </View>
           </View>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('ChatDetail', { channelId: channelId });
+            }}
+          >
+            <Image
+              style={styles.settingIcon}
+              source={require('../../../assets/icon/setting.png')}
+            />
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate('ChatDetail', { channelId: channelId });
-          }}
-        >
-          <Image
-            style={styles.settingIcon}
-            source={require('../../../assets/icon/setting.png')}
-          />
-        </TouchableOpacity>
-      </View>
+      </SafeAreaView>
     ),
     headerTitle: '',
   });
+
   function onQueryMessages() {
     const unSubScribe = liveMessages(
-      { subChannelId: channelId, limit: 15 },
+      { subChannelId: channelId, limit: 10 },
       setMessagesData
     );
     console.log('channelId: ', channelId);
@@ -163,6 +191,7 @@ const ChatRoom2: ChatRoomScreenComponentType = ({ route }) => {
       onQueryMessages();
     }
   }, [channelId]);
+
   useEffect(() => {
     if (messagesArr.length > 0) {
       const formattedMessages = messagesArr.map((item) => {
@@ -172,11 +201,15 @@ const ChatRoom2: ChatRoomScreenComponentType = ({ route }) => {
             (groupChatItem) => item.creatorId === groupChatItem.userId
           );
         let avatarUrl = '';
-        if (groupChat && targetIndex) {
+        if (
+          groupChat &&
+          targetIndex &&
+          (groupChat?.users as any)[targetIndex as number].avatarFileId
+        ) {
           avatarUrl = `https://api.amity.co/api/v3/files/${
             (groupChat?.users as any)[targetIndex as number].avatarFileId as any
           }/download`;
-        } else if (chatReceiver) {
+        } else if (chatReceiver && chatReceiver.avatarFileId) {
           avatarUrl = `https://api.amity.co/api/v3/files/${chatReceiver.avatarFileId}/download`;
         }
 
@@ -194,6 +227,7 @@ const ChatRoom2: ChatRoomScreenComponentType = ({ route }) => {
               name: item.creatorId ?? '',
               avatar: avatarUrl,
             },
+            messageType: item.dataType,
           };
         } else {
           return {
@@ -206,11 +240,11 @@ const ChatRoom2: ChatRoomScreenComponentType = ({ route }) => {
               name: item.creatorId ?? '',
               avatar: avatarUrl,
             },
+            messageType: item.dataType,
           };
         }
       });
       setMessages(formattedMessages);
-      setIsMessagesLoading(false);
     }
   }, [messagesArr]);
   const handleSend = () => {
@@ -239,76 +273,105 @@ const ChatRoom2: ChatRoomScreenComponentType = ({ route }) => {
 
   const loadNextMessages = () => {
     if (flatListRef.current && hasNextPage && onNextPage) {
-      setIsMessagesLoading(true);
-      console.log('flatListRef.current: ', flatListRef.current);
-      console.log('scroll to top');
-      // Get the current scroll position and position index
-      const { offset, index } = flatListRef.current;
-
-      console.log('hasNextPage: ', hasNextPage);
       onNextPage();
       (flatListRef.current as Record<string, any>).scrollToOffset({
         offset: 0,
         animated: false,
       });
-
-      // Save the current scroll position and position index
-      setScrollOffset(offset);
-      setScrollPosition(index);
     }
   };
 
   useEffect(() => {
-    console.log('messages: ', messages);
+    // console.log('messages: ', messages);
     const sortedMessagesData: IMessage[] = messages.sort((x, y) => {
       return new Date(x.createdAt) < new Date(y.createdAt) ? 1 : -1;
     });
-    console.log('sortedMessagesData: ', sortedMessagesData);
+    // console.log('sortedMessagesData: ', sortedMessagesData);
     const reOrderArr = sortedMessagesData;
     setSortedMessages([...reOrderArr]);
   }, [messages]);
-
+  const openFullImage = (image: string) => {
+    const fullSizeImage: string = image + '?size=full';
+    setFullImage(fullSizeImage);
+    setIsVisibleFullImage(true);
+  };
   const renderChatMessages = (message: IMessage) => {
+    // console.log('message: ', message);
+    const isUserChat: boolean =
+      message?.user?._id === (client as Amity.Client).userId;
+
     return (
-      <View>
-        <View
-          key={message._id}
-          style={[
-            styles.chatBubble,
-            message?.user?._id === (client as Amity.Client).userId
-              ? styles.userBubble
-              : styles.friendBubble,
-          ]}
-        >
-          <Text
-            style={
-              message?.user?._id === (client as Amity.Client).userId
-                ? styles.chatUserText
-                : styles.chatFriendText
+      <View
+        style={!isUserChat ? styles.leftMessageWrap : styles.rightMessageWrap}
+      >
+        {!isUserChat && (
+          <Image
+            source={
+              message.user.avatar
+                ? { uri: message.user.avatar }
+                : require('../../../assets/icon/Placeholder.png')
             }
+            style={styles.avatarImage}
+          />
+        )}
+
+        <View>
+          {!isUserChat && (
+            <Text
+              style={isUserChat ? styles.chatUserText : styles.chatFriendText}
+            >
+              {message.user.name}
+            </Text>
+          )}
+
+          {message.messageType === 'text' ? (
+            <View
+              key={message._id}
+              style={[
+                styles.textChatBubble,
+                isUserChat ? styles.userBubble : styles.friendBubble,
+              ]}
+            >
+              <Text
+                style={isUserChat ? styles.chatUserText : styles.chatFriendText}
+              >
+                {message.text}
+              </Text>
+            </View>
+          ) : (
+            <TouchableOpacity
+              style={[
+                styles.imageChatBubble,
+                isUserChat ? styles.userBubble : styles.friendBubble,
+              ]}
+              onPress={() => openFullImage(message.image as string)}
+            >
+              <Image
+                style={styles.imageMessage}
+                source={{
+                  uri: message.image,
+                }}
+              />
+            </TouchableOpacity>
+          )}
+
+          <Text
+            style={[
+              styles.chatTimestamp,
+              {
+                alignSelf: isUserChat ? 'flex-end' : 'flex-start',
+              },
+            ]}
           >
-            {message.text}
+            {moment(message.createdAt).format('hh:mm A')}
           </Text>
         </View>
-        <Text
-          style={[
-            styles.chatTimestamp,
-            {
-              alignSelf:
-                message?.user?._id === (client as Amity.Client).userId
-                  ? 'flex-end'
-                  : 'flex-start',
-            },
-          ]}
-        >
-          {moment(message.createdAt).format('hh:mm A')}
-        </Text>
       </View>
     );
   };
   const handlePress = () => {
     Keyboard.dismiss();
-    // setIsExpanded(!isExpanded);
+    setIsExpanded(!isExpanded);
   };
   const scrollToBottom = () => {
     if (flatListRef && flatListRef.current) {
@@ -318,9 +381,139 @@ const ChatRoom2: ChatRoomScreenComponentType = ({ route }) => {
       });
     }
   };
+  const handleOnFocus = () => {
+    setIsExpanded(false);
+  };
+  const createImageMessage = async () => {
+    const fileId = await uploadFile(imageUriRef.current as string);
+    console.log('fileId555: ', fileId);
+    if (fileId) {
+      const query = createQuery(createMessage, {
+        subChannelId: channelId,
+        dataType: 'file', // image, file, video, audio
+        fileId: fileId,
+      });
+
+      runQuery(query, ({ data: message }) => {
+        // const removeLoadingMessage = messages.filter((item) => !item.pending);
+        setLoadingImages([]);
+        // setMessages(removeLoadingMessage);
+        setImageUri('');
+        console.log('create message success', message);
+      });
+    }
+  };
+  useEffect(() => {
+    if (imageUri) {
+      // console.log('imageUri: ', imageUri);
+      createImageMessage();
+      const oldArr: string[] = loadingImages;
+      const newArray: string[] = [...oldArr, `${imageUri}`];
+      setLoadingImages(newArray);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [imageUri]);
+  const openCamera = async () => {
+    await launchCamera(
+      [0] as unknown as CameraOptions,
+      (response: ImagePickerResponse) => {
+        if (!response.didCancel && !response.errorCode) {
+          if (response.assets) {
+            imageUriRef.current = (
+              response.assets[0] as Record<string, any>
+            ).uri;
+            setImageUri((response.assets[0] as Record<string, any>).uri);
+          }
+        }
+      }
+    );
+  };
+  const pickCamera = async () => {
+    // No permissions request is necessary for launching the image library
+    if (Constants.appOwnership === 'expo') {
+      const permission = await ImagePicker.requestCameraPermissionsAsync();
+      if (permission.granted) {
+        let result: ImagePicker.ImagePickerResult =
+          await ImagePicker.launchCameraAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+          });
+
+        console.log(result);
+        console.log('result: ', result);
+        if (
+          result.assets &&
+          result.assets.length > 0 &&
+          result.assets[0] !== null &&
+          result.assets[0]
+        ) {
+          imageUriRef.current = result && result.assets[0].uri;
+          setImageUri(result.assets[0].uri);
+          // do something with uri
+        }
+      }
+    } else {
+      openCamera();
+    }
+  };
+
+  const openImageGallery = async () => {
+    await launchImageLibrary(
+      actions[1] as unknown as ImageLibraryOptions,
+      (response) => {
+        if (response.didCancel) {
+          console.log('User cancelled image picker');
+        } else if (response.errorCode) {
+          console.log(
+            'ImagePicker Error: ',
+            response.errorCode + ', ' + response.errorMessage
+          );
+        } else {
+          if (response.assets) {
+            imageUriRef.current = (
+              response.assets[0] as Record<string, any>
+            ).uri;
+            setImageUri((response.assets[0] as Record<string, any>).uri);
+
+            // setLoadingImageUri(loadingImageUri.push(response.assets[0].uri?.toString()))
+
+            // console.log('printing image uri ' + response.assets[0].uri);
+          }
+        }
+      }
+    );
+  };
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    if (Constants.appOwnership === 'expo') {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+
+      console.log(result);
+
+      if (
+        !result.canceled &&
+        result.assets &&
+        result.assets.length > 0 &&
+        result.assets[0] !== null &&
+        result.assets[0]
+      ) {
+        imageUriRef.current = (result.assets[0] as Record<string, any>).uri;
+        setImageUri(result.assets[0].uri);
+      }
+    } else {
+      openImageGallery();
+    }
+  };
   return (
     <View style={styles.container}>
-      {isMessagesLoading && <LoadingIndicator />}
+      {/* {isMessagesLoading && <LoadingIndicator />} */}
       <View style={styles.chatContainer}>
         <FlatList
           data={sortedMessages}
@@ -335,33 +528,71 @@ const ChatRoom2: ChatRoomScreenComponentType = ({ route }) => {
 
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.select({ ios: 60, android: 100 })}
+        keyboardVerticalOffset={Platform.select({ ios: 110, android: 100 })}
         style={styles.AllInputWrap}
       >
-        <TextInput
-          style={styles.input}
-          value={inputMessage}
-          onChangeText={(text) => setInputMessage(text)}
-          placeholder="Type a message..."
-          placeholderTextColor="#8A8A8A"
-        />
+        <View style={styles.InputWrap}>
+          <TextInput
+            style={styles.input}
+            value={inputMessage}
+            onChangeText={(text) => setInputMessage(text)}
+            placeholder="Type a message..."
+            placeholderTextColor="#8A8A8A"
+            onFocus={handleOnFocus}
+          />
 
-        {inputMessage.length > 0 ? (
-          <TouchableOpacity onPress={handleSend} style={styles.sendIcon}>
-            <Image
-              source={require('../../../assets/icon/send.png')}
-              style={{ width: 24, height: 24 }}
-            />
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity onPress={handlePress} style={styles.sendIcon}>
-            <Image
-              source={require('../../../assets/icon/plus.png')}
-              style={{ width: 20, height: 20 }}
-            />
-          </TouchableOpacity>
+          {inputMessage.length > 0 ? (
+            <TouchableOpacity onPress={handleSend} style={styles.sendIcon}>
+              <Image
+                source={require('../../../assets/icon/send.png')}
+                style={{ width: 24, height: 24 }}
+              />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity onPress={handlePress} style={styles.sendIcon}>
+              <Image
+                source={require('../../../assets/icon/plus.png')}
+                style={{ width: 20, height: 20 }}
+              />
+            </TouchableOpacity>
+          )}
+        </View>
+        {isExpanded && (
+          <View style={styles.expandedArea}>
+            <TouchableOpacity
+              onPress={pickCamera}
+              style={{ marginHorizontal: 30 }}
+            >
+              <View style={styles.IconCircle}>
+                <Image
+                  source={require('../../../assets/icon/camera.png')}
+                  style={{ width: 32, height: 28 }}
+                />
+              </View>
+              <CustomText>Camera</CustomText>
+            </TouchableOpacity>
+            <TouchableOpacity
+              // disabled={loadingImages.length > 0}
+              onPress={pickImage}
+              style={{ marginHorizontal: 20, alignItems: 'center' }}
+            >
+              <View style={styles.IconCircle}>
+                <Image
+                  source={require('../../../assets/icon/gallery.png')}
+                  style={{ width: 32, height: 28 }}
+                />
+              </View>
+              <CustomText>Album</CustomText>
+            </TouchableOpacity>
+          </View>
         )}
       </KeyboardAvoidingView>
+      <ImageView
+        images={[{ uri: fullImage }]}
+        imageIndex={0}
+        visible={visibleFullImage}
+        onRequestClose={() => setIsVisibleFullImage(false)}
+      />
     </View>
   );
 };

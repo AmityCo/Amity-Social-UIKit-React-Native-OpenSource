@@ -20,10 +20,10 @@ const styles = StyleSheet.create({
   topBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
     justifyContent: 'space-between',
-    backgroundColor: 'white',
+    backgroundColor: '#FFFFFF',
+    marginHorizontal: 20,
+    marginVertical: 10,
   },
   addChatIcon: {
     width: 24,
@@ -53,6 +53,12 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderBottomColor: '#1054DE',
     marginHorizontal: 20,
+  },
+  androidWrap: {
+    marginTop: 0,
+  },
+  iosWrap: {
+    marginTop: 30,
   },
 });
 
