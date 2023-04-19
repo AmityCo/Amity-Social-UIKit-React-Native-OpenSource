@@ -20,10 +20,6 @@ export const AuthContext = React.createContext<AuthContextInterface>({
   isConnected: false,
 });
 
-// interface IAuthProps {
-//   children: any;
-// }
-
 export const AuthContextProvider: FC<IAmityUIkitProvider> = ({
   userId,
   displayName,

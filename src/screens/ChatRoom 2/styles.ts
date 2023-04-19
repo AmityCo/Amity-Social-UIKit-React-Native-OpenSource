@@ -20,6 +20,10 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     backgroundColor: '#1054DE',
   },
+  userImageBubble: {
+    alignSelf: 'flex-end',
+    backgroundColor: 'transparent',
+  },
   friendBubble: {
     alignSelf: 'flex-start',
     backgroundColor: '#EBECEF',
@@ -49,7 +53,6 @@ const styles = StyleSheet.create({
     paddingBottom: 25,
     paddingTop: 10,
     alignItems: 'center',
-
   },
   chatContainer: {
     flex: 1,
@@ -61,8 +64,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     fontSize: 15,
     color: 'black',
-    width: '80%',
-    paddingHorizontal: 12,
+    width: '90%',
+    paddingHorizontal: 16,
     paddingVertical: 10,
   },
   sendButton: {
@@ -85,7 +88,6 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     borderBottomColor: '#EBECEF',
     borderBottomWidth: 1,
-
   },
   avatar: {
     width: 35,
@@ -164,6 +166,13 @@ const styles = StyleSheet.create({
   },
   rightMessageWrap: {
     marginVertical: 10,
+  },
+  loadingRow: {
+    flexDirection: 'row',
+    paddingHorizontal: 10,
+  },
+  loadingText: {
+    marginRight: 13,
   },
 });
 

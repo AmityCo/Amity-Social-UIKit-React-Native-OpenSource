@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   View,
   Image,
@@ -26,6 +26,7 @@ import moment from 'moment';
 import {
   createMessage,
   createQuery,
+  getFile,
   liveMessages,
   runQuery,
 } from '@amityco/ts-sdk';
@@ -42,6 +43,7 @@ import Constants from 'expo-constants';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { Action } from '../EditChatDetail/EditChatRoomDetail';
 import { uploadFile } from '../../providers/file-provider';
+import LoadingIndicator from '../../components/LoadingIndicator';
 type ChatRoomScreenComponentType = React.FC<{
   route: RouteProp<RootStackParamList, 'ChatRoom'>;
   navigation: StackNavigationProp<RootStackParamList, 'ChatRoom'>;
@@ -51,7 +53,7 @@ LogBox.ignoreAllLogs();
 
 interface IMessage {
   _id: string;
-  text: string;
+  text?: string;
   createdAt: Date;
   user: {
     _id: string;
@@ -60,6 +62,7 @@ interface IMessage {
   };
   image?: string;
   messageType: string;
+  isPending?: boolean;
 }
 
 const ChatRoom2: ChatRoomScreenComponentType = ({ route }) => {
@@ -82,13 +85,15 @@ const ChatRoom2: ChatRoomScreenComponentType = ({ route }) => {
   // const [loadingImages, setLoadingImages] = useState<string[]>([]);
   const [unSubFunc, setUnSubFunc] = useState<any>();
   const [sortedMessages, setSortedMessages] = useState<IMessage[]>([]);
+  console.log('sortedMessages: ', sortedMessages);
   const flatListRef = useRef(null);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [imageUri, setImageUri] = useState<string | undefined>();
   const [visibleFullImage, setIsVisibleFullImage] = useState<boolean>(false);
   const [fullImage, setFullImage] = useState<string>('');
   const imageUriRef = useRef(imageUri);
-  const [loadingImages, setLoadingImages] = useState<string[]>([]);
+  const [loadingImages, setLoadingImages] = useState<IMessage[]>([]);
+  // console.log('loadingImages: ', loadingImages);
 
   const actions: Action[] = [
     {
@@ -177,7 +182,7 @@ const ChatRoom2: ChatRoomScreenComponentType = ({ route }) => {
 
   function onQueryMessages() {
     const unSubScribe = liveMessages(
-      { subChannelId: channelId, limit: 10 },
+      { subChannelId: channelId, limit: 8 },
       setMessagesData
     );
     console.log('channelId: ', channelId);
@@ -342,7 +347,7 @@ const ChatRoom2: ChatRoomScreenComponentType = ({ route }) => {
             <TouchableOpacity
               style={[
                 styles.imageChatBubble,
-                isUserChat ? styles.userBubble : styles.friendBubble,
+                isUserChat ? styles.userImageBubble : styles.friendBubble,
               ]}
               onPress={() => openFullImage(message.image as string)}
             >
@@ -363,7 +368,14 @@ const ChatRoom2: ChatRoomScreenComponentType = ({ route }) => {
               },
             ]}
           >
-            {moment(message.createdAt).format('hh:mm A')}
+            {message.isPending ? (
+              <View style={styles.loadingRow}>
+                <Text style={styles.loadingText}>sending</Text>
+                <LoadingIndicator />
+              </View>
+            ) : (
+              moment(message.createdAt).format('hh:mm A')
+            )}
           </Text>
         </View>
       </View>
@@ -394,25 +406,55 @@ const ChatRoom2: ChatRoomScreenComponentType = ({ route }) => {
         fileId: fileId,
       });
 
+      runQuery(createQuery(getFile, fileId), (result) => {
+        const stopLoadingMessages = messages.filter(
+          (item) => item._id !== result.data.attributes.name
+        );
+        setMessages(stopLoadingMessages);
+      });
       runQuery(query, ({ data: message }) => {
         // const removeLoadingMessage = messages.filter((item) => !item.pending);
-        setLoadingImages([]);
+        // setLoadingImages([]);
         // setMessages(removeLoadingMessage);
         setImageUri('');
         console.log('create message success', message);
       });
     }
   };
+  function loadingImagesConfig(imageUrl: string) {
+    console.log('loadingImagesConfig: ', loadingImagesConfig);
+    const oldArr: IMessage[] = loadingImages;
+    const fileName = imageUrl.split('/').pop();
+    const newImageMessage: IMessage = {
+      _id: fileName as string,
+      user: {
+        _id: (client as Amity.Client).userId as string,
+        name: (client as Amity.Client).userId as string,
+        avatar: '',
+      },
+      isPending: true,
+      messageType: 'image',
+      image: imageUrl,
+      createdAt: new Date(Date.now()),
+    };
+    oldArr.push(newImageMessage);
+    setLoadingImages(oldArr);
+    handleRefresh();
+  }
+  // useEffect(() => {
+
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [imageUri]);
   useEffect(() => {
+    const loadingMessages: IMessage[] = loadingImages.concat(messages);
+    console.log('====render====');
+    setMessages(loadingMessages);
     if (imageUri) {
       // console.log('imageUri: ', imageUri);
       createImageMessage();
-      const oldArr: string[] = loadingImages;
-      const newArray: string[] = [...oldArr, `${imageUri}`];
-      setLoadingImages(newArray);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imageUri]);
+
   const openCamera = async () => {
     await launchCamera(
       [0] as unknown as CameraOptions,
@@ -450,6 +492,7 @@ const ChatRoom2: ChatRoomScreenComponentType = ({ route }) => {
           result.assets[0]
         ) {
           imageUriRef.current = result && result.assets[0].uri;
+          loadingImagesConfig(result.assets[0].uri);
           setImageUri(result.assets[0].uri);
           // do something with uri
         }
@@ -476,7 +519,6 @@ const ChatRoom2: ChatRoomScreenComponentType = ({ route }) => {
               response.assets[0] as Record<string, any>
             ).uri;
             setImageUri((response.assets[0] as Record<string, any>).uri);
-
             // setLoadingImageUri(loadingImageUri.push(response.assets[0].uri?.toString()))
 
             // console.log('printing image uri ' + response.assets[0].uri);
@@ -506,10 +548,20 @@ const ChatRoom2: ChatRoomScreenComponentType = ({ route }) => {
       ) {
         imageUriRef.current = (result.assets[0] as Record<string, any>).uri;
         setImageUri(result.assets[0].uri);
+        loadingImagesConfig(result.assets[0].uri);
       }
     } else {
       openImageGallery();
     }
+  };
+
+  // const allMessages = [...loadingImages, ...sortedMessages];
+  // console.log('allMessages: ', allMessages);
+  const handleRefresh = () => {
+    // Perform some logic to refresh the data
+    const loadingMessages: IMessage[] = loadingImages.concat(messages);
+    console.log('====render====');
+    setMessages(loadingMessages);
   };
   return (
     <View style={styles.container}>
@@ -523,6 +575,8 @@ const ChatRoom2: ChatRoomScreenComponentType = ({ route }) => {
           onEndReachedThreshold={0.5}
           inverted
           ref={flatListRef}
+          refreshing={false}
+          onRefresh={handleRefresh}
         />
       </View>
 
