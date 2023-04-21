@@ -27,8 +27,11 @@ import {
   createMessage,
   createQuery,
   getFile,
+  getSubChannel,
+  getSubChannelTopic,
   liveMessages,
   runQuery,
+  subscribeTopic,
 } from '@amityco/ts-sdk';
 import useAuth from '../../hooks/useAuth';
 import {
@@ -85,7 +88,7 @@ const ChatRoom2: ChatRoomScreenComponentType = ({ route }) => {
   // const [loadingImages, setLoadingImages] = useState<string[]>([]);
   const [unSubFunc, setUnSubFunc] = useState<any>();
   const [sortedMessages, setSortedMessages] = useState<IMessage[]>([]);
-  console.log('sortedMessages: ', sortedMessages);
+  // console.log('sortedMessages: ', sortedMessages);
   const flatListRef = useRef(null);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [imageUri, setImageUri] = useState<string | undefined>();
@@ -93,7 +96,11 @@ const ChatRoom2: ChatRoomScreenComponentType = ({ route }) => {
   const [fullImage, setFullImage] = useState<string>('');
   const imageUriRef = useRef(imageUri);
   const [loadingImages, setLoadingImages] = useState<IMessage[]>([]);
+  console.log('loadingImages: ', loadingImages);
+  const [subChannelData, setSubChannelData] = useState<Amity.SubChannel>();
   // console.log('loadingImages: ', loadingImages);
+  const disposers: Amity.Unsubscriber[] = [];
+  console.log('disposers: ', disposers);
 
   const actions: Action[] = [
     {
@@ -131,7 +138,7 @@ const ChatRoom2: ChatRoomScreenComponentType = ({ route }) => {
                 source={
                   chatReceiver?.avatarFileId
                     ? {
-                        uri: `https://api.amity.co/api/v3/files/${chatReceiver.avatarFileId}/download`,
+                        uri: `https://api.amity.co/api/v3/files/${chatReceiver?.avatarFileId}/download`,
                       }
                     : require('../../../assets/icon/Placeholder.png')
                 }
@@ -140,7 +147,7 @@ const ChatRoom2: ChatRoomScreenComponentType = ({ route }) => {
               <Image
                 style={styles.avatar}
                 source={{
-                  uri: `https://api.amity.co/api/v3/files/${groupChat.avatarFileId}/download`,
+                  uri: `https://api.amity.co/api/v3/files/${groupChat?.avatarFileId}/download`,
                 }}
               />
             ) : (
@@ -180,23 +187,41 @@ const ChatRoom2: ChatRoomScreenComponentType = ({ route }) => {
     headerTitle: '',
   });
 
-  function onQueryMessages() {
-    const unSubScribe = liveMessages(
-      { subChannelId: channelId, limit: 8 },
-      setMessagesData
-    );
-    console.log('channelId: ', channelId);
-    console.log('response: ', unSubScribe);
-    setUnSubFunc(() => unSubScribe);
-  }
-
+  // function onQueryMessages() {
+  //   const unSubScribe = liveMessages(
+  //     { subChannelId: channelId, limit: 8 },
+  //     setMessagesData
+  //   );
+  //   console.log('channelId: ', channelId);
+  //   console.log('response: ', unSubScribe);
+  //   setUnSubFunc(() => unSubScribe);
+  // }
+  const subscribeSubChannel = (subChannel: Amity.SubChannel) =>
+    disposers.push(subscribeTopic(getSubChannelTopic(subChannel)));
   useEffect(() => {
     if (channelId) {
-      console.log('channelId:========> ', channelId);
-      onQueryMessages();
+      const query = createQuery(getSubChannel, channelId);
+
+      runQuery(query, ({ data: subChannel }) => setSubChannelData(subChannel));
     }
   }, [channelId]);
 
+  useEffect(() => {
+    if (subChannelData && channelId) {
+      console.log('subChannelData before pass: ', subChannelData);
+      const response = liveMessages(
+        { subChannelId: channelId, limit: 10 },
+        (value) => {
+          console.log('value: ', value);
+          setMessagesData(value);
+          subscribeSubChannel(subChannelData as Amity.SubChannel);
+        }
+      );
+      disposers.push(() => response);
+      // console.log('response: ', response);
+      setUnSubFunc(() => response);
+    }
+  }, [subChannelData]);
   useEffect(() => {
     if (messagesArr.length > 0) {
       const formattedMessages = messagesArr.map((item) => {
@@ -209,10 +234,11 @@ const ChatRoom2: ChatRoomScreenComponentType = ({ route }) => {
         if (
           groupChat &&
           targetIndex &&
-          (groupChat?.users as any)[targetIndex as number].avatarFileId
+          (groupChat?.users as any)[targetIndex as number]?.avatarFileId
         ) {
           avatarUrl = `https://api.amity.co/api/v3/files/${
-            (groupChat?.users as any)[targetIndex as number].avatarFileId as any
+            (groupChat?.users as any)[targetIndex as number]
+              ?.avatarFileId as any
           }/download`;
         } else if (chatReceiver && chatReceiver.avatarFileId) {
           avatarUrl = `https://api.amity.co/api/v3/files/${chatReceiver.avatarFileId}/download`;
@@ -273,6 +299,8 @@ const ChatRoom2: ChatRoomScreenComponentType = ({ route }) => {
 
   function handleBack(): void {
     console.log('handleBack: ', handleBack);
+    console.log('disposers: ', disposers);
+    disposers.forEach((fn) => fn());
     unSubFunc();
   }
 
@@ -437,7 +465,10 @@ const ChatRoom2: ChatRoomScreenComponentType = ({ route }) => {
       image: imageUrl,
       createdAt: new Date(Date.now()),
     };
-    oldArr.push(newImageMessage);
+    const found = oldArr.some((item) => item.image === newImageMessage.image);
+    if (!found) {
+      oldArr.push(newImageMessage);
+    }
     setLoadingImages(oldArr);
     handleRefresh();
   }
@@ -465,6 +496,9 @@ const ChatRoom2: ChatRoomScreenComponentType = ({ route }) => {
               response.assets[0] as Record<string, any>
             ).uri;
             setImageUri((response.assets[0] as Record<string, any>).uri);
+            loadingImagesConfig(
+              (response.assets[0] as Record<string, any>).uri
+            );
           }
         }
       }
@@ -518,6 +552,9 @@ const ChatRoom2: ChatRoomScreenComponentType = ({ route }) => {
             imageUriRef.current = (
               response.assets[0] as Record<string, any>
             ).uri;
+            loadingImagesConfig(
+              (response.assets[0] as Record<string, any>).uri
+            );
             setImageUri((response.assets[0] as Record<string, any>).uri);
             // setLoadingImageUri(loadingImageUri.push(response.assets[0].uri?.toString()))
 
@@ -560,8 +597,10 @@ const ChatRoom2: ChatRoomScreenComponentType = ({ route }) => {
   const handleRefresh = () => {
     // Perform some logic to refresh the data
     const loadingMessages: IMessage[] = loadingImages.concat(messages);
+    console.log('loadingMessages: ', loadingMessages);
     console.log('====render====');
     setMessages(loadingMessages);
+    setLoadingImages([]);
   };
   return (
     <View style={styles.container}>
