@@ -1,5 +1,5 @@
 # Amity Ui-Kit for React native  (open-source)
-
+*** Chat UIKit support only right now
 ## Getting started
 
 ### Installation
