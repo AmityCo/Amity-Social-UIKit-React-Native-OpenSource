@@ -6,7 +6,8 @@
 ## Getting started
 
 ### Sample app
-Run sample app with expo
+Run sample app with expo\
+
 Install packages
 ```
 yarn install
