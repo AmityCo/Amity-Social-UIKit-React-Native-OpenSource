@@ -7,9 +7,11 @@
 
 ### Sample app
 Run sample app with expo
+Install packages
 ```
 yarn install
 ```
+Choose to run between iOS or Android
 ```sh
 yarn example ios
 ```
