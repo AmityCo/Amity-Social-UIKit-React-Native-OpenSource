@@ -5,6 +5,14 @@
 
 ## Getting started
 
+### Sample app
+Run sample app with expo
+```sh
+yarn example ios
+```
+or
+```
+yarn example android
 ### Installation
 ```sh
 1. git clone git@github.com:AmityCo/Amity-Social-Cloud-UIKit-React-Native-OpenSource.git
@@ -55,14 +63,7 @@ export default function App() {
 }
 
 ```
-### Sample app
-Run sample app with expo
-```sh
-yarn example ios
-```
-or
-```
-yarn example android
+
 ```
 ### Documentation
 
