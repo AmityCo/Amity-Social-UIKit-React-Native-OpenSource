@@ -1,5 +1,6 @@
 # Amity Ui-Kit for React native  (open-source)
-*** Chat UIKit support only right now
+*** Chat UIKit support only right now***
+*** This is the beta version, Social UIKit is underdevelopment and will be released soon***
 ## Getting started
 
 ### Installation
