@@ -14,7 +14,7 @@ export default function App() {
       userId="top"
       displayName="topAmity"
     >
-      <AmityUiKitSocial />
+      <AmityUiKitChat />
     </AmityUiKitProvider>
   );
 }

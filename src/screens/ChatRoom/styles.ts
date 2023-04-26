@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
   userBubble: {
     alignSelf: 'flex-end',
     backgroundColor: '#1054DE',
-    maxWidth: '60%',
+    maxWidth: '70%',
   },
   userImageBubble: {
     alignSelf: 'flex-end',
@@ -28,7 +28,6 @@ const styles = StyleSheet.create({
   friendBubble: {
     alignSelf: 'flex-start',
     backgroundColor: '#EBECEF',
-    maxWidth: '60%',
   },
   chatUserText: {
     fontSize: 16,

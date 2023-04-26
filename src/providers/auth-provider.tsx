@@ -1,3 +1,5 @@
+/* eslint-disable no-catch-shadow */
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { FC, useEffect, useState } from 'react';
 import {
   createClient,
@@ -45,7 +47,6 @@ export const AuthContextProvider: FC<IAmityUIkitProvider> = ({
       const res = await connectClient({ userId, displayName }, sessionHandler);
       console.log('res: ', res);
       setIsConnected(res);
-      // eslint-disable-next-line no-catch-shadow, @typescript-eslint/no-shadow
     } catch (error) {
       console.log('error: ', error);
     }
@@ -54,9 +55,7 @@ export const AuthContextProvider: FC<IAmityUIkitProvider> = ({
   const login = async () => {
     setError('');
     setLoading(true);
-
     try {
-      console.log('pass 1');
       handleConnect();
     } catch (e) {
       const errorText =
@@ -68,6 +67,9 @@ export const AuthContextProvider: FC<IAmityUIkitProvider> = ({
       setLoading(false);
     }
   };
+  useEffect(() => {
+    login();
+  }, [userId]);
 
   // TODO
   const logout = async () => {
@@ -79,13 +81,8 @@ export const AuthContextProvider: FC<IAmityUIkitProvider> = ({
 
       Alert.alert(errorText);
     }
-
-    // Updates.reloadAsync();
   };
-  useEffect(() => {
-    login();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userId]);
+
 
   return (
     <AuthContext.Provider

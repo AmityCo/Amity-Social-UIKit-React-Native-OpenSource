@@ -75,7 +75,7 @@ export default function App() {
       userId="userId"
       displayName="displayName"
     >
-      <AmityUiKitSocial />
+      <AmityUiKitChat />
     </AmityUiKitProvider>
   );
 }
