@@ -9,11 +9,6 @@ export type RootStackParamList = {
     chatReceiver?: IUserObject;
     groupChat?: IGroupChatObject;
   };
-  ChatRoom2: {
-    channelId: string;
-    chatReceiver?: IUserObject;
-    groupChat?: IGroupChatObject;
-  };
   RecentChat: undefined;
   ChatDetail: undefined;
   MemberDetail: undefined;

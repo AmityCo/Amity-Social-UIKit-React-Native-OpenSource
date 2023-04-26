@@ -80,7 +80,7 @@ const ChatList: React.FC<IChatListProps> = ({
       };
       console.log('chatReceiver: ', chatReceiver);
 
-      navigation.navigate('ChatRoom2', {
+      navigation.navigate('ChatRoom', {
         channelId: chatId,
         chatReceiver: chatReceiver,
       });
@@ -105,7 +105,7 @@ const ChatList: React.FC<IChatListProps> = ({
         memberCount: chatMemberNumber,
       };
       console.log('group====>: ', groupChat);
-      navigation.navigate('ChatRoom2', {
+      navigation.navigate('ChatRoom', {
         channelId: chatId,
         groupChat: groupChat,
       });

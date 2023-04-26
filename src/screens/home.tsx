@@ -52,7 +52,7 @@ export default function Home({ navigation }: any) {
       (client as Amity.Client).sessionState ===
       (SessionState.established as string)
     ) {
-      navigation.navigate('ChatRoom2', {
+      navigation.navigate('ChatRoom', {
         channelId: '6421a2f271dfbc6449a99886',
       });
     }

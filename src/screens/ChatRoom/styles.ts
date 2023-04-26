@@ -1,14 +1,95 @@
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F7F7F7',
+  },
+  textChatBubble: {
+    alignSelf: 'flex-start',
+    backgroundColor: '#FFF',
+    borderRadius: 10,
+    marginVertical: 5,
+    padding: 10,
+  },
+  imageChatBubble: {
+    marginVertical: 5,
+    borderRadius: 10,
+  },
+  userBubble: {
+    alignSelf: 'flex-end',
+    backgroundColor: '#1054DE',
+    maxWidth: '60%',
+  },
+  userImageBubble: {
+    alignSelf: 'flex-end',
+    backgroundColor: 'transparent',
+  },
+  friendBubble: {
+    alignSelf: 'flex-start',
+    backgroundColor: '#EBECEF',
+    maxWidth: '60%',
+  },
+  chatUserText: {
+    fontSize: 16,
+    color: 'white',
+  },
+  chatFriendText: {
+    fontSize: 16,
+    color: 'black',
+  },
+  chatTimestamp: {
+    fontSize: 13,
+    color: '#898E9E',
+    marginTop: 4,
+  },
+  AllInputWrap: {
+    backgroundColor: '#FFFFFF',
+  },
+  InputWrap: {
+    backgroundColor: '#FFFFFF',
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingBottom: 25,
+    paddingTop: 10,
+    alignItems: 'center',
+  },
+  chatContainer: {
+    flex: 1,
+    paddingHorizontal: 10,
+  },
+
+  input: {
+    backgroundColor: '#EBECEF',
+    borderRadius: 20,
+    fontSize: 15,
+    color: 'black',
+    width: '90%',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+  },
+  sendButton: {
+    backgroundColor: '#1E90FF',
+    borderRadius: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    marginLeft: 10,
+  },
+  sendButtonText: {
+    color: '#FFF',
+    fontSize: 16,
+  },
   topBar: {
     flexDirection: 'row',
     alignItems: 'center',
-
-    paddingVertical: 10,
-    paddingHorizontal: 10,
     justifyContent: 'space-between',
     backgroundColor: 'white',
+    paddingHorizontal: 10,
+    paddingVertical: 15,
+    borderBottomColor: '#EBECEF',
+    borderBottomWidth: 1,
   },
   avatar: {
     width: 35,
@@ -37,74 +118,22 @@ const styles = StyleSheet.create({
   chatMember: {
     marginTop: 2,
   },
-  chatTime: {
-    fontSize: 13,
-    fontWeight: '400',
-    marginVertical: 4,
-    marginHorizontal: 4,
+  chatIcon: {
+    width: 24,
+    height: 20,
   },
-
-  userName: {
-    fontSize: 15,
-    fontWeight: '400',
-    marginVertical: 4,
-  },
-  avatarImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 72,
-    marginRight: 12,
-    marginLeft: 16,
-  },
-  chatLeft: {
-    alignItems: 'flex-start',
-  },
-  chatRight: {
-    alignItems: 'flex-end',
-    marginRight: 16,
+  settingIcon: {
+    width: 26,
+    height: 26,
+    resizeMode: 'contain',
   },
   chatTitleWrap: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  container: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    backgroundColor: 'white',
-    paddingHorizontal: 15,
-    paddingVertical: 5,
-  },
-  input: {
-    backgroundColor: '#EBECEF',
-    borderRadius: 20,
-    padding: 10,
-    fontSize: 16,
-    width: '80%',
-  },
-  voiceInput: {
-    backgroundColor: '#EBECEF',
-    borderRadius: 8,
-    padding: 10,
-    fontSize: 16,
-    width: '75%',
-    marginHorizontal: 10,
-  },
   sendIcon: {
     marginRight: 6,
-    padding: 5,
-  },
-  scrollView: {
-    shadowOpacity: 0.13,
-    shadowRadius: 0,
-    paddingTop: 5,
-    paddingHorizontal: 8,
-    elevation: 1, // for Android
-    shadowColor: '#000', // for iOS
-    shadowOffset: {
-      width: 0,
-      height: -0.5,
-    },
+    padding: 8,
   },
   IconCircle: {
     width: 50,
@@ -116,37 +145,36 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginVertical: 7,
   },
-  voiceIcon: {
-    width: 24,
-    height: 20,
-    resizeMode: 'contain',
-    marginRight: 8,
-  },
-  keyboardIcon: {
-    width: 24,
-    height: 20,
-  },
-  voiceRecordContainer: {
+  expandedArea: {
+    height: 220,
     flexDirection: 'row',
-    justifyContent: 'center',
+    marginVertical: 15,
+    backgroundColor: 'white',
   },
-  settingIcon: {
-    width: 26,
-    height: 26,
-    resizeMode: 'contain',
+  imageMessage: {
+    width: 120,
+    height: 120,
+    borderRadius: 10,
   },
-  sendingStatus: {
+  avatarImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 72,
+    marginRight: 12,
+  },
+  leftMessageWrap: {
     flexDirection: 'row',
-    width: 80,
+    marginVertical: 10,
   },
-  chatHeader: {
-    height: 60,
-    borderBottomWidth: 1,
-    borderBottomColor: '#EBECEF',
+  rightMessageWrap: {
+    marginVertical: 10,
   },
-  chatIcon: {
-    width: 24,
-    height: 20,
+  loadingRow: {
+    flexDirection: 'row',
+    paddingHorizontal: 10,
+  },
+  loadingText: {
+    marginRight: 13,
   },
 });
 

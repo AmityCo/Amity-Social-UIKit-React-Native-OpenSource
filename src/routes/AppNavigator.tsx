@@ -9,15 +9,12 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import SelectMembers from '../screens/SelectMembers/SelectMembers';
 
-import ChatRoom from '../screens/ChatRoom/ChatRoom';
 import type { RootStackParamList } from './RouteParamList';
-import { Text, TouchableOpacity, View } from 'react-native';
 import { ChatRoomSetting } from '../screens/ChatDetail/ChatRoomSetting';
 import { EditChatRoomDetail } from '../screens/EditChatDetail/EditChatRoomDetail';
 import MemberDetail from '../screens/MemberDetail/MemberDetail';
 import useAuth from '../hooks/useAuth';
-import ChatRoom2 from '../screens/ChatRoom 2/ChatRoom';
-// import ChatRoom2 from '../screens/ChatRoom 2/ChatRoom';
+import ChatRoom from '../screens/ChatRoom/ChatRoom';
 
 export default function AppNavigator() {
   const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -55,15 +52,11 @@ export default function AppNavigator() {
         /> */}
 
           <Stack.Screen name="RecentChat" component={RecentChat} />
+  
           <Stack.Screen
             name="ChatRoom"
             //  options={{ headerShown: false }}
             component={ChatRoom}
-          />
-          <Stack.Screen
-            name="ChatRoom2"
-            //  options={{ headerShown: false }}
-            component={ChatRoom2}
           />
           <Stack.Screen
             name="ChatDetail"
