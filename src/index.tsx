@@ -1,7 +1,13 @@
-import { multiply } from './components/multiply';
 import AmityUiKitProvider from './providers/amity-ui-kit-provider';
 import Home from './components/Home/index';
 import RecentChat from './screens/RecentChat/RecentChat';
-import AppNavigator from './routes/AppNavigator';
+import AmityUiKitChat from './routes/ChatNavigator';
+import AmityUiKitSocial from './routes/SocialNavigator';
 
-export { multiply, AmityUiKitProvider, Home, RecentChat, AppNavigator };
+export {
+  AmityUiKitProvider,
+  Home,
+  RecentChat,
+  AmityUiKitChat,
+  AmityUiKitSocial,
+};

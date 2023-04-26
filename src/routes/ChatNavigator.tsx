@@ -16,7 +16,7 @@ import MemberDetail from '../screens/MemberDetail/MemberDetail';
 import useAuth from '../hooks/useAuth';
 import ChatRoom from '../screens/ChatRoom/ChatRoom';
 
-export default function AppNavigator() {
+export default function ChatNavigator() {
   const Stack = createNativeStackNavigator<RootStackParamList>();
   const { isConnected } = useAuth();
   return (
@@ -32,24 +32,6 @@ export default function AppNavigator() {
             // headerShown: false,
           }}
         >
-          {/* <Stack.Screen
-          name="Home"
-          component={Home}
-          options={({ navigation }) => ({
-            title: 'My Screen',
-            headerLeft: () => <Text>Chat</Text>,
-            // eslint-disable-next-line react/no-unstable-nested-components
-            headerRight: () => (
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate('SelectMembers');
-                }}
-              >
-                <Text>Create</Text>
-              </TouchableOpacity>
-            ),
-          })}
-        /> */}
 
           <Stack.Screen name="RecentChat" component={RecentChat} />
   
