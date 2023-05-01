@@ -13,4 +13,5 @@ export type RootStackParamList = {
   ChatDetail: undefined;
   MemberDetail: undefined;
   EditChatDetail: undefined;
+  Community: undefined;
 };

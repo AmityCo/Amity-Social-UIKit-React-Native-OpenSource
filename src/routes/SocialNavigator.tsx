@@ -6,7 +6,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import type { RootStackParamList } from './RouteParamList';
 import useAuth from '../hooks/useAuth';
-import Home from '../screens/home';
+import Home from '../screens/social/Home';
 
 export default function SocialNavigator() {
   const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -24,7 +24,8 @@ export default function SocialNavigator() {
             // headerShown: false,
           }}
         >
-          <Stack.Screen name="Home" component={Home} />
+          {/* <Stack.Screen name="Home" component={Home} /> */}
+          <Stack.Screen name="Community" component={Home} />
         </Stack.Navigator>
       )}
     </NavigationContainer>
