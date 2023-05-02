@@ -34,6 +34,7 @@
     "prepack": "bob build",
     "release": "release-it",
     "example": "yarn --cwd example",
+    "example-npm": "npm run --prefix example",
     "bootstrap": "yarn example && yarn install"
   },
   "keywords": [
