@@ -4,6 +4,8 @@ import { ReactElement, useState } from 'react';
 
 import { View, Text, TouchableOpacity, Animated } from 'react-native';
 import useAuth from '../../../hooks/useAuth';
+import Explore from '../Explore';
+import GlobalFeed from '../GlobalFeed';
 import styles from './styles';
 
 export default function Home({ navigation }: any) {
@@ -52,5 +54,21 @@ export default function Home({ navigation }: any) {
       </View>
     );
   };
-  return <View>{renderTabView()}</View>;
+  const renderTabComponent = () => {
+    switch (activeTab) {
+      case 1:
+        return <GlobalFeed />;
+      case 2:
+        return <Explore />;
+
+      default:
+        <GlobalFeed />;
+    }
+  };
+  return (
+    <View>
+      {renderTabView()}
+      {renderTabComponent()}
+    </View>
+  );
 }
