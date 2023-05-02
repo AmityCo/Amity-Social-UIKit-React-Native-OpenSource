@@ -52,7 +52,8 @@ yarn example android
 ```sh
 1. git clone git@github.com:AmityCo/Amity-Social-Cloud-UIKit-React-Native-OpenSource.git
 2. cd Amity-Social-Cloud-UIKit-React-Native-OpenSource
-3. npm pack
+3. npm install
+4. npm pack
 ```
 
 This step will build the app and return amityco-asc-react-native-ui-kit-x.x.x.tgz.tgz file in inside the folder
