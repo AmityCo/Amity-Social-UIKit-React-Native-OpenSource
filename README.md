@@ -15,6 +15,24 @@ Install packages
 yarn install
 ```
 
+Navigate to example folder (sample app project)
+
+```
+cd example
+```
+
+Install sample app dependencies
+
+```
+yarn install
+```
+
+Once the installation is done, navigate back to the root project
+
+```
+cd ..
+```
+
 Choose to run between iOS or Android
 
 ```sh
