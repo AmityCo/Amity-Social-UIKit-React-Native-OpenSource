@@ -9,25 +9,27 @@
 ### Sample app
 
 Run sample app with expo\
-Install packages
+1. Install packages
 
 ```
 yarn install
 ```
 
-Navigate to example folder (sample app project)
+2. Navigate to example folder (sample app project)
 
 ```
 cd example
 ```
 
-Install sample app dependencies
+3. Install sample app dependencies
 
 ```
 yarn install
 ```
 
-Once the installation is done, navigate back to the root project
+4. Configure your apiKey,apiRegion,userId,displayName in /example/src/App.tsx file(https://github.com/AmityCo/Amity-Social-Cloud-UIKit-React-Native-OpenSource/blob/main/example/src/App.tsx) first before run the sample app
+
+5. Once the installation and Configuration are done, navigate back to the root project
 
 ```
 cd ..
