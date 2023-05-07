@@ -29,6 +29,9 @@ const styles = StyleSheet.create({
     height: 2,
     backgroundColor: '#1054DE',
   },
+  feedWrap: {
+    backgroundColor: '#EBECEF',
+  },
 });
 
 export default styles;

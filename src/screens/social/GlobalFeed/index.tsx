@@ -1,13 +1,18 @@
 import * as React from 'react';
-import { ReactElement, useState } from 'react';
+
 // import { useTranslation } from 'react-i18next';
 
-import { View, Text, TouchableOpacity, Animated } from 'react-native';
+import { View } from 'react-native';
+import PostList from '../../../components/Social/PostList';
+import styles from './styles';
 
 export default function GlobalFeed() {
   return (
-    <View>
-      <Text>Global Feed</Text>
+    <View style={styles.feedWrap}>
+      <PostList />
+      <PostList />
+      <PostList />
+      <PostList />
     </View>
   );
 }

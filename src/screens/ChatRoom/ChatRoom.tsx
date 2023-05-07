@@ -74,6 +74,7 @@ const ChatRoom: ChatRoomScreenComponentType = ({ route }) => {
   const { chatReceiver, groupChat, channelId } = route.params;
   const { client } = useAuth();
   const [messages, setMessages] = useState<IMessage[]>([]);
+
   const [messagesData, setMessagesData] =
     useState<Amity.LiveCollection<Amity.Message>>();
   // const [isMessagesLoading, setIsMessagesLoading] = useState(false);
