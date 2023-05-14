@@ -5,6 +5,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     marginTop: 8,
     paddingHorizontal: 16,
+    paddingTop: 4,
   },
   headerSection: {
     paddingVertical: 8,
@@ -20,8 +21,9 @@ const styles = StyleSheet.create({
     fontColor: '#636878',
   },
   bodySection: {
-    paddingVertical: 8,
-    minHeight: 40,
+    justifyContent: 'center',
+    paddingVertical: 10,
+    minHeight: 45,
   },
   countSection: {
     marginVertical: 8,
@@ -42,6 +44,7 @@ const styles = StyleSheet.create({
     borderTopColor: '#EBECEF',
     borderTopWidth: 1,
     flexDirection: 'row',
+    marginTop: 4,
   },
   likeBtn: {
     flexDirection: 'row',
