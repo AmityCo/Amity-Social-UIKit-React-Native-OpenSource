@@ -34,11 +34,80 @@ export default function Explore({ navigation }: any) {
       navigation.navigate('CategoryList');
     }, 100);
   };
+  const handleCommunityClick = (communityId: string, communityName: string) => {
+    setTimeout(() => {
+      navigation.navigate('CommunityHome', { communityId, communityName });
+    }, 100);
+  };
   useEffect(() => {
     loadRecommendCommunities();
     loadTrendingCommunities();
     loadCategories();
   }, []);
+  const handleCategoryClick = (categoryId: string, categoryName: string) => {
+    setTimeout(() => {
+      navigation.navigate('CommunityList', { categoryId, categoryName });
+    }, 100);
+  };
+  const categoryListComponent = () => {
+    const categoryElements = [];
+    const maxLength = categoryList.length > 8 ? 8 : categoryList.length;
+    for (let index = 0; index < maxLength; index += 2) {
+      categoryElements.push(
+        <View style={styles.rowContainer} key={index}>
+          <TouchableOpacity
+            style={styles.column}
+            onPress={() =>
+              handleCategoryClick(
+                categoryList[index]!.categoryId,
+                categoryList[index]!.name
+              )
+            }
+          >
+            <Image
+              style={styles.avatar}
+              source={
+                categoryList[index]?.avatarFileId
+                  ? {
+                      uri: `https://api.amity.co/api/v3/files/${category.avatarFileId}/download`,
+                    }
+                  : require('../../../../assets/icon/Placeholder.png')
+              }
+            />
+            <Text style={styles.columnText}>{categoryList[index]?.name}</Text>
+          </TouchableOpacity>
+          {index + 1 < categoryList.length && (
+            <TouchableOpacity
+              style={styles.column}
+              onPress={() =>
+                handleCategoryClick(
+                  categoryList[index + 1]!.categoryId,
+                  categoryList[index + 1]!.name
+                )
+              }
+            >
+              <Image
+                style={styles.avatar}
+                source={
+                  categoryList[index + 1]?.avatarFileId
+                    ? {
+                        uri: `https://api.amity.co/api/v3/files/${
+                          categoryList[index + 1]?.avatarFileId
+                        }/download`,
+                      }
+                    : require('../../../../assets/icon/Placeholder.png')
+                }
+              />
+              <Text style={styles.columnText}>
+                {categoryList[index + 1]?.name}
+              </Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      );
+    }
+    return categoryElements;
+  };
 
   return (
     <ScrollView>
@@ -47,7 +116,15 @@ export default function Explore({ navigation }: any) {
           <Text style={styles.title}>Recommended for you</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             {recommendCommunityList.map((community) => (
-              <View style={styles.card} key={community.communityId}>
+              <TouchableOpacity
+                style={styles.card}
+                onPress={() =>
+                  handleCommunityClick(
+                    community.communityId,
+                    community.displayName
+                  )
+                }
+              >
                 <Image
                   style={styles.avatar}
                   source={{
@@ -59,7 +136,7 @@ export default function Explore({ navigation }: any) {
                   {community.membersCount} members
                 </Text>
                 <Text style={styles.bio}>{community.description}</Text>
-              </View>
+              </TouchableOpacity>
             ))}
           </ScrollView>
         </View>
@@ -67,14 +144,22 @@ export default function Explore({ navigation }: any) {
           <Text style={styles.title}>Today's trending</Text>
           <View>
             {trendingCommunityList.map((community, index) => (
-              <View style={styles.itemContainer} key={community.communityId}>
+              <TouchableOpacity
+                style={styles.itemContainer}
+                onPress={() =>
+                  handleCommunityClick(
+                    community.communityId,
+                    community.displayName
+                  )
+                }
+              >
                 <Image
                   style={styles.avatar}
                   source={
                     community.avatarFileId
                       ? {
-                        uri: `https://api.amity.co/api/v3/files/${community.avatarFileId}/download`,
-                      }
+                          uri: `https://api.amity.co/api/v3/files/${community.avatarFileId}/download`,
+                        }
                       : require('../../../../assets/icon/Placeholder.png')
                   }
                 />
@@ -91,7 +176,7 @@ export default function Explore({ navigation }: any) {
                     </View>
                   </View>
                 </View>
-              </View>
+              </TouchableOpacity>
             ))}
           </View>
         </View>
@@ -99,47 +184,66 @@ export default function Explore({ navigation }: any) {
           <View style={styles.titleContainer}>
             <Text style={styles.titleText}>Categories</Text>
             <TouchableOpacity onPress={handleCategoryListClick}>
-            <Image
+              <Image
                 source={require('../../../../assets/icon/arrowRight.png')}
                 style={styles.arrowIcon}
               />
             </TouchableOpacity>
           </View>
-          {categoryList.slice(0, 4).map((category, index) => (
-            <View style={styles.rowContainer} key={index}>
-              <View style={styles.column}>
-                <Image
-                  style={styles.avatar}
-                  source={
-                    category.avatarFileId
-                      ? {
-                        uri: `https://api.amity.co/api/v3/files/${category.avatarFileId}/download`,
-                        }
-                      : require('../../../../assets/icon/Placeholder.png')
+          {categoryListComponent()}
+          {/* {categoryList
+            .filter((_, i) => i % 2 === 0)
+            .map((category, index) => (
+              <View style={styles.rowContainer} key={index}>
+                <TouchableOpacity
+                  style={styles.column}
+                  onPress={() =>
+                    handleCategoryClick(category.categoryId, category.name)
                   }
-                />
-                <Text style={styles.columnText}>{category.name}</Text>
-              </View>
-              {index + 1 < categoryList.length && (
-                <View style={styles.column}>
+                >
+                  <Text>{index}</Text>
                   <Image
                     style={styles.avatar}
                     source={
-                      categoryList[index + 1]?.avatarFileId
+                      category.avatarFileId
                         ? {
-                          uri: `https://api.amity.co/api/v3/files/${categoryList[index + 1]?.avatarFileId
-                            }/download`,
+                            uri: `https://api.amity.co/api/v3/files/${category.avatarFileId}/download`,
                           }
                         : require('../../../../assets/icon/Placeholder.png')
                     }
                   />
-                  <Text style={styles.columnText}>
-                    {categoryList[index + 1]?.name}
-                  </Text>
-                </View>
-              )}
-            </View>
-          ))}
+                  <Text style={styles.columnText}>{category.name}</Text>
+                </TouchableOpacity>
+                {index + 1 < categoryList.length && (
+                  <TouchableOpacity
+                    style={styles.column}
+                    onPress={() =>
+                      handleCategoryClick(
+                        categoryList[index + 1]!.categoryId,
+                        categoryList[index + 1]!.name
+                      )
+                    }
+                  >
+                    <Text>{index + 1}</Text>
+                    <Image
+                      style={styles.avatar}
+                      source={
+                        categoryList[index + 1]?.avatarFileId
+                          ? {
+                              uri: `https://api.amity.co/api/v3/files/${
+                                categoryList[index + 1]?.avatarFileId
+                              }/download`,
+                            }
+                          : require('../../../../assets/icon/Placeholder.png')
+                      }
+                    />
+                    <Text style={styles.columnText}>
+                      {categoryList[index + 1]?.name}
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            ))} */}
         </View>
       </View>
     </ScrollView>

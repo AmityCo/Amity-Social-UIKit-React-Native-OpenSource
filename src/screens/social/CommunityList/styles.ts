@@ -1,5 +1,4 @@
 import { StyleSheet } from 'react-native';
-import LoadingIndicator from '../../../components/LoadingIndicator/index';
 
 export const styles = StyleSheet.create({
   container: {

@@ -6,9 +6,10 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import type { RootStackParamList } from './RouteParamList';
 import useAuth from '../hooks/useAuth';
-import Home from '../screens/social/Home';
 import Explore from '../screens/social/Explore';
 import CategoryList from '../screens/social/CategorytList';
+import CommunityList from '../screens/social/CommunityList';
+import CommunityHome from '../screens/social/CommunityHome/index';
 
 export default function SocialNavigator() {
   const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -29,7 +30,16 @@ export default function SocialNavigator() {
           {/* <Stack.Screen name="Home" component={Home} /> */}
           {/* <Stack.Screen name="Community" component={Home} /> */}
           <Stack.Screen name="Explore" component={Explore} />
-          <Stack.Screen name="CategoryList" component={CategoryList} />
+          <Stack.Screen
+            name="CategoryList"
+            component={CategoryList}
+            options={({}) => ({
+              title: 'Category',
+            })}
+          />
+          <Stack.Screen name="CommunityHome" component={CommunityHome} />
+
+          <Stack.Screen name="CommunityList" component={CommunityList} />
         </Stack.Navigator>
       )}
     </NavigationContainer>

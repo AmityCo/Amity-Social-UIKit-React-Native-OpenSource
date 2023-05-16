@@ -1,19 +1,13 @@
-import { CategoryRepository } from '@amityco/ts-sdk';
+import { CommunityRepository } from '@amityco/ts-sdk';
 import React, { FC, useEffect, useState, useCallback, useRef } from 'react';
-import {
-  FlatList,
-  View,
-  Text,
-  ActivityIndicator,
-  Image,
-  TouchableOpacity,
-} from 'react-native';
+import { FlatList, View, Text, ActivityIndicator, Image } from 'react-native';
 import { styles } from './styles';
 import CloseButton from '../../../components/BackButton';
 
-export default function CategoryList({ navigation }: any) {
-  const [categories, setCategories] = useState<Amity.Category[]>([]);
-  const [loading, setLoading] = useState(false);
+export default function CommunityList({ navigation, route }: any) {
+  const [communities, setCommunities] = useState<Amity.Community[]>([]);
+  const [paginateLoading, setPaginateLoading] = useState(false);
+  const { categoryId, categoryName } = route.params;
   const [hasNextPage, setHasNextPage] = useState(false);
 
   const onNextPageRef = useRef<(() => void) | null>(null);
@@ -23,23 +17,26 @@ export default function CategoryList({ navigation }: any) {
     // Set the headerRight component to a TouchableOpacity
     navigation.setOptions({
       headerLeft: () => <CloseButton navigation={navigation} />,
+      title: categoryName,
       // eslint-disable-next-line react/no-unstable-nested-components
     });
   }, [navigation]);
   useEffect(() => {
-    const loadCategories = async () => {
-      setLoading(true);
+    const loadCommunities = async () => {
+      setPaginateLoading(true);
+      console.log('enter load communities ' + categoryId);
       try {
-        const unsubscribe = CategoryRepository.getCategories(
-          {},
-          ({ data: categories, onNextPage, hasNextPage, loading, error }) => {
-            console.log('check all categories ' + JSON.stringify(categories));
+        const unsubscribe = CommunityRepository.getCommunities(
+          { categoryId: categoryId },
+          ({ data: communities, onNextPage, hasNextPage, loading, error }) => {
             if (!loading) {
-              setCategories((prevCategories) => [
-                ...prevCategories,
-                ...categories,
+              setCommunities((prevCommunities) => [
+                ...prevCommunities,
+                ...communities,
               ]);
-              console.log('did query catgories ');
+              console.log(
+                'did query communities ' + JSON.stringify(communities)
+              );
               setHasNextPage(hasNextPage);
               onNextPageRef.current = onNextPage;
               isFetchingRef.current = false;
@@ -48,43 +45,36 @@ export default function CategoryList({ navigation }: any) {
           }
         );
       } catch (error) {
-        console.error('Failed to load categories:', error);
+        console.error('Failed to load communities:', error);
         isFetchingRef.current = false;
       } finally {
-        setLoading(false);
+        setPaginateLoading(false);
       }
     };
 
-    loadCategories();
+    loadCommunities();
   }, []);
-  const handleCategoryClick = (categoryId: string, categoryName: string) => {
-    setTimeout(() => {
-      navigation.navigate('CommunityList', { categoryId, categoryName });
-    }, 100);
-  };
-  const renderCategory = ({ item }: { item: Amity.Category }) => {
+
+  const renderCommunity = ({ item }: { item: Amity.Community }) => {
     return (
-      <TouchableOpacity
-        style={styles.rowContainer}
-        onPress={() => handleCategoryClick(item.categoryId, item.name)}
-      >
+      <View style={styles.rowContainer}>
         <Image
           style={styles.avatar}
           source={
             item.avatarFileId
               ? {
-                  uri: `https://api.amity.co/api/v3/files/${item.avatarFileId}/download`,
-                }
+                uri: `https://api.amity.co/api/v3/files/${item.avatarFileId}/download`,
+              }
               : require('../../../../assets/icon/Placeholder.png')
           }
         />
-        <Text style={styles.categoryText}>{item.name}</Text>
-      </TouchableOpacity>
+        <Text style={styles.categoryText}>{item.displayName}</Text>
+      </View>
     );
   };
 
   const renderFooter = () => {
-    if (!loading) return null;
+    if (!paginateLoading) return null;
     return (
       <View style={styles.LoadingIndicator}>
         <ActivityIndicator size="large" />
@@ -108,9 +98,9 @@ export default function CategoryList({ navigation }: any) {
   return (
     <View style={styles.container}>
       <FlatList
-        data={categories}
-        renderItem={renderCategory}
-        keyExtractor={(item) => item.categoryId.toString()}
+        data={communities}
+        renderItem={renderCommunity}
+        keyExtractor={(item) => item.communityId.toString()}
         ListFooterComponent={renderFooter}
         // onEndReached={handleEndReached}
         onEndReached={handleEndReached}

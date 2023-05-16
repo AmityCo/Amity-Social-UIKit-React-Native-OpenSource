@@ -9,6 +9,10 @@ export type RootStackParamList = {
     chatReceiver?: IUserObject;
     groupChat?: IGroupChatObject;
   };
+  CommunityList: {
+    categoryId: string;
+  };
+  CommunityHome: undefined;
   RecentChat: undefined;
   ChatDetail: undefined;
   MemberDetail: undefined;
