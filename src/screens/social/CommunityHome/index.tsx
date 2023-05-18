@@ -1,6 +1,6 @@
 import { CommunityRepository } from '@amityco/ts-sdk';
 import React, { useEffect, useState } from 'react';
-import { View, Image, Text } from 'react-native';
+import { View, Image, Text, TouchableOpacity } from 'react-native';
 import CloseButton from '../../../components/BackButton';
 import { styles } from './styles';
 
@@ -14,8 +14,31 @@ export default function CommunityHome({ navigation, route }: any) {
     navigation.setOptions({
       headerLeft: () => <CloseButton navigation={navigation} />,
       title: communityName,
+      headerRight: () => (
+        <TouchableOpacity
+          onPress={() => {
+            // Handle button press here
+            navigation.navigate('CommunitySetting', {
+              communityId: communityId,
+              communityName: communityName,
+            });
+          }}
+        >
+          <Image
+            source={require('../../../../assets/icon/threeDot.png')}
+            style={styles.dotIcon}
+          />
+        </TouchableOpacity>
+      ),
     });
   }, [navigation]);
+
+  const handleMembersPress = () => {
+    navigation.navigate('CommunityMemberDetail', {
+      communityId: communityId,
+      communityName: communityName,
+    });
+  };
   useEffect(() => {
     const loadCommunity = async () => {
       try {
@@ -59,12 +82,15 @@ export default function CommunityHome({ navigation, route }: any) {
 
         <View style={styles.rowItemContent}>
           <View style={styles.verticalLine} />
-          <View style={[styles.rowItem, { paddingLeft: 10 }]}>
+          <TouchableOpacity
+            onPress={() => handleMembersPress()}
+            style={[styles.rowItem, { paddingLeft: 10 }]}
+          >
             <Text style={styles.rowNumber}>
               {communityData?.data.membersCount}
             </Text>
             <Text style={styles.rowLabel}>members</Text>
-          </View>
+          </TouchableOpacity>
         </View>
       </View>
       <Text style={styles.textComponent}>Testsdsdsd</Text>

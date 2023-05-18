@@ -6,6 +6,10 @@ export const styles = StyleSheet.create({
     // alignItems: 'center',
     // justifyContent: 'center',
   },
+  dotIcon: {
+    width: 16,
+    height: 12,
+  },
   imageContainer: {
     width: '100%',
     height: '35%',
