@@ -30,7 +30,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  countText: {
+  likeCountText: {
+    fontSize: 13,
+    color: '#898E9E',
+  },
+  commentCountText: {
     fontSize: 13,
     color: '#898E9E',
   },
@@ -40,7 +44,6 @@ const styles = StyleSheet.create({
     fontWeight: '400',
   },
   actionSection: {
-    paddingVertical: 11,
     borderTopColor: '#EBECEF',
     borderTopWidth: 1,
     flexDirection: 'row',
@@ -48,11 +51,13 @@ const styles = StyleSheet.create({
   },
   likeBtn: {
     flexDirection: 'row',
-    marginRight: 6,
+    paddingRight: 6,
+    paddingVertical: 12,
   },
   commentBtn: {
     flexDirection: 'row',
-    paddingHorizontal: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 12,
   },
   btnText: {
     color: '#898E9E',
@@ -69,6 +74,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  likedText: {
+    color: '#1054DE',
+    fontSize: 15,
+    fontWeight: '600',
+    marginHorizontal: 4,
+  }
 });
 
 export default styles;

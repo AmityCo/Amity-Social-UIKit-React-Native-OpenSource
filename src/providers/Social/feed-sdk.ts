@@ -1,4 +1,4 @@
-import { FeedRepository } from '@amityco/ts-sdk';
+import { FeedRepository, PostRepository, ReactionRepository } from '@amityco/ts-sdk';
 
 export interface IGlobalFeedRes {
   data: Amity.Post<any>[];
@@ -19,4 +19,45 @@ export async function getGlobalFeed(): Promise<IGlobalFeedRes> {
     }
   );
   return feedObject;
+}
+
+export async function addPostReaction(
+  postId: string,
+  reactionName: string
+): Promise<boolean> {
+  const reactionObject: Promise<boolean> = new Promise(
+    async (resolve, reject) => {
+      try {
+        const isPostReactionAdded = await ReactionRepository.addReaction(
+          'post',
+          postId,
+          reactionName
+        );
+        resolve(isPostReactionAdded);
+      } catch (error) {
+        reject(error);
+      }
+    }
+  );
+  return reactionObject;
+}
+export async function removePostReaction(
+  postId: string,
+  reactionName: string
+): Promise<boolean> {
+  const reactionObject: Promise<boolean> = new Promise(
+    async (resolve, reject) => {
+      try {
+        const isPostReactionRemoved = await ReactionRepository.removeReaction(
+          'post',
+          postId,
+          reactionName
+        );
+        resolve(isPostReactionRemoved);
+      } catch (error) {
+        reject(error);
+      }
+    }
+  );
+  return reactionObject;
 }
