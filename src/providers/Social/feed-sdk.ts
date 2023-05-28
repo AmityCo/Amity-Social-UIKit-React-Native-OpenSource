@@ -1,4 +1,8 @@
-import { FeedRepository, PostRepository, ReactionRepository } from '@amityco/ts-sdk';
+import {
+  FeedRepository,
+  PostRepository,
+  ReactionRepository,
+} from '@amityco/ts-sdk';
 
 export interface IGlobalFeedRes {
   data: Amity.Post<any>[];
@@ -6,12 +10,14 @@ export interface IGlobalFeedRes {
   prevPage: Amity.Page<number> | undefined;
 }
 
-export async function getGlobalFeed(): Promise<IGlobalFeedRes> {
+export async function getGlobalFeed(
+  page: Amity.Page<number>
+): Promise<IGlobalFeedRes> {
   const feedObject: Promise<IGlobalFeedRes> = new Promise(
     async (resolve, reject) => {
       try {
         const { data, nextPage, prevPage } =
-          await FeedRepository.queryGlobalFeed();
+          await FeedRepository.queryGlobalFeed({ page });
         resolve({ data, nextPage, prevPage });
       } catch (error) {
         reject(error);
@@ -60,4 +66,22 @@ export async function removePostReaction(
     }
   );
   return reactionObject;
+}
+export function getPostById(postId: string): Promise<any> {
+  const communityObject = new Promise((resolve, reject) => {
+    let object;
+    const unsubscribe = PostRepository.getPost(
+      postId,
+      ({ data: postInfo, loading, error }) => {
+        if (error) {
+          reject(error);
+        }
+        if (!loading) {
+          object = postInfo;
+        }
+      }
+    );
+    resolve({ data: object, unsubscribe });
+  });
+  return communityObject;
 }

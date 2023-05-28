@@ -18,7 +18,8 @@ const styles = StyleSheet.create({
   headerTextTime: {
     fontSize: 13,
     fontWeight: '400',
-    fontColor: '#636878',
+    color: '#636878',
+    marginVertical: 4,
   },
   bodySection: {
     justifyContent: 'center',
@@ -79,7 +80,75 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '600',
     marginHorizontal: 4,
-  }
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  arrow: {
+    marginHorizontal: 4,
+  },
+  imageLargePost: {
+    height: 350,
+    borderRadius: 6,
+  },
+  imageMediumLargePost: {
+    height: 235,
+    borderRadius: 6,
+  },
+  imageMediumPost: {
+    height: 182,
+    borderRadius: 6,
+  },
+  imageSmallPost: {
+    height: 120,
+    borderRadius: 6,
+  },
+  imageMarginRight: {
+    marginRight: 2,
+  },
+  imageMarginLeft: {
+    marginLeft: 2,
+  },
+  imageMarginTop: {
+    marginTop: 2,
+  },
+  imageMarginBottom: {
+    marginBottom: 2,
+  },
+  imagesWrap: {
+    display: 'flex',
+    flex: 6,
+    marginTop: 12,
+    marginBottom: 4,
+    width: '100%',
+  },
+  row: {
+    flexDirection: 'row',
+  },
+  col2: {
+    flex: 2,
+  },
+  col3: {
+    flex: 3,
+  },
+  col6: {
+    flex: 6,
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 6,
+    marginTop: 2,
+    marginLeft: 2,
+  },
+  overlayText: {
+    color: 'white',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
 });
 
 export default styles;

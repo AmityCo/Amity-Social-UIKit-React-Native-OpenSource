@@ -26,6 +26,7 @@ import moment from 'moment';
 import {
   createMessage,
   createQuery,
+  FileRepository,
   getFile,
   getSubChannel,
   getSubChannelTopic,

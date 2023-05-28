@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 // import { useTranslation } from 'react-i18next';
 
@@ -20,10 +20,13 @@ export default function GlobalFeed() {
   console.log('postList: ', postList);
 
   const { data: posts = [], nextPage } = postData ?? {};
+  console.log('nextPage: ', nextPage);
 
-
-  async function getGlobalFeedList(): Promise<void> {
-    const feedObject = await getGlobalFeed();
+  const flatListRef = useRef(null);
+  async function getGlobalFeedList(
+    page: Amity.Page<number> = { after: 0, limit: 8 }
+  ): Promise<void> {
+    const feedObject = await getGlobalFeed(page);
     if (feedObject) {
       setPostData(feedObject);
     }
@@ -56,23 +59,33 @@ export default function GlobalFeed() {
             editedAt: item.editedAt,
             createdAt: item.createdAt,
             updatedAt: item.updatedAt,
+            targetType: item.targetType,
+            targetId: item.targetId,
+            childrenPosts: item.children,
           };
         })
       );
-      setPostList(formattedPostList);
+      setPostList((prev) => [...prev, ...formattedPostList]);
     }
   }, [posts]);
   useEffect(() => {
     getPostList();
   }, [getPostList]);
 
+  const handleLoadMore = () => {
+    if (nextPage) {
+      getGlobalFeedList(nextPage);
+    }
+  };
   return (
     <View style={styles.feedWrap}>
       <FlatList
         data={postList}
         renderItem={({ item }) => <PostList postDetail={item} />}
         keyExtractor={(item) => item.postId.toString()}
-        onEndReachedThreshold={0.5}
+        onEndReachedThreshold={0.8}
+        onEndReached={handleLoadMore}
+        ref={flatListRef}
       />
     </View>
   );
