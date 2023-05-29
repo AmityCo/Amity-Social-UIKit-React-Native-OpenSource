@@ -16,3 +16,18 @@ export const likedXml: string = `<svg width="16" height="16" viewBox="0 0 16 16"
 export const arrowXml: string = `<svg width="8" height="7" viewBox="0 0 8 7" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M1.46094 6.33203C1.63281 6.33203 1.77344 6.26172 1.97656 6.16406L6.82422 3.82812C7.18359 3.65234 7.33594 3.45312 7.33594 3.18359C7.33594 2.91406 7.18359 2.71484 6.82422 2.53906L1.97656 0.203125C1.77344 0.105469 1.62891 0.0351562 1.45703 0.0351562C1.12109 0.0351562 0.863281 0.292969 0.863281 0.714844L0.867188 5.65625C0.867188 6.07422 1.125 6.33203 1.46094 6.33203Z" fill="#636878"/>
 </svg>`;
+export const playBtn: string = `<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g opacity="0.3">
+<circle cx="20" cy="20" r="20" fill="black"/>
+<circle cx="20" cy="20" r="20" stroke="white"/>
+</g>
+<g clip-path="url(#clip0_3065_18002)">
+<path d="M16 13V27L27 20L16 13Z" fill="white"/>
+</g>
+<defs>
+<clipPath id="clip0_3065_18002">
+<rect width="24" height="24" fill="white" transform="translate(8 8)"/>
+</clipPath>
+</defs>
+</svg>
+`;
