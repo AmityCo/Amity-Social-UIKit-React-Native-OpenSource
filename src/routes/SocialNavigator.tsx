@@ -12,6 +12,7 @@ import CommunityList from '../screens/social/CommunityList';
 import CommunityHome from '../screens/social/CommunityHome/index';
 import { CommunitySetting } from '../screens/social/CommunitySetting/index';
 import CommunityMemberDetail from '../screens/social/CommunityMemberDetail/CommunityMemberDetail';
+import Home from '../screens/social/Home';
 
 export default function SocialNavigator() {
   const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -29,7 +30,7 @@ export default function SocialNavigator() {
             // headerShown: false,
           }}
         >
-          {/* <Stack.Screen name="Home" component={Home} /> */}
+          <Stack.Screen name="Home" component={Home} />
           {/* <Stack.Screen name="Community" component={Home} /> */}
           <Stack.Screen name="Explore" component={Explore} />
           <Stack.Screen

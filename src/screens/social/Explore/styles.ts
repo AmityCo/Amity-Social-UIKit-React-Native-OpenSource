@@ -65,7 +65,7 @@ export const styles = StyleSheet.create({
   },
   number: {
     fontSize: 18,
-    fontWeight: 600,
+    fontWeight: '600',
     marginHorizontal: 12,
     color: '#1054DE',
     paddingBottom: 10,
@@ -79,12 +79,12 @@ export const styles = StyleSheet.create({
   },
   memberText: {
     fontSize: 18,
-    fontWeight: 600,
+    fontWeight: '600',
     marginRight: 4,
   },
   memberCount: {
     fontSize: 13,
-    fontWeight: 400,
+    fontWeight: '400',
     color: '#636878',
     marginRight: 4,
   },
@@ -121,7 +121,7 @@ export const styles = StyleSheet.create({
   },
   columnText: {
     fontSize: 16,
-    fontWeight: 600,
+    fontWeight: '600',
     marginLeft: 10,
     marginBottom: 10,
   },

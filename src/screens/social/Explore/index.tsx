@@ -5,8 +5,11 @@ import { useState, useEffect } from 'react';
 
 import { View, Text, ScrollView, Image, TouchableOpacity } from 'react-native';
 import { styles } from './styles';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-export default function Explore({ navigation }: any) {
+export default function Explore() {
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const [recommendCommunityList, setRecommendCommunityList] = useState<
     Amity.Community[]
   >([]);
