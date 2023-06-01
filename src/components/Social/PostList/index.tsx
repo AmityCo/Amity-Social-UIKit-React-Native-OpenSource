@@ -18,6 +18,7 @@ import {
   StyleProp,
   ImageStyle,
   Modal,
+  Button,
 } from 'react-native';
 import styles from './styles';
 import { SvgXml } from 'react-native-svg';
@@ -37,9 +38,10 @@ import {
   removePostReaction,
 } from '../../../providers/Social/feed-sdk';
 import { getCommunityById } from '../../../providers/Social/communities-sdk';
-
+import { Video, ResizeMode } from 'expo-av';
 import ImageView from '../../../components/react-native-image-viewing';
 import { FileRepository } from '@amityco/ts-sdk';
+
 export interface IPost {
   postId: string;
   data: Record<string, any>;
@@ -65,7 +67,7 @@ interface IChildrenPost {
 interface ImageUri {
   uri: string;
 }
-interface IVideoPost {
+export interface IVideoPost {
   thumbnailFileId: string;
   videoFileId: {
     original: string;
@@ -102,6 +104,9 @@ export default function PostList({ postDetail }: IPostList) {
   console.log('videoPosts: ', videoPosts);
   const [visibleFullImage, setIsVisibleFullImage] = useState<boolean>(false);
   const [imageIndex, setImageIndex] = useState<number>(0);
+  const [playVideoUrl, setPlayVideoUrl] = useState<string>('');
+  console.log('playVideoUrl: ', playVideoUrl);
+  const videoRef = React.useRef(null);
   // console.log('videoPosts: ', videoPosts);
   // console.log('imagePosts: ', imagePosts);
 
@@ -243,6 +248,12 @@ export default function PostList({ postDetail }: IPostList) {
     setImageIndex(index);
   }
 
+  async function onClickPlayVideo(index: number): Promise<void> {
+    console.log('play', index);
+    const videoUrl: string = `https://api.amity.co/api/v3/files/${videoPosts[index]?.videoFileId.original}/download`;
+    setPlayVideoUrl(videoUrl);
+    await playVideoFullScreen();
+  }
   function renderMediaPost(): ReactNode {
     let imageStyle: StyleProp<ImageStyle> | StyleProp<ImageStyle>[] =
       styles.imageLargePost;
@@ -390,6 +401,13 @@ export default function PostList({ postDetail }: IPostList) {
       </View>
     );
   }
+  const playVideoFullScreen = async () => {
+    if (videoRef) {
+      await (videoRef as Record<string, any>).current.presentFullscreenPlayer();
+      await (videoRef as Record<string, any>).current.playAsync()();
+    }
+  };
+
   return (
     <View key={postId} style={styles.postWrap}>
       <View style={styles.headerSection}>
@@ -479,6 +497,8 @@ export default function PostList({ postDetail }: IPostList) {
         visible={visibleFullImage}
         onRequestClose={() => setIsVisibleFullImage(false)}
         isVideoButton={videoPosts.length > 0 ? true : false}
+        onClickPlayButton={onClickPlayVideo}
+        videoPosts={videoPosts}
       />
     </View>
   );

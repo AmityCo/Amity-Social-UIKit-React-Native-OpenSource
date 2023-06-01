@@ -23,7 +23,8 @@ import StatusBarManager from './components/StatusBarManager';
 import useAnimatedComponents from './hooks/useAnimatedComponents';
 import useImageIndexChange from './hooks/useImageIndexChange';
 import useRequestClose from './hooks/useRequestClose';
-import Video from 'react-native-video';
+import { Video, ResizeMode } from 'expo-av';
+
 const DEFAULT_ANIMATION_TYPE = 'fade';
 const DEFAULT_BG_COLOR = '#000';
 const DEFAULT_DELAY_LONG_PRESS = 800;
@@ -46,18 +47,21 @@ function ImageViewing({
   HeaderComponent,
   FooterComponent,
   isVideoButton,
+  onClickPlayButton = () => {},
+  videoPosts,
 }) {
   const imageList = useRef(null);
   const [opacity, onRequestCloseEnhanced] = useRequestClose(onRequestClose);
   const [currentImageIndex, onScroll] = useImageIndexChange(imageIndex, SCREEN);
   const [headerTransform, footerTransform, toggleBarsVisible] =
     useAnimatedComponents();
-
+  const videoRef = React.useRef(null);
   useEffect(() => {
     if (onImageIndexChange) {
       onImageIndexChange(currentImageIndex);
     }
   }, [currentImageIndex]);
+
   const onZoom = useCallback(
     (isScaled) => {
       var _a, _b;
@@ -71,6 +75,13 @@ function ImageViewing({
     },
     [imageList]
   );
+  const playVideoFullScreen = async () => {
+    onClickPlayButton(currentImageIndex);
+    if (videoRef) {
+      await videoRef.current.presentFullscreenPlayer();
+      await videoRef.current.playAsync()();
+    }
+  };
   if (!visible) {
     return null;
   }
@@ -117,6 +128,7 @@ function ImageViewing({
           renderItem={({ item: imageSrc }) => (
             <View>
               {/* Your overlay content */}
+
               <ImageItem
                 onZoom={onZoom}
                 imageSrc={imageSrc}
@@ -127,7 +139,10 @@ function ImageViewing({
                 doubleTapToZoomEnabled={doubleTapToZoomEnabled}
               />
               {isVideoButton && (
-                <TouchableOpacity style={styles.playButton}>
+                <TouchableOpacity
+                  style={styles.playButton}
+                  onPress={playVideoFullScreen}
+                >
                   <SvgXml xml={playBtn} width="50" height="50" />
                 </TouchableOpacity>
               )}
@@ -152,6 +167,18 @@ function ImageViewing({
             })}
           </Animated.View>
         )}
+      </View>
+      <View style={styles.videoContainer}>
+        <Video
+          style={styles.video}
+          source={{
+            uri: `https://api.amity.co/api/v3/files/${videoPosts[currentImageIndex]?.videoFileId?.original}/download`,
+          }}
+          useNativeControls
+          ref={videoRef}
+          resizeMode={ResizeMode.CONTAIN}
+          isLooping
+        />
       </View>
     </Modal>
   );
@@ -185,6 +212,14 @@ const styles = StyleSheet.create({
   playButtonImage: {
     width: 50,
     height: 50,
+  },
+  videoContainer: {
+    display: 'none',
+  },
+  video: {
+    alignSelf: 'center',
+    width: 320,
+    height: 200,
   },
 });
 const EnhancedImageViewing = (props) => (

@@ -7,6 +7,7 @@
  */
 import { ComponentType } from 'react';
 import { ModalProps } from 'react-native';
+import type { IVideoPost } from 'src/components/Social/PostList';
 import { ImageSource } from './@types';
 declare type Props = {
   images: ImageSource[];
@@ -29,6 +30,8 @@ declare type Props = {
     imageIndex: number;
   }>;
   isVideoButton: boolean;
+  onClickPlayButton?: (index: number) => void;
+  videoPosts: IVideoPost[];
 };
 declare const EnhancedImageViewing: (props: Props) => JSX.Element;
 export default EnhancedImageViewing;
