@@ -34,7 +34,6 @@ export default function ChatNavigator() {
         >
 
           <Stack.Screen name="RecentChat" component={RecentChat} />
-  
           <Stack.Screen
             name="ChatRoom"
             //  options={{ headerShown: false }}

@@ -4,10 +4,13 @@ import { styles } from './styles';
 
 const maxLength = 10;
 const displayName = (user: Amity.User) => {
-  if (user.displayName!.length > maxLength) {
-    return user.displayName!.substring(0, maxLength) + '..';
+  if (user.displayName) {
+    if (user.displayName!.length > maxLength) {
+      return user.displayName!.substring(0, maxLength) + '..';
+    }
+    return user.displayName!;
   }
-  return user.displayName!;
+  return 'Display name';
 };
 const AvatarListItem = ({
   user,
