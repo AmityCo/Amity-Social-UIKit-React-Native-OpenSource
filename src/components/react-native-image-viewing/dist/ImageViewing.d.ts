@@ -31,7 +31,7 @@ declare type Props = {
   }>;
   isVideoButton: boolean;
   onClickPlayButton?: (index: number) => void;
-  videoPosts: IVideoPost[];
+  videoPosts?: IVideoPost[];
 };
 declare const EnhancedImageViewing: (props: Props) => JSX.Element;
 export default EnhancedImageViewing;

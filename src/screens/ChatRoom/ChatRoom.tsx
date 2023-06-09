@@ -13,7 +13,7 @@ import {
   FlatList,
   Keyboard,
 } from 'react-native';
-import ImageView from 'react-native-image-viewing';
+import ImageView from '../../components/react-native-image-viewing/dist';
 import CustomText from '../../components/CustomText';
 import styles from './styles';
 import { RouteProp, useNavigation } from '@react-navigation/native';
@@ -687,6 +687,7 @@ const ChatRoom: ChatRoomScreenComponentType = ({ route }) => {
         imageIndex={0}
         visible={visibleFullImage}
         onRequestClose={() => setIsVisibleFullImage(false)}
+        isVideoButton={false}
       />
     </View>
   );

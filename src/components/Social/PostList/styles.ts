@@ -48,7 +48,8 @@ const styles = StyleSheet.create({
     borderTopColor: '#EBECEF',
     borderTopWidth: 1,
     flexDirection: 'row',
-    marginTop: 4,
+    marginTop: 8,
+    marginBottom: 4,
   },
   likeBtn: {
     flexDirection: 'row',
@@ -180,6 +181,9 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     width: 320,
     height: 200,
+  },
+  mediaWrap: {
+    minHeight: 375,
   },
 });
 

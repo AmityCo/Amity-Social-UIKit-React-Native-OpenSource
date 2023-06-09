@@ -1,5 +1,5 @@
 import { CommunityRepository } from '@amityco/ts-sdk';
-import { err } from 'react-native-svg/lib/typescript/xml';
+
 
 export function getCommunityById(communityId: string): Promise<any> {
   const communityObject = new Promise((resolve, reject) => {

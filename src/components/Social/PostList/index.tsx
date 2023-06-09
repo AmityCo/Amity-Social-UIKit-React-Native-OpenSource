@@ -12,13 +12,9 @@ import {
   Text,
   TouchableOpacity,
   Image,
-  FlatList,
   TouchableWithoutFeedback,
-  ViewStyle,
   StyleProp,
   ImageStyle,
-  Modal,
-  Button,
 } from 'react-native';
 import styles from './styles';
 import { SvgXml } from 'react-native-svg';
@@ -38,9 +34,9 @@ import {
   removePostReaction,
 } from '../../../providers/Social/feed-sdk';
 import { getCommunityById } from '../../../providers/Social/communities-sdk';
-import { Video, ResizeMode } from 'expo-av';
-import ImageView from '../../../components/react-native-image-viewing';
-import { FileRepository } from '@amityco/ts-sdk';
+import ImageView from '../../../components/react-native-image-viewing/dist';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 export interface IPost {
   postId: string;
@@ -59,12 +55,12 @@ export interface IPost {
 }
 export interface IPostList {
   postDetail: IPost;
+  initVideoPosts?: IVideoPost[];
+  initImagePosts?: string[];
+  initVideoPostsFullSize?: MediaUri[];
+  initImagePostsFullSize?: MediaUri[];
 }
-interface IChildrenPost {
-  dataType: string;
-  data: Record<string, any>;
-}
-interface ImageUri {
+export interface MediaUri {
   uri: string;
 }
 export interface IVideoPost {
@@ -73,11 +69,16 @@ export interface IVideoPost {
     original: string;
   };
 }
-export default function PostList({ postDetail }: IPostList) {
+export default function PostList({
+  postDetail,
+  initVideoPosts = [],
+  initImagePosts = [],
+  initVideoPostsFullSize = [],
+  initImagePostsFullSize = [],
+}: IPostList) {
   const {
     postId,
     data,
-    dataType,
     myReactions,
     reactionCount,
     commentsCount,
@@ -91,27 +92,33 @@ export default function PostList({ postDetail }: IPostList) {
     childrenPosts,
   } = postDetail ?? {};
 
-  const [isLike, setIsLike] = useState(false);
+  const [isLike, setIsLike] = useState<boolean>(false);
   const [likeReaction, setLikeReaction] = useState<number>(0);
   const [communityName, setCommunityName] = useState('');
   const [imagePosts, setImagePosts] = useState<string[]>([]);
 
-  const [imagePostsFull, setImagePostsFull] = useState<ImageUri[]>([]);
-  const [videoPostsFull, setVideoPostsFull] = useState<ImageUri[]>([]);
-  console.log('videoPostsFull: ', videoPostsFull);
-  // console.log('imagePostsFull: ', imagePostsFull);
+  const [imagePostsFullSize, setImagePostsFullSize] = useState<MediaUri[]>(
+    initImagePostsFullSize
+  );
+  const [videoPostsFullSize, setVideoPostsFullSize] = useState<MediaUri[]>(
+    initVideoPostsFullSize
+  );
+  // console.log('videoPostsFullSize: ', videoPostsFullSize);
+  // console.log('imagePostsFullSize: ', imagePostsFullSize);
   const [videoPosts, setVideoPosts] = useState<IVideoPost[]>([]);
-  console.log('videoPosts: ', videoPosts);
+  // console.log('videoPosts: ', videoPosts);
   const [visibleFullImage, setIsVisibleFullImage] = useState<boolean>(false);
   const [imageIndex, setImageIndex] = useState<number>(0);
   const [playVideoUrl, setPlayVideoUrl] = useState<string>('');
-  console.log('playVideoUrl: ', playVideoUrl);
+  // console.log('playVideoUrl: ', playVideoUrl);
   const videoRef = React.useRef(null);
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
   // console.log('videoPosts: ', videoPosts);
   // console.log('imagePosts: ', imagePosts);
 
   // console.log('childrenPosts: ', childrenPosts);
   // console.log('reactionCount: ', reactionCount);
+
   const getPostInfo = useCallback(async () => {
     const response = await Promise.all(
       childrenPosts.map(async (id: string) => {
@@ -126,7 +133,7 @@ export default function PostList({ postDetail }: IPostList) {
           ...prev,
           `https://api.amity.co/api/v3/files/${item?.data.fileId}/download?size=medium`,
         ]);
-        setImagePostsFull((prev) => [
+        setImagePostsFullSize((prev) => [
           ...prev,
           {
             uri: `https://api.amity.co/api/v3/files/${item?.data.fileId}/download?size=large`,
@@ -134,7 +141,7 @@ export default function PostList({ postDetail }: IPostList) {
         ]);
       } else if (item.dataType === 'video') {
         setVideoPosts((prev) => [...prev, item.data]);
-        setVideoPostsFull((prev) => [
+        setVideoPostsFullSize((prev) => [
           ...prev,
           {
             uri: `https://api.amity.co/api/v3/files/${item?.data.thumbnailFileId}/download?size=large`,
@@ -345,6 +352,7 @@ export default function PostList({ postDetail }: IPostList) {
               break;
           }
         }
+
         return (
           <View style={colStyle}>
             <TouchableWithoutFeedback onPress={() => onClickImage(index)}>
@@ -379,7 +387,7 @@ export default function PostList({ postDetail }: IPostList) {
     } else if (imageElement.length === 3) {
       console.log('imageElement.length: ', imageElement.length);
       return (
-        <View style={styles.imagesWrap}>
+        <View style={[styles.imagesWrap]}>
           <View style={styles.row}>{imageElement.slice(0, 1)}</View>
           <View style={styles.row}>{imageElement.slice(1, 3)}</View>
         </View>
@@ -407,7 +415,15 @@ export default function PostList({ postDetail }: IPostList) {
       await (videoRef as Record<string, any>).current.playAsync()();
     }
   };
-
+  function onClickComment() {
+    navigation.navigate('PostDetail', {
+      postDetail: postDetail,
+      init: videoPosts,
+      videoPostsFullSize: videoPostsFullSize,
+      imagePostsFullSize: imagePostsFullSize,
+      imagePosts: imagePosts,
+    });
+  }
   return (
     <View key={postId} style={styles.postWrap}>
       <View style={styles.headerSection}>
@@ -445,54 +461,65 @@ export default function PostList({ postDetail }: IPostList) {
           </Text>
         </View>
       </View>
-      <View style={styles.bodySection}>
-        {data.text && <Text style={styles.bodyText}>{data.text}</Text>}
+      <View>
+        <View style={styles.bodySection}>
+          {data.text && <Text style={styles.bodyText}>{data.text}</Text>}
 
-        {(imagePosts.length > 0 || videoPosts.length > 0) && renderMediaPost()}
-      </View>
-      {likeReaction === 0 && commentsCount === 0 ? (
-        ''
-      ) : (
-        <View style={styles.countSection}>
-          {likeReaction ? (
-            <Text style={styles.likeCountText}>
-              {likeReaction} {renderLikeText(likeReaction)}
-            </Text>
-          ) : (
-            <Text />
-          )}
-          {commentsCount > 0 && (
-            <Text style={styles.commentCountText}>
-              {commentsCount > 0 && commentsCount}{' '}
-              {renderCommentText(commentsCount)}
-            </Text>
+          {(imagePosts.length > 0 || videoPosts.length > 0) && (
+            <View style={styles.mediaWrap}>{renderMediaPost()}</View>
           )}
         </View>
-      )}
 
-      <View style={styles.actionSection}>
-        <TouchableOpacity
-          onPress={() => addReactionToPost()}
-          style={styles.likeBtn}
-        >
-          {isLike ? (
-            <SvgXml xml={likedXml} width="20" height="16" />
-          ) : (
-            <SvgXml xml={likeXml} width="20" height="16" />
-          )}
+        {likeReaction === 0 && commentsCount === 0 ? (
+          ''
+        ) : (
+          <TouchableWithoutFeedback onPress={() => onClickComment()}>
+            <View style={styles.countSection}>
+              {likeReaction ? (
+                <Text style={styles.likeCountText}>
+                  {likeReaction} {renderLikeText(likeReaction)}
+                </Text>
+              ) : (
+                <Text />
+              )}
+              {commentsCount > 0 && (
+                <Text style={styles.commentCountText}>
+                  {commentsCount > 0 && commentsCount}{' '}
+                  {renderCommentText(commentsCount)}
+                </Text>
+              )}
+            </View>
+          </TouchableWithoutFeedback>
+        )}
 
-          <Text style={isLike ? styles.likedText : styles.btnText}>Like</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => getPostInfo()}
-          style={styles.commentBtn}
-        >
-          <SvgXml xml={commentXml} width="20" height="16" />
-          <Text style={styles.btnText}>Comment</Text>
-        </TouchableOpacity>
+        <View style={styles.actionSection}>
+          <TouchableOpacity
+            onPress={() => addReactionToPost()}
+            style={styles.likeBtn}
+          >
+            {isLike ? (
+              <SvgXml xml={likedXml} width="20" height="16" />
+            ) : (
+              <SvgXml xml={likeXml} width="20" height="16" />
+            )}
+
+            <Text style={isLike ? styles.likedText : styles.btnText}>Like</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => onClickComment()}
+            style={styles.commentBtn}
+          >
+            <SvgXml xml={commentXml} width="20" height="16" />
+            <Text style={styles.btnText}>Comment</Text>
+          </TouchableOpacity>
+        </View>
       </View>
       <ImageView
-        images={imagePostsFull.length > 0 ? imagePostsFull : videoPostsFull}
+        images={
+          imagePostsFullSize.length > 0
+            ? imagePostsFullSize
+            : videoPostsFullSize
+        }
         imageIndex={imageIndex}
         visible={visibleFullImage}
         onRequestClose={() => setIsVisibleFullImage(false)}

@@ -6,13 +6,14 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import type { RootStackParamList } from './RouteParamList';
 import useAuth from '../hooks/useAuth';
-import Explore from '../screens/social/Explore';
-import CategoryList from '../screens/social/CategorytList';
-import CommunityList from '../screens/social/CommunityList';
-import CommunityHome from '../screens/social/CommunityHome/index';
-import { CommunitySetting } from '../screens/social/CommunitySetting/index';
-import CommunityMemberDetail from '../screens/social/CommunityMemberDetail/CommunityMemberDetail';
-import Home from '../screens/social/Home';
+import Explore from '../screens/Social/Explore';
+import CategoryList from '../screens/Social/CategorytList';
+import CommunityList from '../screens/Social/CommunityList';
+import CommunityHome from '../screens/Social/CommunityHome/index';
+import { CommunitySetting } from '../screens/Social/CommunitySetting/index';
+import CommunityMemberDetail from '../screens/Social/CommunityMemberDetail/CommunityMemberDetail';
+import Home from '../screens/Social/Home';
+import PostDetail from '../screens/Social/PostDetail';
 
 export default function SocialNavigator() {
   const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -33,6 +34,7 @@ export default function SocialNavigator() {
           <Stack.Screen name="Home" component={Home} />
           {/* <Stack.Screen name="Community" component={Home} /> */}
           <Stack.Screen name="Explore" component={Explore} />
+          <Stack.Screen name="PostDetail" component={PostDetail} />
           <Stack.Screen
             name="CategoryList"
             component={CategoryList}

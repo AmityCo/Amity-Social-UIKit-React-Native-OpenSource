@@ -6,8 +6,8 @@ import { FlatList, View } from 'react-native';
 import {
   getGlobalFeed,
   IGlobalFeedRes,
-} from '../../..//providers/Social/feed-sdk';
-import useAuth from '../../..//hooks/useAuth';
+} from '../../../providers/Social/feed-sdk';
+import useAuth from '../../../hooks/useAuth';
 import PostList, { IPost } from '../../../components/Social/PostList';
 import styles from './styles';
 import { getAmityUser } from '../../../providers/user-provider';
