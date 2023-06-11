@@ -8,6 +8,10 @@ const styles = StyleSheet.create({
     borderBottomColor: '#EBECEF',
     borderBottomWidth: 1,
   },
+  replyCommentWrap: {
+    backgroundColor: '#FFFFFF',
+    width: '90%',
+  },
   headerSection: {
     paddingVertical: 8,
     flexDirection: 'row',
@@ -50,7 +54,7 @@ const styles = StyleSheet.create({
   likeBtn: {
     flexDirection: 'row',
     paddingRight: 6,
-    paddingVertical: 12,
+    paddingVertical: 5,
   },
   actionSection: {
     flexDirection: 'row',

@@ -40,6 +40,10 @@ export const styles = StyleSheet.create({
     color: '#A0BDF8',
     fontSize: 16,
   },
+  postBtn: {
+    color: '#1054DE',
+    fontSize: 16,
+  },
   commentItem: {
     padding: 16,
     borderBottomWidth: 1,

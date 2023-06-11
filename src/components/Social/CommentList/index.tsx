@@ -15,29 +15,26 @@ import {
   TouchableWithoutFeedback,
   StyleProp,
   ImageStyle,
+  FlatList,
 } from 'react-native';
 import styles from './styles';
 import { SvgXml } from 'react-native-svg';
 import {
-  arrowXml,
-  commentXml,
   likedXml,
   likeXml,
   personXml,
-  playBtn,
   replyIcon,
 } from '../../../svg/svg-xml-list';
 
 import type { UserInterface } from '../../../types/user.interface';
+
 import {
-  addPostReaction,
-  getPostById,
-  removePostReaction,
-} from '../../../providers/Social/feed-sdk';
-import { getCommunityById } from '../../../providers/Social/communities-sdk';
-import ImageView from '../../../components/react-native-image-viewing/dist';
-import { useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+  addCommentReaction,
+  getCommentsDataByIds,
+  removeCommentReaction,
+} from '../../../providers/Social/comment-sdk';
+
+import { getAmityUser } from '../../../providers/user-provider';
 
 export interface IComment {
   commentId: string;
@@ -50,17 +47,36 @@ export interface IComment {
   editedAt: string | undefined;
   createdAt: string;
   childrenComment: string[];
+  referenceId: string;
 }
 export interface ICommentList {
   commentDetail: IComment;
+  isReplyComment?: boolean;
 }
 
-export default function CommentList({ commentDetail }: ICommentList) {
-  const { commentId, data, user, createdAt, reactions, myReactions } =
-    commentDetail;
+export default function CommentList({
+  commentDetail,
+  isReplyComment = false,
+}: ICommentList) {
+  const {
+    commentId,
+    data,
+    user,
+    createdAt,
+    reactions,
+    myReactions,
+    childrenComment,
+  } = commentDetail;
   const [isLike, setIsLike] = useState<boolean>(
     myReactions ? myReactions.includes('like') : false
   );
+  console.log('isLike: ', isLike);
+  const [likeReaction, setLikeReaction] = useState<number>(
+    reactions.like ? reactions.like : 0
+  );
+
+  const [commentList, setCommentList] = useState<IComment[]>([]);
+  console.log('replyCommentList: ', commentList);
 
   function getTimeDifference(timestamp: string): string {
     // Convert the timestamp string to a Date object
@@ -103,11 +119,67 @@ export default function CommentList({ commentDetail }: ICommentList) {
     }
   }
 
-  const addReactionToComment: () => void = () => {
-    setIsLike((prev) => !prev);
+  const formatComments = useCallback(async (replyComments) => {
+    if (replyComments && replyComments.length > 0) {
+      const formattedCommentList = await Promise.all(
+        replyComments.map(async (item: Amity.Comment<any>) => {
+          const { userObject } = await getAmityUser(item.userId);
+          let formattedUserObject: UserInterface;
+
+          formattedUserObject = {
+            userId: userObject.data.userId,
+            displayName: userObject.data.displayName,
+            avatarFileId: userObject.data.avatarFileId,
+          };
+
+          return {
+            commentId: item.commentId,
+            data: item.data as Record<string, any>,
+            dataType: item.dataType,
+            myReactions: item.myReactions as string[],
+            reactions: item.reactions as Record<string, number>,
+            user: formattedUserObject as UserInterface,
+            updatedAt: item.updatedAt,
+            editedAt: item.editedAt,
+            createdAt: item.createdAt,
+            childrenComment: item.children,
+            referenceId: item.referenceId,
+          };
+        })
+      );
+      setCommentList([...formattedCommentList]);
+    }
+  }, []);
+  const getReplyComments = useCallback(async () => {
+    const replyComments = await getCommentsDataByIds(childrenComment);
+    formatComments(replyComments);
+  }, [childrenComment, formatComments]);
+
+  useEffect(() => {
+    if (childrenComment.length > 0) {
+      getReplyComments();
+    }
+  }, [childrenComment, getReplyComments]);
+
+  const addReactionToComment: () => Promise<void> = async () => {
+    if (isLike && likeReaction) {
+      setLikeReaction(likeReaction - 1);
+      setIsLike(false);
+      const isRemoveComment = await removeCommentReaction(commentId, 'like');
+      console.log('isRemovePost: ', isRemoveComment);
+    } else {
+      setIsLike(true);
+      setLikeReaction(likeReaction + 1);
+      const isLikeComment = await addCommentReaction(commentId, 'like');
+      console.log('isLikeComment: ', isLikeComment);
+    }
   };
+
   return (
-    <View key={commentId} style={styles.commentWrap}>
+    <View
+      key={commentId}
+      style={isReplyComment ? styles.replyCommentWrap : styles.commentWrap}
+    >
       <View style={styles.headerSection}>
         {user?.avatarFileId ? (
           <Image
@@ -144,18 +216,30 @@ export default function CommentList({ commentDetail }: ICommentList) {
               )}
 
               <Text style={isLike ? styles.likedText : styles.btnText}>
-                {reactions.like}
+                {!isLike && likeReaction === 0 ? 'Like' : likeReaction}
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              // onPress={() => addReactionToComment()}
-              style={styles.likeBtn}
-            >
-              <SvgXml xml={replyIcon} width="20" height="16" />
+            {!isReplyComment && (
+              <TouchableOpacity
+                // onPress={() => addReactionToComment()}
+                style={styles.likeBtn}
+              >
+                <SvgXml xml={replyIcon} width="20" height="16" />
 
-              <Text style={styles.btnText}>Reply</Text>
-            </TouchableOpacity>
+                <Text style={styles.btnText}>Reply</Text>
+              </TouchableOpacity>
+            )}
           </View>
+          {commentList.length > 0 && (
+            <FlatList
+              data={commentList}
+              renderItem={({ item }) => (
+                <CommentList commentDetail={item} isReplyComment />
+              )}
+              keyExtractor={(item) => item.commentId.toString()}
+              onEndReachedThreshold={0.8}
+            />
+          )}
         </View>
       </View>
     </View>
