@@ -130,10 +130,7 @@ const ChatRoom: ChatRoomScreenComponentType = ({ route }) => {
       <SafeAreaView edges={['top']}>
         <View style={styles.topBar}>
           <View style={styles.chatTitleWrap}>
-            <TouchableOpacity onPress={handleBack}>
-              <BackButton onPress={handleBack} />
-            </TouchableOpacity>
-
+            <BackButton onPress={handleBack} />=
             {chatReceiver ? (
               <Image
                 style={styles.avatar}

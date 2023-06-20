@@ -1,4 +1,8 @@
-import type { IPost, IVideoPost, MediaUri } from 'src/components/Social/PostList';
+import type {
+  IPost,
+  IVideoPost,
+  MediaUri,
+} from 'src/components/Social/PostList';
 import type { IGroupChatObject, IUserObject } from '../components/ChatList';
 
 export type RootStackParamList = {
@@ -28,6 +32,7 @@ export type RootStackParamList = {
   Community: undefined;
   Explore: undefined;
   CategoryList: undefined;
+  CreatePost: undefined;
   PostDetail: {
     postDetail: IPost;
     initVideoPosts?: IVideoPost[];

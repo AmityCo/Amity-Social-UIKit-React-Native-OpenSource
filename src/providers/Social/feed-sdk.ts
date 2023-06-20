@@ -17,7 +17,9 @@ export async function getGlobalFeed(
     async (resolve, reject) => {
       try {
         const { data, nextPage, prevPage } =
-          await FeedRepository.queryGlobalFeed({ page });
+          await FeedRepository.queryGlobalFeed({
+            page,
+          });
         resolve({ data, nextPage, prevPage });
       } catch (error) {
         reject(error);

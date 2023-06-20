@@ -156,7 +156,7 @@
     ]
   },
   "dependencies": {
-    "@amityco/ts-sdk": "^6.3.1",
+    "@amityco/ts-sdk": "^6.4.2",
     "@react-navigation/native": "6.1.6",
     "@react-navigation/native-stack": "6.9.10",
     "@react-navigation/stack": "6.3.16",

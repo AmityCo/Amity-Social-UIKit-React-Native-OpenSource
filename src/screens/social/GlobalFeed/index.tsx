@@ -17,10 +17,10 @@ export default function GlobalFeed() {
   const { client } = useAuth();
   const [postData, setPostData] = useState<IGlobalFeedRes>();
   const [postList, setPostList] = useState<IPost[]>([]);
-  console.log('postList: ', postList);
+  // console.log('postList: ', postList);
 
   const { data: posts = [], nextPage } = postData ?? {};
-  console.log('nextPage: ', nextPage);
+  // console.log('nextPage: ', nextPage);
 
   const flatListRef = useRef(null);
   async function getGlobalFeedList(
@@ -31,7 +31,12 @@ export default function GlobalFeed() {
       setPostData(feedObject);
     }
   }
-
+  const handleLoadMore = () => {
+    if (nextPage) {
+      console.log('nextPage: ', nextPage);
+      getGlobalFeedList(nextPage);
+    }
+  };
   useEffect(() => {
     getGlobalFeedList();
   }, [client]);
@@ -72,21 +77,19 @@ export default function GlobalFeed() {
     getPostList();
   }, [getPostList]);
 
-  const handleLoadMore = () => {
-    if (nextPage) {
-      getGlobalFeedList(nextPage);
-    }
-  };
+
   return (
     <View style={styles.feedWrap}>
-      <FlatList
-        data={postList}
-        renderItem={({ item }) => <PostList postDetail={item} />}
-        keyExtractor={(item) => item.postId.toString()}
-        onEndReachedThreshold={0.8}
-        onEndReached={handleLoadMore}
-        ref={flatListRef}
-      />
+      <View style={styles.feedWrap}>
+        <FlatList
+          data={postList}
+          renderItem={({ item }) => <PostList postDetail={item} />}
+          keyExtractor={(item) => item.postId.toString()}
+          onEndReachedThreshold={0.8}
+          onEndReached={handleLoadMore}
+          ref={flatListRef}
+        />
+      </View>
     </View>
   );
 }

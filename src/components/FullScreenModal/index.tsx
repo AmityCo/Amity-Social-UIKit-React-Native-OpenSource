@@ -1,0 +1,258 @@
+import { CommunityRepository } from '@amityco/ts-sdk';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  TouchableOpacity,
+  View,
+  Text,
+  Modal,
+  StyleSheet,
+  Platform,
+  Image,
+  ActivityIndicator,
+  FlatList,
+} from 'react-native';
+import { SvgXml } from 'react-native-svg';
+import { getAmityUser } from '../../providers/user-provider';
+import type { UserInterface } from 'src/types/user.interface';
+import useAuth from '../../hooks/useAuth';
+import { closeIcon } from '../../svg/svg-xml-list';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+interface IModal {
+  visible: boolean;
+  userId?: string;
+  onClose: () => void;
+  onSelect: () => void;
+}
+const FullScreenModal = ({ visible, onClose, userId, onSelect }: IModal) => {
+  console.log('myUser in Modal: ', userId);
+  const [communities, setCommunities] = useState<Amity.Community[]>([]);
+  const [paginateLoading, setPaginateLoading] = useState(false);
+  const [hasNextPageFunc, setHasNextPageFunc] = useState(false);
+  const [myUser, setMyUser] = useState<UserInterface>();
+  console.log('myUser: ', myUser);
+  const onNextPageRef = useRef<(() => void) | null>(null);
+  const isFetchingRef = useRef(false);
+  const onEndReachedCalledDuringMomentumRef = useRef(true);
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
+  const getMyUserDetail = useCallback(async () => {
+    if (userId) {
+      const { userObject } = await getAmityUser(userId);
+      console.log('userObject: ', userObject);
+      let formattedUserObject: UserInterface;
+
+      formattedUserObject = {
+        userId: userObject.data.userId,
+        displayName: userObject.data.displayName,
+        avatarFileId: userObject.data.avatarFileId,
+      };
+      setMyUser(formattedUserObject);
+      console.log('formattedUserObject: ', formattedUserObject);
+    }
+  }, [userId]);
+
+  useEffect(() => {
+    if (userId) {
+      getMyUserDetail();
+    }
+  }, [getMyUserDetail, userId]);
+  useEffect(() => {
+    const loadCommunities = async () => {
+      setPaginateLoading(true);
+      try {
+        const unsubscribe = CommunityRepository.getCommunities(
+          { membership: 'member' },
+          ({ data: communitiesList, onNextPage, hasNextPage, loading }) => {
+            if (!loading) {
+              setCommunities((prevCommunities: Amity.Community[]) => [
+                ...prevCommunities,
+                ...communitiesList,
+              ]);
+              console.log(
+                'did query communities ' + JSON.stringify(communities)
+              );
+              setHasNextPageFunc(hasNextPage);
+              onNextPageRef.current = onNextPage;
+              isFetchingRef.current = false;
+              unsubscribe();
+            }
+          }
+        );
+      } catch (error) {
+        console.error('Failed to load communities:', error);
+        isFetchingRef.current = false;
+      } finally {
+        setPaginateLoading(false);
+      }
+    };
+
+    loadCommunities();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  const renderMyTimeLine = () => {
+    return (
+      <View style={styles.rowContainerMyTimeLine}>
+        <Image
+          style={styles.avatar}
+          source={
+            myUser
+              ? {
+                  uri: `https://api.amity.co/api/v3/files/${myUser.avatarFileId}/download`,
+                }
+              : require('./../../../assets/icon/Placeholder.png')
+          }
+        />
+        <Text style={styles.communityText}>My Timeline</Text>
+      </View>
+    );
+  };
+  const onPressCommunity = (communityId: string, communityName: string) => {
+    onSelect && onSelect();
+    navigation.navigate('CreatePost', {
+      communityId: communityId,
+      communityName: communityName,
+    });
+  };
+  const renderCommunity = ({ item }: { item: Amity.Community }) => {
+    return (
+      <TouchableOpacity
+        onPress={() => onPressCommunity(item.communityId, item.displayName)}
+        style={styles.rowContainer}
+      >
+        <Image
+          style={styles.avatar}
+          source={
+            item.avatarFileId
+              ? {
+                  uri: `https://api.amity.co/api/v3/files/${item.avatarFileId}/download`,
+                }
+              : require('./../../../assets/icon/Placeholder.png')
+          }
+        />
+        <Text style={styles.communityText}>{item.displayName}</Text>
+      </TouchableOpacity>
+    );
+  };
+
+  const renderFooter = () => {
+    if (!paginateLoading) return null;
+    return (
+      <View style={styles.LoadingIndicator}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  };
+
+  const handleEndReached = useCallback(() => {
+    console.log('handleEndReached got triggered');
+    if (
+      !isFetchingRef.current &&
+      hasNextPageFunc &&
+      !onEndReachedCalledDuringMomentumRef.current
+    ) {
+      isFetchingRef.current = true;
+      onEndReachedCalledDuringMomentumRef.current = true;
+      onNextPageRef.current && onNextPageRef.current();
+    }
+  }, [hasNextPageFunc]);
+
+  return (
+    <Modal visible={visible} animationType="slide">
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+            <SvgXml xml={closeIcon} width="17" height="17" />
+          </TouchableOpacity>
+          <View style={styles.headerTextContainer}>
+            <Text style={styles.headerText}>Post To</Text>
+          </View>
+        </View>
+        {renderMyTimeLine()}
+        <Text style={styles.myCommunityText}>My Community</Text>
+        <FlatList
+          data={communities}
+          renderItem={renderCommunity}
+          keyExtractor={(item) => item.communityId.toString()}
+          ListFooterComponent={renderFooter}
+          // onEndReached={handleEndReached}
+          onEndReached={handleEndReached}
+          onMomentumScrollBegin={() =>
+            (onEndReachedCalledDuringMomentumRef.current = false)
+          }
+          onEndReachedThreshold={0.8}
+        />
+      </View>
+    </Modal>
+  );
+};
+
+export default FullScreenModal;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'white',
+    paddingTop: Platform.OS === 'android' ? 35 : 10, // Adjust for Android status bar
+  },
+  header: {
+    paddingTop: Platform.OS === 'ios' ? 50 : 20, // Adjust for iOS notch
+    zIndex: 1,
+    padding: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  closeButton: {
+    position: 'absolute',
+    left: 10,
+    bottom: 8,
+    zIndex: 1,
+    padding: 10,
+  },
+  headerTextContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerText: {
+    fontWeight: '600',
+    fontSize: 17,
+    textAlign: 'center',
+  },
+  communityText: {
+    marginLeft: 12,
+    marginBottom: 10,
+    fontSize: 15,
+    fontWeight: '600',
+  },
+  myCommunityText: {
+    color: '#292B32',
+    padding: 16,
+    opacity: 0.4,
+    fontSize: 17,
+  },
+  rowContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+  },
+  rowContainerMyTimeLine: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingBottom: 16,
+    paddingTop: 26,
+    paddingHorizontal: 16,
+    borderBottomColor: '#EBECEF',
+    borderBottomWidth: 1,
+  },
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginBottom: 10,
+    backgroundColor: '#D9E5FC',
+  },
+  LoadingIndicator: {
+    paddingVertical: 20,
+  },
+});

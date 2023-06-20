@@ -3,17 +3,23 @@ import { StyleSheet } from 'react-native';
 const styles = StyleSheet.create({
   commentWrap: {
     backgroundColor: '#FFFFFF',
-    paddingHorizontal: 16,
-    width: '90%',
+    paddingHorizontal: 12,
+    width: '100%',
     borderBottomColor: '#EBECEF',
     borderBottomWidth: 1,
+    alignSelf: 'center',
   },
   replyCommentWrap: {
     backgroundColor: '#FFFFFF',
-    width: '90%',
+    width: '100%',
+    paddingTop: 4,
   },
   headerSection: {
-    paddingVertical: 8,
+    paddingVertical: 12,
+    flexDirection: 'row',
+  },
+  replyHeaderSection: {
+    paddingTop: 8,
     flexDirection: 'row',
   },
   headerText: {
@@ -40,6 +46,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  rightSection: {
+    width: '90%',
+  },
   commentBubble: {
     padding: 12,
     backgroundColor: '#EBECEF',
@@ -54,7 +63,7 @@ const styles = StyleSheet.create({
   likeBtn: {
     flexDirection: 'row',
     paddingRight: 6,
-    paddingVertical: 5,
+    paddingTop: 4,
   },
   actionSection: {
     flexDirection: 'row',

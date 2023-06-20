@@ -63,8 +63,8 @@ export default function CommunityList({ navigation, route }: any) {
           source={
             item.avatarFileId
               ? {
-                uri: `https://api.amity.co/api/v3/files/${item.avatarFileId}/download`,
-              }
+                  uri: `https://api.amity.co/api/v3/files/${item.avatarFileId}/download`,
+                }
               : require('../../../../assets/icon/Placeholder.png')
           }
         />

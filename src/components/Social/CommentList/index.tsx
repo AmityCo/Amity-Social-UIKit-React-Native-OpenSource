@@ -180,7 +180,11 @@ export default function CommentList({
       key={commentId}
       style={isReplyComment ? styles.replyCommentWrap : styles.commentWrap}
     >
-      <View style={styles.headerSection}>
+      <View
+        style={
+          isReplyComment ? styles.replyHeaderSection : styles.headerSection
+        }
+      >
         {user?.avatarFileId ? (
           <Image
             style={styles.avatar}
@@ -193,7 +197,7 @@ export default function CommentList({
             <SvgXml xml={personXml} width="20" height="16" />
           </View>
         )}
-        <View>
+        <View style={styles.rightSection}>
           <View style={styles.headerRow}>
             <Text style={styles.headerText}>{user?.displayName}</Text>
           </View>

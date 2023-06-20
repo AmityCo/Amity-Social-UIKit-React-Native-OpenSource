@@ -55,6 +55,5 @@ export const styles = StyleSheet.create({
   commentListWrap: {
     borderTopWidth: 1,
     borderTopColor: '#EBECEF',
-    paddingTop: 5,
   },
 });
