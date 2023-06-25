@@ -39,6 +39,7 @@ export const styles = StyleSheet.create({
     borderBottomWidth: 0,
     backgroundColor: 'transparent',
     fontSize: 15,
+    marginHorizontal: 3,
     // Additional styles if needed
   },
   container: {
@@ -68,5 +69,13 @@ export const styles = StyleSheet.create({
     padding: 5,
     width: 35,
     height: 35,
+  },
+  imageContainer: {
+    flexDirection: 'row',
+    marginVertical: 30,
+    flex: 3,
+  },
+  disabled: {
+    opacity: 0.3,
   },
 });

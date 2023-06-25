@@ -156,7 +156,7 @@
     ]
   },
   "dependencies": {
-    "@amityco/ts-sdk": "^6.4.2",
+    "@amityco/ts-sdk": "^6.4.3",
     "@react-navigation/native": "6.1.6",
     "@react-navigation/native-stack": "6.9.10",
     "@react-navigation/stack": "6.3.16",
@@ -169,7 +169,9 @@
     "moment": "2.29.4",
     "react-i18next": "12.1.5",
     "react-native-image-picker": "5.1.0",
+    "react-native-image-progress": "^1.2.0",
     "react-native-pager-view": "6.1.4",
+    "react-native-progress": "^5.0.0",
     "react-native-safe-area-context": "*",
     "react-native-screens": "3.20.0",
     "react-native-svg": "13.4.0",
