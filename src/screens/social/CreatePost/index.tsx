@@ -34,8 +34,8 @@ import {
   launchCamera,
   launchImageLibrary,
 } from 'react-native-image-picker';
-import { uploadFile } from '../../../providers/file-provider';
 import LoadingImage from '../../../components/LoadingImage';
+import { createPostToFeed } from '../../../providers/Social/feed-sdk';
 
 export interface Action {
   title: string;
@@ -71,7 +71,7 @@ export interface IDisplayImage {
 const CreatePost = ({ route }: any) => {
   const { communityId, communityName } = route.params;
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
-
+  const [inputMessage, setInputMessage] = useState('');
   const [imageUri, setImageUri] = useState<string | undefined>();
   const [imageMultipleUri, setImageMultipleUri] = useState<string[]>([]);
   console.log('imageMultipleUri: ', imageMultipleUri);
@@ -80,7 +80,7 @@ const CreatePost = ({ route }: any) => {
   const imageUriRef = useRef(imageUri);
 
   const goBack = () => {
-    navigation.navigate('Home', { isOpenModal: true });
+    navigation.navigate('Home');
   };
   navigation.setOptions({
     // eslint-disable-next-line react/no-unstable-nested-components
@@ -93,12 +93,47 @@ const CreatePost = ({ route }: any) => {
           <View style={styles.headerTextContainer}>
             <Text style={styles.headerText}>{communityName}</Text>
           </View>
+          <TouchableOpacity
+            disabled={
+              inputMessage.length > 0 || displayImages.length > 0 ? false : true
+            }
+            onPress={handleCreatePost}
+          >
+            <Text
+              style={
+                inputMessage.length > 0 || displayImages.length > 0
+                  ? styles.postText
+                  : [styles.postText, styles.disabled]
+              }
+            >
+              Post
+            </Text>
+          </TouchableOpacity>
         </View>
       </SafeAreaView>
     ),
     headerTitle: '',
   });
+  const handleCreatePost = async () => {
+    const fileIdArr: (string | undefined)[] = displayImages.map(
+      (item) => item.fileId
+    );
 
+    const type: string = displayImages.length > 0 ? 'image' : 'text';
+    const response = await createPostToFeed(
+      'community',
+      communityId,
+      {
+        text: inputMessage,
+        fileIds: fileIdArr as string[],
+      },
+      type
+    );
+    if (response) {
+      navigation.navigate('Home');
+    }
+    console.log('response: ', response);
+  };
   const uploadImageByCamera = useCallback(async () => {
     if (imageUri) {
       console.log('imageUri: ', imageUri);
@@ -276,6 +311,15 @@ const CreatePost = ({ route }: any) => {
       newData.splice(index, 1); // Remove the element at the specified index
       return newData; // Update the state with the modified array
     });
+    setDisplayImages((prevData) => {
+      const fileName: string = originalPath.substring(
+        originalPath.lastIndexOf('/') + 1
+      );
+      const newData = prevData.filter(
+        (item: IDisplayImage) => item.fileName !== fileName
+      ); // Filter out objects containing the desired value
+      return newData; // Remove the element at the specified index
+    });
   };
   const handleOnFinish = (
     fileId: string,
@@ -305,11 +349,12 @@ const CreatePost = ({ route }: any) => {
     //   return newData;
     // });
   };
+
   return (
     <View style={styles.AllInputWrap}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.select({ ios: 80, android: 80 })}
+        keyboardVerticalOffset={Platform.select({ ios: 100, android: 80 })}
         style={styles.AllInputWrap}
       >
         <ScrollView style={styles.container}>
@@ -317,6 +362,8 @@ const CreatePost = ({ route }: any) => {
             multiline
             placeholder="What's going on..."
             style={styles.textInput}
+            value={inputMessage}
+            onChangeText={(text) => setInputMessage(text)}
           />
           <View style={styles.imageContainer}>
             <FlatList
@@ -348,9 +395,9 @@ const CreatePost = ({ route }: any) => {
             </View>
           </TouchableOpacity>
           <TouchableOpacity
-            disabled={imageMultipleUri.length > 0 ? true : false}
+            disabled={displayImages.length > 0 ? true : false}
             onPress={pickVideo}
-            style={imageMultipleUri.length > 0 ? styles.disabled : []}
+            style={displayImages.length > 0 ? styles.disabled : []}
           >
             <View style={styles.iconWrap}>
               <SvgXml xml={playVideoIcon} width="27" height="27" />

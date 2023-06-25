@@ -8,10 +8,10 @@ export const styles = StyleSheet.create({
     zIndex: 1,
     padding: 12,
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
   },
   closeButton: {
-    position: 'absolute',
     padding: 10,
     zIndex: 1,
     left: 4,
@@ -26,7 +26,12 @@ export const styles = StyleSheet.create({
     fontSize: 17,
     textAlign: 'center',
   },
-
+  postText: {
+    fontWeight: '400',
+    fontSize: 15,
+    textAlign: 'center',
+    color: '#1054DE',
+  },
   rowContainer: {
     flexDirection: 'row',
     alignItems: 'center',

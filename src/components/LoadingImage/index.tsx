@@ -2,7 +2,10 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { View, Image, TouchableOpacity } from 'react-native';
 import * as Progress from 'react-native-progress';
 import { SvgXml } from 'react-native-svg';
-import { deleteAmityFile, uploadFile } from '../../providers/file-provider';
+import {
+  deleteAmityFile,
+  uploadImageFile,
+} from '../../providers/file-provider';
 import { closeIcon } from '../../svg/svg-xml-list';
 import { createStyles } from './styles';
 
@@ -43,7 +46,7 @@ const LoadingImage = ({
   }, [progress]);
 
   const uploadFileToAmity = useCallback(async () => {
-    const file: Amity.File<any>[] = await uploadFile(
+    const file: Amity.File<any>[] = await uploadImageFile(
       source,
       (percent: number) => {
         console.log('percent: ', percent);
@@ -57,7 +60,7 @@ const LoadingImage = ({
       onLoadFinish &&
         onLoadFinish(
           file[0]?.fileId as string,
-          file[0]?.fileUrl as string,
+          (file[0]?.fileUrl + '?size=medium') as string,
           file[0]?.attributes.name as string,
           index as number,
           source
