@@ -1,4 +1,4 @@
-import { CommunityRepository } from '@amityco/ts-sdk';
+import { CommunityRepository, createReport } from '@amityco/ts-sdk';
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import {
   FlatList,
@@ -68,7 +68,11 @@ export default function CommunityMemberDetail({ navigation, route }: any) {
   //     navigation.navigate('CommunityList', { categoryId, categoryName });
   //   }, 100);
   // };
-  const reportUser = async (userId: string): boolean => {};
+  const reportUser = async (userId: string): Promise<boolean> => {
+    const didCreatePostReport = await createReport('user', userId);
+
+    return didCreatePostReport;
+  };
   const onThreeDotTap = (user: Amity.User) => {
     if (Platform.OS === 'ios') {
       ActionSheetIOS.showActionSheetWithOptions(
@@ -92,14 +96,17 @@ export default function CommunityMemberDetail({ navigation, route }: any) {
       ]);
     }
   };
-  const renderMember = ({ item }: { item: Amity.Member<'community'> }) => {
-    return (
-      <UserItem
-        user={item.user}
-        showThreeDot={true}
-        onThreeDotTap={onThreeDotTap}
-      />
-    );
+  const renderMember = ({ item }: { item: Amity.Membership<'community'> }) => {
+    if (item.user) {
+      return (
+        <UserItem
+          user={item.user}
+          showThreeDot={true}
+          onThreeDotTap={onThreeDotTap}
+        />
+      );
+    }
+    return null;
   };
 
   const renderFooter = () => {

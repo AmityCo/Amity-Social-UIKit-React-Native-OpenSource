@@ -27,4 +27,14 @@ export type RootStackParamList = {
   Community: undefined;
   Explore: undefined;
   CategoryList: undefined;
+  UserProfile: {
+    userId: string;
+  };
+  UserProfileSetting: {
+    userId: string;
+    follow: string;
+  };
+  EditProfile: {
+    userId: string;
+  };
 };

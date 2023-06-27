@@ -41,6 +41,8 @@ import { getCommunityById } from '../../../providers/Social/communities-sdk';
 import { Video, ResizeMode } from 'expo-av';
 import ImageView from '../../../components/react-native-image-viewing';
 import { FileRepository } from '@amityco/ts-sdk';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 export interface IPost {
   postId: string;
@@ -107,6 +109,7 @@ export default function PostList({ postDetail }: IPostList) {
   const [playVideoUrl, setPlayVideoUrl] = useState<string>('');
   console.log('playVideoUrl: ', playVideoUrl);
   const videoRef = React.useRef(null);
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
   // console.log('videoPosts: ', videoPosts);
   // console.log('imagePosts: ', imagePosts);
 
@@ -407,6 +410,22 @@ export default function PostList({ postDetail }: IPostList) {
       await (videoRef as Record<string, any>).current.playAsync()();
     }
   };
+  const handleDisplayNamePress = () => {
+    console.log('checking user object ' + JSON.stringify(user));
+    if (user?.userId) {
+      navigation.navigate('UserProfile', {
+        userId: user.userId,
+      });
+    }
+  };
+  const handleCommunityNamePress = () => {
+    if (targetType === 'community' && targetId) {
+      navigation.navigate('CommunityHome', {
+        communityId: targetId,
+        communityName: communityName,
+      });
+    }
+  };
 
   return (
     <View key={postId} style={styles.postWrap}>
@@ -426,7 +445,10 @@ export default function PostList({ postDetail }: IPostList) {
 
         <View>
           <View style={styles.headerRow}>
-            <Text style={styles.headerText}>{user?.displayName}</Text>
+            <TouchableOpacity onPress={handleDisplayNamePress}>
+              <Text style={styles.headerText}>{user?.displayName}</Text>
+            </TouchableOpacity>
+
             {communityName && (
               <>
                 <SvgXml
@@ -435,7 +457,10 @@ export default function PostList({ postDetail }: IPostList) {
                   width="8"
                   height="8"
                 />
-                <Text style={styles.headerText}>{communityName}</Text>
+
+                <TouchableOpacity onPress={handleCommunityNamePress}>
+                  <Text style={styles.headerText}>{communityName}</Text>
+                </TouchableOpacity>
               </>
             )}
           </View>
