@@ -6,6 +6,30 @@ export const styles = StyleSheet.create({
     // alignItems: 'center',
     // justifyContent: 'center',
   },
+  joinContainer: {
+    flex: 0.2,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  joinCommunityButton: {
+    // flex: 1,
+    // backgroundColor: 'white',
+    // borderWidth: 1,
+    // borderColor: '#A5A9B5',
+    backgroundColor: '#1054DE',
+    width: '90%',
+    padding: 8,
+    borderRadius: 4,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  joinCommunityText: {
+    marginLeft: 8,
+    fontSize: 16,
+    fontWeight: 600,
+    color: 'white',
+  },
   dotIcon: {
     width: 16,
     height: 12,
@@ -32,6 +56,11 @@ export const styles = StyleSheet.create({
     fontSize: 20,
     marginBottom: 5,
   },
+  joinIcon: {
+    width: 18,
+    height: 16,
+    color: 'white',
+  },
   overlayCategoryText: {
     color: 'white',
     fontWeight: '400',
@@ -40,7 +69,7 @@ export const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
-    height: 50,
+    height: 30,
     marginVertical: 10,
     paddingHorizontal: 20,
   },
@@ -68,6 +97,7 @@ export const styles = StyleSheet.create({
   },
   textComponent: {
     fontSize: 16,
+    paddingTop: 15,
     paddingHorizontal: 20,
   },
 });
