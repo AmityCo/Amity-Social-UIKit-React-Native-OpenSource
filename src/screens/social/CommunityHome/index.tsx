@@ -6,7 +6,7 @@ import { styles } from './styles';
 
 export default function CommunityHome({ navigation, route }: any) {
   const { communityId, communityName } = route.params;
-
+  const [isJoin, setIsJoin] = useState(true);
   const [communityData, setCommunityData] =
     useState<Amity.LiveObject<Amity.Community>>();
   React.useLayoutEffect(() => {
@@ -44,7 +44,11 @@ export default function CommunityHome({ navigation, route }: any) {
       try {
         const unsubscribe = CommunityRepository.getCommunity(
           communityId,
-          setCommunityData
+          // setCommunityData
+          (community) => {
+            setCommunityData(community);
+            setIsJoin(community?.data.isJoined || false); // Set isJoin to communityData?.data.isJoined value
+          }
         );
         unsubscribe();
       } catch (error) {
@@ -54,6 +58,46 @@ export default function CommunityHome({ navigation, route }: any) {
 
     loadCommunity();
   }, [communityId]);
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      console.log("hahahahaha ");
+      CommunityRepository.getCommunity(
+        communityId,
+        // setCommunityData
+        (community) => {
+          setCommunityData(community);
+          setIsJoin(community?.data.isJoined || false); // Set isJoin to communityData?.data.isJoined value
+        }
+      );
+    });
+    return unsubscribe;
+  }, []);
+
+  const onJoinCommunityTap = async () => {
+    const isJoined = await CommunityRepository.joinCommunity(communityId);
+    if (isJoined) {
+      setIsJoin(isJoined);
+      return isJoined;
+    }
+    return null;
+  };
+
+  const joinCommunityButton = () => {
+    return (
+      <View style={styles.joinContainer}>
+        <TouchableOpacity
+          style={styles.joinCommunityButton}
+          onPress={onJoinCommunityTap}
+        >
+          <Image
+            source={require('../../../../assets/icon/followPlus.png')}
+            style={styles.joinIcon}
+          />
+          <Text style={styles.joinCommunityText}>Join</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
@@ -93,7 +137,10 @@ export default function CommunityHome({ navigation, route }: any) {
           </TouchableOpacity>
         </View>
       </View>
-      <Text style={styles.textComponent}>Testsdsdsd</Text>
+      <Text style={styles.textComponent}>
+        {communityData?.data.description}
+      </Text>
+      {isJoin === false ? joinCommunityButton() : <View />}
     </View>
   );
 }

@@ -424,12 +424,23 @@ export default function PostList({
       imagePosts: imagePosts,
     });
   }
-  const goToCommunity = () => {
-    navigation.navigate('CommunityHome', {
-      communityId: targetId,
-      communityName: communityName,
-    });
+  const handleDisplayNamePress = () => {
+    console.log('checking user object ' + JSON.stringify(user));
+    if (user?.userId) {
+      navigation.navigate('UserProfile', {
+        userId: user.userId,
+      });
+    }
   };
+  const handleCommunityNamePress = () => {
+    if (targetType === 'community' && targetId) {
+      navigation.navigate('CommunityHome', {
+        communityId: targetId,
+        communityName: communityName,
+      });
+    }
+  };
+
   return (
     <View key={postId} style={styles.postWrap}>
       <View style={styles.headerSection}>
@@ -448,7 +459,10 @@ export default function PostList({
 
         <View>
           <View style={styles.headerRow}>
-            <Text style={styles.headerText}>{user?.displayName}</Text>
+            <TouchableOpacity onPress={handleDisplayNamePress}>
+              <Text style={styles.headerText}>{user?.displayName}</Text>
+            </TouchableOpacity>
+
             {communityName && (
               <>
                 <SvgXml
@@ -457,9 +471,10 @@ export default function PostList({
                   width="8"
                   height="8"
                 />
-                <TouchableWithoutFeedback onPress={goToCommunity}>
+
+                <TouchableOpacity onPress={handleCommunityNamePress}>
                   <Text style={styles.headerText}>{communityName}</Text>
-                </TouchableWithoutFeedback>
+                </TouchableOpacity>
               </>
             )}
           </View>

@@ -40,4 +40,14 @@ export type RootStackParamList = {
     initVideoPostsFullSize?: MediaUri[];
     initImagePostsFullSize?: MediaUri[];
   };
+  UserProfile: {
+    userId: string;
+  };
+  UserProfileSetting: {
+    userId: string;
+    follow: string;
+  };
+  EditProfile: {
+    userId: string;
+  };
 };

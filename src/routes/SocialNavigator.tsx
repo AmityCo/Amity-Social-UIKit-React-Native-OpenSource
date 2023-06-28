@@ -15,6 +15,9 @@ import CommunityMemberDetail from '../screens/Social/CommunityMemberDetail/Commu
 import Home from '../screens/Social/Home';
 import PostDetail from '../screens/Social/PostDetail';
 import CreatePost from '../screens/Social/CreatePost';
+import UserProfile from '../screens/Social/UserProfile/UserProfile';
+import { EditProfile } from '../screens/Social/EditProfile/EditProfile';
+import UserProfileSetting from '../screens/Social/UserProfileSetting/UserProfileSetting';
 
 export default function SocialNavigator() {
   const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -51,6 +54,12 @@ export default function SocialNavigator() {
           <Stack.Screen name="CommunitySetting" component={CommunitySetting} />
           <Stack.Screen name="CommunityList" component={CommunityList} />
           <Stack.Screen name="CreatePost" component={CreatePost} />
+          <Stack.Screen name="UserProfile" component={UserProfile} />
+          <Stack.Screen name="EditProfile" component={EditProfile} />
+          <Stack.Screen
+            name="UserProfileSetting"
+            component={UserProfileSetting}
+          />
         </Stack.Navigator>
       )}
     </NavigationContainer>

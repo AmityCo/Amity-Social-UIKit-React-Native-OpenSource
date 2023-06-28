@@ -27,7 +27,7 @@ export const CommunitySetting: React.FC<ChatDetailProps> = ({
     });
   };
   const handleLeaveCommunityPress = async () => {
-    const hasLeft = await CommunityRepository.leaveCommunity('communityId');
+    const hasLeft = await CommunityRepository.leaveCommunity(communityId);
     if (hasLeft) {
       navigation.goBack();
     }
