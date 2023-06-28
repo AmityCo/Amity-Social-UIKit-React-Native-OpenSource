@@ -36,6 +36,9 @@ import {
 } from 'react-native-image-picker';
 import LoadingImage from '../../../components/LoadingImage';
 import { createPostToFeed } from '../../../providers/Social/feed-sdk';
+import LoadingVideo from '../../../components/LoadingVideo';
+import * as VideoThumbnails from 'expo-video-thumbnails';
+import { Video, ResizeMode } from 'expo-av';
 
 export interface Action {
   title: string;
@@ -67,6 +70,7 @@ export interface IDisplayImage {
   fileId: string | undefined;
   fileName: string;
   isUploaded: boolean;
+  thumbNail?: string;
 }
 const CreatePost = ({ route }: any) => {
   const { communityId, communityName } = route.params;
@@ -74,11 +78,27 @@ const CreatePost = ({ route }: any) => {
   const [inputMessage, setInputMessage] = useState('');
   const [imageUri, setImageUri] = useState<string | undefined>();
   const [imageMultipleUri, setImageMultipleUri] = useState<string[]>([]);
-  console.log('imageMultipleUri: ', imageMultipleUri);
+  const [videoMultipleUri, setVideoMultipleUri] = useState<string[]>([]);
+  // console.log('videoMultipleUri: ', videoMultipleUri);
+  // console.log('imageMultipleUri: ', imageMultipleUri);
   const [displayImages, setDisplayImages] = useState<IDisplayImage[]>([]);
   console.log('displayImages: ', displayImages);
+  const [displayVideos, setDisplayVideos] = useState<IDisplayImage[]>([]);
+  const [playVideoUrl, setPlayVideoUrl] = useState<string>('');
+  console.log('displayVideos: ', displayVideos);
+  console.log('displayImages: ', displayImages);
   const imageUriRef = useRef(imageUri);
+  const videoRef = React.useRef(null);
 
+  const playVideoFullScreen = async (fileUrl: string) => {
+    setPlayVideoUrl(fileUrl);
+    setTimeout(async () => {
+      if (videoRef) {
+        await videoRef.current.presentFullscreenPlayer();
+        await videoRef.current.playAsync()();
+      }
+    }, 100);
+  };
   const goBack = () => {
     navigation.navigate('Home');
   };
@@ -95,13 +115,19 @@ const CreatePost = ({ route }: any) => {
           </View>
           <TouchableOpacity
             disabled={
-              inputMessage.length > 0 || displayImages.length > 0 ? false : true
+              inputMessage.length > 0 ||
+              displayImages.length > 0 ||
+              displayVideos.length > 0
+                ? false
+                : true
             }
             onPress={handleCreatePost}
           >
             <Text
               style={
-                inputMessage.length > 0 || displayImages.length > 0
+                inputMessage.length > 0 ||
+                displayImages.length > 0 ||
+                displayVideos.length > 0
                   ? styles.postText
                   : [styles.postText, styles.disabled]
               }
@@ -115,24 +141,44 @@ const CreatePost = ({ route }: any) => {
     headerTitle: '',
   });
   const handleCreatePost = async () => {
-    const fileIdArr: (string | undefined)[] = displayImages.map(
-      (item) => item.fileId
-    );
+    if (displayImages.length > 0) {
+      const fileIdArr: (string | undefined)[] = displayImages.map(
+        (item) => item.fileId
+      );
 
-    const type: string = displayImages.length > 0 ? 'image' : 'text';
-    const response = await createPostToFeed(
-      'community',
-      communityId,
-      {
-        text: inputMessage,
-        fileIds: fileIdArr as string[],
-      },
-      type
-    );
-    if (response) {
-      navigation.navigate('Home');
+      const type: string = displayImages.length > 0 ? 'image' : 'text';
+      const response = await createPostToFeed(
+        'community',
+        communityId,
+        {
+          text: inputMessage,
+          fileIds: fileIdArr as string[],
+        },
+        type
+      );
+      if (response) {
+        navigation.navigate('Home');
+      }
+      console.log('response: ', response);
+    } else {
+      const fileIdArr: (string | undefined)[] = displayVideos.map(
+        (item) => item.fileId
+      );
+
+      const type: string = displayVideos.length > 0 ? 'video' : 'text';
+      const response = await createPostToFeed(
+        'community',
+        communityId,
+        {
+          text: inputMessage,
+          fileIds: fileIdArr as string[],
+        },
+        type
+      );
+      if (response) {
+        navigation.navigate('Home');
+      }
     }
-    console.log('response: ', response);
   };
   const uploadImageByCamera = useCallback(async () => {
     if (imageUri) {
@@ -252,6 +298,52 @@ const CreatePost = ({ route }: any) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imageMultipleUri]);
 
+  const processVideo = async () => {
+    if (videoMultipleUri.length > 0 && displayVideos.length === 0) {
+      const videosObject: IDisplayImage[] = await Promise.all(
+        videoMultipleUri.map(async (url: string) => {
+          const fileName: string = url.substring(url.lastIndexOf('/') + 1);
+          const thumbnail = await VideoThumbnails.getThumbnailAsync(url);
+          console.log('thumbnail: ', thumbnail);
+          return {
+            url: url,
+            fileName: fileName,
+            fileId: '',
+            isUploaded: false,
+            thumbNail: thumbnail.uri,
+          };
+        })
+      );
+      setDisplayVideos((prev) => [...prev, ...videosObject]);
+    } else if (videoMultipleUri.length > 0 && displayVideos.length > 0) {
+      const filteredDuplicate = videoMultipleUri.filter((url: string) => {
+        const fileName: string = url.substring(url.lastIndexOf('/') + 1);
+        return !displayVideos.some((item) => item.fileName === fileName);
+      });
+      console.log('filteredDuplicate: ', filteredDuplicate);
+      const videosObject: IDisplayImage[] = await Promise.all(
+        filteredDuplicate.map(async (url: string) => {
+          const fileName: string = url.substring(url.lastIndexOf('/') + 1);
+          const thumbnail = await VideoThumbnails.getThumbnailAsync(url);
+          console.log('thumbnail: ', thumbnail);
+          return {
+            url: url,
+            fileName: fileName,
+            fileId: '',
+            isUploaded: false,
+            thumbNail: thumbnail.uri,
+          };
+        })
+      );
+      setDisplayVideos((prev) => [...prev, ...videosObject]);
+    }
+  };
+  useEffect(() => {
+    processVideo();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [videoMultipleUri]);
+
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     if (Constants.appOwnership === 'expo') {
@@ -290,8 +382,15 @@ const CreatePost = ({ route }: any) => {
       console.log(result);
 
       if (!result.canceled && result.assets && result.assets.length > 0) {
-        const selectedImages = result.assets;
-        console.log('selectedImages: ', selectedImages);
+        console.log('result: ', result);
+        const selectedVideos = result.assets;
+        console.log('selectedVideos: ', selectedVideos);
+        const imageUriArr: string[] = selectedVideos.map((item) => item.uri);
+        console.log('imageUriArr: ', imageUriArr);
+        const videosArr = [...videoMultipleUri];
+        const totalVideos = videosArr.concat(imageUriArr);
+        setVideoMultipleUri(totalVideos);
+
         // const newRefs = selectedImages.map((image) => useRef(image.uri));
         // imageUriRefs.current = newRefs;
         // imageUriRefs.current.forEach((ref, index) => {
@@ -301,27 +400,23 @@ const CreatePost = ({ route }: any) => {
       }
     }
   };
-  const handleOnClose = (index: number, originalPath: string) => {
-    setImageMultipleUri((prevData) => {
-      const newData = prevData.filter((url: string) => url !== originalPath); // Filter out objects containing the desired value
-      return newData; // Update the state with the filtered array
-    });
+  const handleOnCloseImage = (originalPath: string) => {
     setDisplayImages((prevData) => {
-      const newData = [...prevData]; // Make a copy of the state array
-      newData.splice(index, 1); // Remove the element at the specified index
-      return newData; // Update the state with the modified array
-    });
-    setDisplayImages((prevData) => {
-      const fileName: string = originalPath.substring(
-        originalPath.lastIndexOf('/') + 1
-      );
       const newData = prevData.filter(
-        (item: IDisplayImage) => item.fileName !== fileName
+        (item: IDisplayImage) => item.url !== originalPath
       ); // Filter out objects containing the desired value
       return newData; // Remove the element at the specified index
     });
   };
-  const handleOnFinish = (
+  const handleOnCloseVideo = (originalPath: string) => {
+    setDisplayVideos((prevData) => {
+      const newData = prevData.filter(
+        (item: IDisplayImage) => item.url !== originalPath
+      ); // Filter out objects containing the desired value
+      return newData; // Remove the element at the specified index
+    });
+  };
+  const handleOnFinishImage = (
     fileId: string,
     fileUrl: string,
     fileName: string,
@@ -349,6 +444,36 @@ const CreatePost = ({ route }: any) => {
     //   return newData;
     // });
   };
+  const handleOnFinishVideo = (
+    fileId: string,
+    fileUrl: string,
+    fileName: string,
+    index: number,
+    originalPath: string,
+    thumbnail: string
+  ) => {
+    const imageObject: IDisplayImage = {
+      url: fileUrl,
+      fileId: fileId,
+      fileName: fileName,
+      isUploaded: true,
+      thumbNail: thumbnail,
+    };
+    setDisplayVideos((prevData) => {
+      const newData = [...prevData];
+      newData[index] = imageObject;
+      return newData;
+    });
+    setVideoMultipleUri((prevData) => {
+      const newData = prevData.filter((url: string) => url !== originalPath); // Filter out objects containing the desired value
+      return newData; // Update the state with the filtered array
+    });
+    // setImageMultipleUri((prevData) => {
+    //   const newData = [...prevData];
+    //   newData.splice(index, 1);
+    //   return newData;
+    // });
+  };
 
   return (
     <View style={styles.AllInputWrap}>
@@ -366,30 +491,56 @@ const CreatePost = ({ route }: any) => {
             onChangeText={(text) => setInputMessage(text)}
           />
           <View style={styles.imageContainer}>
-            <FlatList
-              data={displayImages}
-              renderItem={({ item, index }) => (
-                <LoadingImage
-                  source={item.url}
-                  onClose={handleOnClose}
-                  index={index}
-                  onLoadFinish={handleOnFinish}
-                  isUploaded={item.isUploaded}
-                  fileId={item.fileId}
-                />
-              )}
-              numColumns={3}
-            />
+            {displayImages.length > 0 && (
+              <FlatList
+                data={displayImages}
+                renderItem={({ item, index }) => (
+                  <LoadingImage
+                    source={item.url}
+                    onClose={handleOnCloseImage}
+                    index={index}
+                    onLoadFinish={handleOnFinishImage}
+                    isUploaded={item.isUploaded}
+                    fileId={item.fileId}
+                  />
+                )}
+                numColumns={3}
+              />
+            )}
+            {displayVideos.length > 0 && (
+              <FlatList
+                data={displayVideos}
+                renderItem={({ item, index }) => (
+                  <LoadingVideo
+                    source={item.url}
+                    onClose={handleOnCloseVideo}
+                    index={index}
+                    onLoadFinish={handleOnFinishVideo}
+                    isUploaded={item.isUploaded}
+                    fileId={item.fileId}
+                    thumbNail={item.thumbNail as string}
+                    onPlay={playVideoFullScreen}
+                  />
+                )}
+                numColumns={3}
+              />
+            )}
           </View>
         </ScrollView>
 
         <View style={styles.InputWrap}>
-          <TouchableOpacity onPress={pickCamera}>
+          <TouchableOpacity
+            disabled={displayVideos.length > 0 ? true : false}
+            onPress={pickCamera}
+          >
             <View style={styles.iconWrap}>
               <SvgXml xml={cameraIcon} width="27" height="27" />
             </View>
           </TouchableOpacity>
-          <TouchableOpacity onPress={pickImage}>
+          <TouchableOpacity
+            disabled={displayVideos.length > 0 ? true : false}
+            onPress={pickImage}
+          >
             <View style={styles.iconWrap}>
               <SvgXml xml={galleryIcon} width="27" height="27" />
             </View>
@@ -408,6 +559,15 @@ const CreatePost = ({ route }: any) => {
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
+      <View style={styles.videoContainer}>
+        <Video
+          source={{
+            uri: playVideoUrl,
+          }}
+          ref={videoRef}
+          resizeMode={ResizeMode.CONTAIN}
+        />
+      </View>
     </View>
   );
 };

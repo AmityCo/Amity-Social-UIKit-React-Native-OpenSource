@@ -83,4 +83,7 @@ export const styles = StyleSheet.create({
   disabled: {
     opacity: 0.3,
   },
+  videoContainer: {
+    display: 'none',
+  }
 });

@@ -92,6 +92,7 @@ const styles = StyleSheet.create({
   imageLargePost: {
     height: 350,
     borderRadius: 6,
+    resizeMode: 'cover',
   },
   imageMediumLargePost: {
     height: 235,

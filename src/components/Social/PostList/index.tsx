@@ -278,17 +278,17 @@ export default function PostList({
 
     const imageElement: ReactElement[] = mediaPosts.map(
       (item: string, index: number) => {
-        if (imagePosts.length === 1) {
+        if (mediaPosts.length === 1) {
           imageStyle = styles.imageLargePost;
           colStyle = styles.col6;
-        } else if (imagePosts.length === 2) {
+        } else if (mediaPosts.length === 2) {
           colStyle = styles.col3;
           if (index === 0) {
             imageStyle = [styles.imageLargePost, styles.imageMarginRight];
           } else {
             imageStyle = [styles.imageLargePost, styles.imageMarginLeft];
           }
-        } else if (imagePosts.length === 3) {
+        } else if (mediaPosts.length === 3) {
           switch (index) {
             case 0:
               colStyle = styles.col6;
@@ -424,6 +424,12 @@ export default function PostList({
       imagePosts: imagePosts,
     });
   }
+  const goToCommunity = () => {
+    navigation.navigate('CommunityHome', {
+      communityId: targetId,
+      communityName: communityName,
+    });
+  };
   return (
     <View key={postId} style={styles.postWrap}>
       <View style={styles.headerSection}>
@@ -451,7 +457,9 @@ export default function PostList({
                   width="8"
                   height="8"
                 />
-                <Text style={styles.headerText}>{communityName}</Text>
+                <TouchableWithoutFeedback onPress={goToCommunity}>
+                  <Text style={styles.headerText}>{communityName}</Text>
+                </TouchableWithoutFeedback>
               </>
             )}
           </View>

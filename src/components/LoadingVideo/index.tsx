@@ -1,12 +1,13 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useCallback, useEffect, useState } from 'react';
 import { View, Image, TouchableOpacity } from 'react-native';
 import * as Progress from 'react-native-progress';
 import { SvgXml } from 'react-native-svg';
 import {
   deleteAmityFile,
-  uploadImageFile,
+  uploadVideoFile,
 } from '../../providers/file-provider';
-import { closeIcon } from '../../svg/svg-xml-list';
+import { closeIcon, playBtn } from '../../svg/svg-xml-list';
 import { createStyles } from './styles';
 
 interface OverlayImageProps {
@@ -17,19 +18,24 @@ interface OverlayImageProps {
     fileUrl: string,
     fileName: string,
     index: number,
-    originalPath: string
+    originalPath: string,
+    thumbNail: string
   ) => void;
   index?: number;
   isUploaded: boolean;
   fileId?: string;
+  thumbNail: string;
+  onPlay: (fileUrl: string) => void;
 }
-const LoadingImage = ({
+const LoadingVideo = ({
   source,
   onClose,
   index,
   onLoadFinish,
   isUploaded = false,
-  fileId = '',
+  thumbNail,
+  onPlay,
+  fileId
 }: OverlayImageProps) => {
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
@@ -46,7 +52,7 @@ const LoadingImage = ({
   }, [progress]);
 
   const uploadFileToAmity = useCallback(async () => {
-    const file: Amity.File<any>[] = await uploadImageFile(
+    const file: Amity.File<any>[] = await uploadVideoFile(
       source,
       (percent: number) => {
         console.log('percent: ', percent);
@@ -54,26 +60,28 @@ const LoadingImage = ({
       }
     );
     if (file) {
+      console.log('file: ', file);
       setIsProcess(false);
       handleLoadEnd();
       onLoadFinish &&
         onLoadFinish(
           file[0]?.fileId as string,
-          (file[0]?.fileUrl + '?size=medium') as string,
+          file[0]?.fileUrl as string,
           file[0]?.attributes.name as string,
           index as number,
-          source
+          source,
+          thumbNail
         );
-      console.log('file: ', file);
     }
-  }, [index, onLoadFinish, source]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [source]);
 
   const handleDelete = async () => {
     console.log('fileId: ', fileId);
     if (fileId) {
-      onClose && onClose(source);
-      const isDeleted = await deleteAmityFile(fileId);
+      const isDeleted = await deleteAmityFile(fileId as string);
       console.log('isDeleted: ', isDeleted);
+      onClose && onClose(source);
     }
   };
   useEffect(() => {
@@ -82,13 +90,21 @@ const LoadingImage = ({
     } else {
       uploadFileToAmity();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isUploaded, source]);
-
+  }, [fileId, isUploaded, source]);
+  const handleOnPlay = () => {
+    console.log('handleOnPlay');
+    onPlay && onPlay(source);
+  };
   return (
     <View style={styles.container}>
+      {!loading && (
+        <TouchableOpacity style={styles.playButton} onPress={handleOnPlay}>
+          <SvgXml xml={playBtn} width="50" height="50" />
+        </TouchableOpacity>
+      )}
+
       <Image
-        source={{ uri: source }}
+        source={{ uri: thumbNail }}
         style={[
           styles.image,
           loading ? styles.loadingImage : styles.loadedImage,
@@ -116,4 +132,4 @@ const LoadingImage = ({
     </View>
   );
 };
-export default LoadingImage;
+export default LoadingVideo;

@@ -120,6 +120,19 @@ export async function createPostToFeed(
     };
     postParam = newPostParam;
 
+  } else if (postType === 'video') {
+    const formattedFileIds: { type: string; fileId: string }[] =
+      content.fileIds.map((id) => {
+        return { type: PostContentType.VIDEO, fileId: id };
+      });
+    const newPostParam = {
+      data: {
+        text: content.text,
+      },
+      attachments: formattedFileIds,
+      ...postParam,
+    };
+    postParam = newPostParam;
   }
   console.log('postParam: ', postParam);
   const createPostObject: Promise<Amity.Post<any>> = new Promise(

@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@amityco/ts-sdk@^6.4.2":
-  version "6.4.2"
-  resolved "https://registry.yarnpkg.com/@amityco/ts-sdk/-/ts-sdk-6.4.2.tgz#23256a3d968df13021e6435180bd72047d833b1e"
-  integrity sha512-tKy4G2X9Afi8D5IWi/Sqp21E+5mB0d9jqS468BunjFGlxC1MmsLs3i4uPQ/FDXO0zQu1MyXNOdiFSzxM5TfmSg==
+"@amityco/ts-sdk@^6.4.3":
+  version "6.4.3"
+  resolved "https://registry.yarnpkg.com/@amityco/ts-sdk/-/ts-sdk-6.4.3.tgz#f5366e96e4faf1551545f4ed75d1065f7710f251"
+  integrity sha512-JHvucjVnCLBIThQYK0Sn1aPuh/PzieB3ofZ4Dq2DsdapGXH5fADJsuhkGDf+JsLbKN8VSygIfr/kjdUxO6zuUw==
   dependencies:
     "@react-native-async-storage/async-storage" "^1.17.7"
     agentkeepalive "^4.2.1"
@@ -4966,6 +4966,11 @@ expo-modules-core@^1.2.6:
     compare-versions "^3.4.0"
     invariant "^2.2.4"
 
+expo-video-thumbnails@^7.2.1:
+  version "7.2.1"
+  resolved "https://registry.yarnpkg.com/expo-video-thumbnails/-/expo-video-thumbnails-7.2.1.tgz#aa95cef4c1944720ddc75a86f30c6f0f401177ec"
+  integrity sha512-KJCuSpKl/INhZ4QPy3pKFffUFVwWuu/TnSE8riIMB2Xx1q8a2QlOGiCgqUEL8UouQqmEeddOMkRJav9UXXG4jQ==
+
 extend-shallow@^2.0.1:
   version "2.0.1"
   resolved "https://registry.npmjs.org/extend-shallow/-/extend-shallow-2.0.1.tgz"
@@ -8829,7 +8834,7 @@ prompts@^2.0.1, prompts@^2.4.0, prompts@^2.4.2:
     kleur "^3.0.3"
     sisteransi "^1.0.5"
 
-prop-types@*, prop-types@^15.7.2, prop-types@^15.8.1:
+prop-types@*, prop-types@^15.7.2, prop-types@^15.8.0, prop-types@^15.8.1:
   version "15.8.1"
   resolved "https://registry.npmjs.org/prop-types/-/prop-types-15.8.1.tgz"
   integrity sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
@@ -9020,6 +9025,11 @@ react-native-codegen@^0.71.5:
     jscodeshift "^0.13.1"
     nullthrows "^1.1.1"
 
+react-native-create-thumbnail@^1.6.4:
+  version "1.6.4"
+  resolved "https://registry.yarnpkg.com/react-native-create-thumbnail/-/react-native-create-thumbnail-1.6.4.tgz#90f5b0a587de6e3738a7632fe3d9a9624ed83581"
+  integrity sha512-JWuKXswDXtqUPfuqh6rjCVMvTSSG3kUtwvSK/YdaNU0i+nZKxeqHmt/CO2+TyI/WSUFynGVmWT1xOHhCZAFsRQ==
+
 react-native-gradle-plugin@^0.71.16:
   version "0.71.17"
   resolved "https://registry.npmjs.org/react-native-gradle-plugin/-/react-native-gradle-plugin-0.71.17.tgz"
@@ -9030,10 +9040,24 @@ react-native-image-picker@5.1.0:
   resolved "https://registry.npmjs.org/react-native-image-picker/-/react-native-image-picker-5.1.0.tgz"
   integrity sha512-p506trG3PDSrdm+Yd0QolsnR3FtSe37gkP7OVsMa9UYwn1teaLGzhmx3QMZ4ZBwdV1AKBUFA5HF1ECAVSDTdQQ==
 
+react-native-image-progress@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/react-native-image-progress/-/react-native-image-progress-1.2.0.tgz#81ff1b33e33c541764b9e4aebfa17b1c1a108d04"
+  integrity sha512-RkQydqw3p0i30vHRFFhuGNT/BXWUDJtBR5/hxJbQsfI/Ziipjm5M64bpw3VQqxUcZC8HLLg+ZQtBq1mtUlWjww==
+  dependencies:
+    prop-types "^15.8.0"
+
 react-native-pager-view@6.1.4:
   version "6.1.4"
   resolved "https://registry.npmjs.org/react-native-pager-view/-/react-native-pager-view-6.1.4.tgz"
   integrity sha512-fmTwgGwPxGCBusKAq7gHzm+s1Yp0qh5rKPoQszaCuxrb+76KgK4Qe82jJNPUp2xTZOKSw+FbJU2QahF8ncTl+w==
+
+react-native-progress@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-progress/-/react-native-progress-5.0.0.tgz#f5ac6ceaeee27f184c660b00f29419e82a9d0ab0"
+  integrity sha512-KjnGIt3r9i5Kn2biOD9fXLJocf0bwxPRxOyAgXEnZTJQU2O+HyzgGFRCbM5h3izm9kKIkSc1txh8aGmMafCD9A==
+  dependencies:
+    prop-types "^15.7.2"
 
 react-native-safe-area-context@*:
   version "4.5.1"
