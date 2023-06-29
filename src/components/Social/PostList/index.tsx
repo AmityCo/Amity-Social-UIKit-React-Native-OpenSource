@@ -123,6 +123,7 @@ export default function PostList({
     const response = await Promise.all(
       childrenPosts.map(async (id: string) => {
         const { data: post } = await getPostById(id);
+        console.log('post===: ', post);
         return { dataType: post.dataType, data: post.data };
       })
     );

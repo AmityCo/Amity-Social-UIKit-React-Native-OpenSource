@@ -1,14 +1,42 @@
 import { CommunityRepository } from '@amityco/ts-sdk';
-import React, { useEffect, useState } from 'react';
-import { View, Image, Text, TouchableOpacity } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  View,
+  Image,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
+} from 'react-native';
+import CustomTab from '../../../components/CustomTab';
 import CloseButton from '../../../components/BackButton';
 import { styles } from './styles';
+import Feed from '../Feed';
+
+export type FeedRefType = {
+  handleLoadMore: () => void;
+};
 
 export default function CommunityHome({ navigation, route }: any) {
   const { communityId, communityName } = route.params;
   const [isJoin, setIsJoin] = useState(true);
   const [communityData, setCommunityData] =
     useState<Amity.LiveObject<Amity.Community>>();
+  const feedRef = useRef<FeedRefType>();
+  const scrollViewRef = useRef(null);
+
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+
+    const isScrollEndReached =
+      layoutMeasurement.height + contentOffset.y + 200 >= contentSize.height;
+
+    if (isScrollEndReached) {
+      console.log('ending');
+      triggerLoadMoreFunction();
+    }
+  };
   React.useLayoutEffect(() => {
     // Set the headerRight component to a TouchableOpacity
     navigation.setOptions({
@@ -39,6 +67,12 @@ export default function CommunityHome({ navigation, route }: any) {
       communityName: communityName,
     });
   };
+  function triggerLoadMoreFunction() {
+    console.log('triggerLoadMoreFunction: ', triggerLoadMoreFunction);
+    if (feedRef.current) {
+      feedRef.current.handleLoadMore(); // Call the function inside the child component
+    }
+  }
   useEffect(() => {
     const loadCommunity = async () => {
       try {
@@ -60,7 +94,6 @@ export default function CommunityHome({ navigation, route }: any) {
   }, [communityId]);
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      console.log("hahahahaha ");
       CommunityRepository.getCommunity(
         communityId,
         // setCommunityData
@@ -98,8 +131,17 @@ export default function CommunityHome({ navigation, route }: any) {
       </View>
     );
   };
+
+  const handleTab = (index: number) => {
+    console.log('index: ', index);
+  };
   return (
-    <View style={styles.container}>
+    <ScrollView
+      ref={scrollViewRef}
+      onScroll={handleScroll}
+      scrollEventThrottle={20}
+      style={styles.container}
+    >
       <View style={styles.imageContainer}>
         <Image
           style={styles.image}
@@ -111,6 +153,7 @@ export default function CommunityHome({ navigation, route }: any) {
               : require('../../../../assets/icon/Placeholder.png')
           }
         />
+        <View style={styles.darkOverlay} />
         <View style={styles.overlay}>
           <Text style={styles.overlayCommunityText}>
             {communityData?.data.displayName}
@@ -141,6 +184,8 @@ export default function CommunityHome({ navigation, route }: any) {
         {communityData?.data.description}
       </Text>
       {isJoin === false ? joinCommunityButton() : <View />}
-    </View>
+      <CustomTab tabName={['Timeline', 'Gallery']} onTabChange={handleTab} />
+      <Feed targetType="community" targetId={communityId} ref={feedRef} />
+    </ScrollView>
   );
 }

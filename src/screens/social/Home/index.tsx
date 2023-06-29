@@ -10,6 +10,8 @@ import {
   Modal,
   TouchableWithoutFeedback,
   Pressable,
+  StyleProp,
+  ImageStyle,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { postIcon, postIconOutlined } from '../../../svg/svg-xml-list';
@@ -21,13 +23,13 @@ import styles from './styles';
 import FullScreenModal from '../../../components/FullScreenModal';
 import { getAmityUser } from '../../../providers/user-provider';
 import type { UserInterface } from 'src/types/user.interface';
+import CustomTab from '../../../components/CustomTab';
 
 export default function Home() {
   // const { t, i18n } = useTranslation();
   const { client } = useAuth();
 
   const [activeTab, setActiveTab] = useState(1);
-  const [indicatorAnim] = useState(new Animated.Value(0));
   const [isVisible, setIsVisible] = useState(false);
 
   const [createPostModalVisible, setCreatePostModalVisible] = useState(false);
@@ -63,56 +65,27 @@ export default function Home() {
     }
   }, [isVisible, slideAnimation]);
 
-  const handleTabPress = (tabIndex: number) => {
-    setActiveTab(tabIndex);
-    Animated.timing(indicatorAnim, {
-      toValue: tabIndex,
-      duration: 100,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const getIndicatorPosition = () => {
-    const tabWidth = 100;
-    const translateX = indicatorAnim.interpolate({
-      inputRange: [0, 1, 2],
-      outputRange: [10, 10, 9 + tabWidth],
-    });
-    return { transform: [{ translateX }] };
-  };
-
-  const renderTabView = (): ReactElement => {
+  const renderTabComponent = () => {
+    let globalFeedStyle: StyleProp<ImageStyle> | StyleProp<ImageStyle>[] =
+      styles.visible;
+    styles.visible;
+    let exploreStyle: StyleProp<ImageStyle> | StyleProp<ImageStyle>[] =
+      styles.invisible;
+    styles.visible;
+    if (activeTab === 2) {
+      globalFeedStyle = styles.invisible;
+      exploreStyle = styles.visible;
+    }
     return (
-      <View style={styles.container}>
-        <TouchableOpacity onPress={() => handleTabPress(1)}>
-          <Text
-            style={[styles.tabText, activeTab === 1 && styles.activeTabText]}
-          >
-            Newsfeed
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => handleTabPress(2)}>
-          <Text
-            style={[styles.tabText, activeTab === 2 && styles.activeTabText]}
-          >
-            Explore
-          </Text>
-        </TouchableOpacity>
-        <Animated.View style={[styles.indicator, getIndicatorPosition()]} />
+      <View>
+        <View style={globalFeedStyle}>
+          <GlobalFeed />
+        </View>
+        <View style={exploreStyle}>
+          <Explore />
+        </View>
       </View>
     );
-  };
-
-  const renderTabComponent = () => {
-    switch (activeTab) {
-      case 1:
-        return <GlobalFeed />;
-      case 2:
-        return <Explore />;
-
-      default:
-        <GlobalFeed />;
-    }
   };
   const modalStyle = {
     transform: [
@@ -124,10 +97,16 @@ export default function Home() {
       },
     ],
   };
-
+  const handleTabChange = (index: number) => {
+    setActiveTab(index);
+  };
   return (
     <View>
-      {renderTabView()}
+      {/* {renderTabView()} */}
+      <CustomTab
+        tabName={['Newsfeed', 'Explore']}
+        onTabChange={handleTabChange}
+      />
       {renderTabComponent()}
       <FloatingButton onPress={openModal} />
 

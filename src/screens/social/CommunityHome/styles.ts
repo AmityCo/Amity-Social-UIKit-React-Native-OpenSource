@@ -36,11 +36,15 @@ export const styles = StyleSheet.create({
   },
   imageContainer: {
     width: '100%',
-    height: '35%',
+    height: 260,
   },
   image: {
     width: '100%',
     height: '100%',
+  },
+  darkOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.0)', // Adjust the alpha value for darkness
   },
   overlay: {
     position: 'absolute',
@@ -55,6 +59,9 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 20,
     marginBottom: 5,
+    textShadowColor: 'black',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 1,
   },
   joinIcon: {
     width: 18,
