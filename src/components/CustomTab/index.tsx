@@ -25,7 +25,7 @@ const CustomTab = ({ tabName, onTabChange }: ICustomTab): ReactElement => {
     const tabWidth = 102;
     const translateX = indicatorAnim.interpolate({
       inputRange: [0, 1, 2],
-      outputRange: [10, 10, 8 + tabWidth],
+      outputRange: [10, 12, 8 + tabWidth],
     });
     return { transform: [{ translateX }] };
   };

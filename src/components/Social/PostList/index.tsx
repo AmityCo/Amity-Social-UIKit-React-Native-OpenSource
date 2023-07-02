@@ -3,6 +3,7 @@ import React, {
   ReactNode,
   useCallback,
   useEffect,
+  useLayoutEffect,
   useState,
 } from 'react';
 // import { useTranslation } from 'react-i18next';
@@ -123,7 +124,6 @@ export default function PostList({
     const response = await Promise.all(
       childrenPosts.map(async (id: string) => {
         const { data: post } = await getPostById(id);
-        console.log('post===: ', post);
         return { dataType: post.dataType, data: post.data };
       })
     );
@@ -152,7 +152,7 @@ export default function PostList({
     });
   }, [childrenPosts]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (myReactions.length > 0 && myReactions.includes('like')) {
       setIsLike(true);
     }
@@ -165,14 +165,7 @@ export default function PostList({
     if (childrenPosts.length > 0) {
       getPostInfo();
     }
-  }, [
-    myReactions,
-    reactionCount,
-    targetType,
-    targetId,
-    childrenPosts,
-    getPostInfo,
-  ]);
+  }, []);
 
   function renderLikeText(likeNumber: number | undefined): string {
     if (!likeNumber) {

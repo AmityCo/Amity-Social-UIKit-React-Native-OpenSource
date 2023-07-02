@@ -17,8 +17,8 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: '#333',
-    marginHorizontal: 12,
-    minWidth: 78,
+    marginHorizontal: 15,
+    minWidth: 60,
     textAlign: 'center',
   },
   activeTabText: {
@@ -27,7 +27,7 @@ export const styles = StyleSheet.create({
   indicator: {
     position: 'absolute',
     bottom: 0,
-    width: 90,
+    width: 85,
     height: 2,
     backgroundColor: '#1054DE',
   },

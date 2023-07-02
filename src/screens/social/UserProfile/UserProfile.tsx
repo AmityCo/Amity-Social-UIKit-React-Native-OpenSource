@@ -1,11 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Image } from 'react-native';
+import React, { useState, useEffect, useRef, MutableRefObject } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
+  ScrollView,
+} from 'react-native';
 import { styles } from './styles';
 import { UserRepository } from '@amityco/ts-sdk';
 import CloseButton from '../../../components/BackButton';
 import { follow } from '@amityco/ts-sdk/dist/userRepository/relationship';
 import { LoadingOverlay } from '../../../components/LoadingOverlay/index';
 import LoadingIndicator from '../../../components/LoadingIndicator/index';
+import Feed from '../Feed';
+import CustomTab from '../../../components/CustomTab';
+import type { FeedRefType } from '../CommunityHome';
 
 export default function UserProfile({ navigation, route }: any) {
   const { userId } = route.params;
@@ -14,6 +25,9 @@ export default function UserProfile({ navigation, route }: any) {
   const [followingCount, setFollowingCount] = useState<number>(0);
   const [followStatus, setFollowStatus] = useState<string>('loading');
   const [showLoadingIndicator, setShowLoadingIndicator] = useState(false);
+  const feedRef: MutableRefObject<FeedRefType | null> = useRef<FeedRefType | null>(null);
+  const scrollViewRef = useRef(null);
+
   const avatarFileURL = (fileId: string) => {
     return `https://api.amity.co/api/v3/files/${fileId}/download?size=medium`;
   };
@@ -43,8 +57,7 @@ export default function UserProfile({ navigation, route }: any) {
             // Handle button press here
             navigation.navigate('UserProfileSetting', {
               userId: userId,
-              follow:
-                followStatus !== 'loading' ? followStatus : 'loading',
+              follow: followStatus !== 'loading' ? followStatus : 'loading',
             });
           }}
         >
@@ -153,8 +166,32 @@ export default function UserProfile({ navigation, route }: any) {
     );
   };
 
+  const handleTab = (index: number) => {
+    console.log('index: ', index);
+  };
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+
+    const isScrollEndReached =
+      layoutMeasurement.height + contentOffset.y + 200 >= contentSize.height;
+
+    if (isScrollEndReached) {
+      console.log('ending');
+      triggerLoadMoreFunction();
+    }
+  };
+  function triggerLoadMoreFunction() {
+    console.log('triggerLoadMoreFunction: ', triggerLoadMoreFunction);
+    if (feedRef.current) {
+      feedRef.current.handleLoadMore(); // Call the function inside the child component
+    }
+  }
   return (
-    <View style={styles.container}>
+    <ScrollView
+      ref={scrollViewRef}
+      onScroll={handleScroll}
+      scrollEventThrottle={20}
+    >
       <View>
         <View style={styles.userDetail}>
           <Image
@@ -198,12 +235,14 @@ export default function UserProfile({ navigation, route }: any) {
           <View />
         )}
       </View>
+      <CustomTab tabName={['Timeline', 'Gallery']} onTabChange={handleTab} />
+      <Feed targetType="user" targetId={userId} ref={feedRef} />
       {/* <View style={styles.loadingIndicator}>
         <LoadingOverlay
           isLoading={showLoadingIndicator}
           loadingText="Loading..."
         />
       </View> */}
-    </View>
+    </ScrollView>
   );
 }

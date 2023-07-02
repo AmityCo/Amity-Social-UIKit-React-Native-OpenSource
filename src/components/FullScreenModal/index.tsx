@@ -91,7 +91,10 @@ const FullScreenModal = ({ visible, onClose, userId, onSelect }: IModal) => {
   }, []);
   const renderMyTimeLine = () => {
     return (
-      <View style={styles.rowContainerMyTimeLine}>
+      <TouchableOpacity
+        onPress={() => onSelectFeed(userId as string, 'My Timeline', 'user')}
+        style={styles.rowContainerMyTimeLine}
+      >
         <Image
           style={styles.avatar}
           source={
@@ -103,20 +106,27 @@ const FullScreenModal = ({ visible, onClose, userId, onSelect }: IModal) => {
           }
         />
         <Text style={styles.communityText}>My Timeline</Text>
-      </View>
+      </TouchableOpacity>
     );
   };
-  const onPressCommunity = (communityId: string, communityName: string) => {
+  const onSelectFeed = (
+    targetId: string,
+    targetName: string,
+    targetType: string
+  ) => {
     onSelect && onSelect();
     navigation.navigate('CreatePost', {
-      communityId: communityId,
-      communityName: communityName,
+      targetId: targetId,
+      targetName: targetName,
+      targetType: targetType,
     });
   };
   const renderCommunity = ({ item }: { item: Amity.Community }) => {
     return (
       <TouchableOpacity
-        onPress={() => onPressCommunity(item.communityId, item.displayName)}
+        onPress={() =>
+          onSelectFeed(item.communityId, item.displayName, 'community')
+        }
         style={styles.rowContainer}
       >
         <Image

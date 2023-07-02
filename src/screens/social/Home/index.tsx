@@ -80,6 +80,7 @@ export default function Home() {
       <View>
         <View style={globalFeedStyle}>
           <GlobalFeed />
+          <FloatingButton onPress={openModal} />
         </View>
         <View style={exploreStyle}>
           <Explore />
@@ -108,7 +109,7 @@ export default function Home() {
         onTabChange={handleTabChange}
       />
       {renderTabComponent()}
-      <FloatingButton onPress={openModal} />
+  
 
       <Modal
         animationType="fade"

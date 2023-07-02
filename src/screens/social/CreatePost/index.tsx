@@ -73,7 +73,7 @@ export interface IDisplayImage {
   thumbNail?: string;
 }
 const CreatePost = ({ route }: any) => {
-  const { communityId, communityName } = route.params;
+  const { targetId, targetType, targetName } = route.params;
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const [inputMessage, setInputMessage] = useState('');
   const [imageUri, setImageUri] = useState<string | undefined>();
@@ -94,8 +94,10 @@ const CreatePost = ({ route }: any) => {
     setPlayVideoUrl(fileUrl);
     setTimeout(async () => {
       if (videoRef) {
-        await videoRef.current.presentFullscreenPlayer();
-        await videoRef.current.playAsync()();
+        await (
+          videoRef as React.MutableRefObject<any>
+        ).current.presentFullscreenPlayer();
+        await (videoRef as React.MutableRefObject<any>).current.playAsync()();
       }
     }, 100);
   };
@@ -111,7 +113,7 @@ const CreatePost = ({ route }: any) => {
             <SvgXml xml={closeIcon} width="17" height="17" />
           </TouchableOpacity>
           <View style={styles.headerTextContainer}>
-            <Text style={styles.headerText}>{communityName}</Text>
+            <Text style={styles.headerText}>{targetName}</Text>
           </View>
           <TouchableOpacity
             disabled={
@@ -148,8 +150,8 @@ const CreatePost = ({ route }: any) => {
 
       const type: string = displayImages.length > 0 ? 'image' : 'text';
       const response = await createPostToFeed(
-        'community',
-        communityId,
+        targetType,
+        targetId,
         {
           text: inputMessage,
           fileIds: fileIdArr as string[],
@@ -167,8 +169,8 @@ const CreatePost = ({ route }: any) => {
 
       const type: string = displayVideos.length > 0 ? 'video' : 'text';
       const response = await createPostToFeed(
-        'community',
-        communityId,
+        targetType,
+        targetId,
         {
           text: inputMessage,
           fileIds: fileIdArr as string[],

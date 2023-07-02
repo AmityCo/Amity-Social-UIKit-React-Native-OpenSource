@@ -1,5 +1,5 @@
 import { CommunityRepository } from '@amityco/ts-sdk';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { MutableRefObject, useEffect, useRef, useState } from 'react';
 import {
   View,
   Image,
@@ -23,7 +23,8 @@ export default function CommunityHome({ navigation, route }: any) {
   const [isJoin, setIsJoin] = useState(true);
   const [communityData, setCommunityData] =
     useState<Amity.LiveObject<Amity.Community>>();
-  const feedRef = useRef<FeedRefType>();
+  const feedRef: MutableRefObject<FeedRefType | null> =
+    useRef<FeedRefType | null>(null);
   const scrollViewRef = useRef(null);
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {

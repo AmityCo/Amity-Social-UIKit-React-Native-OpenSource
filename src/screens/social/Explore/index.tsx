@@ -113,88 +113,87 @@ export default function Explore() {
   };
 
   return (
-    <ScrollView>
-      <View style={styles.container}>
-        <View style={styles.recommendContainer}>
-          <Text style={styles.title}>Recommended for you</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {recommendCommunityList.map((community) => (
-              <TouchableOpacity
-                style={styles.card}
-                onPress={() =>
-                  handleCommunityClick(
-                    community.communityId,
-                    community.displayName
-                  )
+    <ScrollView style={styles.container}>
+      <View style={styles.recommendContainer}>
+        <Text style={styles.title}>Recommended for you</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {recommendCommunityList.map((community) => (
+            <TouchableOpacity
+              style={styles.card}
+              onPress={() =>
+                handleCommunityClick(
+                  community.communityId,
+                  community.displayName
+                )
+              }
+            >
+              <Image
+                style={styles.avatar}
+                source={{
+                  uri: `https://api.amity.co/api/v3/files/${community.avatarFileId}/download`,
+                }}
+              />
+              <Text style={styles.name}>{community.displayName}</Text>
+              <Text style={styles.recommendSubDetail}>
+                {community.membersCount} members
+              </Text>
+              <Text style={styles.bio}>{community.description}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
+      <View style={styles.trendingContainer}>
+        <Text style={styles.title}>Today's trending</Text>
+        <View>
+          {trendingCommunityList.map((community, index) => (
+            <TouchableOpacity
+              style={styles.itemContainer}
+              onPress={() =>
+                handleCommunityClick(
+                  community.communityId,
+                  community.displayName
+                )
+              }
+            >
+              <Image
+                style={styles.avatar}
+                source={
+                  community.avatarFileId
+                    ? {
+                        uri: `https://api.amity.co/api/v3/files/${community.avatarFileId}/download`,
+                      }
+                    : require('../../../../assets/icon/Placeholder.png')
                 }
-              >
-                <Image
-                  style={styles.avatar}
-                  source={{
-                    uri: `https://api.amity.co/api/v3/files/${community.avatarFileId}/download`,
-                  }}
-                />
-                <Text style={styles.name}>{community.displayName}</Text>
-                <Text style={styles.recommendSubDetail}>
-                  {community.membersCount} members
-                </Text>
-                <Text style={styles.bio}>{community.description}</Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-        </View>
-        <View style={styles.trendingContainer}>
-          <Text style={styles.title}>Today's trending</Text>
-          <View>
-            {trendingCommunityList.map((community, index) => (
-              <TouchableOpacity
-                style={styles.itemContainer}
-                onPress={() =>
-                  handleCommunityClick(
-                    community.communityId,
-                    community.displayName
-                  )
-                }
-              >
-                <Image
-                  style={styles.avatar}
-                  source={
-                    community.avatarFileId
-                      ? {
-                          uri: `https://api.amity.co/api/v3/files/${community.avatarFileId}/download`,
-                        }
-                      : require('../../../../assets/icon/Placeholder.png')
-                  }
-                />
-                <View style={styles.trendingTextContainer}>
-                  <Text style={styles.number}>{index + 1}</Text>
-                  <View style={styles.memberContainer}>
-                    <View style={styles.memberTextContainer}>
-                      <Text style={styles.memberText}>
-                        {community.displayName}
-                      </Text>
-                      <Text style={styles.memberCount}>
-                        {community.membersCount} members
-                      </Text>
-                    </View>
+              />
+              <View style={styles.trendingTextContainer}>
+                <Text style={styles.number}>{index + 1}</Text>
+                <View style={styles.memberContainer}>
+                  <View style={styles.memberTextContainer}>
+                    <Text style={styles.memberText}>
+                      {community.displayName}
+                    </Text>
+                    <Text style={styles.memberCount}>
+                      {community.membersCount} members
+                    </Text>
                   </View>
                 </View>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
-        <View style={styles.categoriesContainer}>
-          <View style={styles.titleContainer}>
-            <Text style={styles.titleText}>Categories</Text>
-            <TouchableOpacity onPress={handleCategoryListClick}>
-              <Image
-                source={require('../../../../assets/icon/arrowRight.png')}
-                style={styles.arrowIcon}
-              />
+              </View>
             </TouchableOpacity>
-          </View>
-          {categoryListComponent()}
-          {/* {categoryList
+          ))}
+        </View>
+      </View>
+      <View style={styles.categoriesContainer}>
+        <View style={styles.titleContainer}>
+          <Text style={styles.titleText}>Categories</Text>
+          <TouchableOpacity onPress={handleCategoryListClick}>
+            <Image
+              source={require('../../../../assets/icon/arrowRight.png')}
+              style={styles.arrowIcon}
+            />
+          </TouchableOpacity>
+        </View>
+        {categoryListComponent()}
+        {/* {categoryList
             .filter((_, i) => i % 2 === 0)
             .map((category, index) => (
               <View style={styles.rowContainer} key={index}>
@@ -247,7 +246,6 @@ export default function Explore() {
                 )}
               </View>
             ))} */}
-        </View>
       </View>
     </ScrollView>
   );

@@ -32,6 +32,8 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
   const [postData, setPostData] =
     useState<Amity.LiveCollection<Amity.Post<any>>>();
   const [postList, setPostList] = useState<IPost[]>([]);
+  console.log('postList: ', postList);
+  console.log('postList: ', postList.length);
   // console.log('postList: ', postList);
 
   const {
@@ -42,7 +44,7 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
     error,
   } = postData ?? {};
   // console.log('nextPage: ', nextPage);
-  console.log('posts: ', posts);
+  // console.log('posts: ', posts);
   const flatListRef = useRef(null);
   async function getFeed(): Promise<void> {
     const unsubscribe = PostRepository.getPosts(
@@ -96,14 +98,14 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
           };
         })
       );
-      setPostList((prev) => [...prev, ...formattedPostList]);
+      setPostList([...formattedPostList]);
     }
   }, [posts]);
   useEffect(() => {
     if (posts) {
       getPostList();
     }
-  }, [getPostList, posts]);
+  }, [posts]);
 
   useImperativeHandle(ref, () => ({
     handleLoadMore,
