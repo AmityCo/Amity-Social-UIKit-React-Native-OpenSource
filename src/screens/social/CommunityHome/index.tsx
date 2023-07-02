@@ -1,3 +1,5 @@
+/* eslint-disable react/no-unstable-nested-components */
+/* eslint-disable react-hooks/exhaustive-deps */
 import { CommunityRepository } from '@amityco/ts-sdk';
 import React, { MutableRefObject, useEffect, useRef, useState } from 'react';
 import {
