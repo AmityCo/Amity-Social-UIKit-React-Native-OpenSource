@@ -14,7 +14,6 @@ import {
 import { SvgXml } from 'react-native-svg';
 import { getAmityUser } from '../../providers/user-provider';
 import type { UserInterface } from 'src/types/user.interface';
-import useAuth from '../../hooks/useAuth';
 import { closeIcon } from '../../svg/svg-xml-list';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';

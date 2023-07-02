@@ -1,10 +1,4 @@
-import {
-  runQuery,
-  createQuery,
-  createImage,
-  FileRepository,
-  ContentFeedType,
-} from '@amityco/ts-sdk';
+import { FileRepository, ContentFeedType } from '@amityco/ts-sdk';
 
 import { Platform } from 'react-native';
 

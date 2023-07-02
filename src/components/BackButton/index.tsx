@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Image } from 'react-native';
 interface IBackBtn {
-  onPress: () => any;
+  onPress?: () => any;
 }
 export default function BackButton({ onPress }: IBackBtn) {
   const navigation = useNavigation<NativeStackNavigationProp<any>>();

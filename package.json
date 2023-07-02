@@ -171,7 +171,6 @@
     "react-i18next": "12.1.5",
     "react-native-create-thumbnail": "^1.6.4",
     "react-native-image-picker": "5.1.0",
-    "react-native-image-progress": "^1.2.0",
     "react-native-pager-view": "6.1.4",
     "react-native-progress": "^5.0.0",
     "react-native-safe-area-context": "*",

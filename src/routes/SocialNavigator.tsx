@@ -6,18 +6,18 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import type { RootStackParamList } from './RouteParamList';
 import useAuth from '../hooks/useAuth';
-import Explore from '../screens/Social/Explore';
-import CategoryList from '../screens/Social/CategorytList';
-import CommunityList from '../screens/Social/CommunityList';
-import CommunityHome from '../screens/Social/CommunityHome/index';
-import { CommunitySetting } from '../screens/Social/CommunitySetting/index';
-import CommunityMemberDetail from '../screens/Social/CommunityMemberDetail/CommunityMemberDetail';
-import Home from '../screens/Social/Home';
-import PostDetail from '../screens/Social/PostDetail';
-import CreatePost from '../screens/Social/CreatePost';
-import UserProfile from '../screens/Social/UserProfile/UserProfile';
-import { EditProfile } from '../screens/Social/EditProfile/EditProfile';
-import UserProfileSetting from '../screens/Social/UserProfileSetting/UserProfileSetting';
+import Explore from '../screens/Explore';
+import CategoryList from '../screens/CategorytList';
+import CommunityList from '../screens/CommunityList';
+import CommunityHome from '../screens/CommunityHome/index';
+import { CommunitySetting } from '../screens/CommunitySetting/index';
+import CommunityMemberDetail from '../screens/CommunityMemberDetail/CommunityMemberDetail';
+import Home from '../screens/Home';
+import PostDetail from '../screens/PostDetail';
+import CreatePost from '../screens/CreatePost';
+import UserProfile from '../screens/UserProfile/UserProfile';
+import { EditProfile } from '../screens/EditProfile/EditProfile';
+import UserProfileSetting from '../screens/UserProfileSetting/UserProfileSetting';
 
 export default function SocialNavigator() {
   const Stack = createNativeStackNavigator<RootStackParamList>();

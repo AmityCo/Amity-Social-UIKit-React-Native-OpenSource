@@ -1,22 +1,7 @@
-import React, {
-  ReactElement,
-  ReactNode,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 // import { useTranslation } from 'react-i18next';
 
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Image,
-  TouchableWithoutFeedback,
-  StyleProp,
-  ImageStyle,
-  FlatList,
-} from 'react-native';
+import { View, Text, TouchableOpacity, Image, FlatList } from 'react-native';
 import styles from './styles';
 import { SvgXml } from 'react-native-svg';
 import {

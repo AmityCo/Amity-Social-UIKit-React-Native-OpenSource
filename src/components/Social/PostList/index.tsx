@@ -2,7 +2,6 @@ import React, {
   ReactElement,
   ReactNode,
   useCallback,
-  useEffect,
   useLayoutEffect,
   useState,
 } from 'react';
@@ -72,8 +71,6 @@ export interface IVideoPost {
 }
 export default function PostList({
   postDetail,
-  initVideoPosts = [],
-  initImagePosts = [],
   initVideoPostsFullSize = [],
   initImagePostsFullSize = [],
 }: IPostList) {
@@ -83,9 +80,6 @@ export default function PostList({
     myReactions,
     reactionCount,
     commentsCount,
-    postedUserId = '',
-    updatedAt,
-    editedAt,
     createdAt,
     user,
     targetType,
@@ -111,6 +105,7 @@ export default function PostList({
   const [visibleFullImage, setIsVisibleFullImage] = useState<boolean>(false);
   const [imageIndex, setImageIndex] = useState<number>(0);
   const [playVideoUrl, setPlayVideoUrl] = useState<string>('');
+  console.log('playVideoUrl: ', playVideoUrl);
   // console.log('playVideoUrl: ', playVideoUrl);
   const videoRef = React.useRef(null);
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
