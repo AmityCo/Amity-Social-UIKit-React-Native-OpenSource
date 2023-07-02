@@ -22,7 +22,7 @@ export async function createAmityChannel(
     let channelType: Amity.ChannelType =
       users.length > 1 ? 'community' : 'conversation';
     let userIds: string[] = [currentUserID];
-    const currentUser = await getAmityUser(currentUserID);
+ 
     let displayName = currentUser.displayName! + '-';
     displayName += users.map((user) => user.displayName).join('-');
     userIds.push(...users.map((user) => user.userId));

@@ -4,6 +4,7 @@ import {
   queryUsers,
   getUser,
   createReport,
+  UserRepository,
 } from '@amityco/ts-sdk';
 import type { UserGroup } from '../types/user.interface';
 
@@ -52,17 +53,15 @@ export async function reportUser(userId: string): Promise<boolean> {
   });
 }
 
-export async function getAmityUser(userId: string): Promise<Amity.User> {
+export async function getAmityUser(userId: string): Promise<any> {
   return await new Promise((resolve, reject) => {
-    const query = createQuery(getUser, userId);
-
-    runQuery(query, ({ data: user, ...options }) => {
-      if (options.loading == false) {
-        if (user !== undefined) {
-          return resolve(user);
-        } else {
-          return reject(new Error('Unable to get user data ' + options.error));
-        }
+    let userObject: Record<string, any> = {};
+    const unsubscribe = UserRepository.getUser(userId, (value) => {
+      if (value) {
+        userObject = value;
+        resolve({ userObject, unsubscribe });
+      } else {
+        reject((value as Record<string, any>).error);
       }
     });
   });
@@ -76,7 +75,7 @@ export async function queryUser(
   displayName?: string
 ): Promise<Amity.User[]> {
   let param = {};
-  if (displayName != undefined && displayName != '') {
+  if (displayName !== undefined && displayName !== '') {
     param = {
       displayName: displayName,
       sortBy: 'displayName',

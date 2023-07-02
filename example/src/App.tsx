@@ -1,19 +1,19 @@
 import * as React from 'react';
 
 import {
-  AmityUiKitChat,
+  AmityUiKitSocial,
   AmityUiKitProvider,
 } from '@amityco/asc-react-native-ui-kit';
 
 export default function App() {
   return (
     <AmityUiKitProvider
-      apiKey="YOUR_API_KEY" // Put your apiKey
-      apiRegion="API_REGION" // Put your apiRegion
-      userId="USER_ID" // Put your UserId
-      displayName="DISPLAYNAME" // Put your displayName
+      apiKey="b3babb0b3a89f4341d31dc1a01091edcd70f8de7b23d697f"
+      apiRegion="sg"
+      userId="John"
+      displayName="John"
     >
-      <AmityUiKitChat />
+      <AmityUiKitSocial />
     </AmityUiKitProvider>
   );
 }

@@ -1,12 +1,7 @@
 /* eslint-disable no-catch-shadow */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { FC, useEffect, useState } from 'react';
-import {
-  createClient,
-  connectClient,
-  disconnectClient,
-  enableCache,
-} from '@amityco/ts-sdk';
+import { Client } from '@amityco/ts-sdk';
 import type { AuthContextInterface } from '../types/auth.interface';
 import { Alert } from 'react-native';
 import type { IAmityUIkitProvider } from './amity-ui-kit-provider';
@@ -33,24 +28,24 @@ export const AuthContextProvider: FC<IAmityUIkitProvider> = ({
   const [isConnecting, setLoading] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
 
-  const client = createClient(apiKey, apiRegion);
-  enableCache();
+  const client: Amity.Client = Client.createClient(apiKey, apiRegion);
 
   const sessionHandler: Amity.SessionHandler = {
     sessionWillRenewAccessToken(renewal) {
       renewal.renew();
     },
   };
-
   const handleConnect = async () => {
-    try {
-      const res = await connectClient({ userId, displayName }, sessionHandler);
-      console.log('res: ', res);
-      setIsConnected(res);
-    } catch (error) {
-      console.log('error: ', error);
-    }
+    const response = await Client.login(
+      {
+        userId: userId,
+        displayName: displayName, // optional
+      },
+      sessionHandler
+    );
+    setIsConnected(response);
   };
+
 
   const login = async () => {
     setError('');
@@ -74,7 +69,7 @@ export const AuthContextProvider: FC<IAmityUIkitProvider> = ({
   // TODO
   const logout = async () => {
     try {
-      await disconnectClient();
+      await Client.logout();
     } catch (e) {
       const errorText =
         (e as Error)?.message ?? 'Error while handling request!';
@@ -82,7 +77,6 @@ export const AuthContextProvider: FC<IAmityUIkitProvider> = ({
       Alert.alert(errorText);
     }
   };
-
 
   return (
     <AuthContext.Provider
