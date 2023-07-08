@@ -14,8 +14,11 @@ import CloseButton from '../../components/BackButton';
 import Feed from '../Feed';
 import CustomTab from '../../components/CustomTab';
 import type { FeedRefType } from '../CommunityHome';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-export default function UserProfile({ navigation, route }: any) {
+export default function UserProfile({ route }: any) {
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const { userId } = route.params;
   const [user, setUser] = useState<Amity.User>();
   const [followerCount, setFollowerCount] = useState<number>(0);
@@ -43,13 +46,12 @@ export default function UserProfile({ navigation, route }: any) {
     if (followStatus) {
       setFollowStatus(followStatus.status);
       setShowLoadingIndicator(false);
-      return followStatus;
     }
   };
   React.useLayoutEffect(() => {
     // Set the headerRight component to a TouchableOpacity
     navigation.setOptions({
-      headerLeft: () => <CloseButton navigation={navigation} />,
+      headerLeft: () => <CloseButton />,
       headerRight: () => (
         <TouchableOpacity
           onPress={() => {

@@ -81,7 +81,7 @@ export default function GlobalFeed() {
           data={postList}
           renderItem={({ item }) => <PostList postDetail={item} />}
           keyExtractor={(item) => item.postId.toString()}
-          onEndReachedThreshold={0.8}
+          onEndReachedThreshold={0.5}
           onEndReached={handleLoadMore}
           ref={flatListRef}
         />

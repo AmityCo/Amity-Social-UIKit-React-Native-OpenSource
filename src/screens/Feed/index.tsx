@@ -43,7 +43,7 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
   const flatListRef = useRef(null);
   async function getFeed(): Promise<void> {
     const unsubscribe = PostRepository.getPosts(
-      { targetId, targetType },
+      { targetId, targetType, sortBy: 'lastCreated' },
       (data) => {
         console.log('data: ', data);
         setPostData(data);

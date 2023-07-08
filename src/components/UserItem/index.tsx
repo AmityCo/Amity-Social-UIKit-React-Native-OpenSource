@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 import { styles } from './styles';
 import RoundCheckbox from '../RoundCheckbox/index';
+import type { UserInterface } from 'src/types/user.interface';
 
 export default function UserItem({
   user,
@@ -10,11 +11,11 @@ export default function UserItem({
   onPress,
   onThreeDotTap,
 }: {
-  user: Amity.User;
+  user: UserInterface;
   isCheckmark?: boolean | undefined;
   showThreeDot?: boolean | undefined;
-  onPress?: (user: Amity.User) => void;
-  onThreeDotTap?: (user: Amity.User) => void;
+  onPress?: (user: UserInterface) => void;
+  onThreeDotTap?: (user: UserInterface) => void;
 }) {
   const [isChecked, setIsChecked] = useState(false);
   const maxLength = 25;
@@ -44,11 +45,9 @@ export default function UserItem({
         <Image
           style={styles.avatar}
           source={
-            user.avatarFileId || user.avatarCustomUrl
+            user.avatarFileId
               ? {
-                  uri: user.avatarFileId
-                    ? avatarFileURL(user.avatarFileId!)
-                    : user.avatarCustomUrl,
+                  uri: user.avatarFileId && avatarFileURL(user.avatarFileId!),
                 }
               : require('../../../assets/icon/Placeholder.png')
           }

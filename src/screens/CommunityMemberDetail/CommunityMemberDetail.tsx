@@ -1,5 +1,5 @@
 import { CommunityRepository, createReport } from '@amityco/ts-sdk';
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   FlatList,
   View,
@@ -11,6 +11,7 @@ import {
 import { styles } from './styles';
 import CloseButton from '../../components/BackButton';
 import UserItem from '../../components/UserItem';
+import type { UserInterface } from '../../types/user.interface';
 
 export default function CommunityMemberDetail({ navigation, route }: any) {
   const [memberList, setMemberList] = useState<Amity.Member<'community'>[]>([]);
@@ -19,9 +20,9 @@ export default function CommunityMemberDetail({ navigation, route }: any) {
   const { communityId } = route.params;
   const onNextPageRef = useRef<(() => void) | null>(null);
   const isFetchingRef = useRef(false);
-  const onEndReachedCalledDuringMomentumRef = useRef(true);
+  const flatListRef = useRef(null);
+
   React.useLayoutEffect(() => {
-    // Set the headerRight component to a TouchableOpacity
     navigation.setOptions({
       headerLeft: () => <CloseButton />,
       title: 'Member',
@@ -32,7 +33,7 @@ export default function CommunityMemberDetail({ navigation, route }: any) {
       setLoading(true);
       try {
         const unsubscribe = CommunityRepository.Membership.getMembers(
-          { communityId },
+          { communityId, limit: 10 },
           ({ data: members, onNextPage, hasNextPage, loading }) => {
             // console.log('check all categories ' + JSON.stringify(categories));
             if (!loading) {
@@ -42,10 +43,7 @@ export default function CommunityMemberDetail({ navigation, route }: any) {
                   ' --- ' +
                   JSON.stringify(members)
               );
-              setMemberList((prevMembers) => [
-                ...prevMembers,
-                ...(members || []),
-              ]);
+              setMemberList(members);
               console.log('did query members ');
               setHasNextPage(hasNextPage);
               onNextPageRef.current = onNextPage;
@@ -73,7 +71,7 @@ export default function CommunityMemberDetail({ navigation, route }: any) {
 
     return didCreatePostReport;
   };
-  const onThreeDotTap = (user: Amity.User) => {
+  const onThreeDotTap = (user: UserInterface) => {
     if (Platform.OS === 'ios') {
       ActionSheetIOS.showActionSheetWithOptions(
         {
@@ -96,11 +94,16 @@ export default function CommunityMemberDetail({ navigation, route }: any) {
       ]);
     }
   };
-  const renderMember = ({ item }: { item: Amity.Membership<'community'> }) => {
-    if (item.user) {
+  const renderMember = ({ item }: { item: Amity.Member<'community'> }) => {
+    if ((item as Record<string, any>).user) {
+      const userObject: UserInterface = {
+        userId: item.userId,
+        displayName: (item as Record<string, any>).user.displayName,
+        avatarFileId: (item as Record<string, any>).user.avatarFileId,
+      };
       return (
         <UserItem
-          user={item.user}
+          user={userObject}
           showThreeDot={true}
           onThreeDotTap={onThreeDotTap}
         />
@@ -118,19 +121,11 @@ export default function CommunityMemberDetail({ navigation, route }: any) {
     );
   };
 
-  const handleEndReached = useCallback(() => {
-    console.log('handleEndReached got triggered');
-    if (
-      !isFetchingRef.current &&
-      hasNextPage &&
-      !onEndReachedCalledDuringMomentumRef.current
-    ) {
-      isFetchingRef.current = true;
-      onEndReachedCalledDuringMomentumRef.current = true;
+  const handleLoadMore = () => {
+    if (hasNextPage) {
       onNextPageRef.current && onNextPageRef.current();
     }
-  }, [hasNextPage]);
-
+  };
   return (
     <View style={styles.container}>
       <FlatList
@@ -139,11 +134,9 @@ export default function CommunityMemberDetail({ navigation, route }: any) {
         keyExtractor={(item) => item.userId.toString()}
         ListFooterComponent={renderFooter}
         // onEndReached={handleEndReached}
-        onEndReached={handleEndReached}
-        onMomentumScrollBegin={() =>
-          (onEndReachedCalledDuringMomentumRef.current = false)
-        }
         onEndReachedThreshold={0.8}
+        onEndReached={handleLoadMore}
+        ref={flatListRef}
       />
     </View>
   );

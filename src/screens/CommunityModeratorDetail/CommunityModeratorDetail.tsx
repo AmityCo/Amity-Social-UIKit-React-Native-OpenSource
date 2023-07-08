@@ -11,6 +11,7 @@ import {
 import { styles } from './styles';
 import CloseButton from '../../components/BackButton';
 import UserItem from '../../components/UserItem';
+import type { UserInterface } from '../../types/user.interface';
 
 export default function CommunityModeratorDetail({ navigation, route }: any) {
   const [memberList, setMemberList] = useState<Amity.Member<'community'>[]>([]);
@@ -73,7 +74,7 @@ export default function CommunityModeratorDetail({ navigation, route }: any) {
 
     return didCreatePostReport;
   };
-  const onThreeDotTap = (user: Amity.User) => {
+  const onThreeDotTap = (user: UserInterface) => {
     if (Platform.OS === 'ios') {
       ActionSheetIOS.showActionSheetWithOptions(
         {
@@ -96,11 +97,16 @@ export default function CommunityModeratorDetail({ navigation, route }: any) {
       ]);
     }
   };
-  const renderMember = ({ item }: { item: Amity.Membership<'community'> }) => {
-    if (item.user) {
+  const renderMember = ({ item }: { item: Amity.Member<'community'>}) => {
+    if ((item as Record<string, any>).user) {
+      const userObject: UserInterface = {
+        userId: item.userId,
+        displayName: (item as Record<string, any>).user.displayName,
+        avatarFileId: (item as Record<string, any>).user.avatarFileId,
+      };
       return (
         <UserItem
-          user={item.user}
+          user={userObject}
           showThreeDot={true}
           onThreeDotTap={onThreeDotTap}
         />
