@@ -1,8 +1,7 @@
 # Amity Ui-Kit for React native (open-source)
 
-**_ Chat UIKit support only right now_**
 
-**_ This is the beta version, Social UIKit is underdevelopment and will be released soon_**
+** This is the beta version **
 
 ## Getting started
 
@@ -82,12 +81,12 @@ Then, inside another project, where need to use ui-kit:
 Add following permissions to `info.plist` file (ios/{YourAppName}/Info.plist)
 
 ```sh
-  <key>NSCameraUsageDescription</key>
-	<string>App needs access to the camera to take photos.</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>App needs access to the microphone to record audio.</string>
-	<key>NSCameraUsageDescription</key>
-	<string>App needs access to the camera to take photos.</string>
+ <key>NSCameraUsageDescription</key>
+ <string>App needs access to the camera to take photos.</string>
+ <key>NSMicrophoneUsageDescription</key>
+ <string>App needs access to the microphone to record audio.</string>
+ <key>NSCameraUsageDescription</key>
+ <string>App needs access to the camera to take photos.</string>
 
 ```
 ### Usage
