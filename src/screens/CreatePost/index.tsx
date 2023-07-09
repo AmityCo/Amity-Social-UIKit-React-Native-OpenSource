@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   TouchableOpacity,
   View,
@@ -22,46 +22,45 @@ import {
   playVideoIcon,
 } from '../../svg/svg-xml-list';
 import { styles } from './styles';
-import Constants from 'expo-constants';
+// import Constants from 'expo-constants';
 import * as ImagePicker from 'expo-image-picker';
-import {
-  CameraOptions,
-  ImageLibraryOptions,
-  ImagePickerResponse,
-  launchCamera,
-  launchImageLibrary,
-} from 'react-native-image-picker';
+// import {
+//   CameraOptions,
+//   ImageLibraryOptions,
+//   ImagePickerResponse,
+//   launchCamera,
+// } from 'react-native-image-picker';
 import LoadingImage from '../../components/LoadingImage';
 import { createPostToFeed } from '../../providers/Social/feed-sdk';
 import LoadingVideo from '../../components/LoadingVideo';
 import * as VideoThumbnails from 'expo-video-thumbnails';
 import { Video, ResizeMode } from 'expo-av';
 
-export interface Action {
-  title: string;
-  type: 'capture' | 'library';
-  options: CameraOptions | ImageLibraryOptions;
-}
-const actions: Action[] = [
-  {
-    title: 'Take Image',
-    type: 'capture',
-    options: {
-      saveToPhotos: true,
-      mediaType: 'photo',
-      includeBase64: false,
-    },
-  },
-  {
-    title: 'Select Image',
-    type: 'library',
-    options: {
-      selectionLimit: 1,
-      mediaType: 'photo',
-      includeBase64: false,
-    },
-  },
-];
+// export interface Action {
+//   title: string;
+//   type: 'capture' | 'library';
+//   options: CameraOptions | ImageLibraryOptions;
+// }
+// const actions: Action[] = [
+//   {
+//     title: 'Take Image',
+//     type: 'capture',
+//     options: {
+//       saveToPhotos: true,
+//       mediaType: 'photo',
+//       includeBase64: false,
+//     },
+//   },
+//   {
+//     title: 'Select Image',
+//     type: 'library',
+//     options: {
+//       selectionLimit: 1,
+//       mediaType: 'photo',
+//       includeBase64: false,
+//     },
+//   },
+// ];
 export interface IDisplayImage {
   url: string;
   fileId: string | undefined;
@@ -73,7 +72,7 @@ const CreatePost = ({ route }: any) => {
   const { targetId, targetType, targetName } = route.params;
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const [inputMessage, setInputMessage] = useState('');
-  const [imageUri, setImageUri] = useState<string | undefined>();
+  // const [imageUri, setImageUri] = useState<string | undefined>();
   const [imageMultipleUri, setImageMultipleUri] = useState<string[]>([]);
   const [videoMultipleUri, setVideoMultipleUri] = useState<string[]>([]);
   // console.log('videoMultipleUri: ', videoMultipleUri);
@@ -84,7 +83,7 @@ const CreatePost = ({ route }: any) => {
   const [playVideoUrl, setPlayVideoUrl] = useState<string>('');
   console.log('displayVideos: ', displayVideos);
   console.log('displayImages: ', displayImages);
-  const imageUriRef = useRef(imageUri);
+  // const imageUriRef = useRef(imageUri);
   const videoRef = React.useRef(null);
 
   const playVideoFullScreen = async (fileUrl: string) => {
@@ -179,86 +178,92 @@ const CreatePost = ({ route }: any) => {
       }
     }
   };
-  const uploadImageByCamera = useCallback(async () => {
-    if (imageUri) {
-      console.log('imageUri: ', imageUri);
-    }
-  }, [imageUri]);
-  useEffect(() => {
-    uploadImageByCamera();
-  }, [imageUri, uploadImageByCamera]);
+  // const uploadImageByCamera = useCallback(async () => {
+  //   if (imageUri) {
+  //     console.log('imageUri: ', imageUri);
+  //   }
+  // }, [imageUri]);
+  // useEffect(() => {
+  //   uploadImageByCamera();
+  // }, [imageUri, uploadImageByCamera]);
 
-  const openCamera = async () => {
-    await launchCamera(
-      [0] as unknown as CameraOptions,
-      (response: ImagePickerResponse) => {
-        if (!response.didCancel && !response.errorCode) {
-          if (response.assets) {
-            imageUriRef.current = (
-              response.assets[0] as Record<string, any>
-            ).uri;
-            setImageUri((response.assets[0] as Record<string, any>).uri);
-          }
-        }
-      }
-    );
-  };
+  // const openCamera = async () => {
+  //   await launchCamera(
+  //     [0] as unknown as CameraOptions,
+  //     (response: ImagePickerResponse) => {
+  //       if (!response.didCancel && !response.errorCode) {
+  //         if (
+  //           response.assets &&
+  //           response.assets.length > 0 &&
+  //           response.assets[0] !== null &&
+  //           response.assets[0]
+  //         ) {
+  //           // imageUriRef.current = result && result.assets[0].uri;
+  //           const imagesArr = [...imageMultipleUri];
+  //           imagesArr.push((response.assets[0] as Record<string, any>).uri);
+  //           setImageMultipleUri(imagesArr);
+  //           // do something with uri
+  //         }
+  //       }
+  //     }
+  //   );
+  // };
   const pickCamera = async () => {
     // No permissions request is necessary for launching the image library
-    if (Constants.appOwnership === 'expo') {
-      const permission = await ImagePicker.requestCameraPermissionsAsync();
-      if (permission.granted) {
-        let result: ImagePicker.ImagePickerResult =
-          await ImagePicker.launchCameraAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.All,
-            allowsEditing: false,
-            aspect: [4, 3],
-          });
+    // if (Constants.appOwnership === 'expo') {
+    const permission = await ImagePicker.requestCameraPermissionsAsync();
+    if (permission.granted) {
+      let result: ImagePicker.ImagePickerResult =
+        await ImagePicker.launchCameraAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.All,
+          allowsEditing: false,
+          aspect: [4, 3],
+        });
 
-        console.log(result);
-        console.log('result: ', result);
-        if (
-          result.assets &&
-          result.assets.length > 0 &&
-          result.assets[0] !== null &&
-          result.assets[0]
-        ) {
-          // imageUriRef.current = result && result.assets[0].uri;
-          const imagesArr = [...imageMultipleUri];
-          imagesArr.push(result.assets[0].uri);
-          setImageMultipleUri(imagesArr);
-          // do something with uri
-        }
+      console.log(result);
+      console.log('result: ', result);
+      if (
+        result.assets &&
+        result.assets.length > 0 &&
+        result.assets[0] !== null &&
+        result.assets[0]
+      ) {
+        // imageUriRef.current = result && result.assets[0].uri;
+        const imagesArr = [...imageMultipleUri];
+        imagesArr.push(result.assets[0].uri);
+        setImageMultipleUri(imagesArr);
+        // do something with uri
       }
-    } else {
-      openCamera();
     }
+    // } else {
+    //   openCamera();
+    // }
   };
-  const openImageGallery = async () => {
-    await launchImageLibrary(
-      actions[1] as unknown as ImageLibraryOptions,
-      (response) => {
-        if (response.didCancel) {
-          console.log('User cancelled image picker');
-        } else if (response.errorCode) {
-          console.log(
-            'ImagePicker Error: ',
-            response.errorCode + ', ' + response.errorMessage
-          );
-        } else {
-          if (response.assets) {
-            imageUriRef.current = (
-              response.assets[0] as Record<string, any>
-            ).uri;
-            setImageUri((response.assets[0] as Record<string, any>).uri);
-            // setLoadingImageUri(loadingImageUri.push(response.assets[0].uri?.toString()))
+  // const openImageGallery = async () => {
+  //   await launchImageLibrary(
+  //     actions[1] as unknown as ImageLibraryOptions,
+  //     (response) => {
+  //       if (response.didCancel) {
+  //         console.log('User cancelled image picker');
+  //       } else if (response.errorCode) {
+  //         console.log(
+  //           'ImagePicker Error: ',
+  //           response.errorCode + ', ' + response.errorMessage
+  //         );
+  //       } else {
+  //         if (response.assets) {
+  //           imageUriRef.current = (
+  //             response.assets[0] as Record<string, any>
+  //           ).uri;
+  //           setImageUri((response.assets[0] as Record<string, any>).uri);
+  //           // setLoadingImageUri(loadingImageUri.push(response.assets[0].uri?.toString()))
 
-            // console.log('printing image uri ' + response.assets[0].uri);
-          }
-        }
-      }
-    );
-  };
+  //           // console.log('printing image uri ' + response.assets[0].uri);
+  //         }
+  //       }
+  //     }
+  //   );
+  // };
   useEffect(() => {
     if (imageMultipleUri.length > 0 && displayImages.length === 0) {
       const imagesObject: IDisplayImage[] = imageMultipleUri.map(
@@ -345,59 +350,60 @@ const CreatePost = ({ route }: any) => {
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
-    if (Constants.appOwnership === 'expo') {
-      let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: false,
-        quality: 1,
-        allowsMultipleSelection: true,
-      });
+    // if (Constants.appOwnership === 'expo') {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: false,
+      quality: 1,
+      allowsMultipleSelection: true,
+    });
 
-      console.log(result);
+    console.log(result);
 
-      if (!result.canceled && result.assets && result.assets.length > 0) {
-        const selectedImages = result.assets;
-        const imageUriArr: string[] = selectedImages.map((item) => item.uri);
-        console.log('imageUriArr: ', imageUriArr);
-        const imagesArr = [...imageMultipleUri];
-        const totalImages = imagesArr.concat(imageUriArr);
-        console.log('imagesArr: ', imagesArr);
-        setImageMultipleUri(totalImages);
-      }
-    } else {
-      openImageGallery();
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+      const selectedImages = result.assets;
+      const imageUriArr: string[] = selectedImages.map((item) => item.uri);
+      console.log('imageUriArr: ', imageUriArr);
+      const imagesArr = [...imageMultipleUri];
+      const totalImages = imagesArr.concat(imageUriArr);
+      console.log('imagesArr: ', imagesArr);
+      setImageMultipleUri(totalImages);
     }
+    // }
+    // else {
+    //   openImageGallery();
+    // }
   };
   const pickVideo = async () => {
     // No permissions request is necessary for launching the image library
-    if (Constants.appOwnership === 'expo') {
-      let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Videos,
-        allowsEditing: false,
-        quality: 1,
-        allowsMultipleSelection: true,
-      });
+    // if (Constants.appOwnership === 'expo') {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+      allowsEditing: false,
+      quality: 1,
+      allowsMultipleSelection: true,
+    });
 
-      console.log(result);
+    console.log(result);
 
-      if (!result.canceled && result.assets && result.assets.length > 0) {
-        console.log('result: ', result);
-        const selectedVideos = result.assets;
-        console.log('selectedVideos: ', selectedVideos);
-        const imageUriArr: string[] = selectedVideos.map((item) => item.uri);
-        console.log('imageUriArr: ', imageUriArr);
-        const videosArr = [...videoMultipleUri];
-        const totalVideos = videosArr.concat(imageUriArr);
-        setVideoMultipleUri(totalVideos);
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+      console.log('result: ', result);
+      const selectedVideos = result.assets;
+      console.log('selectedVideos: ', selectedVideos);
+      const imageUriArr: string[] = selectedVideos.map((item) => item.uri);
+      console.log('imageUriArr: ', imageUriArr);
+      const videosArr = [...videoMultipleUri];
+      const totalVideos = videosArr.concat(imageUriArr);
+      setVideoMultipleUri(totalVideos);
 
-        // const newRefs = selectedImages.map((image) => useRef(image.uri));
-        // imageUriRefs.current = newRefs;
-        // imageUriRefs.current.forEach((ref, index) => {
-        //   console.log(`Image ${index + 1}: ${ref.current}`);
-        // });
-        // setImageUri(result.assets[0].uri);
-      }
+      // const newRefs = selectedImages.map((image) => useRef(image.uri));
+      // imageUriRefs.current = newRefs;
+      // imageUriRefs.current.forEach((ref, index) => {
+      //   console.log(`Image ${index + 1}: ${ref.current}`);
+      // });
+      // setImageUri(result.assets[0].uri);
     }
+    // }
   };
   const handleOnCloseImage = (originalPath: string) => {
     setDisplayImages((prevData) => {

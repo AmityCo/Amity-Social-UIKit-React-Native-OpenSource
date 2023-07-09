@@ -1,6 +1,6 @@
 {
   "name": "@amityco/asc-react-native-ui-kit",
-  "version": "0.1.0",
+  "version": "0.1.5",
   "description": "test",
   "main": "lib/commonjs/index.js",
   "module": "lib/module/index.js",
@@ -157,6 +157,7 @@
   },
   "dependencies": {
     "@amityco/ts-sdk": "^6.4.3",
+    "@react-native-async-storage/async-storage": "^1.19.0",
     "@react-navigation/native": "6.1.6",
     "@react-navigation/native-stack": "6.9.10",
     "@react-navigation/stack": "6.3.16",
@@ -164,7 +165,7 @@
     "expo-av": "^13.2.1",
     "expo-constants": "^14.2.1",
     "expo-image-picker": "^14.1.1",
-    "expo-modules-core": "^1.2.6",
+    "expo-modules-core": "^1.5.4",
     "expo-video-thumbnails": "^7.2.1",
     "i18next": "22.4.10",
     "moment": "2.29.4",
