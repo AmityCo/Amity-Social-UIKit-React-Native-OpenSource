@@ -88,6 +88,7 @@ Add following permissions to `info.plist` file (ios/{YourAppName}/Info.plist)
 	<string>App needs access to the microphone to record audio.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>App needs access to the camera to take photos.</string>
+
 ```
 ### Usage
 
