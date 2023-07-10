@@ -1,6 +1,6 @@
 {
   "name": "@amityco/asc-react-native-ui-kit",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "test",
   "main": "lib/commonjs/index.js",
   "module": "lib/module/index.js",
@@ -162,7 +162,7 @@
     "@react-navigation/native-stack": "6.9.10",
     "@react-navigation/stack": "6.3.16",
     "expo-asset": "^8.9.1",
-    "expo-av": "^13.2.1",
+    "expo-av": "^13.4.1",
     "expo-constants": "^14.2.1",
     "expo-image-picker": "^14.1.1",
     "expo-modules-core": "^1.5.4",

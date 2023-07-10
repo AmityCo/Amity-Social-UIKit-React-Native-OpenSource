@@ -32,15 +32,11 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
   console.log('postList: ', postList.length);
   // console.log('postList: ', postList);
 
-  const {
-    data: posts,
-    onNextPage,
-    hasNextPage,
-
-  } = postData ?? {};
+  const { data: posts, onNextPage, hasNextPage } = postData ?? {};
   // console.log('nextPage: ', nextPage);
   // console.log('posts: ', posts);
   const flatListRef = useRef(null);
+
   async function getFeed(): Promise<void> {
     const unsubscribe = PostRepository.getPosts(
       { targetId, targetType, sortBy: 'lastCreated' },
@@ -56,11 +52,17 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
     unsubscribe();
   }
   const handleLoadMore = () => {
-    console.log('ending5555');
     if (hasNextPage) {
       onNextPage && onNextPage();
     }
   };
+  useEffect(() => {
+    return () => {
+      // Reset component state here
+      setPostData(undefined);
+      setPostList([]);
+    };
+  }, []);
   useEffect(() => {
     getFeed();
   }, [client]);

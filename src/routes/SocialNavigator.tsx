@@ -22,6 +22,10 @@ import UserProfileSetting from '../screens/UserProfileSetting/UserProfileSetting
 export default function SocialNavigator() {
   const Stack = createNativeStackNavigator<RootStackParamList>();
   const { isConnected } = useAuth();
+
+  // const renderPostDeatil = () => {
+  //   return <PostDetail />;
+  // };
   return (
     <NavigationContainer independent={true}>
       {isConnected && (

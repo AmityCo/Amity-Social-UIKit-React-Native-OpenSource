@@ -1,5 +1,4 @@
-import type { RouteProp } from '@react-navigation/native';
-import type { StackNavigationProp } from '@react-navigation/stack';
+import { RouteProp, useRoute } from '@react-navigation/native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   View,
@@ -25,11 +24,10 @@ import { getAmityUser } from '../../providers/user-provider';
 import CommentList from '../../components/Social/CommentList';
 import { CommentRepository } from '@amityco/ts-sdk';
 import { createComment } from '../../providers/Social/comment-sdk';
-type PostDetailScreenComponentType = React.FC<{
-  route: RouteProp<RootStackParamList, 'PostDetail'>;
-  navigation: StackNavigationProp<RootStackParamList, 'PostDetail'>;
-}>;
-const PostDetail: PostDetailScreenComponentType = ({ route }) => {
+import { ResizeMode, Video } from 'expo-av';
+
+const PostDetail = () => {
+  const route = useRoute<RouteProp<RootStackParamList, 'PostDetail'>>();
   const {
     postDetail,
     initImagePosts,
@@ -37,7 +35,7 @@ const PostDetail: PostDetailScreenComponentType = ({ route }) => {
     initVideoPostsFullSize,
     initImagePostsFullSize,
   } = route.params;
-
+  console.log('initImagePostsFullSize: ', initImagePostsFullSize);
   const [commentList, setCommentList] = useState<IComment[]>([]);
   const [commentCollection, setCommentCollection] =
     useState<Amity.LiveCollection<Amity.Comment<any>>>();
@@ -72,6 +70,7 @@ const PostDetail: PostDetailScreenComponentType = ({ route }) => {
 
   const queryComment = useCallback(async () => {
     if (comments && comments.length > 0) {
+      console.log('comments: ', comments);
       const formattedCommentList = await Promise.all(
         comments.map(async (item: Amity.Comment<any>) => {
           const { userObject } = await getAmityUser(item.userId);
@@ -86,7 +85,7 @@ const PostDetail: PostDetailScreenComponentType = ({ route }) => {
           return {
             commentId: item.commentId,
             data: item.data as Record<string, any>,
-            dataType: item.dataType,
+            dataType: item.dataType || 'text',
             myReactions: item.myReactions as string[],
             reactions: item.reactions as Record<string, number>,
             user: formattedUserObject as UserInterface,
@@ -130,7 +129,19 @@ const PostDetail: PostDetailScreenComponentType = ({ route }) => {
     setInputMessage('');
     await createComment(inputMessage, postDetail.postId);
   };
+  const video = React.useRef(null);
 
+  const playVideo = async () => {
+    try {
+      await video.current.loadAsync({
+        uri: 'https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4',
+      });
+      await video.current.presentFullscreenPlayer();
+      await video.current.playAsync();
+    } catch (error) {
+      console.log('Error playing video:', error);
+    }
+  };
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -138,13 +149,16 @@ const PostDetail: PostDetailScreenComponentType = ({ route }) => {
       style={styles.AllInputWrap}
     >
       <ScrollView onScroll={handleScroll} style={styles.container}>
-        <PostList
-          postDetail={postDetail}
-          initImagePosts={initImagePosts}
-          initVideoPosts={initVideoPosts}
-          initImagePostsFullSize={initImagePostsFullSize}
-          initVideoPostsFullSize={initVideoPostsFullSize}
-        />
+        {postDetail && (
+          <PostList
+            postDetail={postDetail}
+            initImagePosts={initImagePosts}
+            initVideoPosts={initVideoPosts}
+            initImagePostsFullSize={initImagePostsFullSize}
+            initVideoPostsFullSize={initVideoPostsFullSize}
+          />
+        )}
+
         <View style={styles.commentListWrap}>
           <FlatList
             data={commentList}
@@ -154,6 +168,10 @@ const PostDetail: PostDetailScreenComponentType = ({ route }) => {
             ref={flatListRef}
           />
         </View>
+        <TouchableOpacity onPress={playVideo}>
+          <Text>test</Text>
+        </TouchableOpacity>
+        <Video ref={video} style={{ width: 300, height: 200 }} />
       </ScrollView>
 
       <View style={styles.InputWrap}>

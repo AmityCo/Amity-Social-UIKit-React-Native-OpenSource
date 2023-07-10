@@ -1,8 +1,10 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, {
   ReactElement,
   ReactNode,
   useCallback,
-  useLayoutEffect,
+  useEffect,
+  useRef,
   useState,
 } from 'react';
 // import { useTranslation } from 'react-i18next';
@@ -15,6 +17,8 @@ import {
   TouchableWithoutFeedback,
   StyleProp,
   ImageStyle,
+  AppState,
+  AppStateStatus,
 } from 'react-native';
 import styles from './styles';
 import { SvgXml } from 'react-native-svg';
@@ -86,20 +90,18 @@ export default function PostList({
     targetId,
     childrenPosts,
   } = postDetail ?? {};
-
+  console.log('initImagePostsFullSize: ', initImagePostsFullSize);
   const [isLike, setIsLike] = useState<boolean>(false);
   const [likeReaction, setLikeReaction] = useState<number>(0);
   const [communityName, setCommunityName] = useState('');
   const [imagePosts, setImagePosts] = useState<string[]>([]);
+  console.log('imagePosts: ', imagePosts);
 
-  const [imagePostsFullSize, setImagePostsFullSize] = useState<MediaUri[]>(
-    initImagePostsFullSize
-  );
-  const [videoPostsFullSize, setVideoPostsFullSize] = useState<MediaUri[]>(
-    initVideoPostsFullSize
-  );
-  // console.log('videoPostsFullSize: ', videoPostsFullSize);
-  // console.log('imagePostsFullSize: ', imagePostsFullSize);
+  const [imagePostsFullSize, setImagePostsFullSize] = useState<MediaUri[]>([]);
+  const [videoPostsFullSize, setVideoPostsFullSize] = useState<MediaUri[]>([]);
+  console.log('childrenPosts: ', childrenPosts);
+  console.log('videoPostsFullSize: ', videoPostsFullSize);
+  console.log('imagePostsFullSize: ', imagePostsFullSize);
   const [videoPosts, setVideoPosts] = useState<IVideoPost[]>([]);
   // console.log('videoPosts: ', videoPosts);
   const [visibleFullImage, setIsVisibleFullImage] = useState<boolean>(false);
@@ -114,40 +116,63 @@ export default function PostList({
 
   // console.log('childrenPosts: ', childrenPosts);
   // console.log('reactionCount: ', reactionCount);
+  const appState = useRef(AppState.currentState);
+
+  console.log('appState: ', appState);
 
   const getPostInfo = useCallback(async () => {
-    const response = await Promise.all(
-      childrenPosts.map(async (id: string) => {
-        const { data: post } = await getPostById(id);
-        return { dataType: post.dataType, data: post.data };
-      })
-    );
+    console.log('getPostInfo: ');
+    try {
+      console.log('childrenPosts: ', childrenPosts);
+      const response = await Promise.all(
+        childrenPosts.map(async (id: string) => {
+          const { data: post } = await getPostById(id);
+          return { dataType: post.dataType, data: post.data };
+        })
+      );
 
-    response.forEach((item) => {
-      if (item.dataType === 'image') {
-        setImagePosts((prev) => [
-          ...prev,
-          `https://api.amity.co/api/v3/files/${item?.data.fileId}/download?size=medium`,
-        ]);
-        setImagePostsFullSize((prev) => [
-          ...prev,
-          {
-            uri: `https://api.amity.co/api/v3/files/${item?.data.fileId}/download?size=large`,
-          },
-        ]);
-      } else if (item.dataType === 'video') {
-        setVideoPosts((prev) => [...prev, item.data]);
-        setVideoPostsFullSize((prev) => [
-          ...prev,
-          {
-            uri: `https://api.amity.co/api/v3/files/${item?.data.thumbnailFileId}/download?size=large`,
-          },
-        ]);
-      }
-    });
+      console.log('response=====: ', response);
+      response.forEach((item) => {
+        if (item.dataType === 'image') {
+          setImagePosts((prev) => [
+            ...prev,
+            `https://api.amity.co/api/v3/files/${item?.data.fileId}/download?size=medium`,
+          ]);
+          setImagePostsFullSize((prev) => [
+            ...prev,
+            {
+              uri: `https://api.amity.co/api/v3/files/${item?.data.fileId}/download?size=large`,
+            },
+          ]);
+        } else if (item.dataType === 'video') {
+          setVideoPosts((prev) => [...prev, item.data]);
+          setVideoPostsFullSize((prev) => [
+            ...prev,
+            {
+              uri: `https://api.amity.co/api/v3/files/${item?.data.thumbnailFileId}/download?size=large`,
+            },
+          ]);
+        }
+      });
+    } catch (error) {
+      console.log('error: ', error);
+    }
   }, [childrenPosts]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
+    if (initImagePostsFullSize) {
+      setImagePostsFullSize(initImagePostsFullSize);
+    } else if (initVideoPostsFullSize) {
+      setVideoPostsFullSize(initVideoPostsFullSize);
+    }
+    return () => {
+      setImagePostsFullSize([]);
+      // setVideoPostsFullSize([]);
+      setImagePosts([]);
+      // setVideoPosts([]);
+    };
+  }, []);
+  useEffect(() => {
     if (myReactions.length > 0 && myReactions.includes('like')) {
       setIsLike(true);
     }
@@ -157,7 +182,13 @@ export default function PostList({
     if (targetType === 'community' && targetId) {
       getCommunityInfo(targetId);
     }
-    if (childrenPosts.length > 0) {
+    if (
+      childrenPosts.length > 0 &&
+      (imagePosts.length === 0 || videoPosts.length === 0) &&
+      (initImagePostsFullSize.length === 0 ||
+        initVideoPostsFullSize.length === 0)
+    ) {
+      console.log('enter this laa');
       getPostInfo();
     }
   }, []);
@@ -244,12 +275,12 @@ export default function PostList({
     setImageIndex(index);
   }
 
-  async function onClickPlayVideo(index: number): Promise<void> {
-    console.log('play', index);
-    const videoUrl: string = `https://api.amity.co/api/v3/files/${videoPosts[index]?.videoFileId.original}/download`;
-    setPlayVideoUrl(videoUrl);
-    await playVideoFullScreen();
-  }
+  // async function onClickPlayVideo(index: number): Promise<void> {
+  //   console.log('play', index);
+  //   console.log('playVideoUrl: ', playVideoUrl);
+  //   const videoUrl: string = `https://api.amity.co/api/v3/files/${videoPosts[index]?.videoFileId.original}/download`;
+  //   setPlayVideoUrl(videoUrl);
+  // }
   function renderMediaPost(): ReactNode {
     let imageStyle: StyleProp<ImageStyle> | StyleProp<ImageStyle>[] =
       styles.imageLargePost;
@@ -261,9 +292,14 @@ export default function PostList({
             return `https://api.amity.co/api/v3/files/${item?.thumbnailFileId}/download?size=medium`;
           })
         : [];
-
-    const mediaPosts =
-      thumbnailFileIds.length > 0 ? thumbnailFileIds : imagePosts;
+    let mediaPosts: string[] = [];
+    if (initImagePostsFullSize.length > 0) {
+      mediaPosts = initImagePostsFullSize.map((item) => item.uri);
+    } else if (initVideoPostsFullSize.length > 0) {
+      mediaPosts = initVideoPostsFullSize.map((item) => item.uri);
+    } else {
+      mediaPosts = thumbnailFileIds.length > 0 ? thumbnailFileIds : imagePosts;
+    }
 
     const imageElement: ReactElement[] = mediaPosts.map(
       (item: string, index: number) => {
@@ -346,7 +382,8 @@ export default function PostList({
           <View style={colStyle}>
             <TouchableWithoutFeedback onPress={() => onClickImage(index)}>
               <View>
-                {videoPosts.length > 0 && renderPlayButton()}
+                {(videoPosts.length > 0 || initVideoPostsFullSize.length > 0) &&
+                  renderPlayButton()}
                 <Image
                   style={imageStyle}
                   source={{
@@ -390,6 +427,7 @@ export default function PostList({
       );
     }
   }
+
   // console.log('reactionCount: ', data.text + reactionCount.like);
   function renderPlayButton() {
     return (
@@ -400,16 +438,20 @@ export default function PostList({
   }
   const playVideoFullScreen = async () => {
     if (videoRef) {
+      console.log('videoRef: ', videoRef);
+      await (videoRef as Record<string, any>).current.loadAsync({
+        uri: playVideoUrl,
+      });
       await (videoRef as Record<string, any>).current.presentFullscreenPlayer();
-      await (videoRef as Record<string, any>).current.playAsync()();
+      await (videoRef as Record<string, any>).current.playAsync();
     }
   };
   function onClickComment() {
     navigation.navigate('PostDetail', {
       postDetail: postDetail,
       init: videoPosts,
-      videoPostsFullSize: videoPostsFullSize,
-      imagePostsFullSize: imagePostsFullSize,
+      initVideoPostsFullSize: videoPostsFullSize,
+      initImagePostsFullSize: imagePostsFullSize,
       imagePosts: imagePosts,
     });
   }
@@ -477,9 +519,7 @@ export default function PostList({
         <View style={styles.bodySection}>
           {data.text && <Text style={styles.bodyText}>{data.text}</Text>}
 
-          {(imagePosts.length > 0 || videoPosts.length > 0) && (
-            <View style={styles.mediaWrap}>{renderMediaPost()}</View>
-          )}
+          <View style={styles.mediaWrap}>{renderMediaPost()}</View>
         </View>
 
         {likeReaction === 0 && commentsCount === 0 ? (
@@ -536,7 +576,6 @@ export default function PostList({
         visible={visibleFullImage}
         onRequestClose={() => setIsVisibleFullImage(false)}
         isVideoButton={videoPosts.length > 0 ? true : false}
-        onClickPlayButton={onClickPlayVideo}
         videoPosts={videoPosts}
       />
     </View>

@@ -78,8 +78,12 @@ function ImageViewing({
   const playVideoFullScreen = async () => {
     onClickPlayButton(currentImageIndex);
     if (videoRef) {
+      await videoRef.current.loadAsync({
+        uri: `https://api.amity.co/api/v3/files/${videoPosts[currentImageIndex]?.videoFileId?.original}/download`,
+      });
+
       await videoRef.current.presentFullscreenPlayer();
-      await videoRef.current.playAsync()();
+      await videoRef.current.playAsync();
     }
   };
   if (!visible) {
@@ -169,16 +173,7 @@ function ImageViewing({
         )}
       </View>
       <View style={styles.videoContainer}>
-        <Video
-          style={styles.video}
-          source={{
-            uri: `https://api.amity.co/api/v3/files/${videoPosts[currentImageIndex]?.videoFileId?.original}/download`,
-          }}
-          useNativeControls
-          ref={videoRef}
-          resizeMode={ResizeMode.CONTAIN}
-          isLooping
-        />
+        <Video ref={videoRef} resizeMode={ResizeMode.CONTAIN} />
       </View>
     </Modal>
   );

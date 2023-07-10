@@ -80,22 +80,21 @@ const CreatePost = ({ route }: any) => {
   const [displayImages, setDisplayImages] = useState<IDisplayImage[]>([]);
   console.log('displayImages: ', displayImages);
   const [displayVideos, setDisplayVideos] = useState<IDisplayImage[]>([]);
-  const [playVideoUrl, setPlayVideoUrl] = useState<string>('');
   console.log('displayVideos: ', displayVideos);
   console.log('displayImages: ', displayImages);
   // const imageUriRef = useRef(imageUri);
   const videoRef = React.useRef(null);
 
   const playVideoFullScreen = async (fileUrl: string) => {
-    setPlayVideoUrl(fileUrl);
-    setTimeout(async () => {
-      if (videoRef) {
-        await (
-          videoRef as React.MutableRefObject<any>
-        ).current.presentFullscreenPlayer();
-        await (videoRef as React.MutableRefObject<any>).current.playAsync()();
-      }
-    }, 100);
+    if (videoRef) {
+      await (videoRef as React.MutableRefObject<any>).current.loadAsync({
+        uri: fileUrl,
+      });
+      await (
+        videoRef as React.MutableRefObject<any>
+      ).current.presentFullscreenPlayer();
+      await (videoRef as React.MutableRefObject<any>).current.playAsync()();
+    }
   };
   const goBack = () => {
     navigation.navigate('Home');
@@ -564,15 +563,7 @@ const CreatePost = ({ route }: any) => {
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
-      <View style={styles.videoContainer}>
-        <Video
-          source={{
-            uri: playVideoUrl,
-          }}
-          ref={videoRef}
-          resizeMode={ResizeMode.CONTAIN}
-        />
-      </View>
+      <Video ref={videoRef} resizeMode={ResizeMode.CONTAIN} />
     </View>
   );
 };
