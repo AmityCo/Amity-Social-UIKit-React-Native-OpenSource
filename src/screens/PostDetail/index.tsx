@@ -168,10 +168,6 @@ const PostDetail = () => {
             ref={flatListRef}
           />
         </View>
-        <TouchableOpacity onPress={playVideo}>
-          <Text>test</Text>
-        </TouchableOpacity>
-        <Video ref={video} style={{ width: 300, height: 200 }} />
       </ScrollView>
 
       <View style={styles.InputWrap}>

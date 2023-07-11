@@ -6,6 +6,7 @@ import type {
 
 export type RootStackParamList = {
   Home: undefined;
+  CommunitySearch: undefined;
   CommunityMemberDetail: {
     communityId: string;
   };

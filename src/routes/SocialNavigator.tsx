@@ -18,6 +18,7 @@ import CreatePost from '../screens/CreatePost';
 import UserProfile from '../screens/UserProfile/UserProfile';
 import { EditProfile } from '../screens/EditProfile/EditProfile';
 import UserProfileSetting from '../screens/UserProfileSetting/UserProfileSetting';
+import CommunitySearch from '../screens/CommunitySearch';
 
 export default function SocialNavigator() {
   const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -51,6 +52,13 @@ export default function SocialNavigator() {
             })}
           />
           <Stack.Screen name="CommunityHome" component={CommunityHome} />
+          <Stack.Screen
+            name="CommunitySearch"
+            options={{
+              headerShown: false,
+            }}
+            component={CommunitySearch}
+          />
           <Stack.Screen
             name="CommunityMemberDetail"
             component={CommunityMemberDetail}

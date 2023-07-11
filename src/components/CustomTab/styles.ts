@@ -14,11 +14,10 @@ export const styles = StyleSheet.create({
     borderBottomColor: '#333',
   },
   tabText: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: 'bold',
     color: '#333',
     marginHorizontal: 15,
-    minWidth: 60,
     textAlign: 'center',
   },
   activeTabText: {
@@ -27,7 +26,6 @@ export const styles = StyleSheet.create({
   indicator: {
     position: 'absolute',
     bottom: 0,
-    width: 85,
     height: 2,
     backgroundColor: '#1054DE',
   },

@@ -29,6 +29,7 @@ import {
   likeXml,
   personXml,
   playBtn,
+  searchIcon,
 } from '../../../svg/svg-xml-list';
 
 import type { UserInterface } from '../../../types/user.interface';
@@ -109,7 +110,6 @@ export default function PostList({
   const [playVideoUrl, setPlayVideoUrl] = useState<string>('');
   console.log('playVideoUrl: ', playVideoUrl);
   // console.log('playVideoUrl: ', playVideoUrl);
-  const videoRef = React.useRef(null);
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   // console.log('videoPosts: ', videoPosts);
   // console.log('imagePosts: ', imagePosts);
@@ -436,16 +436,6 @@ export default function PostList({
       </View>
     );
   }
-  const playVideoFullScreen = async () => {
-    if (videoRef) {
-      console.log('videoRef: ', videoRef);
-      await (videoRef as Record<string, any>).current.loadAsync({
-        uri: playVideoUrl,
-      });
-      await (videoRef as Record<string, any>).current.presentFullscreenPlayer();
-      await (videoRef as Record<string, any>).current.playAsync();
-    }
-  };
   function onClickComment() {
     navigation.navigate('PostDetail', {
       postDetail: postDetail,

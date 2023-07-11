@@ -13,7 +13,7 @@ import {
   ImageStyle,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
-import { postIconOutlined } from '../../svg/svg-xml-list';
+import { postIconOutlined, searchIcon } from '../../svg/svg-xml-list';
 import FloatingButton from '../../components/FloatingButton';
 import useAuth from '../../hooks/useAuth';
 import Explore from '../Explore';
@@ -21,6 +21,8 @@ import GlobalFeed from '../GlobalFeed';
 import styles from './styles';
 import FullScreenModal from '../../components/FullScreenModal';
 import CustomTab from '../../components/CustomTab';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 export default function Home() {
   // const { t, i18n } = useTranslation();
@@ -30,6 +32,20 @@ export default function Home() {
   const [isVisible, setIsVisible] = useState(false);
 
   const [createPostModalVisible, setCreatePostModalVisible] = useState(false);
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
+
+  const onClickSearch = () => {
+    navigation.navigate('CommunitySearch');
+  };
+  navigation.setOptions({
+    // eslint-disable-next-line react/no-unstable-nested-components
+    headerRight: () => (
+      <TouchableOpacity onPress={onClickSearch} style={styles.btnWrap}>
+        <SvgXml xml={searchIcon} width="25" height="25" />
+      </TouchableOpacity>
+    ),
+    headerTitle: 'Community',
+  });
 
   const openCreatePostModal = () => {
     setCreatePostModalVisible(true);

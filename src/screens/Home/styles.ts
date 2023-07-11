@@ -64,6 +64,9 @@ const styles = StyleSheet.create({
   visible: {
     display: 'flex',
   },
+  btnWrap: {
+    padding: 5,
+  },
 });
 
 export default styles;
