@@ -10,11 +10,18 @@ const styles = StyleSheet.create({
   headerSection: {
     paddingVertical: 8,
     flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   headerText: {
     fontWeight: '600',
     fontSize: 15,
   },
+  user: {
+    paddingVertical: 8,
+    flexDirection: 'row',
+    maxWidth: 300,
+  },
+
   headerTextTime: {
     fontSize: 13,
     fontWeight: '400',
@@ -43,6 +50,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontStyle: 'normal',
     fontWeight: '400',
+    marginBottom: 8,
   },
   actionSection: {
     borderTopColor: '#EBECEF',
@@ -185,6 +193,31 @@ const styles = StyleSheet.create({
   },
   mediaWrap: {
     minHeight: 375,
+  },
+  threeDots: {
+    padding: 5,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: '#FFF',
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    padding: 10,
+    minHeight: 730,
+  },
+  modalRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 5,
+    marginVertical: 8,
+  },
+  deleteText: {
+    paddingLeft: 12,
+    fontWeight: '600',
   },
 });
 

@@ -22,13 +22,16 @@ export const AuthContextProvider: FC<IAmityUIkitProvider> = ({
   displayName,
   apiKey,
   apiRegion,
+  apiEndpoint,
   children,
 }: IAmityUIkitProvider) => {
   const [error, setError] = useState('');
   const [isConnecting, setLoading] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
 
-  const client: Amity.Client = Client.createClient(apiKey, apiRegion);
+  const client: Amity.Client = Client.createClient(apiKey, apiRegion, {
+    apiEndpoint: { http: apiEndpoint },
+  });
 
   const sessionHandler: Amity.SessionHandler = {
     sessionWillRenewAccessToken(renewal) {
@@ -45,7 +48,6 @@ export const AuthContextProvider: FC<IAmityUIkitProvider> = ({
     );
     setIsConnected(response);
   };
-
 
   const login = async () => {
     setError('');

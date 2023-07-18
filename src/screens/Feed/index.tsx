@@ -41,12 +41,7 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
     const unsubscribe = PostRepository.getPosts(
       { targetId, targetType, sortBy: 'lastCreated' },
       (data) => {
-        console.log('data: ', data);
         setPostData(data);
-        /*
-         * this is only required if you want real time updates for each
-         * community in the collection
-         */
       }
     );
     unsubscribe();

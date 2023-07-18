@@ -35,7 +35,7 @@ const LoadingImage = ({
   const [progress, setProgress] = useState(0);
   const [isProcess, setIsProcess] = useState<boolean>(false);
   const styles = createStyles();
-  console.log('source: ', source);
+
   const handleLoadEnd = () => {
     setLoading(false);
   };
@@ -49,7 +49,6 @@ const LoadingImage = ({
     const file: Amity.File<any>[] = await uploadImageFile(
       source,
       (percent: number) => {
-        console.log('percent: ', percent);
         setProgress(percent);
       }
     );
@@ -64,16 +63,13 @@ const LoadingImage = ({
           index as number,
           source
         );
-      console.log('file: ', file);
     }
   }, [index, onLoadFinish, source]);
 
   const handleDelete = async () => {
-    console.log('fileId: ', fileId);
     if (fileId) {
       onClose && onClose(source);
-      const isDeleted = await deleteAmityFile(fileId);
-      console.log('isDeleted: ', isDeleted);
+      await deleteAmityFile(fileId);
     }
   };
   useEffect(() => {

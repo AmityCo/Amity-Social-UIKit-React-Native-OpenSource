@@ -12,6 +12,7 @@ export default function App() {
       apiRegion="sg"
       userId="John"
       displayName="John"
+      apiEndpoint="https://api.sg.amity.co"
     >
       <AmityUiKitSocial />
     </AmityUiKitProvider>

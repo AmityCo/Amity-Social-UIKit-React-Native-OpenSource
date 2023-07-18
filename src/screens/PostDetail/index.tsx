@@ -24,7 +24,6 @@ import { getAmityUser } from '../../providers/user-provider';
 import CommentList from '../../components/Social/CommentList';
 import { CommentRepository } from '@amityco/ts-sdk';
 import { createComment } from '../../providers/Social/comment-sdk';
-import { ResizeMode, Video } from 'expo-av';
 
 const PostDetail = () => {
   const route = useRoute<RouteProp<RootStackParamList, 'PostDetail'>>();
@@ -35,7 +34,6 @@ const PostDetail = () => {
     initVideoPostsFullSize,
     initImagePostsFullSize,
   } = route.params;
-  console.log('initImagePostsFullSize: ', initImagePostsFullSize);
   const [commentList, setCommentList] = useState<IComment[]>([]);
   const [commentCollection, setCommentCollection] =
     useState<Amity.LiveCollection<Amity.Comment<any>>>();
@@ -45,7 +43,6 @@ const PostDetail = () => {
   console.log('unSubscribeFunc: ', unSubscribeFunc);
 
   const flatListRef = useRef(null);
-  console.log('commentList: ', commentList);
 
   function getCommentsByPostId(postId: string) {
     const unsubscribe = CommentRepository.getComments(
@@ -55,13 +52,13 @@ const PostDetail = () => {
         referenceType: 'post',
       },
       (data: Amity.LiveCollection<Amity.Comment<any>>) => {
+        console.log('data:====== ', data);
         if (data.error) throw data.error;
         if (!data.loading) {
           setCommentCollection(data);
         }
       }
     );
-    unsubscribe();
     setUnSubscribeFunc(() => unsubscribe);
   }
   useEffect(() => {
@@ -70,7 +67,6 @@ const PostDetail = () => {
 
   const queryComment = useCallback(async () => {
     if (comments && comments.length > 0) {
-      console.log('comments: ', comments);
       const formattedCommentList = await Promise.all(
         comments.map(async (item: Amity.Comment<any>) => {
           const { userObject } = await getAmityUser(item.userId);
@@ -114,9 +110,7 @@ const PostDetail = () => {
       layoutMeasurement.height + contentOffset.y + 250 >= contentSize.height;
 
     if (isScrollEndReached) {
-      console.log('Load more data: ');
       if (onNextPage && hasNextPage) {
-        console.log('onNextPage: ', onNextPage);
         onNextPage();
       }
     }
@@ -128,20 +122,9 @@ const PostDetail = () => {
     Keyboard.dismiss();
     setInputMessage('');
     await createComment(inputMessage, postDetail.postId);
+    setInputMessage('');
   };
-  const video = React.useRef(null);
 
-  const playVideo = async () => {
-    try {
-      await video.current.loadAsync({
-        uri: 'https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4',
-      });
-      await video.current.presentFullscreenPlayer();
-      await video.current.playAsync();
-    } catch (error) {
-      console.log('Error playing video:', error);
-    }
-  };
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}

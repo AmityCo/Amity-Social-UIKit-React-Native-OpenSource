@@ -147,3 +147,18 @@ export async function createPostToFeed(
   );
   return createPostObject;
 }
+export async function deletePostById(postId: string): Promise<boolean> {
+  const reactionObject: Promise<boolean> = new Promise(
+    async (resolve, reject) => {
+      try {
+        const hardDelete = await PostRepository.deletePost(postId, true);
+        if (hardDelete) {
+          resolve(true);
+        }
+      } catch (error) {
+        reject(error);
+      }
+    }
+  );
+  return reactionObject;
+}

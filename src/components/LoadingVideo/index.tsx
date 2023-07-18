@@ -35,13 +35,12 @@ const LoadingVideo = ({
   isUploaded = false,
   thumbNail,
   onPlay,
-  fileId
+  fileId,
 }: OverlayImageProps) => {
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
   const [isProcess, setIsProcess] = useState<boolean>(false);
   const styles = createStyles();
-  console.log('source: ', source);
   const handleLoadEnd = () => {
     setLoading(false);
   };
@@ -55,12 +54,10 @@ const LoadingVideo = ({
     const file: Amity.File<any>[] = await uploadVideoFile(
       source,
       (percent: number) => {
-        console.log('percent: ', percent);
         setProgress(percent);
       }
     );
     if (file) {
-      console.log('file: ', file);
       setIsProcess(false);
       handleLoadEnd();
       onLoadFinish &&
@@ -77,10 +74,8 @@ const LoadingVideo = ({
   }, [source]);
 
   const handleDelete = async () => {
-    console.log('fileId: ', fileId);
     if (fileId) {
-      const isDeleted = await deleteAmityFile(fileId as string);
-      console.log('isDeleted: ', isDeleted);
+      await deleteAmityFile(fileId as string);
       onClose && onClose(source);
     }
   };

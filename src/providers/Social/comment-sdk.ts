@@ -66,7 +66,6 @@ export async function createComment(
         const { data: comment } = await CommentRepository.createComment(
           newComment
         );
-        console.log('comment: ', comment);
         resolve(comment);
       } catch (error) {
         reject(error);

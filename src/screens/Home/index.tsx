@@ -11,6 +11,7 @@ import {
   Pressable,
   StyleProp,
   ImageStyle,
+  LogBox,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { postIconOutlined, searchIcon } from '../../svg/svg-xml-list';
@@ -23,9 +24,10 @@ import FullScreenModal from '../../components/FullScreenModal';
 import CustomTab from '../../components/CustomTab';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-
+LogBox.ignoreAllLogs(true);
 export default function Home() {
   // const { t, i18n } = useTranslation();
+
   const { client } = useAuth();
 
   const [activeTab, setActiveTab] = useState(1);

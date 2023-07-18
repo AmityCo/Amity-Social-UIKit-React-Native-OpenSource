@@ -24,12 +24,12 @@ interface IModal {
   onSelect: () => void;
 }
 const FullScreenModal = ({ visible, onClose, userId, onSelect }: IModal) => {
-  console.log('myUser in Modal: ', userId);
+
   const [communities, setCommunities] = useState<Amity.Community[]>([]);
   const [paginateLoading, setPaginateLoading] = useState(false);
   const [hasNextPageFunc, setHasNextPageFunc] = useState(false);
   const [myUser, setMyUser] = useState<UserInterface>();
-  console.log('myUser: ', myUser);
+
   const onNextPageRef = useRef<(() => void) | null>(null);
   const isFetchingRef = useRef(false);
   const onEndReachedCalledDuringMomentumRef = useRef(true);
@@ -37,7 +37,6 @@ const FullScreenModal = ({ visible, onClose, userId, onSelect }: IModal) => {
   const getMyUserDetail = useCallback(async () => {
     if (userId) {
       const { userObject } = await getAmityUser(userId);
-      console.log('userObject: ', userObject);
       let formattedUserObject: UserInterface;
 
       formattedUserObject = {
@@ -46,7 +45,6 @@ const FullScreenModal = ({ visible, onClose, userId, onSelect }: IModal) => {
         avatarFileId: userObject.data.avatarFileId,
       };
       setMyUser(formattedUserObject);
-      console.log('formattedUserObject: ', formattedUserObject);
     }
   }, [userId]);
 
@@ -55,6 +53,7 @@ const FullScreenModal = ({ visible, onClose, userId, onSelect }: IModal) => {
       getMyUserDetail();
     }
   }, [getMyUserDetail, userId]);
+
   useEffect(() => {
     const loadCommunities = async () => {
       setPaginateLoading(true);
@@ -67,9 +66,6 @@ const FullScreenModal = ({ visible, onClose, userId, onSelect }: IModal) => {
                 ...prevCommunities,
                 ...communitiesList,
               ]);
-              console.log(
-                'did query communities ' + JSON.stringify(communities)
-              );
               setHasNextPageFunc(hasNextPage);
               onNextPageRef.current = onNextPage;
               isFetchingRef.current = false;
@@ -153,7 +149,6 @@ const FullScreenModal = ({ visible, onClose, userId, onSelect }: IModal) => {
   };
 
   const handleEndReached = useCallback(() => {
-    console.log('handleEndReached got triggered');
     if (
       !isFetchingRef.current &&
       hasNextPageFunc &&

@@ -1,6 +1,6 @@
 {
   "name": "@amityco/asc-react-native-ui-kit",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "test",
   "main": "lib/commonjs/index.js",
   "module": "lib/module/index.js",
@@ -71,7 +71,7 @@
     "pod-install": "^0.1.0",
     "prettier": "^2.0.5",
     "react": "18.2.0",
-    "react-native": "0.71.4",
+    "react-native": "^0.72.3",
     "react-native-builder-bob": "^0.20.4",
     "release-it": "^15.0.0",
     "typescript": "^4.5.2"
@@ -82,7 +82,7 @@
   "peerDependencies": {
     "react": "*",
     "react-native": "*",
-    "react-native-safe-area-context": "*"
+    "react-native-safe-area-context": "4.7.1"
   },
   "engines": {
     "node": ">= 16.0.0"
@@ -157,7 +157,7 @@
     ]
   },
   "dependencies": {
-    "@amityco/ts-sdk": "^6.4.3",
+    "@amityco/ts-sdk": "^6.4.5",
     "@react-native-async-storage/async-storage": "^1.19.0",
     "@react-navigation/native": "6.1.6",
     "@react-navigation/native-stack": "6.9.10",
@@ -176,7 +176,7 @@
     "react-native-image-picker": "5.1.0",
     "react-native-pager-view": "6.1.4",
     "react-native-progress": "^5.0.0",
-    "react-native-safe-area-context": "*",
+    "react-native-safe-area-context": "4.7.1",
     "react-native-screens": "3.20.0",
     "react-native-svg": "13.4.0",
     "react-native-video": "^5.2.1",

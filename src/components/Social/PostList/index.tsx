@@ -17,8 +17,9 @@ import {
   TouchableWithoutFeedback,
   StyleProp,
   ImageStyle,
-  AppState,
-  AppStateStatus,
+  Modal,
+  Pressable,
+  Animated,
 } from 'react-native';
 import styles from './styles';
 import { SvgXml } from 'react-native-svg';
@@ -29,7 +30,7 @@ import {
   likeXml,
   personXml,
   playBtn,
-  searchIcon,
+  threeDots,
 } from '../../../svg/svg-xml-list';
 
 import type { UserInterface } from '../../../types/user.interface';
@@ -57,6 +58,7 @@ export interface IPost {
   targetType: string;
   targetId: string;
   childrenPosts: string[];
+  onDelete?: (postId: string) => void;
 }
 export interface IPostList {
   postDetail: IPost;
@@ -90,40 +92,36 @@ export default function PostList({
     targetType,
     targetId,
     childrenPosts,
+    onDelete
   } = postDetail ?? {};
-  console.log('initImagePostsFullSize: ', initImagePostsFullSize);
   const [isLike, setIsLike] = useState<boolean>(false);
   const [likeReaction, setLikeReaction] = useState<number>(0);
   const [communityName, setCommunityName] = useState('');
   const [imagePosts, setImagePosts] = useState<string[]>([]);
-  console.log('imagePosts: ', imagePosts);
 
   const [imagePostsFullSize, setImagePostsFullSize] = useState<MediaUri[]>([]);
   const [videoPostsFullSize, setVideoPostsFullSize] = useState<MediaUri[]>([]);
-  console.log('childrenPosts: ', childrenPosts);
-  console.log('videoPostsFullSize: ', videoPostsFullSize);
-  console.log('imagePostsFullSize: ', imagePostsFullSize);
   const [videoPosts, setVideoPosts] = useState<IVideoPost[]>([]);
-  // console.log('videoPosts: ', videoPosts);
   const [visibleFullImage, setIsVisibleFullImage] = useState<boolean>(false);
   const [imageIndex, setImageIndex] = useState<number>(0);
-  const [playVideoUrl, setPlayVideoUrl] = useState<string>('');
-  console.log('playVideoUrl: ', playVideoUrl);
-  // console.log('playVideoUrl: ', playVideoUrl);
+  const [isVisible, setIsVisible] = useState(false);
+  const slideAnimation = useRef(new Animated.Value(0)).current;
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
-  // console.log('videoPosts: ', videoPosts);
-  // console.log('imagePosts: ', imagePosts);
 
-  // console.log('childrenPosts: ', childrenPosts);
-  // console.log('reactionCount: ', reactionCount);
-  const appState = useRef(AppState.currentState);
+  const openModal = () => {
+    setIsVisible(true);
+  };
 
-  console.log('appState: ', appState);
+  const closeModal = () => {
+    Animated.timing(slideAnimation, {
+      toValue: 0,
+      duration: 100,
+      useNativeDriver: true,
+    }).start(() => setIsVisible(false));
+  };
 
   const getPostInfo = useCallback(async () => {
-    console.log('getPostInfo: ');
     try {
-      console.log('childrenPosts: ', childrenPosts);
       const response = await Promise.all(
         childrenPosts.map(async (id: string) => {
           const { data: post } = await getPostById(id);
@@ -131,7 +129,6 @@ export default function PostList({
         })
       );
 
-      console.log('response=====: ', response);
       response.forEach((item) => {
         if (item.dataType === 'image') {
           setImagePosts((prev) => [
@@ -167,9 +164,7 @@ export default function PostList({
     }
     return () => {
       setImagePostsFullSize([]);
-      // setVideoPostsFullSize([]);
       setImagePosts([]);
-      // setVideoPosts([]);
     };
   }, []);
   useEffect(() => {
@@ -188,7 +183,6 @@ export default function PostList({
       (initImagePostsFullSize.length === 0 ||
         initVideoPostsFullSize.length === 0)
     ) {
-      console.log('enter this laa');
       getPostInfo();
     }
   }, []);
@@ -256,12 +250,10 @@ export default function PostList({
     setIsLike((prev) => !prev);
     if (isLike && likeReaction) {
       setLikeReaction(likeReaction - 1);
-      const isRemovePost = await removePostReaction(postId, 'like');
-      console.log('isRemovePost: ', isRemovePost);
+      await removePostReaction(postId, 'like');
     } else {
       setLikeReaction(likeReaction + 1);
-      const isLikePost = await addPostReaction(postId, 'like');
-      console.log('isLikePost: ', isLikePost);
+      await addPostReaction(postId, 'like');
     }
   }
 
@@ -275,12 +267,6 @@ export default function PostList({
     setImageIndex(index);
   }
 
-  // async function onClickPlayVideo(index: number): Promise<void> {
-  //   console.log('play', index);
-  //   console.log('playVideoUrl: ', playVideoUrl);
-  //   const videoUrl: string = `https://api.amity.co/api/v3/files/${videoPosts[index]?.videoFileId.original}/download`;
-  //   setPlayVideoUrl(videoUrl);
-  // }
   function renderMediaPost(): ReactNode {
     let imageStyle: StyleProp<ImageStyle> | StyleProp<ImageStyle>[] =
       styles.imageLargePost;
@@ -428,7 +414,6 @@ export default function PostList({
     }
   }
 
-  // console.log('reactionCount: ', data.text + reactionCount.like);
   function renderPlayButton() {
     return (
       <View style={styles.playButton}>
@@ -461,55 +446,75 @@ export default function PostList({
       });
     }
   };
-
+  const deletePostObject = () => {
+    console.log('delete');
+    onDelete && onDelete(postId);
+  };
+  const modalStyle = {
+    transform: [
+      {
+        translateY: slideAnimation.interpolate({
+          inputRange: [0, 1],
+          outputRange: [600, 0], // Adjust this value to control the sliding distance
+        }),
+      },
+    ],
+  };
   return (
     <View key={postId} style={styles.postWrap}>
       <View style={styles.headerSection}>
-        {user?.avatarFileId ? (
-          <Image
-            style={styles.avatar}
-            source={{
-              uri: `https://api.amity.co/api/v3/files/${user?.avatarFileId}/download`,
-            }}
-          />
-        ) : (
-          <View style={styles.avatar}>
-            <SvgXml xml={personXml} width="20" height="16" />
+        <View style={styles.user}>
+          {user?.avatarFileId ? (
+            <Image
+              style={styles.avatar}
+              source={{
+                uri: `https://api.amity.co/api/v3/files/${user?.avatarFileId}/download`,
+              }}
+            />
+          ) : (
+            <View style={styles.avatar}>
+              <SvgXml xml={personXml} width="20" height="16" />
+            </View>
+          )}
+
+          <View>
+            <View style={styles.headerRow}>
+              <TouchableOpacity onPress={handleDisplayNamePress}>
+                <Text style={styles.headerText}>{user?.displayName}</Text>
+              </TouchableOpacity>
+
+              {communityName && (
+                <>
+                  <SvgXml
+                    style={styles.arrow}
+                    xml={arrowXml}
+                    width="8"
+                    height="8"
+                  />
+
+                  <TouchableOpacity onPress={handleCommunityNamePress}>
+                    <Text style={styles.headerText}>{communityName}</Text>
+                  </TouchableOpacity>
+                </>
+              )}
+            </View>
+
+            <Text style={styles.headerTextTime}>
+              {getTimeDifference(createdAt)}
+            </Text>
           </View>
-        )}
-
-        <View>
-          <View style={styles.headerRow}>
-            <TouchableOpacity onPress={handleDisplayNamePress}>
-              <Text style={styles.headerText}>{user?.displayName}</Text>
-            </TouchableOpacity>
-
-            {communityName && (
-              <>
-                <SvgXml
-                  style={styles.arrow}
-                  xml={arrowXml}
-                  width="8"
-                  height="8"
-                />
-
-                <TouchableOpacity onPress={handleCommunityNamePress}>
-                  <Text style={styles.headerText}>{communityName}</Text>
-                </TouchableOpacity>
-              </>
-            )}
-          </View>
-
-          <Text style={styles.headerTextTime}>
-            {getTimeDifference(createdAt)}
-          </Text>
         </View>
+        <TouchableOpacity onPress={openModal} style={styles.threeDots}>
+          <SvgXml xml={threeDots} width="20" height="16" />
+        </TouchableOpacity>
       </View>
       <View>
         <View style={styles.bodySection}>
           {data.text && <Text style={styles.bodyText}>{data.text}</Text>}
 
-          <View style={styles.mediaWrap}>{renderMediaPost()}</View>
+          {childrenPosts.length > 0 && (
+            <View style={styles.mediaWrap}>{renderMediaPost()}</View>
+          )}
         </View>
 
         {likeReaction === 0 && commentsCount === 0 ? (
@@ -568,6 +573,29 @@ export default function PostList({
         isVideoButton={videoPosts.length > 0 ? true : false}
         videoPosts={videoPosts}
       />
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={isVisible}
+        onRequestClose={closeModal}
+      >
+        <Pressable onPress={closeModal} style={styles.modalContainer}>
+          <Animated.View style={[styles.modalContent, modalStyle]}>
+            <TouchableOpacity
+              onPress={deletePostObject}
+              style={styles.modalRow}
+            >
+              <Text style={styles.deleteText}> Delete Post</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={deletePostObject}
+              style={styles.modalRow}
+            >
+              <Text style={styles.deleteText}> Edit Post</Text>
+            </TouchableOpacity>
+          </Animated.View>
+        </Pressable>
+      </Modal>
     </View>
   );
 }

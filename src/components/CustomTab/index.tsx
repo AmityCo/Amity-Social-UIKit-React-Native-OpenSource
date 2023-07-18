@@ -1,13 +1,10 @@
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import {
   Animated,
-  findNodeHandle,
-  ImageStyle,
   LayoutChangeEvent,
   StyleProp,
   Text,
   TouchableOpacity,
-  UIManager,
   View,
 } from 'react-native';
 import { styles } from './styles';
@@ -18,12 +15,9 @@ interface ICustomTab {
 }
 const CustomTab = ({ tabName, onTabChange }: ICustomTab): ReactElement => {
   const [activeTab, setActiveTab] = useState(1);
-  console.log('activeTab: ', activeTab);
   const [indicatorAnim] = useState(new Animated.Value(0));
   const [tabOneWidth, setTabOneWidth] = useState<number>(0);
-  console.log('tabOneWidth: ', tabOneWidth);
   const [tabTwoWidth, setTabTwoWidth] = useState<number>(0);
-  console.log('tabTwoWidth: ', tabTwoWidth);
   const handleTabPress = (tabIndex: number) => {
     setActiveTab(tabIndex);
     onTabChange && onTabChange(tabIndex);
