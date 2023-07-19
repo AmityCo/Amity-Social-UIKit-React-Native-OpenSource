@@ -17,6 +17,7 @@ import { getAmityUser } from '../../providers/user-provider';
 import type { UserInterface } from '../../types/user.interface';
 import { PostRepository } from '@amityco/ts-sdk';
 import type { FeedRefType } from '../CommunityHome';
+import { deletePostById } from '../../providers/Social/feed-sdk';
 
 interface IFeed {
   targetId: string;
@@ -104,11 +105,25 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
     handleLoadMore,
   }));
 
+  const onDeletePost = async (postId: string) => {
+    console.log('postId: ', postId);
+    const isDeleted = await deletePostById(postId);
+    if (isDeleted) {
+      console.log('isDeleted Post: ', isDeleted);
+      const prevPostList: IPost[] = [...postList];
+      const updatedPostList: IPost[] = prevPostList.filter(
+        (item) => item.postId !== postId
+      );
+      setPostList(updatedPostList);
+    }
+  };
   return (
     <View style={styles.feedWrap}>
       <FlatList
         data={postList}
-        renderItem={({ item }) => <PostList postDetail={item} />}
+        renderItem={({ item }) => (
+          <PostList onDelete={onDeletePost} postDetail={item} />
+        )}
         keyExtractor={(item) => item.postId.toString()}
         onEndReachedThreshold={0.8}
         // onEndReached={handleLoadMore}

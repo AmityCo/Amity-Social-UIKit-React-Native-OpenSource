@@ -20,6 +20,7 @@ import {
   Modal,
   Pressable,
   Animated,
+  Alert,
 } from 'react-native';
 import styles from './styles';
 import { SvgXml } from 'react-native-svg';
@@ -37,12 +38,16 @@ import type { UserInterface } from '../../../types/user.interface';
 import {
   addPostReaction,
   getPostById,
+  isReportPost,
   removePostReaction,
+  reportPostById,
+  unReportPostById,
 } from '../../../providers/Social/feed-sdk';
 import { getCommunityById } from '../../../providers/Social/communities-sdk';
 import ImageView from '../../../components/react-native-image-viewing/dist';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import useAuth from '../../../hooks/useAuth';
 
 export interface IPost {
   postId: string;
@@ -58,9 +63,9 @@ export interface IPost {
   targetType: string;
   targetId: string;
   childrenPosts: string[];
-  onDelete?: (postId: string) => void;
 }
 export interface IPostList {
+  onDelete?: (postId: string) => void;
   postDetail: IPost;
   initVideoPosts?: IVideoPost[];
   initImagePosts?: string[];
@@ -80,6 +85,7 @@ export default function PostList({
   postDetail,
   initVideoPostsFullSize = [],
   initImagePostsFullSize = [],
+  onDelete,
 }: IPostList) {
   const {
     postId,
@@ -92,8 +98,9 @@ export default function PostList({
     targetType,
     targetId,
     childrenPosts,
-    onDelete
   } = postDetail ?? {};
+
+  const { client } = useAuth();
   const [isLike, setIsLike] = useState<boolean>(false);
   const [likeReaction, setLikeReaction] = useState<number>(0);
   const [communityName, setCommunityName] = useState('');
@@ -105,6 +112,8 @@ export default function PostList({
   const [visibleFullImage, setIsVisibleFullImage] = useState<boolean>(false);
   const [imageIndex, setImageIndex] = useState<number>(0);
   const [isVisible, setIsVisible] = useState(false);
+  const [isReportByMe, setIsReportByMe] = useState<boolean>(false);
+
   const slideAnimation = useRef(new Animated.Value(0)).current;
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
@@ -156,12 +165,19 @@ export default function PostList({
     }
   }, [childrenPosts]);
 
+  const checkIsReport = async () => {
+    const isReport = await isReportPost(postId);
+    if (isReport) {
+      setIsReportByMe(true);
+    }
+  };
   useEffect(() => {
     if (initImagePostsFullSize) {
       setImagePostsFullSize(initImagePostsFullSize);
     } else if (initVideoPostsFullSize) {
       setVideoPostsFullSize(initVideoPostsFullSize);
     }
+    checkIsReport();
     return () => {
       setImagePostsFullSize([]);
       setImagePosts([]);
@@ -447,8 +463,39 @@ export default function PostList({
     }
   };
   const deletePostObject = () => {
-    console.log('delete');
-    onDelete && onDelete(postId);
+    Alert.alert(
+      'Delete this post',
+      `This post will be permanently deleted. You'll no longer see and find this post`,
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => onDelete && onDelete(postId),
+        },
+      ]
+    );
+    setIsVisible(false);
+  };
+  const reportPostObject = async () => {
+    if (isReportByMe) {
+      const unReportPost = await unReportPostById(postId);
+      if (unReportPost) {
+        Alert.alert('Undo Report sent', '', []);
+      }
+      setIsVisible(false);
+      setIsReportByMe(false);
+    } else {
+      const reportPost = await reportPostById(postId);
+      if (reportPost) {
+        Alert.alert('Report sent', '', []);
+      }
+      setIsVisible(false);
+      setIsReportByMe(true);
+    }
   };
   const modalStyle = {
     transform: [
@@ -581,18 +628,23 @@ export default function PostList({
       >
         <Pressable onPress={closeModal} style={styles.modalContainer}>
           <Animated.View style={[styles.modalContent, modalStyle]}>
-            <TouchableOpacity
-              onPress={deletePostObject}
-              style={styles.modalRow}
-            >
-              <Text style={styles.deleteText}> Delete Post</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={deletePostObject}
-              style={styles.modalRow}
-            >
-              <Text style={styles.deleteText}> Edit Post</Text>
-            </TouchableOpacity>
+            {user?.userId === (client as Amity.Client).userId ? (
+              <TouchableOpacity
+                onPress={deletePostObject}
+                style={styles.modalRow}
+              >
+                <Text style={styles.deleteText}> Delete Post</Text>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                onPress={reportPostObject}
+                style={styles.modalRow}
+              >
+                <Text style={styles.deleteText}>
+                  {isReportByMe ? 'Undo Report' : 'Report'}
+                </Text>
+              </TouchableOpacity>
+            )}
           </Animated.View>
         </Pressable>
       </Modal>

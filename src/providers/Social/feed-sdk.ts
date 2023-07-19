@@ -1,5 +1,8 @@
 import {
+  createReport,
+  deleteReport,
   FeedRepository,
+  isReportedByMe,
   PostContentType,
   PostRepository,
   ReactionRepository,
@@ -119,7 +122,6 @@ export async function createPostToFeed(
       ...postParam,
     };
     postParam = newPostParam;
-
   } else if (postType === 'video') {
     const formattedFileIds: { type: string; fileId: string }[] =
       content.fileIds.map((id) => {
@@ -148,7 +150,7 @@ export async function createPostToFeed(
   return createPostObject;
 }
 export async function deletePostById(postId: string): Promise<boolean> {
-  const reactionObject: Promise<boolean> = new Promise(
+  const isDeletedObject: Promise<boolean> = new Promise(
     async (resolve, reject) => {
       try {
         const hardDelete = await PostRepository.deletePost(postId, true);
@@ -160,5 +162,47 @@ export async function deletePostById(postId: string): Promise<boolean> {
       }
     }
   );
-  return reactionObject;
+  return isDeletedObject;
+}
+export async function reportPostById(postId: string): Promise<boolean> {
+  const isReport: Promise<boolean> = new Promise(async (resolve, reject) => {
+    try {
+      const didCreatePostReport = await createReport('post', postId);
+      console.log('didCreatePostReport: ', didCreatePostReport);
+      if (didCreatePostReport) {
+        resolve(didCreatePostReport);
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
+  return isReport;
+}
+export async function isReportPost(postId: string): Promise<boolean> {
+  const isReport: Promise<boolean> = new Promise(async (resolve, reject) => {
+    try {
+      const isReportByMe = await isReportedByMe('post', postId);;
+      console.log('didCreatePostReport: ', isReportByMe);
+      if (isReportByMe) {
+        resolve(isReportByMe);
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
+  return isReport;
+}
+export async function unReportPostById(postId: string): Promise<boolean> {
+  const isReport: Promise<boolean> = new Promise(async (resolve, reject) => {
+    try {
+      const didDeletePostReport = await deleteReport('post', postId);;
+      console.log('didCreatePostReport: ', didDeletePostReport);
+      if (didDeletePostReport) {
+        resolve(didDeletePostReport);
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
+  return isReport;
 }

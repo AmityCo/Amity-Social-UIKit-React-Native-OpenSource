@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 // import { useTranslation } from 'react-i18next';
 
 import { FlatList, View } from 'react-native';
-import { getGlobalFeed, IGlobalFeedRes } from '../../providers/Social/feed-sdk';
+import { deletePostById, getGlobalFeed, IGlobalFeedRes } from '../../providers/Social/feed-sdk';
 import useAuth from '../../hooks/useAuth';
 import PostList, { IPost } from '../../components/Social/PostList';
 import styles from './styles';
@@ -14,7 +14,7 @@ export default function GlobalFeed() {
   const { client } = useAuth();
   const [postData, setPostData] = useState<IGlobalFeedRes>();
   const [postList, setPostList] = useState<IPost[]>([]);
-  // console.log('postList: ', postList);
+  console.log('postList: ', postList);
 
   const { data: posts = [], nextPage } = postData ?? {};
   // console.log('nextPage: ', nextPage);
@@ -74,12 +74,26 @@ export default function GlobalFeed() {
     getPostList();
   }, [getPostList]);
 
+  const onDeletePost = async (postId: string) => {
+    console.log('postId: ', postId);
+    const isDeleted = await deletePostById(postId);
+    if (isDeleted) {
+      console.log('isDeleted Post: ', isDeleted);
+      const prevPostList: IPost[] = [...postList];
+      const updatedPostList: IPost[] = prevPostList.filter(
+        (item) => item.postId !== postId
+      );
+      setPostList(updatedPostList);
+    }
+  };
   return (
     <View style={styles.feedWrap}>
       <View style={styles.feedWrap}>
         <FlatList
           data={postList}
-          renderItem={({ item }) => <PostList postDetail={item} />}
+          renderItem={({ item }) => (
+            <PostList onDelete={onDeletePost} postDetail={item} />
+          )}
           keyExtractor={(item) => item.postId.toString()}
           onEndReachedThreshold={0.5}
           onEndReached={handleLoadMore}
