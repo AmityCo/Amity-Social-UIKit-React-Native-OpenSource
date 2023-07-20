@@ -164,10 +164,13 @@ export async function deletePostById(postId: string): Promise<boolean> {
   );
   return isDeletedObject;
 }
-export async function reportPostById(postId: string): Promise<boolean> {
+export async function reportTargetById(
+  targetType: 'post' | 'comment',
+  postId: string
+): Promise<boolean> {
   const isReport: Promise<boolean> = new Promise(async (resolve, reject) => {
     try {
-      const didCreatePostReport = await createReport('post', postId);
+      const didCreatePostReport = await createReport(targetType, postId);
       console.log('didCreatePostReport: ', didCreatePostReport);
       if (didCreatePostReport) {
         resolve(didCreatePostReport);
@@ -178,10 +181,13 @@ export async function reportPostById(postId: string): Promise<boolean> {
   });
   return isReport;
 }
-export async function isReportPost(postId: string): Promise<boolean> {
+export async function isReportTarget(
+  targetType: 'post' | 'comment',
+  targetId: string
+): Promise<boolean> {
   const isReport: Promise<boolean> = new Promise(async (resolve, reject) => {
     try {
-      const isReportByMe = await isReportedByMe('post', postId);;
+      const isReportByMe = await isReportedByMe(targetType, targetId);
       console.log('didCreatePostReport: ', isReportByMe);
       if (isReportByMe) {
         resolve(isReportByMe);
@@ -192,10 +198,14 @@ export async function isReportPost(postId: string): Promise<boolean> {
   });
   return isReport;
 }
-export async function unReportPostById(postId: string): Promise<boolean> {
+
+export async function unReportTargetById(
+  targetType: 'post' | 'comment',
+  targetId: string
+): Promise<boolean> {
   const isReport: Promise<boolean> = new Promise(async (resolve, reject) => {
     try {
-      const didDeletePostReport = await deleteReport('post', postId);;
+      const didDeletePostReport = await deleteReport(targetType, targetId);
       console.log('didCreatePostReport: ', didDeletePostReport);
       if (didDeletePostReport) {
         resolve(didDeletePostReport);

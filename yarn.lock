@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@amityco/ts-sdk@^6.4.5":
-  version "6.4.5"
-  resolved "https://registry.yarnpkg.com/@amityco/ts-sdk/-/ts-sdk-6.4.5.tgz#fa826aba6c62d380ce352977d2c019b60158faa2"
-  integrity sha512-Zo381n0y9Z8skR5bKiE0MWbBAKmlLKPaYLW+m6NdOGjZywheF8QxzN2CwqTZWuVd9B/J83SzdRUpzTS6Whdmiw==
+"@amityco/ts-sdk@^6.5.1":
+  version "6.5.1"
+  resolved "https://registry.yarnpkg.com/@amityco/ts-sdk/-/ts-sdk-6.5.1.tgz#e3cfe0edd498bd37849fa7d960dce4e46fcd2517"
+  integrity sha512-8YQQUyP4nDzD8UKgoDLMFOlr/xDG0rrnbA9mCD/WIxjuCWhYdid3ChoMizpqh1lbCpMU7MfIuAAc/bGvvNExRg==
   dependencies:
     "@react-native-async-storage/async-storage" "^1.17.7"
     agentkeepalive "^4.2.1"
@@ -8674,7 +8674,7 @@ react-native-progress@^5.0.0:
   dependencies:
     prop-types "^15.7.2"
 
-react-native-safe-area-context@^4.7.1:
+react-native-safe-area-context@4.7.1:
   version "4.7.1"
   resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-4.7.1.tgz#b7be2d68dee909717cfa439bb5c7966042d231e8"
   integrity sha512-X2pJG2ttmAbiGlItWedvDkZg1T1ikmEDiz+7HsiIwAIm2UbFqlhqn+B1JF53mSxPzdNaDcCQVHRNPvj8oFu6Yg==

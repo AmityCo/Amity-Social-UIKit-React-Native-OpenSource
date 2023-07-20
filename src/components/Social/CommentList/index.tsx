@@ -1,7 +1,17 @@
-import React, { useCallback, useEffect, useState } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 // import { useTranslation } from 'react-i18next';
 
-import { View, Text, TouchableOpacity, Image, FlatList } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  FlatList,
+  Modal,
+  Animated,
+  Alert,
+} from 'react-native';
 import styles from './styles';
 import { SvgXml } from 'react-native-svg';
 import {
@@ -9,6 +19,7 @@ import {
   likeXml,
   personXml,
   replyIcon,
+  threeDots,
 } from '../../../svg/svg-xml-list';
 
 import type { UserInterface } from '../../../types/user.interface';
@@ -20,6 +31,13 @@ import {
 } from '../../../providers/Social/comment-sdk';
 
 import { getAmityUser } from '../../../providers/user-provider';
+import { Pressable } from 'react-native';
+import useAuth from '../../../hooks/useAuth';
+import {
+  isReportTarget,
+  reportTargetById,
+  unReportTargetById,
+} from '../../../providers/Social/feed-sdk';
 
 export interface IComment {
   commentId: string;
@@ -37,11 +55,13 @@ export interface IComment {
 export interface ICommentList {
   commentDetail: IComment;
   isReplyComment?: boolean;
+  onDelete: (commentId: string) => void;
 }
 
 export default function CommentList({
   commentDetail,
   isReplyComment = false,
+  onDelete,
 }: ICommentList) {
   const {
     commentId,
@@ -60,9 +80,31 @@ export default function CommentList({
     reactions.like ? reactions.like : 0
   );
 
+  const { client } = useAuth();
   const [commentList, setCommentList] = useState<IComment[]>([]);
   console.log('replyCommentList: ', commentList);
+  const [isVisible, setIsVisible] = useState(false);
+  const [isReportByMe, setIsReportByMe] = useState<boolean>(false);
 
+  const slideAnimation = useRef(new Animated.Value(0)).current;
+
+  const openModal = () => {
+    setIsVisible(true);
+  };
+
+  const closeModal = () => {
+    Animated.timing(slideAnimation, {
+      toValue: 0,
+      duration: 100,
+      useNativeDriver: true,
+    }).start(() => setIsVisible(false));
+  };
+  const checkIsReport = async () => {
+    const isReport = await isReportTarget('comment', commentId);
+    if (isReport) {
+      setIsReportByMe(true);
+    }
+  };
   function getTimeDifference(timestamp: string): string {
     // Convert the timestamp string to a Date object
     const timestampDate = Date.parse(timestamp);
@@ -144,6 +186,7 @@ export default function CommentList({
     if (childrenComment.length > 0) {
       getReplyComments();
     }
+    checkIsReport();
   }, [childrenComment, getReplyComments]);
 
   const addReactionToComment: () => Promise<void> = async () => {
@@ -159,7 +202,51 @@ export default function CommentList({
       console.log('isLikeComment: ', isLikeComment);
     }
   };
-
+  const deletePostObject = () => {
+    Alert.alert(
+      'Delete this post',
+      `This post will be permanently deleted. You'll no longer see and find this post`,
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => onDelete && onDelete(commentId),
+        },
+      ]
+    );
+    setIsVisible(false);
+  };
+  const reportCommentObject = async () => {
+    if (isReportByMe) {
+      const unReportPost = await unReportTargetById('comment', commentId);
+      if (unReportPost) {
+        Alert.alert('Undo Report sent', '', []);
+      }
+      setIsVisible(false);
+      setIsReportByMe(false);
+    } else {
+      const reportPost = await reportTargetById('comment', commentId);
+      if (reportPost) {
+        Alert.alert('Report sent', '', []);
+      }
+      setIsVisible(false);
+      setIsReportByMe(true);
+    }
+  };
+  const modalStyle = {
+    transform: [
+      {
+        translateY: slideAnimation.interpolate({
+          inputRange: [0, 1],
+          outputRange: [600, 0], // Adjust this value to control the sliding distance
+        }),
+      },
+    ],
+  };
   return (
     <View
       key={commentId}
@@ -208,7 +295,7 @@ export default function CommentList({
                 {!isLike && likeReaction === 0 ? 'Like' : likeReaction}
               </Text>
             </TouchableOpacity>
-            {!isReplyComment && (
+            {/* {!isReplyComment && (
               <TouchableOpacity
                 // onPress={() => addReactionToComment()}
                 style={styles.likeBtn}
@@ -217,9 +304,13 @@ export default function CommentList({
 
                 <Text style={styles.btnText}>Reply</Text>
               </TouchableOpacity>
-            )}
+            )} */}
+
+            <TouchableOpacity onPress={openModal} style={styles.threeDots}>
+              <SvgXml xml={threeDots} width="20" height="16" />
+            </TouchableOpacity>
           </View>
-          {commentList.length > 0 && (
+          {/* {commentList.length > 0 && (
             <FlatList
               data={commentList}
               renderItem={({ item }) => (
@@ -228,9 +319,37 @@ export default function CommentList({
               keyExtractor={(item) => item.commentId.toString()}
               onEndReachedThreshold={0.8}
             />
-          )}
+          )} */}
         </View>
       </View>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={isVisible}
+        onRequestClose={closeModal}
+      >
+        <Pressable onPress={closeModal} style={styles.modalContainer}>
+          <Animated.View style={[styles.modalContent, modalStyle]}>
+            {user?.userId === (client as Amity.Client).userId ? (
+              <TouchableOpacity
+                onPress={deletePostObject}
+                style={styles.modalRow}
+              >
+                <Text style={styles.deleteText}> Delete Comment</Text>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                onPress={reportCommentObject}
+                style={styles.modalRow}
+              >
+                <Text style={styles.deleteText}>
+                  {isReportByMe ? 'Undo Report' : 'Report'}
+                </Text>
+              </TouchableOpacity>
+            )}
+          </Animated.View>
+        </Pressable>
+      </Modal>
     </View>
   );
 }

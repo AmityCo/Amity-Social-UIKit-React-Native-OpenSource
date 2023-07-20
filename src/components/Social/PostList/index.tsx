@@ -38,10 +38,10 @@ import type { UserInterface } from '../../../types/user.interface';
 import {
   addPostReaction,
   getPostById,
-  isReportPost,
+  isReportTarget,
   removePostReaction,
-  reportPostById,
-  unReportPostById,
+  reportTargetById,
+  unReportTargetById,
 } from '../../../providers/Social/feed-sdk';
 import { getCommunityById } from '../../../providers/Social/communities-sdk';
 import ImageView from '../../../components/react-native-image-viewing/dist';
@@ -166,7 +166,7 @@ export default function PostList({
   }, [childrenPosts]);
 
   const checkIsReport = async () => {
-    const isReport = await isReportPost(postId);
+    const isReport = await isReportTarget('post', postId);
     if (isReport) {
       setIsReportByMe(true);
     }
@@ -482,14 +482,14 @@ export default function PostList({
   };
   const reportPostObject = async () => {
     if (isReportByMe) {
-      const unReportPost = await unReportPostById(postId);
+      const unReportPost = await unReportTargetById('post', postId);
       if (unReportPost) {
         Alert.alert('Undo Report sent', '', []);
       }
       setIsVisible(false);
       setIsReportByMe(false);
     } else {
-      const reportPost = await reportPostById(postId);
+      const reportPost = await reportTargetById('post', postId);
       if (reportPost) {
         Alert.alert('Report sent', '', []);
       }

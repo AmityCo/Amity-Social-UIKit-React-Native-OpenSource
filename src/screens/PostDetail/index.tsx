@@ -23,7 +23,8 @@ import type { UserInterface } from '../../types/user.interface';
 import { getAmityUser } from '../../providers/user-provider';
 import CommentList from '../../components/Social/CommentList';
 import { CommentRepository } from '@amityco/ts-sdk';
-import { createComment } from '../../providers/Social/comment-sdk';
+import { createComment, deleteCommentById } from '../../providers/Social/comment-sdk';
+import type { ICommentList } from 'lib/typescript/src/components/Social/CommentList';
 
 const PostDetail = () => {
   const route = useRoute<RouteProp<RootStackParamList, 'PostDetail'>>();
@@ -124,7 +125,17 @@ const PostDetail = () => {
     await createComment(inputMessage, postDetail.postId);
     setInputMessage('');
   };
-
+  const onDeleteComment = async (commentId: string) => {
+    const isDeleted = await deleteCommentById(commentId);
+    if (isDeleted) {
+      console.log('isDeleted Comment: ', isDeleted);
+      const prevCommentList: IComment[] = [...commentList];
+      const updatedCommentList: IComment[] = prevCommentList.filter(
+        (item) => item.commentId !== commentId
+      );
+      setCommentList(updatedCommentList);
+    }
+  };
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -145,7 +156,9 @@ const PostDetail = () => {
         <View style={styles.commentListWrap}>
           <FlatList
             data={commentList}
-            renderItem={({ item }) => <CommentList commentDetail={item} />}
+            renderItem={({ item }) => (
+              <CommentList onDelete={onDeleteComment} commentDetail={item} />
+            )}
             keyExtractor={(item) => item.commentId.toString()}
             onEndReachedThreshold={0.8}
             ref={flatListRef}

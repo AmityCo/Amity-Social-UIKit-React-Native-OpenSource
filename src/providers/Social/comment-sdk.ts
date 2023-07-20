@@ -90,3 +90,21 @@ export async function getCommentsDataByIds(
   );
   return commentObject;
 }
+export async function deleteCommentById(commentId: string): Promise<boolean> {
+  const isDeletedObject: Promise<boolean> = new Promise(
+    async (resolve, reject) => {
+      try {
+        const hardDelete = await CommentRepository.deleteComment(
+          commentId,
+          true
+        );
+        if (hardDelete) {
+          resolve(true);
+        }
+      } catch (error) {
+        reject(error);
+      }
+    }
+  );
+  return isDeletedObject;
+}
