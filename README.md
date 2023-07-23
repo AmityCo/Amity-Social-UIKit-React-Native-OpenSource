@@ -61,7 +61,7 @@ Then, inside another project, where need to use ui-kit:
 
 ```sh
 1. npm install ./../asc-react-native-ui-kit/amityco-asc-react-native-ui-kit-0.1.0.tgz
-2. npm install react-native-safe-area-context \ react-native-screens \ react-native-image-picker \ @react-native-async-storage/async-storage \ react-native-svg@13.4.0
+2. npm install react-native-safe-area-context \react-native-image-picker \@react-native-async-storage/async-storage \react-native-svg@13.4.0
 3. npx install-expo-modules@latest
 ```
 
