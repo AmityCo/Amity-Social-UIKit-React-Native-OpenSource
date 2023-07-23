@@ -1,4 +1,4 @@
-# Amity Ui-Kit for React native (open-source)
+![image](https://github.com/AmityCo/Amity-Social-UIKit-React-Native-OpenSource/assets/112688936/2c8a13dd-c63d-46a0-ba9a-f5b5b2480e01)# Amity Ui-Kit for React native (open-source)
 
 
 ** This is the beta version **
@@ -7,34 +7,16 @@
 
 ### Sample app
 
-Run sample app with expo\
+#### Run sample app with expo
+Use yarn
+
 1. Install packages
-
 ```
-yarn install
+yarn
 ```
+2. Configure your apiKey,apiRegion,userId,displayName in /example/src/App.tsx file(https://github.com/AmityCo/Amity-Social-Cloud-UIKit-React-Native-OpenSource/blob/main/example/src/App.tsx) first before run the sample app
 
-2. Navigate to example folder (sample app project)
-
-```
-cd example
-```
-
-3. Install sample app dependencies
-
-```
-yarn install
-```
-
-4. Configure your apiKey,apiRegion,userId,displayName in /example/src/App.tsx file(https://github.com/AmityCo/Amity-Social-Cloud-UIKit-React-Native-OpenSource/blob/main/example/src/App.tsx) first before run the sample app
-
-5. Once the installation and Configuration are done, navigate back to the root project
-
-```
-cd ..
-```
-
-Choose to run between iOS or Android
+3. Choose to run between iOS or Android
 
 ```sh
 yarn example ios
@@ -62,7 +44,6 @@ Then, inside another project, where need to use ui-kit:
 ```sh
 1. npm install ./../asc-react-native-ui-kit/amityco-asc-react-native-ui-kit-0.1.0.tgz
 2. npm install react-native-safe-area-context \react-native-image-picker \@react-native-async-storage/async-storage \react-native-svg@13.4.0 \react-native-screens
-
 3. npx install-expo-modules@latest
 ```
 ### iOS Configuration
@@ -88,11 +69,6 @@ Add following permissions to `info.plist` file (ios/{YourAppName}/Info.plist)
  <key>NSCameraUsageDescription</key>
  <string>App needs access to the camera to take photos.</string>
 
-```
-### React Native CLI Camera and Gallery Configuration
-
-```sh
- npm install react-native-image-picker
 ```
 
 ### Usage
