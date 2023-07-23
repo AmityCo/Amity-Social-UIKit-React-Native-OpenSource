@@ -18,10 +18,7 @@ export default function GlobalFeed() {
   const { client } = useAuth();
   const [postData, setPostData] = useState<IGlobalFeedRes>();
   const [postList, setPostList] = useState<IPost[]>([]);
-  console.log('postList: ', postList);
-
   const { data: posts = [], nextPage } = postData ?? {};
-  // console.log('nextPage: ', nextPage);
 
   const flatListRef = useRef(null);
   async function getGlobalFeedList(
@@ -34,7 +31,6 @@ export default function GlobalFeed() {
   }
   const handleLoadMore = () => {
     if (nextPage) {
-      console.log('nextPage: ', nextPage);
       getGlobalFeedList(nextPage);
     }
   };
@@ -79,10 +75,8 @@ export default function GlobalFeed() {
   }, [getPostList]);
 
   const onDeletePost = async (postId: string) => {
-    console.log('postId: ', postId);
     const isDeleted = await deletePostById(postId);
     if (isDeleted) {
-      console.log('isDeleted Post: ', isDeleted);
       const prevPostList: IPost[] = [...postList];
       const updatedPostList: IPost[] = prevPostList.filter(
         (item) => item.postId !== postId

@@ -24,18 +24,11 @@ interface IFeed {
   targetType: string;
 }
 function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
-  console.log('targetId: ', targetId);
   const { client } = useAuth();
   const [postData, setPostData] =
     useState<Amity.LiveCollection<Amity.Post<any>>>();
   const [postList, setPostList] = useState<IPost[]>([]);
-  console.log('postList: ', postList);
-  console.log('postList: ', postList.length);
-  // console.log('postList: ', postList);
-
   const { data: posts, onNextPage, hasNextPage } = postData ?? {};
-  // console.log('nextPage: ', nextPage);
-  // console.log('posts: ', posts);
   const flatListRef = useRef(null);
 
   async function getFeed(): Promise<void> {
@@ -54,7 +47,6 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
   };
   useEffect(() => {
     return () => {
-      // Reset component state here
       setPostData(undefined);
       setPostList([]);
     };
@@ -62,6 +54,7 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
   useEffect(() => {
     getFeed();
   }, [client]);
+
   const getPostList = useCallback(async () => {
     if (posts && posts.length > 0) {
       const formattedPostList = await Promise.all(
@@ -106,10 +99,8 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
   }));
 
   const onDeletePost = async (postId: string) => {
-    console.log('postId: ', postId);
     const isDeleted = await deletePostById(postId);
     if (isDeleted) {
-      console.log('isDeleted Post: ', isDeleted);
       const prevPostList: IPost[] = [...postList];
       const updatedPostList: IPost[] = prevPostList.filter(
         (item) => item.postId !== postId

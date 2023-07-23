@@ -24,7 +24,6 @@ export default function CommunityList({ navigation, route }: any) {
   useEffect(() => {
     const loadCommunities = async () => {
       setPaginateLoading(true);
-      console.log('enter load communities ' + categoryId);
       try {
         const unsubscribe = CommunityRepository.getCommunities(
           { categoryId: categoryId },
@@ -34,9 +33,6 @@ export default function CommunityList({ navigation, route }: any) {
                 ...prevCommunities,
                 ...communities,
               ]);
-              console.log(
-                'did query communities ' + JSON.stringify(communities)
-              );
               setHasNextPage(hasNextPage);
               onNextPageRef.current = onNextPage;
               isFetchingRef.current = false;
@@ -83,7 +79,6 @@ export default function CommunityList({ navigation, route }: any) {
   };
 
   const handleEndReached = useCallback(() => {
-    console.log('handleEndReached got triggered');
     if (
       !isFetchingRef.current &&
       hasNextPage &&

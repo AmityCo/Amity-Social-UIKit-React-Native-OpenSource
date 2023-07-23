@@ -73,7 +73,6 @@ export default function CommentList({
   const [isLike, setIsLike] = useState<boolean>(
     myReactions ? myReactions.includes('like') : false
   );
-  console.log('isLike: ', isLike);
   const [likeReaction, setLikeReaction] = useState<number>(
     reactions.like ? reactions.like : 0
   );
@@ -191,13 +190,12 @@ export default function CommentList({
     if (isLike && likeReaction) {
       setLikeReaction(likeReaction - 1);
       setIsLike(false);
-      const isRemoveComment = await removeCommentReaction(commentId, 'like');
-      console.log('isRemovePost: ', isRemoveComment);
+      await removeCommentReaction(commentId, 'like');
+
     } else {
       setIsLike(true);
       setLikeReaction(likeReaction + 1);
-      const isLikeComment = await addCommentReaction(commentId, 'like');
-      console.log('isLikeComment: ', isLikeComment);
+      await addCommentReaction(commentId, 'like');
     }
   };
   const deletePostObject = () => {

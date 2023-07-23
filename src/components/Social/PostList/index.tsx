@@ -413,7 +413,6 @@ export default function PostList({
         </View>
       );
     } else if (imageElement.length === 3) {
-      console.log('imageElement.length: ', imageElement.length);
       return (
         <View style={[styles.imagesWrap]}>
           <View style={styles.row}>{imageElement.slice(0, 1)}</View>
@@ -447,7 +446,6 @@ export default function PostList({
     });
   }
   const handleDisplayNamePress = () => {
-    console.log('checking user object ' + JSON.stringify(user));
     if (user?.userId) {
       navigation.navigate('UserProfile', {
         userId: user.userId,

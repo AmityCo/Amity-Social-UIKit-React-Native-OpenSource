@@ -10,7 +10,6 @@ export default function UserProfileSetting({ navigation, route }: any) {
   console.log('showLoadingIndicator: ', showLoadingIndicator);
   const [followStatus, setFollowStatus] = useState(follow);
   React.useLayoutEffect(() => {
-    // Set the headerRight component to a TouchableOpacity
     navigation.setOptions({
       headerLeft: () => <CloseButton />,
       title: 'Settings',
@@ -55,7 +54,6 @@ export default function UserProfileSetting({ navigation, route }: any) {
       //     </TouchableOpacity>
       //   );
       case 1:
-        console.log('checking follow status ' + followStatus);
         return followStatus === 'accepted' ? (
           <TouchableOpacity
             style={styles.rowContainer}
@@ -68,10 +66,6 @@ export default function UserProfileSetting({ navigation, route }: any) {
               />
             </View>
             <Text style={styles.rowText}>Unfollow</Text>
-            {/* <Image
-              source={require('../../../assets/icon/arrowRight.png')}
-              style={styles.arrowIcon}
-            /> */}
           </TouchableOpacity>
         ) : (
           <View />

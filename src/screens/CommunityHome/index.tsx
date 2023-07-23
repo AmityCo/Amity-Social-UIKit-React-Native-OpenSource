@@ -36,7 +36,6 @@ export default function CommunityHome({ navigation, route }: any) {
       layoutMeasurement.height + contentOffset.y + 200 >= contentSize.height;
 
     if (isScrollEndReached) {
-      console.log('ending');
       triggerLoadMoreFunction();
     }
   };
@@ -71,7 +70,6 @@ export default function CommunityHome({ navigation, route }: any) {
     });
   };
   function triggerLoadMoreFunction() {
-    console.log('triggerLoadMoreFunction: ', triggerLoadMoreFunction);
     if (feedRef.current) {
       feedRef.current.handleLoadMore(); // Call the function inside the child component
     }

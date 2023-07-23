@@ -55,7 +55,6 @@ const PostDetail = () => {
         referenceType: 'post',
       },
       (data: Amity.LiveCollection<Amity.Comment<any>>) => {
-        console.log('data:====== ', data);
         if (data.error) throw data.error;
         if (!data.loading) {
           setCommentCollection(data);
@@ -130,7 +129,6 @@ const PostDetail = () => {
   const onDeleteComment = async (commentId: string) => {
     const isDeleted = await deleteCommentById(commentId);
     if (isDeleted) {
-      console.log('isDeleted Comment: ', isDeleted);
       const prevCommentList: IComment[] = [...commentList];
       const updatedCommentList: IComment[] = prevCommentList.filter(
         (item) => item.commentId !== commentId

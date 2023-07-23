@@ -41,7 +41,6 @@ export async function reportUser(userId: string): Promise<boolean> {
     runQuery(query, (options) => {
       if (options.loading == false) {
         if (options.data !== undefined) {
-          console.log('successfully report user ');
           return resolve(options.data);
         } else {
           return reject(new Error('Unable to report user ' + options.error));
