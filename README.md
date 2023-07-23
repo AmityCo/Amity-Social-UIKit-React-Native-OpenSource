@@ -64,18 +64,17 @@ Then, inside another project, where need to use ui-kit:
 2. npm install react-native-safe-area-context \react-native-image-picker \@react-native-async-storage/async-storage \react-native-svg@13.4.0
 3. npx install-expo-modules@latest
 ```
+### iOS Configuration
+```sh
+npx pod-install
+
+```
 
 ### Expo CLI Camera and Gallery Configuration
 
 ```sh
  expo install expo-image-picker \
 
-```
-
-### React Native CLI Camera and Gallery Configuration
-
-```sh
- npm install react-native-image-picker
 ```
 ### Add Camera permission iOS
 Add following permissions to `info.plist` file (ios/{YourAppName}/Info.plist)
@@ -89,6 +88,12 @@ Add following permissions to `info.plist` file (ios/{YourAppName}/Info.plist)
  <string>App needs access to the camera to take photos.</string>
 
 ```
+### React Native CLI Camera and Gallery Configuration
+
+```sh
+ npm install react-native-image-picker
+```
+
 ### Usage
 
 ```js
