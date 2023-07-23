@@ -17,11 +17,16 @@ export default function Explore() {
     Amity.Community[]
   >([]);
   const [categoryList, setCategoryList] = useState<Amity.Category[]>([]);
-  const loadRecommendCommunities = async () => {
-    const { data: communities } =
-      await CommunityRepository.getRecommendedCommunities();
-    setRecommendCommunityList(communities);
+
+  const loadRecommendCommunities = () => {
+    const unsubscribe = CommunityRepository.getRecommendedCommunities(
+      { limit: 5 },
+      ({ data: recommendCommunities }) =>
+        setRecommendCommunityList(recommendCommunities)
+    );
+    unsubscribe();
   };
+
   const loadTrendingCommunities = async () => {
     const { data: communities } =
       await CommunityRepository.getTopTrendingCommunities();

@@ -3,7 +3,11 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 // import { useTranslation } from 'react-i18next';
 
 import { FlatList, View } from 'react-native';
-import { deletePostById, getGlobalFeed, IGlobalFeedRes } from '../../providers/Social/feed-sdk';
+import {
+  deletePostById,
+  getGlobalFeed,
+  IGlobalFeedRes,
+} from '../../providers/Social/feed-sdk';
 import useAuth from '../../hooks/useAuth';
 import PostList, { IPost } from '../../components/Social/PostList';
 import styles from './styles';

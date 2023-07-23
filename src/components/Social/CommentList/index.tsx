@@ -7,7 +7,6 @@ import {
   Text,
   TouchableOpacity,
   Image,
-  FlatList,
   Modal,
   Animated,
   Alert,
@@ -18,7 +17,6 @@ import {
   likedXml,
   likeXml,
   personXml,
-  replyIcon,
   threeDots,
 } from '../../../svg/svg-xml-list';
 

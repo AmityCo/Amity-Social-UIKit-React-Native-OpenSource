@@ -1,6 +1,6 @@
 {
   "name": "@amityco/asc-react-native-ui-kit",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "test",
   "main": "lib/commonjs/index.js",
   "module": "lib/module/index.js",

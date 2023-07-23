@@ -23,8 +23,10 @@ import type { UserInterface } from '../../types/user.interface';
 import { getAmityUser } from '../../providers/user-provider';
 import CommentList from '../../components/Social/CommentList';
 import { CommentRepository } from '@amityco/ts-sdk';
-import { createComment, deleteCommentById } from '../../providers/Social/comment-sdk';
-import type { ICommentList } from 'lib/typescript/src/components/Social/CommentList';
+import {
+  createComment,
+  deleteCommentById,
+} from '../../providers/Social/comment-sdk';
 
 const PostDetail = () => {
   const route = useRoute<RouteProp<RootStackParamList, 'PostDetail'>>();
