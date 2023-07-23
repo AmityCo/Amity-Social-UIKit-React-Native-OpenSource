@@ -1,6 +1,8 @@
-![image](https://github.com/AmityCo/Amity-Social-UIKit-React-Native-OpenSource/assets/112688936/2c8a13dd-c63d-46a0-ba9a-f5b5b2480e01)# Amity Ui-Kit for React native (open-source)
-
-
+<div align="center">
+<img src="https://github.com/AmityCo/Amity-Social-UIKit-React-Native-OpenSource/assets/112688936/ddeeef20-2dfa-449e-bd3d-62238d7c9be0" width="160" >
+<img src="https://github.com/AmityCo/Amity-Social-UIKit-React-Native-OpenSource/assets/112688936/e6b2d2a2-5158-429e-b1af-ea679b14fc11" width="150">
+<h1>Amity Ui-Kit for React native (open-source)</h1> 
+</div>
 ** This is the beta version **
 
 ## Getting started
