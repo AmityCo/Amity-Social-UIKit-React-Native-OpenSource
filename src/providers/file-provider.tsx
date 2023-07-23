@@ -23,7 +23,6 @@ export async function uploadFile(
     const { data: file } = await FileRepository.uploadFile(
       formData,
       (percent) => {
-        console.log('percent===: ', percent);
         perCentCallback && perCentCallback(percent);
       }
     );
@@ -55,7 +54,6 @@ export async function uploadImageFile(
     const { data: file } = await FileRepository.uploadImage(
       formData,
       (percent) => {
-        console.log('percent===: ', percent);
         perCentCallback && perCentCallback(percent);
       }
     );
@@ -88,7 +86,6 @@ export async function uploadVideoFile(
       formData,
       ContentFeedType.POST,
       (percent) => {
-        console.log('percent===: ', percent);
         perCentCallback && perCentCallback(percent);
       }
     );

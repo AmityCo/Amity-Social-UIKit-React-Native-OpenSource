@@ -103,7 +103,6 @@ export const EditProfile: React.FC<EditProfileProps> = ({
   const onDonePressed = async () => {
     try {
       setShowLoadingIndicator(true);
-      console.log('check display name ' + displayName + ' -- ' + about);
       const { data: updatedUser } = await UserRepository.updateUser(
         user.userId,
         {
@@ -113,7 +112,6 @@ export const EditProfile: React.FC<EditProfileProps> = ({
       );
       console.log('Update user success ' + JSON.stringify(updatedUser));
     } catch (error) {
-      console.log('Update user error ' + JSON.stringify(error));
       console.error(error);
     } finally {
       setShowLoadingIndicator(false);
@@ -153,7 +151,6 @@ export const EditProfile: React.FC<EditProfileProps> = ({
               response.assets[0] as Record<string, any>
             ).uri;
             setImageUri((response.assets[0] as Record<string, any>).uri);
-            // console.log('printing image uri ' + response.assets[0].uri);
           }
         }
       }

@@ -22,45 +22,15 @@ import {
   playVideoIcon,
 } from '../../svg/svg-xml-list';
 import { styles } from './styles';
-// import Constants from 'expo-constants';
+
 import * as ImagePicker from 'expo-image-picker';
-// import {
-//   CameraOptions,
-//   ImageLibraryOptions,
-//   ImagePickerResponse,
-//   launchCamera,
-// } from 'react-native-image-picker';
+
 import LoadingImage from '../../components/LoadingImage';
 import { createPostToFeed } from '../../providers/Social/feed-sdk';
 import LoadingVideo from '../../components/LoadingVideo';
 import * as VideoThumbnails from 'expo-video-thumbnails';
 import { Video, ResizeMode } from 'expo-av';
 
-// export interface Action {
-//   title: string;
-//   type: 'capture' | 'library';
-//   options: CameraOptions | ImageLibraryOptions;
-// }
-// const actions: Action[] = [
-//   {
-//     title: 'Take Image',
-//     type: 'capture',
-//     options: {
-//       saveToPhotos: true,
-//       mediaType: 'photo',
-//       includeBase64: false,
-//     },
-//   },
-//   {
-//     title: 'Select Image',
-//     type: 'library',
-//     options: {
-//       selectionLimit: 1,
-//       mediaType: 'photo',
-//       includeBase64: false,
-//     },
-//   },
-// ];
 export interface IDisplayImage {
   url: string;
   fileId: string | undefined;
@@ -72,17 +42,11 @@ const CreatePost = ({ route }: any) => {
   const { targetId, targetType, targetName } = route.params;
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const [inputMessage, setInputMessage] = useState('');
-  // const [imageUri, setImageUri] = useState<string | undefined>();
   const [imageMultipleUri, setImageMultipleUri] = useState<string[]>([]);
   const [videoMultipleUri, setVideoMultipleUri] = useState<string[]>([]);
-  // console.log('videoMultipleUri: ', videoMultipleUri);
-  // console.log('imageMultipleUri: ', imageMultipleUri);
   const [displayImages, setDisplayImages] = useState<IDisplayImage[]>([]);
-  console.log('displayImages: ', displayImages);
   const [displayVideos, setDisplayVideos] = useState<IDisplayImage[]>([]);
-  console.log('displayVideos: ', displayVideos);
-  console.log('displayImages: ', displayImages);
-  // const imageUriRef = useRef(imageUri);
+
   const videoRef = React.useRef(null);
 
   const playVideoFullScreen = async (fileUrl: string) => {
@@ -156,7 +120,6 @@ const CreatePost = ({ route }: any) => {
       if (response) {
         navigation.navigate('Home');
       }
-      console.log('response: ', response);
     } else {
       const fileIdArr: (string | undefined)[] = displayVideos.map(
         (item) => item.fileId
@@ -177,39 +140,9 @@ const CreatePost = ({ route }: any) => {
       }
     }
   };
-  // const uploadImageByCamera = useCallback(async () => {
-  //   if (imageUri) {
-  //     console.log('imageUri: ', imageUri);
-  //   }
-  // }, [imageUri]);
-  // useEffect(() => {
-  //   uploadImageByCamera();
-  // }, [imageUri, uploadImageByCamera]);
 
-  // const openCamera = async () => {
-  //   await launchCamera(
-  //     [0] as unknown as CameraOptions,
-  //     (response: ImagePickerResponse) => {
-  //       if (!response.didCancel && !response.errorCode) {
-  //         if (
-  //           response.assets &&
-  //           response.assets.length > 0 &&
-  //           response.assets[0] !== null &&
-  //           response.assets[0]
-  //         ) {
-  //           // imageUriRef.current = result && result.assets[0].uri;
-  //           const imagesArr = [...imageMultipleUri];
-  //           imagesArr.push((response.assets[0] as Record<string, any>).uri);
-  //           setImageMultipleUri(imagesArr);
-  //           // do something with uri
-  //         }
-  //       }
-  //     }
-  //   );
-  // };
   const pickCamera = async () => {
-    // No permissions request is necessary for launching the image library
-    // if (Constants.appOwnership === 'expo') {
+
     const permission = await ImagePicker.requestCameraPermissionsAsync();
     if (permission.granted) {
       let result: ImagePicker.ImagePickerResult =
@@ -219,50 +152,20 @@ const CreatePost = ({ route }: any) => {
           aspect: [4, 3],
         });
 
-      console.log(result);
-      console.log('result: ', result);
       if (
         result.assets &&
         result.assets.length > 0 &&
         result.assets[0] !== null &&
         result.assets[0]
       ) {
-        // imageUriRef.current = result && result.assets[0].uri;
         const imagesArr = [...imageMultipleUri];
         imagesArr.push(result.assets[0].uri);
         setImageMultipleUri(imagesArr);
-        // do something with uri
       }
     }
-    // } else {
-    //   openCamera();
-    // }
-  };
-  // const openImageGallery = async () => {
-  //   await launchImageLibrary(
-  //     actions[1] as unknown as ImageLibraryOptions,
-  //     (response) => {
-  //       if (response.didCancel) {
-  //         console.log('User cancelled image picker');
-  //       } else if (response.errorCode) {
-  //         console.log(
-  //           'ImagePicker Error: ',
-  //           response.errorCode + ', ' + response.errorMessage
-  //         );
-  //       } else {
-  //         if (response.assets) {
-  //           imageUriRef.current = (
-  //             response.assets[0] as Record<string, any>
-  //           ).uri;
-  //           setImageUri((response.assets[0] as Record<string, any>).uri);
-  //           // setLoadingImageUri(loadingImageUri.push(response.assets[0].uri?.toString()))
 
-  //           // console.log('printing image uri ' + response.assets[0].uri);
-  //         }
-  //       }
-  //     }
-  //   );
-  // };
+  };
+
   useEffect(() => {
     if (imageMultipleUri.length > 0 && displayImages.length === 0) {
       const imagesObject: IDisplayImage[] = imageMultipleUri.map(
@@ -283,7 +186,7 @@ const CreatePost = ({ route }: any) => {
         const fileName: string = url.substring(url.lastIndexOf('/') + 1);
         return !displayImages.some((item) => item.fileName === fileName);
       });
-      console.log('filteredDuplicate: ', filteredDuplicate);
+
       const imagesObject: IDisplayImage[] = filteredDuplicate.map(
         (url: string) => {
           const fileName: string = url.substring(url.lastIndexOf('/') + 1);
@@ -307,7 +210,6 @@ const CreatePost = ({ route }: any) => {
         videoMultipleUri.map(async (url: string) => {
           const fileName: string = url.substring(url.lastIndexOf('/') + 1);
           const thumbnail = await VideoThumbnails.getThumbnailAsync(url);
-          console.log('thumbnail: ', thumbnail);
           return {
             url: url,
             fileName: fileName,
@@ -323,12 +225,10 @@ const CreatePost = ({ route }: any) => {
         const fileName: string = url.substring(url.lastIndexOf('/') + 1);
         return !displayVideos.some((item) => item.fileName === fileName);
       });
-      console.log('filteredDuplicate: ', filteredDuplicate);
       const videosObject: IDisplayImage[] = await Promise.all(
         filteredDuplicate.map(async (url: string) => {
           const fileName: string = url.substring(url.lastIndexOf('/') + 1);
           const thumbnail = await VideoThumbnails.getThumbnailAsync(url);
-          console.log('thumbnail: ', thumbnail);
           return {
             url: url,
             fileName: fileName,
@@ -348,8 +248,6 @@ const CreatePost = ({ route }: any) => {
   }, [videoMultipleUri]);
 
   const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
-    // if (Constants.appOwnership === 'expo') {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: false,
@@ -357,25 +255,16 @@ const CreatePost = ({ route }: any) => {
       allowsMultipleSelection: true,
     });
 
-    console.log(result);
 
     if (!result.canceled && result.assets && result.assets.length > 0) {
       const selectedImages = result.assets;
       const imageUriArr: string[] = selectedImages.map((item) => item.uri);
-      console.log('imageUriArr: ', imageUriArr);
       const imagesArr = [...imageMultipleUri];
       const totalImages = imagesArr.concat(imageUriArr);
-      console.log('imagesArr: ', imagesArr);
       setImageMultipleUri(totalImages);
     }
-    // }
-    // else {
-    //   openImageGallery();
-    // }
   };
   const pickVideo = async () => {
-    // No permissions request is necessary for launching the image library
-    // if (Constants.appOwnership === 'expo') {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Videos,
       allowsEditing: false,
@@ -383,26 +272,14 @@ const CreatePost = ({ route }: any) => {
       allowsMultipleSelection: true,
     });
 
-    console.log(result);
 
     if (!result.canceled && result.assets && result.assets.length > 0) {
-      console.log('result: ', result);
       const selectedVideos = result.assets;
-      console.log('selectedVideos: ', selectedVideos);
       const imageUriArr: string[] = selectedVideos.map((item) => item.uri);
-      console.log('imageUriArr: ', imageUriArr);
       const videosArr = [...videoMultipleUri];
       const totalVideos = videosArr.concat(imageUriArr);
       setVideoMultipleUri(totalVideos);
-
-      // const newRefs = selectedImages.map((image) => useRef(image.uri));
-      // imageUriRefs.current = newRefs;
-      // imageUriRefs.current.forEach((ref, index) => {
-      //   console.log(`Image ${index + 1}: ${ref.current}`);
-      // });
-      // setImageUri(result.assets[0].uri);
     }
-    // }
   };
   const handleOnCloseImage = (originalPath: string) => {
     setDisplayImages((prevData) => {
@@ -442,11 +319,6 @@ const CreatePost = ({ route }: any) => {
       const newData = prevData.filter((url: string) => url !== originalPath); // Filter out objects containing the desired value
       return newData; // Update the state with the filtered array
     });
-    // setImageMultipleUri((prevData) => {
-    //   const newData = [...prevData];
-    //   newData.splice(index, 1);
-    //   return newData;
-    // });
   };
   const handleOnFinishVideo = (
     fileId: string,
@@ -472,11 +344,6 @@ const CreatePost = ({ route }: any) => {
       const newData = prevData.filter((url: string) => url !== originalPath); // Filter out objects containing the desired value
       return newData; // Update the state with the filtered array
     });
-    // setImageMultipleUri((prevData) => {
-    //   const newData = [...prevData];
-    //   newData.splice(index, 1);
-    //   return newData;
-    // });
   };
 
   return (

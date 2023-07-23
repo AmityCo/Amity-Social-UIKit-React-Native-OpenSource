@@ -35,16 +35,8 @@ export default function CommunityMemberDetail({ navigation, route }: any) {
         const unsubscribe = CommunityRepository.Membership.getMembers(
           { communityId, limit: 10 },
           ({ data: members, onNextPage, hasNextPage, loading }) => {
-            // console.log('check all categories ' + JSON.stringify(categories));
             if (!loading) {
-              console.log(
-                'checking list of members ' +
-                  communityId +
-                  ' --- ' +
-                  JSON.stringify(members)
-              );
               setMemberList(members);
-              console.log('did query members ');
               setHasNextPage(hasNextPage);
               onNextPageRef.current = onNextPage;
               isFetchingRef.current = false;

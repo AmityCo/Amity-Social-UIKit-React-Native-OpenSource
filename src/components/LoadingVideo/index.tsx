@@ -87,7 +87,6 @@ const LoadingVideo = ({
     }
   }, [fileId, isUploaded, source]);
   const handleOnPlay = () => {
-    console.log('handleOnPlay');
     onPlay && onPlay(source);
   };
   return (

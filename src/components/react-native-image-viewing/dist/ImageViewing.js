@@ -89,7 +89,7 @@ function ImageViewing({
   if (!visible) {
     return null;
   }
-  //   console.log('images===>', images);
+
   return (
     <Modal
       transparent={presentationStyle === 'overFullScreen'}

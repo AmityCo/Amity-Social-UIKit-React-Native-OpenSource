@@ -25,7 +25,8 @@ export default function UserProfile({ route }: any) {
   const [followingCount, setFollowingCount] = useState<number>(0);
   const [followStatus, setFollowStatus] = useState<string>('loading');
   const [showLoadingIndicator, setShowLoadingIndicator] = useState(false);
-  console.log('showLoadingIndicator: ', showLoadingIndicator);
+  console.log('showLoadingIndicator:', showLoadingIndicator)
+
   const feedRef: MutableRefObject<FeedRefType | null> =
     useRef<FeedRefType | null>(null);
   const scrollViewRef = useRef(null);
@@ -96,7 +97,6 @@ export default function UserProfile({ route }: any) {
       userId,
       (value) => {
         if (value && !value.loading) {
-          console.log('query follow success ' + JSON.stringify(value));
           setFollowStatus(value.data.status!);
           setFollowerCount(value.data.followerCount);
           setFollowingCount(value.data.followingCount);
@@ -108,7 +108,6 @@ export default function UserProfile({ route }: any) {
     const unsubscribeUser = UserRepository.getUser(userId, (value) => {
       if (value && !value.loading) {
         setUser(value.data);
-        console.log('checking user profile ' + JSON.stringify(value.data));
       } else {
         console.log('user profile query error ' + JSON.stringify(user));
       }
@@ -120,20 +119,16 @@ export default function UserProfile({ route }: any) {
     const unsubscribe = navigation.addListener('focus', () => {
       UserRepository.Relationship.getFollowInfo(userId, (value) => {
         if (value && !value.loading) {
-          console.log('query follow success ' + JSON.stringify(value));
           setFollowStatus(value.data.status!);
           setFollowerCount(value.data.followerCount);
           setFollowingCount(value.data.followingCount);
         } else {
-          console.log('query follow error ' + JSON.stringify(value));
         }
       });
       UserRepository.getUser(userId, (value) => {
         if (value && !value.loading) {
           setUser(value.data);
-          console.log('checking user profile ' + JSON.stringify(value.data));
         } else {
-          console.log('user profile query error ' + JSON.stringify(user));
         }
       });
     });
@@ -177,12 +172,10 @@ export default function UserProfile({ route }: any) {
       layoutMeasurement.height + contentOffset.y + 200 >= contentSize.height;
 
     if (isScrollEndReached) {
-      console.log('ending');
       triggerLoadMoreFunction();
     }
   };
   function triggerLoadMoreFunction() {
-    console.log('triggerLoadMoreFunction: ', triggerLoadMoreFunction);
     if (feedRef.current) {
       feedRef.current.handleLoadMore(); // Call the function inside the child component
     }

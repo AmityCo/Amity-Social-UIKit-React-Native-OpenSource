@@ -35,19 +35,12 @@ export default function CommunityModeratorDetail({ navigation, route }: any) {
         const unsubscribe = CommunityRepository.Membership.getMembers(
           { communityId, roles: ['community-moderator'] },
           ({ data: members, onNextPage, hasNextPage, loading }) => {
-            // console.log('check all categories ' + JSON.stringify(categories));
+
             if (!loading) {
-              console.log(
-                'checking list of members ' +
-                  communityId +
-                  ' --- ' +
-                  JSON.stringify(members)
-              );
               setMemberList((prevMembers) => [
                 ...prevMembers,
                 ...(members || []),
               ]);
-              console.log('did query members ');
               setHasNextPage(hasNextPage);
               onNextPageRef.current = onNextPage;
               isFetchingRef.current = false;
@@ -125,7 +118,6 @@ export default function CommunityModeratorDetail({ navigation, route }: any) {
   };
 
   const handleEndReached = useCallback(() => {
-    console.log('handleEndReached got triggered');
     if (
       !isFetchingRef.current &&
       hasNextPage &&

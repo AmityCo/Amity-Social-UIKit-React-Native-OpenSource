@@ -136,7 +136,6 @@ export async function createPostToFeed(
     };
     postParam = newPostParam;
   }
-  console.log('postParam: ', postParam);
   const createPostObject: Promise<Amity.Post<any>> = new Promise(
     async (resolve, reject) => {
       try {
@@ -171,7 +170,6 @@ export async function reportTargetById(
   const isReport: Promise<boolean> = new Promise(async (resolve, reject) => {
     try {
       const didCreatePostReport = await createReport(targetType, postId);
-      console.log('didCreatePostReport: ', didCreatePostReport);
       if (didCreatePostReport) {
         resolve(didCreatePostReport);
       }
@@ -188,7 +186,6 @@ export async function isReportTarget(
   const isReport: Promise<boolean> = new Promise(async (resolve, reject) => {
     try {
       const isReportByMe = await isReportedByMe(targetType, targetId);
-      console.log('didCreatePostReport: ', isReportByMe);
       if (isReportByMe) {
         resolve(isReportByMe);
       }
@@ -206,7 +203,6 @@ export async function unReportTargetById(
   const isReport: Promise<boolean> = new Promise(async (resolve, reject) => {
     try {
       const didDeletePostReport = await deleteReport(targetType, targetId);
-      console.log('didCreatePostReport: ', didDeletePostReport);
       if (didDeletePostReport) {
         resolve(didDeletePostReport);
       }

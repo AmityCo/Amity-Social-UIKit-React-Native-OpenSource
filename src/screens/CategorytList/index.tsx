@@ -33,13 +33,11 @@ export default function CategoryList({ navigation }: any) {
         const unsubscribe = CategoryRepository.getCategories(
           {},
           ({ data: categories, onNextPage, hasNextPage, loading }) => {
-            console.log('check all categories ' + JSON.stringify(categories));
             if (!loading) {
               setCategories((prevCategories) => [
                 ...prevCategories,
                 ...categories,
               ]);
-              console.log('did query catgories ');
               setHasNextPage(hasNextPage);
               onNextPageRef.current = onNextPage;
               isFetchingRef.current = false;
@@ -93,7 +91,6 @@ export default function CategoryList({ navigation }: any) {
   };
 
   const handleEndReached = useCallback(() => {
-    console.log('handleEndReached got triggered');
     if (
       !isFetchingRef.current &&
       hasNextPage &&

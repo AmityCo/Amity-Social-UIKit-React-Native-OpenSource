@@ -23,15 +23,12 @@ export default function CommunitySearch() {
   LogBox.ignoreAllLogs(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchType, setSearchType] = useState('community');
-  console.log('searchType: ', searchType);
-  console.log('searchTerm: ', searchTerm);
   const [communities, setCommunities] =
     useState<Amity.LiveCollection<Amity.Community>>();
   const [usersObject, setUsersObject] =
     useState<Amity.LiveCollection<Amity.User>>();
   const navigation = useNavigation<any>();
   const [searchList, setSearchList] = useState<ISearchItem[]>([]);
-  console.log('searchList: ', searchList);
   const {
     data: communitiesArr = [],
     // onNextPage,
@@ -46,8 +43,6 @@ export default function CommunitySearch() {
     // loading,
     // error,
   } = usersObject ?? {};
-  console.log('communitiesArr: ', communitiesArr);
-  console.log('userArr: ', userArr);
   const handleChange = (text: string) => {
     setSearchTerm(text);
   };
@@ -55,9 +50,7 @@ export default function CommunitySearch() {
     if (searchTerm.length > 2 && searchType === 'community') {
       searchCommunities(searchTerm);
     } else if (searchTerm.length > 2 && searchType === 'user') {
-      // setTimeout(() => {
       searchAccounts(searchTerm);
-      // }, 500);
     }
   }, [searchTerm]);
 
@@ -65,7 +58,6 @@ export default function CommunitySearch() {
     const unsubscribe = CommunityRepository.getCommunities(
       { displayName: text, membership: 'notMember', limit: 40 },
       (data) => {
-        console.log('data: ', data);
         setCommunities(data);
         if (data.data.length === 0) {
           setSearchList([]);
@@ -76,8 +68,6 @@ export default function CommunitySearch() {
   };
   const searchAccounts = (text: string) => {
     if (searchTerm.length > 0) {
-      console.log('text: users ', searchTerm);
-      //   try {
       const unsubscribe = UserRepository.getUsers(
         { displayName: text },
         (data) => {
@@ -132,7 +122,6 @@ export default function CommunitySearch() {
   });
 
   const clearButton = () => {
-    console.log('clearButton: ');
     setSearchTerm('');
   };
 
@@ -147,7 +136,6 @@ export default function CommunitySearch() {
       setSearchType('user');
       searchAccounts(searchTerm);
     }
-    console.log('index: ', index);
   };
   return (
     <SafeAreaView>
