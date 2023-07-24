@@ -1,9 +1,13 @@
 <div align="center">
 <img src="https://github.com/AmityCo/Amity-Social-UIKit-React-Native-OpenSource/assets/112688936/ddeeef20-2dfa-449e-bd3d-62238d7c9be0" width="160" >
 <img src="https://github.com/AmityCo/Amity-Social-UIKit-React-Native-OpenSource/assets/112688936/e6b2d2a2-5158-429e-b1af-ea679b14fc11" width="150">
-<h1>Amity Ui-Kit for React native (open-source)</h1> 
+<h1>Amity Ui-Kit for React native (open-source)</h1>
+  ** This is the beta version **
 </div>
-** This is the beta version **
+<div align="center">
+ <img width="250" alt="Screenshot_2566-07-24_at_19 16 20-removebg-preview" src="https://github.com/AmityCo/Amity-Social-UIKit-React-Native-OpenSource/assets/112688936/ce60425f-b478-408b-88c3-341d00263760">
+ <img width="286" alt="Screenshot_2566-07-24_at_19 16 20-removebg-preview" src="https://github.com/AmityCo/Amity-Social-UIKit-React-Native-OpenSource/assets/112688936/843d3dc7-094f-4e29-812b-9fc864a96c14">
+</div>
 
 ## Getting started
 Our AmityUIKit include user interfaces to enable fast integration of standard Amity Social features into new or existing applications. Furthermore, our React Native UIKit supports integration with both **Expo** and **React Native CLI**, providing you with a flexible experience to seamlessly integrate social features into your existing React Native application.
@@ -53,7 +57,11 @@ Then, inside another project, Copy tgz file to your application folder where you
 npx pod-install
 
 ```
-### Add Camera permission iOS
+### Android Configuration
+
+Sync project gradle file
+
+### Add Camera permission (only iOS)
 Add following permissions to `info.plist` file (ios/{YourAppName}/Info.plist)
 
 ```sh
