@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   LogBox,
   ScrollView,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
 } from 'react-native';
 import debounce from 'lodash.debounce';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -14,49 +16,44 @@ import { styles } from './styles';
 import { SvgXml } from 'react-native-svg';
 import { circleCloseIcon, searchIcon } from '../../svg/svg-xml-list';
 import { useNavigation } from '@react-navigation/native';
-import CustomTab from '../../components/CustomTab';
 import { CommunityRepository, UserRepository } from '@amityco/ts-sdk';
 import type { ISearchItem } from '../../components/SearchItem';
 import SearchItem from '../../components/SearchItem';
 
-export default function CommunitySearch() {
+export default function AllMyCommunity() {
   LogBox.ignoreAllLogs(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [searchType, setSearchType] = useState('community');
+  const [searchType,] = useState('community');
   const [communities, setCommunities] =
     useState<Amity.LiveCollection<Amity.Community>>();
-  const [usersObject, setUsersObject] =
-    useState<Amity.LiveCollection<Amity.User>>();
   const navigation = useNavigation<any>();
   const [searchList, setSearchList] = useState<ISearchItem[]>([]);
+  const scrollViewRef = useRef(null);
   const {
     data: communitiesArr = [],
-    // onNextPage,
-    // hasNextPage,
-    // loading,
-    // error,
+    onNextPage,
   } = communities ?? {};
-  const {
-    data: userArr = [],
-    // onNextPage,
-    // hasNextPage,
-    // loading,
-    // error,
-  } = usersObject ?? {};
+
   const handleChange = (text: string) => {
     setSearchTerm(text);
   };
-  useEffect(() => {
-    if (searchTerm.length > 2 && searchType === 'community') {
-      searchCommunities(searchTerm);
-    } else if (searchTerm.length > 2 && searchType === 'user') {
-      searchAccounts(searchTerm);
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+
+    const isScrollEndReached =
+      layoutMeasurement.height + contentOffset.y + 200 >= contentSize.height;
+
+    if (isScrollEndReached) {
+      onNextPage && onNextPage();
     }
+  };
+  useEffect(() => {
+    searchCommunities(searchTerm);
   }, [searchTerm]);
 
   const searchCommunities = (text: string) => {
     const unsubscribe = CommunityRepository.getCommunities(
-      { displayName: text, membership: 'notMember', limit: 20 },
+      { displayName: text, membership: 'member', limit: 20 },
       (data) => {
         setCommunities(data);
         if (data.data.length === 0) {
@@ -65,21 +62,6 @@ export default function CommunitySearch() {
       }
     );
     unsubscribe();
-  };
-  const searchAccounts = (text: string) => {
-    if (searchTerm.length > 0) {
-      const unsubscribe = UserRepository.getUsers(
-        { displayName: text },
-        (data) => {
-          if (data.data.length === 0) {
-            setSearchList([]);
-          } else {
-            setUsersObject(data);
-          }
-        }
-      );
-      unsubscribe();
-    }
   };
 
   useEffect(() => {
@@ -95,21 +77,8 @@ export default function CommunitySearch() {
       });
       setSearchList(searchItem);
     }
-  }, [communitiesArr, searchType]);
+  }, [communitiesArr]);
 
-  useEffect(() => {
-    if (userArr.length > 0 && searchType === 'user') {
-      const searchUsers: ISearchItem[] = userArr.map((item) => {
-        return {
-          targetId: item?.userId,
-          targetType: searchType,
-          avatarFileId: (item?.avatarFileId as string) ?? '',
-          displayName: item?.displayName as string,
-        };
-      });
-      setSearchList(searchUsers);
-    }
-  }, [usersObject, searchType]);
 
   const debouncedResults = useMemo(() => {
     return debounce(handleChange, 500);
@@ -128,27 +97,14 @@ export default function CommunitySearch() {
   const cancelSearch = () => {
     navigation.goBack();
   };
-  const handleTabChange = (index: number) => {
-    if (index === 1) {
-      setSearchType('community');
-      if (searchTerm.length > 0) {
-        searchCommunities(searchTerm);
-      }
 
-    } else if (index === 2) {
-      setSearchType('user');
-      if (searchTerm.length > 0) {
-        searchAccounts(searchTerm);
-      }
-    }
-  };
   return (
     <SafeAreaView>
       <View style={styles.headerWrap}>
         <View style={styles.inputWrap}>
-          <TouchableOpacity onPress={() => searchAccounts(searchTerm)}>
-            <SvgXml xml={searchIcon} width="20" height="20" />
-          </TouchableOpacity>
+
+          <SvgXml xml={searchIcon} width="20" height="20" />
+
           <TextInput
             style={styles.input}
             value={searchTerm}
@@ -163,11 +119,11 @@ export default function CommunitySearch() {
           <Text style={styles.cancelBtn}>Cancel</Text>
         </TouchableOpacity>
       </View>
-      <CustomTab
-        tabName={['Communities', 'Accounts']}
-        onTabChange={handleTabChange}
-      />
-      <ScrollView contentContainerStyle={styles.searchScrollList}>
+      <ScrollView
+        ref={scrollViewRef}
+        onScroll={handleScroll}
+        scrollEventThrottle={20}
+        contentContainerStyle={styles.searchScrollList}>
         {searchList.map((item, index) => (
           <SearchItem key={index} target={item} />
         ))}

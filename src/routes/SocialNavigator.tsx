@@ -19,6 +19,7 @@ import UserProfile from '../screens/UserProfile/UserProfile';
 import { EditProfile } from '../screens/EditProfile/EditProfile';
 import UserProfileSetting from '../screens/UserProfileSetting/UserProfileSetting';
 import CommunitySearch from '../screens/CommunitySearch';
+import AllMyCommunity from '../screens/AllMyCommunity';
 
 export default function SocialNavigator() {
   const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -47,7 +48,7 @@ export default function SocialNavigator() {
           <Stack.Screen
             name="CategoryList"
             component={CategoryList}
-            options={({}) => ({
+            options={({ }) => ({
               title: 'Category',
             })}
           />
@@ -65,6 +66,9 @@ export default function SocialNavigator() {
           />
           <Stack.Screen name="CommunitySetting" component={CommunitySetting} />
           <Stack.Screen name="CommunityList" component={CommunityList} />
+          <Stack.Screen name="AllMyCommunity" options={{
+            headerShown: false,
+          }} component={AllMyCommunity} />
           <Stack.Screen name="CreatePost" component={CreatePost} />
           <Stack.Screen name="UserProfile" component={UserProfile} />
           <Stack.Screen name="EditProfile" component={EditProfile} />

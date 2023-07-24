@@ -2,7 +2,7 @@ import type {
   IPost,
   IVideoPost,
   MediaUri,
-} from 'src/components/Social/PostList';
+} from '../components/Social/PostList';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -40,4 +40,5 @@ export type RootStackParamList = {
   EditProfile: {
     userId: string;
   };
+  AllMyCommunity: undefined
 };
