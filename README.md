@@ -57,7 +57,11 @@ Then, inside another project, Copy tgz file to your application folder where you
 npx pod-install
 
 ```
-### Add Camera permission iOS
+### Android Configuration
+
+Sync project gradle file
+
+### Add Camera permission (only iOS)
 Add following permissions to `info.plist` file (ios/{YourAppName}/Info.plist)
 
 ```sh
