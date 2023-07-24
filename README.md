@@ -6,9 +6,9 @@
 ** This is the beta version **
 
 ## Getting started
-
-### Sample app
-
+Our AmityUIKit include user interfaces to enable fast integration of standard Amity Social features into new or existing applications. Furthermore, our React Native UIKit supports integration with both **Expo** and **React Native CLI**, providing you with a flexible experience to seamlessly integrate social features into your existing React Native application.
+### Try Sample app
+This repository also includes a built-in sample app which you can use to test your code while customizing it, or even explore our UIKit features with just a few installations!
 #### Run sample app with expo
 Use yarn
 
@@ -31,7 +31,7 @@ yarn example android
 ```
 
 ### Installation
-
+Here are the steps to install ui-kit together with another React Native project.
 ```sh
 1. git clone git@github.com:AmityCo/Amity-Social-Cloud-UIKit-React-Native-OpenSource.git
 2. cd Amity-Social-Cloud-UIKit-React-Native-OpenSource
