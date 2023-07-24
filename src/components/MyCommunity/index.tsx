@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, Image, TouchableOpacity } from 'react-native';
 import { styles } from './styles';
 import { CommunityRepository } from '@amityco/ts-sdk';
-import { arrowOutlined, arrowXml, communityIcon, privateIcon } from '../../svg/svg-xml-list';
+import { arrowOutlined, arrowXml, communityIcon, officialIcon, privateIcon } from '../../svg/svg-xml-list';
 import { SvgXml } from 'react-native-svg';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -12,6 +12,7 @@ interface ICommunityItems {
   avatarFileId: string;
   displayName: string;
   isPublic: boolean;
+  isOfficial: boolean;
 
 }
 export default function MyCommunity() {
@@ -30,7 +31,8 @@ export default function MyCommunity() {
             communityId: item.communityId as string,
             avatarFileId: item.avatarFileId as string,
             displayName: item.displayName as string,
-            isPublic: item.isPublic as boolean
+            isPublic: item.isPublic as boolean,
+            isOfficial: item.isOfficial as boolean
           }
         })
         setCommunityItems(formattedData);
@@ -54,11 +56,14 @@ export default function MyCommunity() {
   const onClickItem = (communityId: string, displayName: string) => {
     navigation.navigate('CommunityHome', { communityId: communityId, communityName: displayName });
   }
+  const onClickSeeAll = () => {
+    navigation.navigate('AllMyCommunity');
+  }
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
         <Text style={styles.title}>My Community</Text>
-        <TouchableOpacity>
+        <TouchableOpacity  onPress={onClickSeeAll}>
           <SvgXml
             style={styles.arrowIcon}
             width={17}
@@ -87,13 +92,19 @@ export default function MyCommunity() {
                   xml={privateIcon}
                 />}
               <Text style={styles.itemText}>{displayName(item.displayName)}</Text>
+              {item.isOfficial &&
+                <SvgXml
+                  width={20}
+                  height={20}
+                  xml={officialIcon}
+                />}
             </View>
 
           </TouchableOpacity>
 
         ))
         }
-        <TouchableOpacity style={styles.seeAllBtn}>
+        <TouchableOpacity onPress={onClickSeeAll} style={styles.seeAllBtn}>
         <View  style={styles.seeAllIcon}>
         <SvgXml
           width={15}
