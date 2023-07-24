@@ -20,7 +20,8 @@ Use yarn
 ```
 yarn
 ```
-2. Configure your apiKey,apiRegion,userId,displayName in /example/src/App.tsx file(https://github.com/AmityCo/Amity-Social-Cloud-UIKit-React-Native-OpenSource/blob/main/example/src/App.tsx) first before run the sample app
+2. Configure your apiKey,apiRegion,userId,displayName in /example/src/App.tsx file(https://github.com/AmityCo/Amity-Social-UIKit-React-Native-OpenSource/blob/main/example/src/App.tsx) first before run the sample app
+<img width="1499" alt="Screenshot 2566-07-24 at 20 22 44" src="https://github.com/AmityCo/Amity-Social-UIKit-React-Native-OpenSource/assets/112688936/d0fb1491-1213-4dea-8e7d-459b4c9f29a6">
 
 3. Choose to run between iOS or Android
 
