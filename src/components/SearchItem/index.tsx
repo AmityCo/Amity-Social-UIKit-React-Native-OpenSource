@@ -5,6 +5,7 @@ import { styles } from './styles';
 import { SvgXml } from 'react-native-svg';
 import { communityIcon } from '../../svg/svg-xml-list';
 import { CategoryRepository } from '@amityco/ts-sdk';
+import { useNavigation } from '@react-navigation/native';
 
 export interface ISearchItem {
   targetId: string;
@@ -22,11 +23,19 @@ export default function SearchItem({
 }) {
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const [categoryName, setCategoryName] = useState<string>('');
+  const navigation = useNavigation<any>();
   const maxLength = 25;
   const handleToggle = () => {
     setIsChecked(!isChecked);
     if (onPress) {
       onPress(target);
+    }
+    if(target.targetType === 'community'){
+      navigation.navigate('CommunityHome', { communityId: target.targetId, communityName: target.displayName });
+    }else{
+      navigation.navigate('UserProfile', {
+        userId: target.targetId
+      });
     }
   };
   useEffect(() => {
