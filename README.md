@@ -35,29 +35,22 @@ yarn example android
 ```sh
 1. git clone git@github.com:AmityCo/Amity-Social-Cloud-UIKit-React-Native-OpenSource.git
 2. cd Amity-Social-Cloud-UIKit-React-Native-OpenSource
-3. npm install
-4. npm pack
+3. yarn or npm install
+4. yarn pack or npm pack
 ```
 
-This step will build the app and return amityco-asc-react-native-ui-kit-x.x.x.tgz.tgz file in inside the folder
+This step will build the app and return amityco-asc-react-native-ui-kit-x.x.x.tgz file in inside the folder
 
-Then, inside another project, where need to use ui-kit:
+Then, inside another project, Copy tgz file to your application folder where you need to use ui-kit:
 
 ```sh
-1. npm install ./../asc-react-native-ui-kit/amityco-asc-react-native-ui-kit-0.1.0.tgz
-2. npm install react-native-safe-area-context \react-native-image-picker \@react-native-async-storage/async-storage \react-native-svg@13.4.0 \react-native-screens
+1. yarn add ./asc-react-native-ui-kit/amityco-asc-react-native-ui-kit-0.1.0.tgz
+2. yarn add react-native-safe-area-context \react-native-image-picker \@react-native-async-storage/async-storage \react-native-svg@13.4.0 \react-native-screens
 3. npx install-expo-modules@latest
 ```
 ### iOS Configuration
 ```sh
 npx pod-install
-
-```
-
-### Expo CLI Camera and Gallery Configuration
-
-```sh
- expo install expo-image-picker \
 
 ```
 ### Add Camera permission iOS
