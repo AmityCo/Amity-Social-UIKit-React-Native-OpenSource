@@ -13,6 +13,7 @@ import PostList, { IPost } from '../../components/Social/PostList';
 import styles from './styles';
 import { getAmityUser } from '../../providers/user-provider';
 import type { UserInterface } from '../../types/user.interface';
+import MyCommunity from '../../components/MyCommunity';
 
 export default function GlobalFeed() {
   const { client } = useAuth();
@@ -87,6 +88,7 @@ export default function GlobalFeed() {
   return (
     <View style={styles.feedWrap}>
       <View style={styles.feedWrap}>
+
         <FlatList
           data={postList}
           renderItem={({ item }) => (
@@ -96,6 +98,7 @@ export default function GlobalFeed() {
           onEndReachedThreshold={0.5}
           onEndReached={handleLoadMore}
           ref={flatListRef}
+          ListHeaderComponent={<MyCommunity />}
         />
       </View>
     </View>
