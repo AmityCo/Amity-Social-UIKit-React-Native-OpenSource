@@ -23,7 +23,7 @@ interface IModal {
   onClose: () => void;
   onSelect: () => void;
 }
-const FullScreenModal = ({ visible, onClose, userId, onSelect }: IModal) => {
+const CreatePostModal = ({ visible, onClose, userId, onSelect }: IModal) => {
 
   const [communities, setCommunities] = useState<Amity.Community[]>([]);
   const [paginateLoading, setPaginateLoading] = useState(false);
@@ -190,7 +190,7 @@ const FullScreenModal = ({ visible, onClose, userId, onSelect }: IModal) => {
   );
 };
 
-export default FullScreenModal;
+export default CreatePostModal;
 
 const styles = StyleSheet.create({
   container: {

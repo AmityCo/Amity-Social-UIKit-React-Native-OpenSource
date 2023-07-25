@@ -19,7 +19,6 @@ import FloatingButton from '../../components/FloatingButton';
 import useAuth from '../../hooks/useAuth';
 import Explore from '../Explore';
 import GlobalFeed from '../GlobalFeed';
-import styles from './styles';
 import CreatePostModal from '../../components/CreatePostModal';
 import CustomTab from '../../components/CustomTab';
 import { useNavigation } from '@react-navigation/native';
