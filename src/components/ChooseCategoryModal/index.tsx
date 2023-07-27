@@ -13,7 +13,7 @@ import {
   NativeScrollEvent,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
-import { closeIcon } from '../../svg/svg-xml-list';
+import { categoryIcon, closeIcon } from '../../svg/svg-xml-list';
 
 interface IModal {
   visible: boolean;
@@ -65,16 +65,15 @@ const ChooseCategoryModal = ({ visible, onClose, onSelect }: IModal) => {
         }
         style={styles.rowContainer}
       >
-        <Image
+        {item.avatarFileId ? <Image
           style={styles.avatar}
           source={
-            item.avatarFileId
-              ? {
-                uri: `https://api.amity.co/api/v3/files/${item.avatarFileId}/download`,
-              }
-              : require('./../../../assets/icon/Placeholder.png')
+            {
+              uri: `https://api.amity.co/api/v3/files/${item.avatarFileId}/download`,
+            }
           }
-        />
+        /> : <SvgXml xml={categoryIcon} width={40} height={40} />}
+
         <Text style={styles.communityText}>{item.name}</Text>
       </TouchableOpacity>
     );
@@ -145,6 +144,7 @@ const styles = StyleSheet.create({
   },
   headerTextContainer: {
     flex: 1,
+    flexDirection:'row',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -186,6 +186,9 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginBottom: 10,
     backgroundColor: '#D9E5FC',
+  },
+  categoryIcon: {
+    alignItems: 'center'
   },
   LoadingIndicator: {
     paddingVertical: 20,

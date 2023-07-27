@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 // import { useTranslation } from 'react-i18next';
 
 import {
@@ -13,12 +13,14 @@ import {
   Pressable,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
-import { arrowOutlined, closeIcon } from '../../svg/svg-xml-list';
+import { arrowOutlined, closeIcon, plusIcon, privateIcon, publicIcon } from '../../svg/svg-xml-list';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as ImagePicker from 'expo-image-picker';
 import { styles } from './styles';
 import ChooseCategoryModal from '../../components/ChooseCategoryModal';
+import { RadioButton } from 'react-native-radio-buttons-group';
+import AddMembersModal from '../../components/AddMembersModal';
 
 export default function CreateCommunity() {
 
@@ -29,6 +31,10 @@ export default function CreateCommunity() {
   console.log('categoryId:', categoryId)
   const [aboutText, setAboutText] = useState('');
   const [categoryModal, setCategoryModal] = useState<boolean>(false)
+  const [addMembersModal, setAddMembersModal] = useState<boolean>(false) 
+  const [selectedId, setSelectedId] = useState<string>();
+  console.log('selectedId:', selectedId)
+
   const MAX_COMMUNITY_NAME_LENGTH = 30;
   const MAX_ABOUT_TEXT_LENGTH = 180;
 
@@ -71,8 +77,13 @@ export default function CreateCommunity() {
     setCategoryId(categoryId);
     setCategoryName(categoryName);
   }
+
+  const handleAddMembers = (userIds: string[]) => {
+  	console.log('userIds:', userIds)
+ 
+  }
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <View >
         <View style={styles.uploadContainer}>
 
@@ -139,13 +150,78 @@ export default function CreateCommunity() {
               </Text>
             </View>
             <Pressable onPress={() => setCategoryModal(true)} style={styles.categoryContainer}>
-              <Text style={!categoryName?styles.placeHolderText:[]}>{categoryName.length > 0 ? categoryName : 'Select Category'}</Text>
+              <Text style={!categoryName ? styles.placeHolderText : []}>{categoryName.length > 0 ? categoryName : 'Select Category'}</Text>
               <SvgXml style={styles.arrowIcon} xml={arrowOutlined} width={15} height={15} />
             </Pressable>
           </View>
+          <View style={styles.radioGroup}>
+            <Pressable onPress={() => setSelectedId('public')} style={styles.listItem}>
+
+              <View style={styles.avatar}>
+                <SvgXml
+                  width={20}
+                  height={20}
+                  xml={publicIcon}
+                />
+              </View>
+
+              <View style={styles.optionDescription}>
+                <Text style={styles.itemText}>Public</Text>
+                <Text style={styles.categoryText}>Anyone can join, view, and search the posts in this community.</Text>
+              </View>
+              <RadioButton
+                id='public'
+                onPress={(value) => setSelectedId(value)}
+                value={'public'}
+                selected={selectedId === 'public'}
+                color={selectedId === 'public' ? '#1054DE' : '#444'}
+                size={17}
+
+              />
+            </Pressable>
+
+            <Pressable onPress={() => setSelectedId('private')} style={styles.listItem}>
+
+              <View style={styles.avatar}>
+                <SvgXml
+                  width={24}
+                  height={24}
+                  xml={privateIcon}
+                />
+              </View>
+
+              <View style={styles.optionDescription}>
+                <Text style={styles.itemText}>Private</Text>
+                <Text style={styles.categoryText}>Only members invited by the moderators can join, view, and search the posts in this community.</Text>
+              </View>
+              <RadioButton
+                id='private'
+                onPress={(value) => setSelectedId(value)}
+                value={'private'}
+                selected={selectedId === 'private'}
+                color={selectedId === 'private' ? '#1054DE' : '#444'}
+                size={17}
+              />
+            </Pressable>
+          </View>
+          <View style={styles.inputContainer}>
+            <View style={styles.titleRow}>
+              <Text style={styles.inputTitle}>
+                Add members<Text style={styles.requiredField}> *</Text>
+              </Text>
+            </View>
+            <Pressable onPress={() => setAddMembersModal(true)} style={styles.categoryContainer}>
+              <View style={styles.avatar}>
+                <SvgXml style={styles.arrowIcon} xml={plusIcon} width={24} height={24} />
+              </View>
+            </Pressable>
+          </View>
+          <Pressable style={styles.createButton}><Text style={styles.createText}>Create community</Text></Pressable>
         </View>
+
       </View>
       <ChooseCategoryModal onSelect={handleSelectCategory} onClose={() => setCategoryModal(false)} visible={categoryModal} />
+      <AddMembersModal onSelect={handleAddMembers} onClose={() => setAddMembersModal(false)} visible={addMembersModal} />
     </ScrollView>
   );
 }
