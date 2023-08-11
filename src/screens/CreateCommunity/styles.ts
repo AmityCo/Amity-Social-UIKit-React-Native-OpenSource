@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
   container: {
-   paddingBottom: 320
+    paddingBottom: 320
   },
   uploadContainer: {
     width: '100%',
@@ -70,12 +70,12 @@ export const styles = StyleSheet.create({
   placeHolderText: {
     color: '#A5A9B5',
   },
-  titleRow:{
+  titleRow: {
     flexDirection: 'row',
-    justifyContent:'space-between',
+    justifyContent: 'space-between',
     alignItems: 'center',
   },
-  categoryContainer:{
+  categoryContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -83,10 +83,10 @@ export const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#EBECEF',
   },
-  categoryInput: {
-    flex: 1,
+  addIcon: {
+    marginHorizontal: 6
   },
-  arrowIcon:{
+  arrowIcon: {
     opacity: 0.75
   },
   listItem: {
@@ -101,17 +101,14 @@ export const styles = StyleSheet.create({
     height: 40,
     borderRadius: 72,
     marginRight: 12,
-    backgroundColor:'#EBECEF',
+    backgroundColor: '#EBECEF',
     alignItems: 'center',
-    justifyContent:'center'
+    justifyContent: 'center'
   },
   itemText: {
     fontSize: 15,
     fontWeight: '600',
     color: '#292B32',
-  },
-  leftContainer: {
-
   },
   dotIcon: {
     width: 16,
@@ -122,17 +119,17 @@ export const styles = StyleSheet.create({
     color: '#636878',
     marginTop: 4,
   },
-  optionDescription:{
+  optionDescription: {
     width: '70%'
   },
-  radioGroup:{
+  radioGroup: {
     borderBottomWidth: 1,
     borderBottomColor: '#EBECEF',
     marginBottom: 24,
   },
-  createButton:{
-    flexDirection:'row',
-    backgroundColor:'#1054DE',
+  createButton: {
+    flexDirection: 'row',
+    backgroundColor: '#1054DE',
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: 10,
@@ -140,10 +137,43 @@ export const styles = StyleSheet.create({
     borderRadius: 4,
     marginBottom: 24,
   },
-  createText:{
+  createText: {
     fontWeight: '600',
     fontSize: 15,
     color: '#FFFFFF'
+  },
+  addUsersContainer: {
+    marginVertical: 6,
+    borderBottomWidth: 1,
+    borderBottomColor: '#EBECEF',
+    paddingBottom: 24,
+  },
+  userItemWrap: {
+    flexDirection: 'row',
+    backgroundColor: '#EBECEF',
+    borderRadius: 24,
+    padding: 6,
+    height: 40,
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    margin: 6,
+    maxWidth: '45%'
+  },
+  avatarImageContainer: {
+    overflow: 'hidden',
+    borderRadius: 40,
+    width: 30,
+    height: 30,
+    marginRight: 5,
+  },
+  avatarImage: {
+    width: 30,
+    height: 30,
+  },
+  avatarRow: {
+    flexDirection: 'row',
+    alignItems: 'center'
   }
 });
 

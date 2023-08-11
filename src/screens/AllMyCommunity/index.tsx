@@ -11,12 +11,11 @@ import {
   NativeScrollEvent,
 } from 'react-native';
 import debounce from 'lodash.debounce';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { styles } from './styles';
 import { SvgXml } from 'react-native-svg';
 import { circleCloseIcon, closeIcon, plusIcon, searchIcon } from '../../svg/svg-xml-list';
 import { useNavigation } from '@react-navigation/native';
-import { CommunityRepository, UserRepository } from '@amityco/ts-sdk';
+import { CommunityRepository } from '@amityco/ts-sdk';
 import type { ISearchItem } from '../../components/SearchItem';
 import SearchItem from '../../components/SearchItem';
 

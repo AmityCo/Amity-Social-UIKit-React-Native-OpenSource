@@ -69,5 +69,33 @@ export const styles = StyleSheet.create({
     LoadingIndicator: {
       paddingVertical: 20,
     },
+    headerWrap: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    inputWrap: {
+      marginHorizontal: 16,
+      backgroundColor: '#EBECEF',
+      padding: 10,
+      borderRadius: 4,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginVertical: 10,
+    },
+    input: { flex: 1, marginHorizontal: 6 },
+    cancelBtn: {
+      marginRight: 16,
+    },
+    searchScrollList: {
+      paddingBottom: 110,
+      marginTop: 10,
+    },
+    doneText:{
+      color: '#1054DE'
+    },
+    disabledDone:{
+      opacity: 0.5
+    }
   });
   

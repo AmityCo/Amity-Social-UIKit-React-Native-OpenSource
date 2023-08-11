@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, Image, TouchableOpacity } from 'react-native';
 import { styles } from './styles';
 import { CommunityRepository } from '@amityco/ts-sdk';
-import { arrowOutlined, arrowXml, communityIcon, officialIcon, privateIcon } from '../../svg/svg-xml-list';
+import { arrowOutlined, communityIcon, officialIcon, privateIcon } from '../../svg/svg-xml-list';
 import { SvgXml } from 'react-native-svg';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -63,7 +63,7 @@ export default function MyCommunity() {
     <View style={styles.container}>
       <View style={styles.titleContainer}>
         <Text style={styles.title}>My Community</Text>
-        <TouchableOpacity  onPress={onClickSeeAll}>
+        <TouchableOpacity onPress={onClickSeeAll}>
           <SvgXml
             style={styles.arrowIcon}
             width={17}
@@ -105,16 +105,16 @@ export default function MyCommunity() {
         ))
         }
         <TouchableOpacity onPress={onClickSeeAll} style={styles.seeAllBtn}>
-        <View  style={styles.seeAllIcon}>
-        <SvgXml
-          width={15}
-          height={15}
-          xml={arrowOutlined}
-        />
-        </View>
-        <Text style={styles.seeAllText}>See all</Text>
+          <View style={styles.seeAllIcon}>
+            <SvgXml
+              width={15}
+              height={15}
+              xml={arrowOutlined}
+            />
+          </View>
+          <Text style={styles.seeAllText}>See all</Text>
         </TouchableOpacity>
-    
+
       </ScrollView>
     </View>
   );

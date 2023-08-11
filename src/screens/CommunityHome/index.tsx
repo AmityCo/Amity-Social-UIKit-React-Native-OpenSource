@@ -39,10 +39,13 @@ export default function CommunityHome({ navigation, route }: any) {
       triggerLoadMoreFunction();
     }
   };
+  const onBackPress=()=>{
+    navigation.navigate('Home')
+  }
   React.useLayoutEffect(() => {
     // Set the headerRight component to a TouchableOpacity
     navigation.setOptions({
-      headerLeft: () => <CloseButton />,
+      headerLeft: () => <CloseButton onPress={onBackPress} goBack={false} />,
       title: communityName,
       headerRight: () => (
         <TouchableOpacity

@@ -7,13 +7,17 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Image } from 'react-native';
 interface IBackBtn {
   onPress?: () => any;
+  goBack?: boolean;
 }
-export default function BackButton({ onPress }: IBackBtn) {
+export default function BackButton({ onPress, goBack= true }: IBackBtn) {
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   return (
     <TouchableOpacity
       onPress={() => {
-        navigation.goBack();
+        if(goBack){
+          navigation.goBack();
+        }
+
         onPress && onPress();
       }}
     >

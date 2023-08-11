@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useState } from 'react';
 // import { useTranslation } from 'react-i18next';
 
 import {
@@ -9,8 +9,8 @@ import {
   Image,
   TextInput,
   ScrollView,
-  TouchableWithoutFeedback,
   Pressable,
+  FlatList,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { arrowOutlined, closeIcon, plusIcon, privateIcon, publicIcon } from '../../svg/svg-xml-list';
@@ -21,6 +21,8 @@ import { styles } from './styles';
 import ChooseCategoryModal from '../../components/ChooseCategoryModal';
 import { RadioButton } from 'react-native-radio-buttons-group';
 import AddMembersModal from '../../components/AddMembersModal';
+import type { UserInterface } from 'src/types/user.interface';
+import { createCommunity, type ICreateCommunity } from '../../providers/Social/communities-sdk';
 
 export default function CreateCommunity() {
 
@@ -28,17 +30,15 @@ export default function CreateCommunity() {
   const [communityName, setCommunityName] = useState<string>('');
   const [categoryName, setCategoryName] = useState<string>('');
   const [categoryId, setCategoryId] = useState<string>('');
-  console.log('categoryId:', categoryId)
   const [aboutText, setAboutText] = useState('');
   const [categoryModal, setCategoryModal] = useState<boolean>(false)
-  const [addMembersModal, setAddMembersModal] = useState<boolean>(false) 
+  const [addMembersModal, setAddMembersModal] = useState<boolean>(false)
   const [selectedId, setSelectedId] = useState<string>();
-  console.log('selectedId:', selectedId)
+  const [selectedUserList, setSelectedUserList] = useState<UserInterface[]>([]);
 
   const MAX_COMMUNITY_NAME_LENGTH = 30;
   const MAX_ABOUT_TEXT_LENGTH = 180;
 
-  console.log('image:', image)
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
   const onClickBack = () => {
@@ -78,10 +78,43 @@ export default function CreateCommunity() {
     setCategoryName(categoryName);
   }
 
-  const handleAddMembers = (userIds: string[]) => {
-  	console.log('userIds:', userIds)
- 
+  const handleAddMembers = (users: UserInterface[]) => {
+    console.log('userIds:', users)
+    setSelectedUserList(users)
+
   }
+  const avatarFileURL = (fileId: string) => {
+    return `https://api.amity.co/api/v3/files/${fileId}/download?size=medium`;
+  };
+
+  const displayName = (user: string) => {
+    const maxLength = 10;
+    if (user) {
+      if (user!.length > maxLength) {
+        return user!.substring(0, maxLength) + '..';
+      }
+      return user!;
+    }
+    return 'Display name';
+  };
+
+  const onDeleteUserPressed = (user: UserInterface) => {
+    console.log('user:', user)
+    const removedUser = selectedUserList.filter(item => item !== user)
+    setSelectedUserList(removedUser)
+    console.log('removedUser:', removedUser)
+  }
+
+const onCreateCommunity=async ()=>{
+  const userIds: string[] = selectedUserList.map(item => item.userId)
+  const isPublic: boolean = selectedId === 'private'? false : true
+  const communityParam: ICreateCommunity= {displayName: communityName, description: aboutText, isPublic: isPublic, userIds: userIds, category: categoryId }
+  const isCreated = await createCommunity(communityParam)
+  if(isCreated){
+    navigation.navigate('CommunityHome', { communityId: isCreated.communityId, communityName: isCreated.displayName });
+  }
+  console.log('isCreated:', isCreated)
+}
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View >
@@ -125,7 +158,7 @@ export default function CreateCommunity() {
 
           <View style={styles.inputContainer}>
             <View style={styles.titleRow}>
-              <Text style={styles.inputTitle}>About text</Text>
+              <Text style={styles.inputTitle}>About</Text>
               <Text style={styles.inputLengthMeasure}>
                 {aboutText.length}/{MAX_ABOUT_TEXT_LENGTH}
               </Text>
@@ -204,24 +237,60 @@ export default function CreateCommunity() {
               />
             </Pressable>
           </View>
-          <View style={styles.inputContainer}>
+          {selectedId === 'private' && <View style={styles.inputContainer}>
+
             <View style={styles.titleRow}>
               <Text style={styles.inputTitle}>
                 Add members<Text style={styles.requiredField}> *</Text>
               </Text>
             </View>
-            <Pressable onPress={() => setAddMembersModal(true)} style={styles.categoryContainer}>
-              <View style={styles.avatar}>
-                <SvgXml style={styles.arrowIcon} xml={plusIcon} width={24} height={24} />
-              </View>
-            </Pressable>
-          </View>
-          <Pressable style={styles.createButton}><Text style={styles.createText}>Create community</Text></Pressable>
+            <View style={styles.addUsersContainer}>
+
+              {selectedUserList.length > 0 &&
+                <FlatList
+                  data={selectedUserList}
+                  renderItem={({ item }) =>
+                    <View style={styles.userItemWrap}>
+                      <View style={styles.avatarRow}>
+
+                        <View style={styles.avatarImageContainer}>
+
+                          <Image
+                            style={styles.avatarImage}
+                            source={
+                              item.avatarFileId
+                                ? { uri: avatarFileURL(item.avatarFileId) }
+                                : require('../../../assets/icon/Placeholder.png')
+                            }
+                          />
+                        </View>
+                        <Text>{displayName(item.displayName)}</Text>
+                      </View>
+                      <TouchableOpacity onPress={() => onDeleteUserPressed(item)}>
+                        <SvgXml xml={closeIcon} width={12} height={12} />
+                      </TouchableOpacity>
+
+                    </View>}
+                  keyExtractor={(item) => item.userId.toString()}
+                  numColumns={2}
+                />
+
+              }
+
+              <Pressable onPress={() => setAddMembersModal(true)} style={styles.addIcon}>
+                <View style={styles.avatar}>
+                  <SvgXml style={styles.arrowIcon} xml={plusIcon} width={24} height={24} />
+                </View>
+              </Pressable>
+            </View>
+          </View>}
+
+          <TouchableOpacity onPress={onCreateCommunity} style={styles.createButton}><Text style={styles.createText}>Create community</Text></TouchableOpacity>
         </View>
 
       </View>
       <ChooseCategoryModal onSelect={handleSelectCategory} onClose={() => setCategoryModal(false)} visible={categoryModal} />
-      <AddMembersModal onSelect={handleAddMembers} onClose={() => setAddMembersModal(false)} visible={addMembersModal} />
+      <AddMembersModal onSelect={handleAddMembers} onClose={() => setAddMembersModal(false)} visible={addMembersModal} initUserList={selectedUserList}/>
     </ScrollView>
   );
 }

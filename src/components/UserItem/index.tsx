@@ -54,7 +54,7 @@ export default function UserItem({
         />
         <Text style={styles.itemText}>{displayName()}</Text>
       </View>
-      {!showThreeDot && isChecked ? (
+      {!showThreeDot ? (
         <RoundCheckbox isChecked={isCheckmark ?? false} />
       ) : (
         <TouchableOpacity
