@@ -22,7 +22,7 @@ import type { IComment } from '../../components/Social/CommentList';
 import type { UserInterface } from '../../types/user.interface';
 import { getAmityUser } from '../../providers/user-provider';
 import CommentList from '../../components/Social/CommentList';
-import { CommentRepository } from '@amityco/ts-sdk';
+import { CommentRepository, CommunityRepository, SubscriptionLevels, UserRepository, getCommunityTopic, getUserTopic, subscribeTopic } from '@amityco/ts-sdk';
 import {
   createComment,
   deleteCommentById,
@@ -38,15 +38,44 @@ const PostDetail = () => {
     initImagePostsFullSize,
   } = route.params;
   const [commentList, setCommentList] = useState<IComment[]>([]);
-  const [commentCollection, setCommentCollection] =
-    useState<Amity.LiveCollection<Amity.Comment<any>>>();
+  const [commentCollection, setCommentCollection] =useState<Amity.LiveCollection<Amity.Comment<any>>>();
   const { data: comments, hasNextPage, onNextPage } = commentCollection ?? {};
+  console.log('comments:', comments)
   const [unSubscribeFunc, setUnSubscribeFunc] = useState<() => void>();
   const [inputMessage, setInputMessage] = useState('');
+  const [communityObject, setCommunityObject] = useState<Amity.Community>()
+  const [userObject, setUserObject] = useState<Amity.User>()
   console.log('unSubscribeFunc: ', unSubscribeFunc);
-
+  console.log('postDetail:', postDetail)
   const flatListRef = useRef(null);
-
+  let isSubscribed = false;
+  const disposers: Amity.Unsubscriber[] = [];
+  
+  const subscribeCommentTopic = (targetType: string) => {
+    if (isSubscribed) return;
+  
+    if (targetType === 'user') {
+      const user = userObject as Amity.User; // use getUser to get user by targetId
+      disposers.push(
+        subscribeTopic(getUserTopic(user, SubscriptionLevels.COMMENT), () => {
+          // use callback to handle errors with event subscription
+        }),
+      );
+      isSubscribed = true;
+      return;
+    }
+  
+    if (targetType === 'community') {
+      console.log('communityObject:', communityObject)
+      const community = communityObject as Amity.Community; // use getCommunity to get community by targetId
+      disposers.push(
+        subscribeTopic(getCommunityTopic(community, SubscriptionLevels.COMMENT), () => {
+          // use callback to handle errors with event subscription
+        }),
+      );
+      isSubscribed = true;
+    }
+  };
   function getCommentsByPostId(postId: string) {
     const unsubscribe = CommentRepository.getComments(
       {
@@ -64,6 +93,24 @@ const PostDetail = () => {
     setUnSubscribeFunc(() => unsubscribe);
   }
   useEffect(() => {
+    if(communityObject || userObject){
+    console.log('postDetail.targetType:', postDetail.targetType)
+      subscribeCommentTopic(postDetail.targetType as string);
+    }
+ 
+  }, [communityObject,userObject])
+  
+  useEffect(() => {
+
+    if(postDetail.targetType === 'community'){
+      CommunityRepository.getCommunity(postDetail.targetId, ({data: community})=>{
+        setCommunityObject(community)
+      });
+    }else if(postDetail.targetType === 'user'){
+      UserRepository.getUser(postDetail.targetId, ({data: user})=>{
+        setUserObject(user)
+      });
+    }
     getCommentsByPostId(postDetail.postId);
   }, [postDetail]);
 
