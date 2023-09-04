@@ -9,7 +9,7 @@ export const styles = StyleSheet.create({
   inputWrap: {
     marginHorizontal: 16,
     backgroundColor: '#EBECEF',
-    padding: 12,
+    padding: 10,
     borderRadius: 4,
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -23,5 +23,8 @@ export const styles = StyleSheet.create({
   searchScrollList: {
     paddingBottom: 110,
     marginTop: 10,
+  },
+  btnWrap: {
+    padding: 10,
   },
 });

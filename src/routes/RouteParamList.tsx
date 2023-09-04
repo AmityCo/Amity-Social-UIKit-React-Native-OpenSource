@@ -40,5 +40,6 @@ export type RootStackParamList = {
   EditProfile: {
     userId: string;
   };
-  AllMyCommunity: undefined
+  AllMyCommunity: undefined;
+  CreateCommunity: undefined;
 };

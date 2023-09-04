@@ -34,25 +34,6 @@ export default function UserProfileSetting({ navigation, route }: any) {
 
   const renderItem = ({ item }: any) => {
     switch (item.id) {
-      // case 1:
-      //   return (
-      //     <TouchableOpacity
-      //       style={styles.rowContainer}
-      //       onPress={handleGroupProfilePress}
-      //     >
-      //       <View style={styles.iconContainer}>
-      //         <Image
-      //           source={require('../../../assets/icon/editPencil.png')}
-      //           style={styles.icon}
-      //         />
-      //       </View>
-      //       <Text style={styles.rowText}>Group profile</Text>
-      //       <Image
-      //         source={require('../../../assets/icon/arrowRight.png')}
-      //         style={styles.arrowIcon}
-      //       />
-      //     </TouchableOpacity>
-      //   );
       case 1:
         return followStatus === 'accepted' ? (
           <TouchableOpacity

@@ -11,12 +11,11 @@ import {
   NativeScrollEvent,
 } from 'react-native';
 import debounce from 'lodash.debounce';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { styles } from './styles';
 import { SvgXml } from 'react-native-svg';
-import { circleCloseIcon, searchIcon } from '../../svg/svg-xml-list';
+import { circleCloseIcon, closeIcon, plusIcon, searchIcon } from '../../svg/svg-xml-list';
 import { useNavigation } from '@react-navigation/native';
-import { CommunityRepository, UserRepository } from '@amityco/ts-sdk';
+import { CommunityRepository } from '@amityco/ts-sdk';
 import type { ISearchItem } from '../../components/SearchItem';
 import SearchItem from '../../components/SearchItem';
 
@@ -33,6 +32,25 @@ export default function AllMyCommunity() {
     data: communitiesArr = [],
     onNextPage,
   } = communities ?? {};
+
+  const goBack=()=>{
+    navigation.goBack()
+  }
+  const onClickCreateCommunity = ()=>{
+    navigation.navigate("CreateCommunity")
+  }
+  navigation.setOptions({
+    // eslint-disable-next-line react/no-unstable-nested-components
+    headerLeft:()=>(  <TouchableOpacity onPress={goBack} style={styles.btnWrap}>
+      <SvgXml xml={closeIcon} width="15" height="15" />
+    </TouchableOpacity>),
+    headerRight: () => (
+      <TouchableOpacity onPress={onClickCreateCommunity}>
+        <SvgXml xml={plusIcon} width="25" height="25" />
+      </TouchableOpacity>
+    ),
+    headerTitle: 'My Community',
+  });
 
   const handleChange = (text: string) => {
     setSearchTerm(text);
@@ -99,7 +117,7 @@ export default function AllMyCommunity() {
   };
 
   return (
-    <SafeAreaView>
+    <View>
       <View style={styles.headerWrap}>
         <View style={styles.inputWrap}>
 
@@ -128,6 +146,6 @@ export default function AllMyCommunity() {
           <SearchItem key={index} target={item} />
         ))}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }

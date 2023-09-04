@@ -20,7 +20,7 @@ import useAuth from '../../hooks/useAuth';
 import Explore from '../Explore';
 import GlobalFeed from '../GlobalFeed';
 import styles from './styles';
-import FullScreenModal from '../../components/FullScreenModal';
+import CreatePostModal from '../../components/CreatePostModal';
 import CustomTab from '../../components/CustomTab';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -140,7 +140,7 @@ export default function Home() {
               <SvgXml xml={postIconOutlined} width="28" height="28" />
               <Text style={styles.postText}>Post</Text>
             </TouchableOpacity>
-            <FullScreenModal
+            <CreatePostModal
               visible={createPostModalVisible}
               onClose={closeCreatePostModal}
               userId={(client as Amity.Client).userId as string}
