@@ -40,9 +40,13 @@ export default function MyCommunity() {
     );
     unsubscribe();
   };
-  const displayName = (text: string) => {
+  const displayName = (text: string, type: string) => {
     if (text) {
-      if (text!.length > maxLength) {
+      let reduceLetter = 0;
+      if(type === 'private'){
+        reduceLetter = 3
+      }
+      if (text!.length > maxLength-reduceLetter) {
         return text!.substring(0, maxLength) + '...';
       }
       return text;
@@ -91,7 +95,7 @@ export default function MyCommunity() {
                   height={17}
                   xml={privateIcon}
                 />}
-              <Text style={styles.itemText}>{displayName(item.displayName)}</Text>
+              <Text style={styles.itemText}>{displayName(item.displayName, !item.isPublic?'private': 'public')}</Text>
               {item.isOfficial &&
                 <SvgXml
                   width={20}
