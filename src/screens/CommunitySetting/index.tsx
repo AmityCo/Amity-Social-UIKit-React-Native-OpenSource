@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native';
 import { styles } from './styles';
-import { CommunityRepository } from '@amityco/ts-sdk';
+import { CommunityRepository } from '@amityco/ts-sdk-react-native';
 import CloseButton from '../../components/BackButton';
 
 interface ChatDetailProps {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native';
-import { UserRepository, createReport } from '@amityco/ts-sdk';
+import { UserRepository, createReport } from '@amityco/ts-sdk-react-native';
 import CloseButton from '../../components/BackButton';
 import { styles } from './styles';
 

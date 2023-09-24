@@ -1,4 +1,4 @@
-import { CommentRepository, ReactionRepository } from '@amityco/ts-sdk';
+import { CommentRepository, ReactionRepository } from '@amityco/ts-sdk-react-native';
 
 export interface ICommentRes {
   data: Amity.Comment<any>[];

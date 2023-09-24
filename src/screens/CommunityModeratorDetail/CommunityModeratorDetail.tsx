@@ -1,4 +1,4 @@
-import { CommunityRepository, createReport } from '@amityco/ts-sdk';
+import { CommunityRepository, createReport } from '@amityco/ts-sdk-react-native';
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import {
   FlatList,

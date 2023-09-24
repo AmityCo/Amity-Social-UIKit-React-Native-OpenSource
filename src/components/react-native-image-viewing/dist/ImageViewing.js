@@ -24,6 +24,7 @@ import useAnimatedComponents from './hooks/useAnimatedComponents';
 import useImageIndexChange from './hooks/useImageIndexChange';
 import useRequestClose from './hooks/useRequestClose';
 import { Video, ResizeMode } from 'expo-av';
+import useAuth from '../../../hooks/useAuth'
 
 const DEFAULT_ANIMATION_TYPE = 'fade';
 const DEFAULT_BG_COLOR = '#000';
@@ -50,6 +51,8 @@ function ImageViewing({
   onClickPlayButton = () => {},
   videoPosts,
 }) {
+
+  const { apiRegion } = useAuth();
   const imageList = useRef(null);
   const [opacity, onRequestCloseEnhanced] = useRequestClose(onRequestClose);
   const [currentImageIndex, onScroll] = useImageIndexChange(imageIndex, SCREEN);
@@ -79,7 +82,7 @@ function ImageViewing({
     onClickPlayButton(currentImageIndex);
     if (videoRef) {
       await videoRef.current.loadAsync({
-        uri: `https://api.amity.co/api/v3/files/${videoPosts[currentImageIndex]?.videoFileId?.original}/download`,
+        uri: `https://api.${apiRegion}.amity.co/api/v3/files/${videoPosts[currentImageIndex]?.videoFileId?.original}/download`,
       });
 
       await videoRef.current.presentFullscreenPlayer();

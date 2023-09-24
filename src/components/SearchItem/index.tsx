@@ -4,8 +4,9 @@ import { Image, Text, TouchableOpacity, View } from 'react-native';
 import { styles } from './styles';
 import { SvgXml } from 'react-native-svg';
 import { communityIcon } from '../../svg/svg-xml-list';
-import { CategoryRepository } from '@amityco/ts-sdk';
+import { CategoryRepository } from '@amityco/ts-sdk-react-native';
 import { useNavigation } from '@react-navigation/native';
+import useAuth from '../../hooks/useAuth';
 
 export interface ISearchItem {
   targetId: string;
@@ -21,6 +22,7 @@ export default function SearchItem({
   target: ISearchItem;
   onPress?: (target: ISearchItem) => void;
 }) {
+  const { apiRegion } = useAuth();
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const [categoryName, setCategoryName] = useState<string>('');
   const navigation = useNavigation<any>();
@@ -61,7 +63,7 @@ export default function SearchItem({
     return 'Display name';
   };
   const avatarFileURL = (fileId: string) => {
-    return `https://api.amity.co/api/v3/files/${fileId}/download?size=medium`;
+    return `https://api.${apiRegion}.amity.co/api/v3/files/${fileId}/download?size=medium`;
   };
 
   return (

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CategoryRepository, CommunityRepository } from '@amityco/ts-sdk';
+import { CategoryRepository, CommunityRepository } from '@amityco/ts-sdk-react-native';
 import { useState, useEffect } from 'react';
 // import { useTranslation } from 'react-i18next';
 
@@ -7,8 +7,11 @@ import { View, Text, ScrollView, Image, TouchableOpacity } from 'react-native';
 import { styles } from './styles';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import useAuth from '../../hooks/useAuth';
 
 export default function Explore() {
+
+  const { apiRegion } = useAuth();
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const [recommendCommunityList, setRecommendCommunityList] = useState<
     Amity.Community[]
@@ -77,7 +80,7 @@ export default function Explore() {
               source={
                 categoryList[index]?.avatarFileId
                   ? {
-                      uri: `https://api.amity.co/api/v3/files/${categoryList[index]?.avatarFileId}/download`,
+                      uri: `https://api.${apiRegion}.amity.co/api/v3/files/${categoryList[index]?.avatarFileId}/download`,
                     }
                   : require('../../../assets/icon/Placeholder.png')
               }
@@ -99,7 +102,7 @@ export default function Explore() {
                 source={
                   categoryList[index + 1]?.avatarFileId
                     ? {
-                        uri: `https://api.amity.co/api/v3/files/${
+                        uri: `https://api.${apiRegion}.amity.co/api/v3/files/${
                           categoryList[index + 1]?.avatarFileId
                         }/download`,
                       }
@@ -135,7 +138,7 @@ export default function Explore() {
               <Image
                 style={styles.avatar}
                 source={{
-                  uri: `https://api.amity.co/api/v3/files/${community.avatarFileId}/download`,
+                  uri: `https://api.${apiRegion}.amity.co/api/v3/files/${community.avatarFileId}/download`,
                 }}
               />
               <Text style={styles.name}>{community.displayName}</Text>
@@ -165,7 +168,7 @@ export default function Explore() {
                 source={
                   community.avatarFileId
                     ? {
-                        uri: `https://api.amity.co/api/v3/files/${community.avatarFileId}/download`,
+                        uri: `https://api.${apiRegion}.amity.co/api/v3/files/${community.avatarFileId}/download`,
                       }
                     : require('../../../assets/icon/Placeholder.png')
                 }
@@ -214,7 +217,7 @@ export default function Explore() {
                     source={
                       category.avatarFileId
                         ? {
-                            uri: `https://api.amity.co/api/v3/files/${category.avatarFileId}/download`,
+                            uri: `https://api.${apiRegion}.amity.co/api/v3/files/${category.avatarFileId}/download`,
                           }
                         : require('../../../assets/icon/Placeholder.png')
                     }
@@ -237,7 +240,7 @@ export default function Explore() {
                       source={
                         categoryList[index + 1]?.avatarFileId
                           ? {
-                              uri: `https://api.amity.co/api/v3/files/${
+                              uri: `https://api.${apiRegion}.amity.co/api/v3/files/${
                                 categoryList[index + 1]?.avatarFileId
                               }/download`,
                             }

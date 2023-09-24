@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { styles } from './styles';
 import type { UserInterface } from '../../types/user.interface';
+import useAuth from '../../hooks/useAuth';
 
 const maxLength = 10;
 const displayName = (user: UserInterface) => {
@@ -20,8 +21,9 @@ const AvatarListItem = ({
   user: UserInterface;
   onDelete: () => void;
 }) => {
+  const { apiRegion } = useAuth();
   const avatarFileURL = (fileId: string) => {
-    return `https://api.amity.co/api/v3/files/${fileId}/download?size=medium`;
+    return `https://api.${apiRegion}.amity.co/api/v3/files/${fileId}/download?size=medium`;
   };
   return (
     <View style={styles.avatarContainer}>

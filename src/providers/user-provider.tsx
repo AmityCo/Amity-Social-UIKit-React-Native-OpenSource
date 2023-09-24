@@ -3,7 +3,7 @@ import {
   createQuery,
   createReport,
   UserRepository,
-} from '@amityco/ts-sdk';
+} from '@amityco/ts-sdk-react-native';
 import type { UserGroup } from '../types/user.interface';
 
 export function groupUsers(users: Amity.User[]): UserGroup[] {

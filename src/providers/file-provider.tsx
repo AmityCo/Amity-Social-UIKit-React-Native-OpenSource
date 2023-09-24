@@ -1,4 +1,4 @@
-import { FileRepository, ContentFeedType } from '@amityco/ts-sdk';
+import { FileRepository, ContentFeedType } from '@amityco/ts-sdk-react-native';
 
 import { Platform } from 'react-native';
 

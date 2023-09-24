@@ -1,4 +1,4 @@
-import { CommunityRepository } from '@amityco/ts-sdk';
+import { CommunityRepository } from '@amityco/ts-sdk-react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   TouchableOpacity,
@@ -17,6 +17,7 @@ import type { UserInterface } from 'src/types/user.interface';
 import { closeIcon } from '../../svg/svg-xml-list';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import useAuth from '../../hooks/useAuth';
 interface IModal {
   visible: boolean;
   userId?: string;
@@ -24,7 +25,7 @@ interface IModal {
   onSelect: () => void;
 }
 const CreatePostModal = ({ visible, onClose, userId, onSelect }: IModal) => {
-
+  const { apiRegion } = useAuth();
   const [communities, setCommunities] = useState<Amity.Community[]>([]);
   const [paginateLoading, setPaginateLoading] = useState(false);
   const [hasNextPageFunc, setHasNextPageFunc] = useState(false);
@@ -95,7 +96,7 @@ const CreatePostModal = ({ visible, onClose, userId, onSelect }: IModal) => {
           source={
             myUser
               ? {
-                  uri: `https://api.amity.co/api/v3/files/${myUser.avatarFileId}/download`,
+                  uri: `https://api.${apiRegion}.amity.co/api/v3/files/${myUser.avatarFileId}/download`,
                 }
               : require('./../../../assets/icon/Placeholder.png')
           }
@@ -129,7 +130,7 @@ const CreatePostModal = ({ visible, onClose, userId, onSelect }: IModal) => {
           source={
             item.avatarFileId
               ? {
-                  uri: `https://api.amity.co/api/v3/files/${item.avatarFileId}/download`,
+                  uri: `https://api.${apiRegion}.amity.co/api/v3/files/${item.avatarFileId}/download`,
                 }
               : require('./../../../assets/icon/Placeholder.png')
           }

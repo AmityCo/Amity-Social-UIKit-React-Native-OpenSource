@@ -1,4 +1,4 @@
-import { CommunityPostSettings, CommunityRepository } from '@amityco/ts-sdk';
+import { CommunityPostSettings, CommunityRepository } from '@amityco/ts-sdk-react-native';
 
 export interface ICreateCommunity {
   description: string;

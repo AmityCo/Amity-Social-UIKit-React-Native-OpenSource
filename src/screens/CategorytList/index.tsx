@@ -1,4 +1,4 @@
-import { CategoryRepository } from '@amityco/ts-sdk';
+import { CategoryRepository } from '@amityco/ts-sdk-react-native';
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import {
   FlatList,
@@ -10,8 +10,11 @@ import {
 } from 'react-native';
 import { styles } from './styles';
 import CloseButton from '../../components/BackButton';
+import useAuth from '../../hooks/useAuth';
 
 export default function CategoryList({ navigation }: any) {
+
+  const { apiRegion } = useAuth();
   const [categories, setCategories] = useState<Amity.Category[]>([]);
   const [loading, setLoading] = useState(false);
   const [hasNextPage, setHasNextPage] = useState(false);
@@ -71,7 +74,7 @@ export default function CategoryList({ navigation }: any) {
           source={
             item.avatarFileId
               ? {
-                  uri: `https://api.amity.co/api/v3/files/${item.avatarFileId}/download`,
+                  uri: `https://api.${apiRegion}.amity.co/api/v3/files/${item.avatarFileId}/download`,
                 }
               : require('../../../assets/icon/Placeholder.png')
           }
