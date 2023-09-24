@@ -22,7 +22,8 @@ import { styles } from './styles';
 import CloseButton from '../../components/BackButton/index';
 import DoneButton from '../../components/DoneButton/index';
 import { LoadingOverlay } from '../../components/LoadingOverlay/index';
-import { UserRepository } from '@amityco/ts-sdk';
+import { UserRepository } from '@amityco/ts-sdk-react-native';
+import useAuth from '../../hooks/useAuth';
 
 interface EditProfileProps {
   navigation: any;
@@ -60,6 +61,8 @@ export const EditProfile: React.FC<EditProfileProps> = ({
   navigation,
   route,
 }) => {
+
+  const { apiRegion } = useAuth();
   const MAX_CHARACTER_COUNT = 100;
   const [imageUri, setImageUri] = useState<string | undefined>();
   const imageUriRef = useRef(imageUri);
@@ -87,7 +90,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
     });
   }, [navigation]);
   const avatarFileURL = (fileId: string) => {
-    return `https://api.amity.co/api/v3/files/${fileId}/download?size=medium`;
+    return `https://api.${apiRegion}.amity.co/api/v3/files/${fileId}/download?size=medium`;
   };
   useEffect(() => {
     setDisplayName(user.displayName);

@@ -6,7 +6,7 @@ import {
   PostContentType,
   PostRepository,
   ReactionRepository,
-} from '@amityco/ts-sdk';
+} from '@amityco/ts-sdk-react-native';
 
 export interface IGlobalFeedRes {
   data: Amity.Post<any>[];

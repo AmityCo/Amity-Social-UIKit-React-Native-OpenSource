@@ -13,10 +13,12 @@ export const styles = StyleSheet.create({
   },
   scrollView: {
     paddingTop: 16,
+    justifyContent: 'space-between',
   },
   itemContainer: {
     alignItems: 'center',
-    marginRight: 18,
+    marginRight: 10,
+    width: 68
   },
   avatar: {
     width: 40,
@@ -24,7 +26,8 @@ export const styles = StyleSheet.create({
     borderRadius: 25,
   },
   itemText: {
-    fontSize: 13,
+    fontSize: 12,
+    marginHorizontal: 3
   },
   textRow: {
     marginTop: 6,

@@ -15,6 +15,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginVertical: 10,
     flex: 2,
+    alignItems: 'center',
   },
   input: { flex: 1, marginHorizontal: 6 },
   cancelBtn: {

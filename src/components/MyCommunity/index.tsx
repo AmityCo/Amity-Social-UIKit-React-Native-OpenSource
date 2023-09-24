@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, Image, TouchableOpacity } from 'react-native';
 import { styles } from './styles';
-import { CommunityRepository } from '@amityco/ts-sdk';
+import { CommunityRepository } from '@amityco/ts-sdk-react-native';
 import { arrowOutlined, communityIcon, officialIcon, privateIcon } from '../../svg/svg-xml-list';
 import { SvgXml } from 'react-native-svg';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import useAuth from '../../hooks/useAuth';
 
 interface ICommunityItems {
   communityId: string;
@@ -16,11 +17,13 @@ interface ICommunityItems {
 
 }
 export default function MyCommunity() {
+
   const maxLength = 6;
+  const { apiRegion } = useAuth();
   const [communityItems, setCommunityItems] = useState<ICommunityItems[]>([])
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const avatarFileURL = (fileId: string) => {
-    return `https://api.amity.co/api/v3/files/${fileId}/download?size=medium`;
+    return `https://api.${apiRegion}.amity.co/api/v3/files/${fileId}/download?size=medium`;
   };
   const queryCommunities = () => {
     const unsubscribe = CommunityRepository.getCommunities(
@@ -40,9 +43,13 @@ export default function MyCommunity() {
     );
     unsubscribe();
   };
-  const displayName = (text: string) => {
+  const displayName = (text: string, type: string) => {
     if (text) {
-      if (text!.length > maxLength) {
+      let reduceLetter = 0;
+      if(type === 'private'){
+        reduceLetter = 3
+      }
+      if (text!.length > maxLength-reduceLetter) {
         return text!.substring(0, maxLength) + '...';
       }
       return text;
@@ -91,7 +98,7 @@ export default function MyCommunity() {
                   height={17}
                   xml={privateIcon}
                 />}
-              <Text style={styles.itemText}>{displayName(item.displayName)}</Text>
+              <Text style={styles.itemText}>{displayName(item.displayName, !item.isPublic?'private': 'public')}</Text>
               {item.isOfficial &&
                 <SvgXml
                   width={20}

@@ -1,4 +1,4 @@
-import { CategoryRepository } from '@amityco/ts-sdk';
+import { CategoryRepository } from '@amityco/ts-sdk-react-native';
 import React, { useEffect, useState } from 'react';
 import {
   TouchableOpacity,
@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { categoryIcon, closeIcon } from '../../svg/svg-xml-list';
+import useAuth from '../../hooks/useAuth';
 
 interface IModal {
   visible: boolean;
@@ -23,6 +24,7 @@ interface IModal {
 }
 const ChooseCategoryModal = ({ visible, onClose, onSelect }: IModal) => {
 
+  const { apiRegion } = useAuth();
   const [categories, setCategories] = useState<Amity.LiveCollection<Amity.Category>>();
   const { data: categoriesList, onNextPage } = categories ?? {}
   const [unSubFunc, setUnSubPageFunc] = useState<() => void>();
@@ -69,7 +71,7 @@ const ChooseCategoryModal = ({ visible, onClose, onSelect }: IModal) => {
           style={styles.avatar}
           source={
             {
-              uri: `https://api.amity.co/api/v3/files/${item.avatarFileId}/download`,
+              uri: `https://api.${apiRegion}.amity.co/api/v3/files/${item.avatarFileId}/download`,
             }
           }
         /> : <SvgXml xml={categoryIcon} width={40} height={40} />}

@@ -77,7 +77,7 @@ export default function CommentList({
     reactions.like ? reactions.like : 0
   );
 
-  const { client } = useAuth();
+  const { client, apiRegion } = useAuth();
   const [commentList, setCommentList] = useState<IComment[]>([]);
   console.log('replyCommentList: ', commentList);
   const [isVisible, setIsVisible] = useState(false);
@@ -257,7 +257,7 @@ export default function CommentList({
           <Image
             style={styles.avatar}
             source={{
-              uri: `https://api.amity.co/api/v3/files/${user?.avatarFileId}/download`,
+              uri: `https://api.${apiRegion}.amity.co/api/v3/files/${user?.avatarFileId}/download`,
             }}
           />
         ) : (

@@ -23,9 +23,10 @@ import { RadioButton } from 'react-native-radio-buttons-group';
 import AddMembersModal from '../../components/AddMembersModal';
 import type { UserInterface } from 'src/types/user.interface';
 import { createCommunity, type ICreateCommunity } from '../../providers/Social/communities-sdk';
+import useAuth from '../../hooks/useAuth';
 
 export default function CreateCommunity() {
-
+  const { apiRegion } = useAuth();
   const [image, setImage] = useState<string>();
   const [communityName, setCommunityName] = useState<string>('');
   const [categoryName, setCategoryName] = useState<string>('');
@@ -84,7 +85,7 @@ export default function CreateCommunity() {
 
   }
   const avatarFileURL = (fileId: string) => {
-    return `https://api.amity.co/api/v3/files/${fileId}/download?size=medium`;
+    return `https://api.${apiRegion}.amity.co/api/v3/files/${fileId}/download?size=medium`;
   };
 
   const displayName = (user: string) => {

@@ -1,10 +1,13 @@
-import { CommunityRepository } from '@amityco/ts-sdk';
+import { CommunityRepository } from '@amityco/ts-sdk-react-native';
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { FlatList, View, Text, ActivityIndicator, Image } from 'react-native';
 import { styles } from './styles';
 import CloseButton from '../../components/BackButton';
+import useAuth from '../../hooks/useAuth';
 
 export default function CommunityList({ navigation, route }: any) {
+
+  const { apiRegion } = useAuth();
   const [communities, setCommunities] = useState<Amity.Community[]>([]);
   const [paginateLoading, setPaginateLoading] = useState(false);
   const { categoryId, categoryName } = route.params;
@@ -59,7 +62,7 @@ export default function CommunityList({ navigation, route }: any) {
           source={
             item.avatarFileId
               ? {
-                  uri: `https://api.amity.co/api/v3/files/${item.avatarFileId}/download`,
+                  uri: `https://api.${apiRegion}.amity.co/api/v3/files/${item.avatarFileId}/download`,
                 }
               : require('../../../assets/icon/Placeholder.png')
           }

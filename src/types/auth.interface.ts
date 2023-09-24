@@ -5,4 +5,6 @@ export type AuthContextInterface = {
   client?: Amity.Client | {};
   login: () => void;
   isConnected: boolean;
+  sessionState: string;
+  apiRegion: string;
 };

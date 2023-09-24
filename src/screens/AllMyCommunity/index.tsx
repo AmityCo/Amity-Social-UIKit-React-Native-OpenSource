@@ -15,7 +15,7 @@ import { styles } from './styles';
 import { SvgXml } from 'react-native-svg';
 import { circleCloseIcon, closeIcon, plusIcon, searchIcon } from '../../svg/svg-xml-list';
 import { useNavigation } from '@react-navigation/native';
-import { CommunityRepository } from '@amityco/ts-sdk';
+import { CommunityRepository } from '@amityco/ts-sdk-react-native';
 import type { ISearchItem } from '../../components/SearchItem';
 import SearchItem from '../../components/SearchItem';
 

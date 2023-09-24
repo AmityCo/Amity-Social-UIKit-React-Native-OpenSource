@@ -100,7 +100,8 @@ export default function PostList({
     childrenPosts,
   } = postDetail ?? {};
 
-  const { client } = useAuth();
+  const { client, apiRegion } = useAuth();
+
   const [isLike, setIsLike] = useState<boolean>(false);
   const [likeReaction, setLikeReaction] = useState<number>(0);
   const [communityName, setCommunityName] = useState('');
@@ -142,12 +143,12 @@ export default function PostList({
         if (item.dataType === 'image') {
           setImagePosts((prev) => [
             ...prev,
-            `https://api.amity.co/api/v3/files/${item?.data.fileId}/download?size=medium`,
+            `https://api.${apiRegion}.amity.co/api/v3/files/${item?.data.fileId}/download?size=medium`,
           ]);
           setImagePostsFullSize((prev) => [
             ...prev,
             {
-              uri: `https://api.amity.co/api/v3/files/${item?.data.fileId}/download?size=large`,
+              uri: `https://api.${apiRegion}.amity.co/api/v3/files/${item?.data.fileId}/download?size=large`,
             },
           ]);
         } else if (item.dataType === 'video') {
@@ -155,7 +156,7 @@ export default function PostList({
           setVideoPostsFullSize((prev) => [
             ...prev,
             {
-              uri: `https://api.amity.co/api/v3/files/${item?.data.thumbnailFileId}/download?size=large`,
+              uri: `https://api.${apiRegion}.amity.co/api/v3/files/${item?.data.thumbnailFileId}/download?size=large`,
             },
           ]);
         }
@@ -291,7 +292,7 @@ export default function PostList({
     const thumbnailFileIds: string[] =
       videoPosts.length > 0
         ? videoPosts.map((item) => {
-            return `https://api.amity.co/api/v3/files/${item?.thumbnailFileId}/download?size=medium`;
+            return `https://api.${apiRegion}.amity.co/api/v3/files/${item?.thumbnailFileId}/download?size=medium`;
           })
         : [];
     let mediaPosts: string[] = [];
@@ -513,7 +514,7 @@ export default function PostList({
             <Image
               style={styles.avatar}
               source={{
-                uri: `https://api.amity.co/api/v3/files/${user?.avatarFileId}/download`,
+                uri: `https://api.${apiRegion}.amity.co/api/v3/files/${user?.avatarFileId}/download`,
               }}
             />
           ) : (

@@ -15,7 +15,7 @@ import PostList, { IPost } from '../../components/Social/PostList';
 import styles from './styles';
 import { getAmityUser } from '../../providers/user-provider';
 import type { UserInterface } from '../../types/user.interface';
-import { PostRepository } from '@amityco/ts-sdk';
+import { PostRepository } from '@amityco/ts-sdk-react-native';
 import type { FeedRefType } from '../CommunityHome';
 import { deletePostById } from '../../providers/Social/feed-sdk';
 

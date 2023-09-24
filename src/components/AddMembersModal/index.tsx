@@ -1,4 +1,4 @@
-import { UserRepository } from '@amityco/ts-sdk';
+import { UserRepository } from '@amityco/ts-sdk-react-native';
 import React, { useEffect, useState } from 'react';
 import {
   TouchableOpacity,

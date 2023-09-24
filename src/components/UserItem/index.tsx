@@ -3,6 +3,7 @@ import { Image, Text, TouchableOpacity, View } from 'react-native';
 import { styles } from './styles';
 import RoundCheckbox from '../RoundCheckbox/index';
 import type { UserInterface } from 'src/types/user.interface';
+import useAuth from '../../hooks/useAuth';
 
 export default function UserItem({
   user,
@@ -17,6 +18,8 @@ export default function UserItem({
   onPress?: (user: UserInterface) => void;
   onThreeDotTap?: (user: UserInterface) => void;
 }) {
+
+  const { apiRegion } = useAuth();
   const [isChecked, setIsChecked] = useState(false);
   const maxLength = 25;
   const handleToggle = () => {
@@ -36,7 +39,7 @@ export default function UserItem({
     return 'Display name';
   };
   const avatarFileURL = (fileId: string) => {
-    return `https://api.amity.co/api/v3/files/${fileId}/download?size=medium`;
+    return `https://api.${apiRegion}.amity.co/api/v3/files/${fileId}/download?size=medium`;
   };
 
   return (
