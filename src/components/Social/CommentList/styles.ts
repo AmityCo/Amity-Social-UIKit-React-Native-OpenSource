@@ -106,6 +106,18 @@ const styles = StyleSheet.create({
     paddingLeft: 12,
     fontWeight: '600',
   },
+  twoOptions:{
+    minHeight: 720,
+  },
+  timeRow:{
+    flexDirection:'row',
+    alignItems: 'center'
+  },
+  dot:{
+    color: '#636878',
+    fontWeight: '900',
+    paddingHorizontal:5
+  }
 });
 
 export default styles;

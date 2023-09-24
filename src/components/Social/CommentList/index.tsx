@@ -36,6 +36,7 @@ import {
   reportTargetById,
   unReportTargetById,
 } from '../../../providers/Social/feed-sdk';
+import EditCommentModal from '../../../components/EditCommentModal';
 
 export interface IComment {
   commentId: string;
@@ -69,6 +70,7 @@ export default function CommentList({
     reactions,
     myReactions,
     childrenComment,
+    editedAt
   } = commentDetail;
   const [isLike, setIsLike] = useState<boolean>(
     myReactions ? myReactions.includes('like') : false
@@ -80,9 +82,11 @@ export default function CommentList({
   const { client, apiRegion } = useAuth();
   const [commentList, setCommentList] = useState<IComment[]>([]);
   console.log('replyCommentList: ', commentList);
+  const [textComment, setTextComment] = useState<string>(data.text)
   const [isVisible, setIsVisible] = useState(false);
   const [isReportByMe, setIsReportByMe] = useState<boolean>(false);
-
+  const [editCommentModal, setEditCommentModal] = useState<boolean>(false)
+  const [isEditComment, setIsEditComment] = useState<boolean>(false)
   const slideAnimation = useRef(new Animated.Value(0)).current;
 
   const openModal = () => {
@@ -243,6 +247,19 @@ export default function CommentList({
       },
     ],
   };
+
+  const openEditCommentModal = () => {
+    setIsVisible(false)
+    setEditCommentModal(true)
+  }
+  const onEditComment = (editText: string) => {
+    setIsEditComment(true)
+    setEditCommentModal(false)
+    setTextComment(editText);
+  }
+  const onCloseEditCommentModal = () => {
+    setEditCommentModal(false)
+  }
   return (
     <View
       key={commentId}
@@ -270,11 +287,20 @@ export default function CommentList({
             <Text style={styles.headerText}>{user?.displayName}</Text>
           </View>
 
-          <Text style={styles.headerTextTime}>
-            {getTimeDifference(createdAt)}
-          </Text>
+          <View style={styles.timeRow}>
+              <Text style={styles.headerTextTime}>
+                {getTimeDifference(createdAt)}
+              </Text>
+              {(editedAt !== createdAt || isEditComment) && <Text style={styles.dot}>·</Text>}
+              {(editedAt !== createdAt || isEditComment) &&
+
+                <Text style={styles.headerTextTime}>
+                  Edited
+                </Text>}
+
+            </View>
           <View style={styles.commentBubble}>
-            <Text style={styles.commentText}>{data.text}</Text>
+            <Text style={styles.commentText}>{textComment}</Text>
           </View>
           <View style={styles.actionSection}>
             <TouchableOpacity
@@ -325,14 +351,23 @@ export default function CommentList({
         onRequestClose={closeModal}
       >
         <Pressable onPress={closeModal} style={styles.modalContainer}>
-          <Animated.View style={[styles.modalContent, modalStyle]}>
+          <Animated.View style={[styles.modalContent, modalStyle, user?.userId === (client as Amity.Client).userId && styles.twoOptions]}>
             {user?.userId === (client as Amity.Client).userId ? (
-              <TouchableOpacity
-                onPress={deletePostObject}
-                style={styles.modalRow}
-              >
-                <Text style={styles.deleteText}> Delete Comment</Text>
-              </TouchableOpacity>
+              <View>
+                <TouchableOpacity
+                  onPress={openEditCommentModal}
+                  style={styles.modalRow}
+                >
+                  <Text style={styles.deleteText}> Edit Comment</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={deletePostObject}
+                  style={styles.modalRow}
+                >
+                  <Text style={styles.deleteText}> Delete Comment</Text>
+                </TouchableOpacity>
+              </View>
+
             ) : (
               <TouchableOpacity
                 onPress={reportCommentObject}
@@ -346,6 +381,12 @@ export default function CommentList({
           </Animated.View>
         </Pressable>
       </Modal>
+      <EditCommentModal
+        visible={editCommentModal}
+        commentDetail={commentDetail}
+        onFinishEdit={onEditComment}
+        onClose={onCloseEditCommentModal}
+      />
     </View>
   );
 }

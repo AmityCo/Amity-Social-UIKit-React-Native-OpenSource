@@ -1,7 +1,7 @@
 import { CommentRepository, ReactionRepository } from '@amityco/ts-sdk-react-native';
 
 export interface ICommentRes {
-  data: Amity.Comment<any>[];
+  data: Amity.Comment[];
   onNextPage: () => any;
   unsubscribe: () => any;
   hasNextPage: boolean;
@@ -51,8 +51,8 @@ export async function removeCommentReaction(
 export async function createComment(
   text: string,
   postId: string
-): Promise<Amity.Comment<any>> {
-  const createCommentObject: Promise<Amity.Comment<any>> = new Promise(
+): Promise<Amity.InternalComment> {
+  const createCommentObject: Promise<Amity.InternalComment> = new Promise(
     async (resolve, reject) => {
       try {
         const newComment = {
@@ -74,11 +74,32 @@ export async function createComment(
   );
   return createCommentObject;
 }
-
+export async function editComment(
+  text: string,
+  commentId: string
+): Promise<Amity.InternalComment> {
+  const createCommentObject: Promise<Amity.InternalComment> = new Promise(
+    async (resolve, reject) => {
+      try {
+        const updatedComment = {
+          data: {
+            text: text,
+          },
+          referenceType: 'post' as Amity.CommentReferenceType,
+        };
+        const { data: comment } = await CommentRepository.updateComment(commentId, updatedComment);
+        resolve(comment);
+      } catch (error) {
+        reject(error);
+      }
+    }
+  );
+  return createCommentObject;
+}
 export async function getCommentsDataByIds(
   commentIds: string[]
-): Promise<Amity.Comment<any>[]> {
-  const commentObject: Promise<Amity.Comment<any>[]> = new Promise(
+): Promise<Amity.InternalComment[]> {
+  const commentObject: Promise<Amity.InternalComment[]> = new Promise(
     async (resolve, reject) => {
       try {
         const { data } = await CommentRepository.getCommentByIds(commentIds);

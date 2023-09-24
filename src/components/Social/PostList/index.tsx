@@ -108,7 +108,7 @@ export default function PostList({
   const [likeReaction, setLikeReaction] = useState<number>(0);
   const [communityName, setCommunityName] = useState('');
   const [imagePosts, setImagePosts] = useState<string[]>([]);
-  const [textPost, setTextPost] = useState(data.text)
+  const [textPost, setTextPost] = useState<string>(data.text)
   const [imagePostsFullSize, setImagePostsFullSize] = useState<MediaUri[]>([]);
   const [videoPostsFullSize, setVideoPostsFullSize] = useState<MediaUri[]>([]);
   const [videoPosts, setVideoPosts] = useState<IVideoPost[]>([]);
