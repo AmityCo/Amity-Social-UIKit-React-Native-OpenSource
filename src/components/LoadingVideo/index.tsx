@@ -12,7 +12,7 @@ import { createStyles } from './styles';
 
 interface OverlayImageProps {
   source: string;
-  onClose?: (originalPath: string) => void;
+  onClose?: (originalPath: string, fileId: string) => void;
   onLoadFinish?: (
     fileId: string,
     fileUrl: string,
@@ -25,7 +25,8 @@ interface OverlayImageProps {
   isUploaded: boolean;
   fileId?: string;
   thumbNail: string;
-  onPlay: (fileUrl: string) => void;
+  onPlay?: (fileUrl: string) => void;
+  isEditMode?: boolean
 }
 const LoadingVideo = ({
   source,
@@ -36,6 +37,7 @@ const LoadingVideo = ({
   thumbNail,
   onPlay,
   fileId,
+  isEditMode
 }: OverlayImageProps) => {
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
@@ -75,8 +77,10 @@ const LoadingVideo = ({
 
   const handleDelete = async () => {
     if (fileId) {
-      await deleteAmityFile(fileId as string);
-      onClose && onClose(source);
+      if (!isEditMode) {
+        await deleteAmityFile(fileId as string);
+      }
+      onClose && onClose(source, fileId);
     }
   };
   useEffect(() => {

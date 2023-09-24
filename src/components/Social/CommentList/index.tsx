@@ -146,7 +146,7 @@ export default function CommentList({
   const formatComments = useCallback(async (replyComments) => {
     if (replyComments && replyComments.length > 0) {
       const formattedCommentList = await Promise.all(
-        replyComments.map(async (item: Amity.Comment<any>) => {
+        replyComments.map(async (item: Amity.Comment) => {
           const { userObject } = await getAmityUser(item.userId);
           let formattedUserObject: UserInterface;
 

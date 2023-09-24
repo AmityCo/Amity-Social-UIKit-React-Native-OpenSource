@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {
-  ReactElement,
-  ReactNode,
+  type ReactElement,
+  type ReactNode,
   useCallback,
   useEffect,
   useRef,
@@ -15,8 +15,8 @@ import {
   TouchableOpacity,
   Image,
   TouchableWithoutFeedback,
-  StyleProp,
-  ImageStyle,
+  type StyleProp,
+  type ImageStyle,
   Modal,
   Pressable,
   Animated,
@@ -48,6 +48,7 @@ import ImageView from '../../../components/react-native-image-viewing/dist';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import useAuth from '../../../hooks/useAuth';
+import EditPostModal from '../../../components/EditPostModal';
 
 export interface IPost {
   postId: string;
@@ -98,6 +99,7 @@ export default function PostList({
     targetType,
     targetId,
     childrenPosts,
+    editedAt
   } = postDetail ?? {};
 
   const { client, apiRegion } = useAuth();
@@ -106,15 +108,16 @@ export default function PostList({
   const [likeReaction, setLikeReaction] = useState<number>(0);
   const [communityName, setCommunityName] = useState('');
   const [imagePosts, setImagePosts] = useState<string[]>([]);
-
+  const [textPost, setTextPost] = useState(data.text)
   const [imagePostsFullSize, setImagePostsFullSize] = useState<MediaUri[]>([]);
   const [videoPostsFullSize, setVideoPostsFullSize] = useState<MediaUri[]>([]);
   const [videoPosts, setVideoPosts] = useState<IVideoPost[]>([]);
   const [visibleFullImage, setIsVisibleFullImage] = useState<boolean>(false);
   const [imageIndex, setImageIndex] = useState<number>(0);
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState<boolean>(false);
+  const [isEdit, setIsEdit] = useState<boolean>(false);
   const [isReportByMe, setIsReportByMe] = useState<boolean>(false);
-
+  const [editPostModalVisible, setEditPostModalVisible] = useState<boolean>(false)
   const slideAnimation = useRef(new Animated.Value(0)).current;
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
@@ -145,26 +148,38 @@ export default function PostList({
             ...prev,
             `https://api.${apiRegion}.amity.co/api/v3/files/${item?.data.fileId}/download?size=medium`,
           ]);
-          setImagePostsFullSize((prev) => [
-            ...prev,
-            {
-              uri: `https://api.${apiRegion}.amity.co/api/v3/files/${item?.data.fileId}/download?size=large`,
-            },
-          ]);
+
         } else if (item.dataType === 'video') {
           setVideoPosts((prev) => [...prev, item.data]);
-          setVideoPostsFullSize((prev) => [
-            ...prev,
-            {
-              uri: `https://api.${apiRegion}.amity.co/api/v3/files/${item?.data.thumbnailFileId}/download?size=large`,
-            },
-          ]);
+
         }
       });
     } catch (error) {
       console.log('error: ', error);
     }
   }, [childrenPosts]);
+
+  useEffect(() => {
+    if (imagePosts.length > 0) {
+      const updatedUrls: MediaUri[] = imagePosts.map((url: string) => {
+        return {
+          uri: url.replace('size=medium', 'size=large')
+        }
+      })
+      setImagePostsFullSize(updatedUrls)
+
+
+    }
+    if (videoPosts.length > 0) {
+      const updatedUrls: MediaUri[] = videoPosts.map((item: IVideoPost) => {
+        return {
+          uri: `https://api.${apiRegion}.amity.co/api/v3/files/${item?.thumbnailFileId}/download?size=large`
+        }
+      })
+      setVideoPostsFullSize(updatedUrls)
+    }
+
+  }, [imagePosts, videoPosts])
 
   const checkIsReport = async () => {
     const isReport = await isReportTarget('post', postId);
@@ -292,8 +307,8 @@ export default function PostList({
     const thumbnailFileIds: string[] =
       videoPosts.length > 0
         ? videoPosts.map((item) => {
-            return `https://api.${apiRegion}.amity.co/api/v3/files/${item?.thumbnailFileId}/download?size=medium`;
-          })
+          return `https://api.${apiRegion}.amity.co/api/v3/files/${item?.thumbnailFileId}/download?size=medium`;
+        })
         : [];
     let mediaPosts: string[] = [];
     if (initImagePostsFullSize.length > 0) {
@@ -395,9 +410,8 @@ export default function PostList({
                 />
                 {index === 3 && imagePosts.length > 4 && (
                   <View style={styles.overlay}>
-                    <Text style={styles.overlayText}>{`+ ${
-                      imagePosts.length - 3
-                    }`}</Text>
+                    <Text style={styles.overlayText}>{`+ ${imagePosts.length - 3
+                      }`}</Text>
                   </View>
                 )}
               </View>
@@ -506,6 +520,71 @@ export default function PostList({
       },
     ],
   };
+
+  const renderOptionModal = () => {
+    return (
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={isVisible}
+        onRequestClose={closeModal}
+      >
+        <Pressable onPress={closeModal} style={styles.modalContainer}>
+          <Animated.View style={[styles.modalContent, modalStyle, user?.userId === (client as Amity.Client).userId && styles.twoOptions]}>
+            {user?.userId === (client as Amity.Client).userId ? (
+              <View>
+                <TouchableOpacity
+                  onPress={openEditPostModal}
+                  style={styles.modalRow}
+                >
+                  <Text style={styles.deleteText}> Edit Post</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={deletePostObject}
+                  style={styles.modalRow}
+                >
+                  <Text style={styles.deleteText}> Delete Post</Text>
+                </TouchableOpacity>
+              </View>
+
+            ) : (
+              <TouchableOpacity
+                onPress={reportPostObject}
+                style={styles.modalRow}
+              >
+                <Text style={styles.deleteText}>
+                  {isReportByMe ? 'Undo Report' : 'Report'}
+                </Text>
+              </TouchableOpacity>
+            )}
+          </Animated.View>
+        </Pressable>
+      </Modal>
+    )
+  }
+  const closeEditPostModal = () => {
+    setEditPostModalVisible(false)
+  }
+  const openEditPostModal = () => {
+    setIsVisible(false)
+    setEditPostModalVisible(true)
+
+  }
+
+  const handleOnFinishEdit = (postData: { text: string, mediaUrls: string[] | IVideoPost[] }, type: string) => {
+    if (type === 'image') {
+      setImagePosts(postData.mediaUrls as string[])
+
+    }
+    else if (type === 'video') {
+      const videoPostsCallBack: unknown[] = postData.mediaUrls
+      setVideoPosts(videoPostsCallBack as IVideoPost[])
+    }
+    setTextPost(postData.text)
+    setEditPostModalVisible(false)
+    setIsEdit(true)
+  }
+
   return (
     <View key={postId} style={styles.postWrap}>
       <View style={styles.headerSection}>
@@ -544,10 +623,19 @@ export default function PostList({
                 </>
               )}
             </View>
+            <View style={styles.timeRow}>
+              <Text style={styles.headerTextTime}>
+                {getTimeDifference(createdAt)}
+              </Text>
+              {(editedAt !== createdAt || isEdit) && <Text style={styles.dot}>·</Text>}
+              {(editedAt !== createdAt || isEdit) &&
 
-            <Text style={styles.headerTextTime}>
-              {getTimeDifference(createdAt)}
-            </Text>
+                <Text style={styles.headerTextTime}>
+                  Edited
+                </Text>}
+
+            </View>
+
           </View>
         </View>
         <TouchableOpacity onPress={openModal} style={styles.threeDots}>
@@ -556,7 +644,7 @@ export default function PostList({
       </View>
       <View>
         <View style={styles.bodySection}>
-          {data.text && <Text style={styles.bodyText}>{data.text}</Text>}
+          {textPost && <Text style={styles.bodyText}>{textPost}</Text>}
 
           {childrenPosts.length > 0 && (
             <View style={styles.mediaWrap}>{renderMediaPost()}</View>
@@ -619,34 +707,15 @@ export default function PostList({
         isVideoButton={videoPosts.length > 0 ? true : false}
         videoPosts={videoPosts}
       />
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={isVisible}
-        onRequestClose={closeModal}
-      >
-        <Pressable onPress={closeModal} style={styles.modalContainer}>
-          <Animated.View style={[styles.modalContent, modalStyle]}>
-            {user?.userId === (client as Amity.Client).userId ? (
-              <TouchableOpacity
-                onPress={deletePostObject}
-                style={styles.modalRow}
-              >
-                <Text style={styles.deleteText}> Delete Post</Text>
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity
-                onPress={reportPostObject}
-                style={styles.modalRow}
-              >
-                <Text style={styles.deleteText}>
-                  {isReportByMe ? 'Undo Report' : 'Report'}
-                </Text>
-              </TouchableOpacity>
-            )}
-          </Animated.View>
-        </Pressable>
-      </Modal>
+      {renderOptionModal()}
+      <EditPostModal
+        visible={editPostModalVisible}
+        onClose={closeEditPostModal}
+        postDetail={postDetail}
+        imagePosts={imagePosts}
+        videoPosts={videoPosts}
+        onFinishEdit={handleOnFinishEdit}
+      />
     </View>
   );
 }

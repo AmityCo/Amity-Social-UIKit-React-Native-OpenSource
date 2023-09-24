@@ -209,6 +209,9 @@ const styles = StyleSheet.create({
     padding: 10,
     minHeight: 700,
   },
+  twoOptions:{
+    minHeight: 720,
+  },
   modalRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -219,6 +222,15 @@ const styles = StyleSheet.create({
     paddingLeft: 12,
     fontWeight: '600',
   },
+  timeRow:{
+    flexDirection:'row',
+    alignItems: 'center'
+  },
+  dot:{
+    color: '#636878',
+    fontWeight: '900',
+    paddingHorizontal:5
+  }
 });
 
 export default styles;

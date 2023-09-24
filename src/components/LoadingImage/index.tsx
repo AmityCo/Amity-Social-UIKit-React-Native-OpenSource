@@ -22,6 +22,7 @@ interface OverlayImageProps {
   index?: number;
   isUploaded: boolean;
   fileId?: string;
+  isEditMode?: boolean
 }
 const LoadingImage = ({
   source,
@@ -30,6 +31,7 @@ const LoadingImage = ({
   onLoadFinish,
   isUploaded = false,
   fileId = '',
+  isEditMode = false
 }: OverlayImageProps) => {
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
@@ -69,7 +71,10 @@ const LoadingImage = ({
   const handleDelete = async () => {
     if (fileId) {
       onClose && onClose(source);
-      await deleteAmityFile(fileId);
+      if (!isEditMode) {
+        await deleteAmityFile(fileId);
+      }
+
     }
   };
   useEffect(() => {

@@ -148,6 +148,58 @@ export async function createPostToFeed(
   );
   return createPostObject;
 }
+
+export async function editPost(
+  postId: string,
+  content: { text: string; fileIds: string[] },
+  postType: string
+): Promise<Amity.Post<any>> {
+  let postParam = {};
+  if (postType === 'text') {
+    const newPostParam = {
+      data: {
+        text: content.text,
+        attachments: [],
+      },
+    };
+    postParam = newPostParam;
+  } else if (postType === 'image') {
+    const formattedFileIds: { type: string; fileId: string }[] =
+      content.fileIds.map((id) => {
+        return { type: PostContentType.IMAGE, fileId: id };
+      });
+    const newPostParam = {
+      data: {
+        text: content.text,
+      },
+      attachments: formattedFileIds,
+    };
+    postParam = newPostParam;
+  } else if (postType === 'video') {
+    const formattedFileIds: { type: string; fileId: string }[] =
+      content.fileIds.map((id) => {
+        return { type: PostContentType.VIDEO, fileId: id };
+      });
+    const newPostParam = {
+      data: {
+        text: content.text,
+      },
+      attachments: formattedFileIds,
+    };
+    postParam = newPostParam;
+  }
+  const editPostObject: Promise<Amity.Post<any>> = new Promise(
+    async (resolve, reject) => {
+      try {
+        const { data: post } = await PostRepository.editPost(postId, postParam);
+        resolve(post);
+      } catch (error) {
+        reject(error);
+      }
+    }
+  );
+  return editPostObject;
+}
 export async function deletePostById(postId: string): Promise<boolean> {
   const isDeletedObject: Promise<boolean> = new Promise(
     async (resolve, reject) => {
