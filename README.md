@@ -38,7 +38,7 @@ yarn example android
 ### Installation
 Here are the steps to install ui-kit together with another React Native project.
 ```sh
-1. git clone git@github.com:AmityCo/Amity-Social-Cloud-UIKit-React-Native-OpenSource.git
+1. git clone https://github.com/AmityCo/Amity-Social-UIKit-React-Native-CLI-OpenSource.git
 2. cd Amity-Social-Cloud-UIKit-React-Native-OpenSource
 3. yarn or npm install
 4. yarn pack or npm pack
