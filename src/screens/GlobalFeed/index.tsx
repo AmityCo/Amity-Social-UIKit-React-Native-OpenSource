@@ -6,20 +6,22 @@ import { FlatList, View } from 'react-native';
 import {
   deletePostById,
   getGlobalFeed,
-  IGlobalFeedRes,
+  type IGlobalFeedRes,
 } from '../../providers/Social/feed-sdk';
 import useAuth from '../../hooks/useAuth';
-import PostList, { IPost } from '../../components/Social/PostList';
-import styles from './styles';
+import PostList, { type IPost } from '../../components/Social/PostList';
+import { getStyles } from './styles';
 import { getAmityUser } from '../../providers/user-provider';
 import type { UserInterface } from '../../types/user.interface';
 import MyCommunity from '../../components/MyCommunity';
 
+
 export default function GlobalFeed() {
-  const { client } = useAuth();
+
+  const styles = getStyles();
+  const { client, isConnected } = useAuth();
   const [postData, setPostData] = useState<IGlobalFeedRes>();
   const [postList, setPostList] = useState<IPost[]>([]);
-  console.log('postList:', postList.map(item=>item.postId))
   const { data: posts = [], nextPage } = postData ?? {};
 
 
@@ -38,7 +40,10 @@ export default function GlobalFeed() {
     }
   };
   useEffect(() => {
-    getGlobalFeedList();
+    if (isConnected) {
+      getGlobalFeedList();
+    }
+
   }, [client]);
   const getPostList = useCallback(async () => {
     if (posts.length > 0) {

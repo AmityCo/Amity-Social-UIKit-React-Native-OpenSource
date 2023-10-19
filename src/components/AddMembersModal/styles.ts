@@ -1,10 +1,14 @@
 import { Platform, StyleSheet } from "react-native";
+import { useTheme } from "react-native-paper";
+import type { MyMD3Theme } from "../../providers/amity-ui-kit-provider";
 
-
-export const styles = StyleSheet.create({
+export const getStyles=()=>{
+  const theme = useTheme() as MyMD3Theme ;
+  
+  const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: 'white',
+      backgroundColor: theme.colors.background,
       paddingTop: Platform.OS === 'android' ? 35 : 10, // Adjust for Android status bar
     },
     header: {
@@ -36,7 +40,7 @@ export const styles = StyleSheet.create({
       fontWeight: '600',
     },
     myCommunityText: {
-      color: '#292B32',
+      color: theme.colors.base,
       padding: 16,
       opacity: 0.4,
       fontSize: 17,
@@ -53,7 +57,7 @@ export const styles = StyleSheet.create({
       paddingBottom: 16,
       paddingTop: 26,
       paddingHorizontal: 16,
-      borderBottomColor: '#EBECEF',
+      borderBottomColor: theme.colors.border,
       borderBottomWidth: 1,
     },
     avatar: {
@@ -98,4 +102,5 @@ export const styles = StyleSheet.create({
       opacity: 0.5
     }
   });
-  
+  return styles;
+}

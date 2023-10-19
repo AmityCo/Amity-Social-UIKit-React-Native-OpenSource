@@ -12,10 +12,12 @@ import {
 import { SvgXml } from 'react-native-svg';
 import { closeIcon } from '../../svg/svg-xml-list';
 
-import { styles } from './styles';
+import { getStyles } from './styles';
 
 import type { IComment } from '../Social/CommentList';
 import { editComment } from '../../providers/Social/comment-sdk';
+import { useTheme } from 'react-native-paper';
+import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 
 interface IModal {
   visible: boolean;
@@ -25,20 +27,21 @@ interface IModal {
   commentDetail: IComment;
 }
 const EditCommentModal = ({ visible, onClose, commentDetail, onFinishEdit }: IModal) => {
-
+  const theme = useTheme() as MyMD3Theme;
+  const styles = getStyles();
   const [inputMessage, setInputMessage] = useState(commentDetail?.data?.text ?? '');
 
 
 
   const handleEditComment = async () => {
 
-    if(inputMessage){
-      const editedComment = await editComment(inputMessage,commentDetail.commentId)
-      if(editedComment){
+    if (inputMessage) {
+      const editedComment = await editComment(inputMessage, commentDetail.commentId)
+      if (editedComment) {
         onFinishEdit && onFinishEdit(inputMessage)
       }
     }
-   
+
   };
 
 
@@ -47,7 +50,7 @@ const EditCommentModal = ({ visible, onClose, commentDetail, onFinishEdit }: IMo
     <Modal visible={visible} animationType="slide">
       <View style={styles.header}>
         <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-          <SvgXml xml={closeIcon} width="17" height="17" />
+          <SvgXml xml={closeIcon(theme.colors.base)} width="17" height="17" />
         </TouchableOpacity>
         <View style={styles.headerTextContainer}>
           <Text style={styles.headerText}>Edit Comment</Text>

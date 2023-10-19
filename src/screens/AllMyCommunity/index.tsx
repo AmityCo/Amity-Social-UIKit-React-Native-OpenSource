@@ -7,19 +7,25 @@ import {
   TouchableOpacity,
   LogBox,
   ScrollView,
-  NativeSyntheticEvent,
-  NativeScrollEvent,
+  type NativeSyntheticEvent,
+  type NativeScrollEvent,
 } from 'react-native';
 import debounce from 'lodash.debounce';
-import { styles } from './styles';
+import { getStyles } from './styles';
 import { SvgXml } from 'react-native-svg';
 import { circleCloseIcon, closeIcon, plusIcon, searchIcon } from '../../svg/svg-xml-list';
 import { useNavigation } from '@react-navigation/native';
 import { CommunityRepository } from '@amityco/ts-sdk-react-native';
 import type { ISearchItem } from '../../components/SearchItem';
 import SearchItem from '../../components/SearchItem';
+import { useTheme } from 'react-native-paper';
+import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 
 export default function AllMyCommunity() {
+
+
+   const theme = useTheme() as MyMD3Theme;
+  const styles = getStyles();
   LogBox.ignoreAllLogs(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchType,] = useState('community');
@@ -42,11 +48,11 @@ export default function AllMyCommunity() {
   navigation.setOptions({
     // eslint-disable-next-line react/no-unstable-nested-components
     headerLeft:()=>(  <TouchableOpacity onPress={goBack} style={styles.btnWrap}>
-      <SvgXml xml={closeIcon} width="15" height="15" />
+      <SvgXml xml={closeIcon(theme.colors.base)} width="15" height="15" />
     </TouchableOpacity>),
     headerRight: () => (
       <TouchableOpacity onPress={onClickCreateCommunity}>
-        <SvgXml xml={plusIcon} width="25" height="25" />
+        <SvgXml xml={plusIcon(theme.colors.base)} width="25" height="25" />
       </TouchableOpacity>
     ),
     headerTitle: 'My Community',
@@ -117,11 +123,11 @@ export default function AllMyCommunity() {
   };
 
   return (
-    <View>
+    <View style={styles.container}>
       <View style={styles.headerWrap}>
         <View style={styles.inputWrap}>
 
-          <SvgXml xml={searchIcon} width="20" height="20" />
+          <SvgXml xml={searchIcon(theme.colors.base)} width="20" height="20" />
 
           <TextInput
             style={styles.input}

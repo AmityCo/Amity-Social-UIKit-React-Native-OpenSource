@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import { styles } from './styles';
+import { getStyles } from './styles';
 import type { UserInterface } from '../../types/user.interface';
 import useAuth from '../../hooks/useAuth';
 
@@ -21,6 +21,8 @@ const AvatarListItem = ({
   user: UserInterface;
   onDelete: () => void;
 }) => {
+
+  const styles = getStyles()
   const { apiRegion } = useAuth();
   const avatarFileURL = (fileId: string) => {
     return `https://api.${apiRegion}.amity.co/api/v3/files/${fileId}/download?size=medium`;
@@ -54,6 +56,8 @@ export default function SelectedUserHorizontal({
   users: UserInterface[];
   onDeleteUserPressed: (user: UserInterface) => void;
 }) {
+
+  const styles = getStyles()
   const [scrollOffset, setScrollOffset] = useState(0);
   const scrollViewRef = useRef<ScrollView>(null);
 

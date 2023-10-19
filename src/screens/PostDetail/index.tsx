@@ -1,4 +1,4 @@
-import { RouteProp, useRoute } from '@react-navigation/native';
+import { type RouteProp, useRoute } from '@react-navigation/native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   View,
@@ -10,14 +10,14 @@ import {
   Keyboard,
   ScrollView,
   FlatList,
-  NativeSyntheticEvent,
-  NativeScrollEvent,
+  type NativeSyntheticEvent,
+  type NativeScrollEvent,
 } from 'react-native';
 
 import type { RootStackParamList } from 'src/routes/RouteParamList';
 import PostList from '../../components/Social/PostList';
 
-import { styles } from './styles';
+import { getStyles } from './styles';
 import type { IComment } from '../../components/Social/CommentList';
 import type { UserInterface } from '../../types/user.interface';
 import { getAmityUser } from '../../providers/user-provider';
@@ -27,8 +27,13 @@ import {
   createComment,
   deleteCommentById,
 } from '../../providers/Social/comment-sdk';
+import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
+import { useTheme } from 'react-native-paper';
 
 const PostDetail = () => {
+
+  const theme = useTheme() as MyMD3Theme ;
+  const styles = getStyles();
   const route = useRoute<RouteProp<RootStackParamList, 'PostDetail'>>();
   const {
     postDetail,
@@ -38,15 +43,13 @@ const PostDetail = () => {
     initImagePostsFullSize,
   } = route.params;
   const [commentList, setCommentList] = useState<IComment[]>([]);
-  const [commentCollection, setCommentCollection] =useState<Amity.LiveCollection<Amity.InternalComment>>();
+  const [commentCollection, setCommentCollection] =useState<Amity.LiveCollection<Amity.Comment>>();
   const { data: comments, hasNextPage, onNextPage } = commentCollection ?? {};
-  console.log('comments:', comments)
   const [unSubscribeFunc, setUnSubscribeFunc] = useState<() => void>();
   const [inputMessage, setInputMessage] = useState('');
   const [communityObject, setCommunityObject] = useState<Amity.Community>()
   const [userObject, setUserObject] = useState<Amity.User>()
   console.log('unSubscribeFunc: ', unSubscribeFunc);
-  console.log('postDetail:', postDetail)
   const flatListRef = useRef(null);
   let isSubscribed = false;
   const disposers: Amity.Unsubscriber[] = [];
@@ -66,7 +69,6 @@ const PostDetail = () => {
     }
   
     if (targetType === 'community') {
-      console.log('communityObject:', communityObject)
       const community = communityObject as Amity.Community; // use getCommunity to get community by targetId
       disposers.push(
         subscribeTopic(getCommunityTopic(community, SubscriptionLevels.COMMENT), () => {
@@ -83,7 +85,7 @@ const PostDetail = () => {
         referenceId: postId,
         referenceType: 'post',
       },
-      (data: Amity.LiveCollection<Amity.InternalComment<any>>) => {
+      (data: Amity.LiveCollection<Amity.Comment>) => {
         if (data.error) throw data.error;
         if (!data.loading) {
           setCommentCollection(data);
@@ -94,7 +96,6 @@ const PostDetail = () => {
   }
   useEffect(() => {
     if(communityObject || userObject){
-    console.log('postDetail.targetType:', postDetail.targetType)
       subscribeCommentTopic(postDetail.targetType as string);
     }
  
@@ -117,7 +118,7 @@ const PostDetail = () => {
   const queryComment = useCallback(async () => {
     if (comments && comments.length > 0) {
       const formattedCommentList = await Promise.all(
-        comments.map(async (item: Amity.InternalComment) => {
+        comments.map(async (item: Amity.Comment) => {
           const { userObject } = await getAmityUser(item.userId);
           let formattedUserObject: UserInterface;
 
@@ -219,6 +220,7 @@ const PostDetail = () => {
           style={styles.input}
           placeholder="Say something nice..."
           value={inputMessage}
+          placeholderTextColor={theme.colors.baseShade3}
         />
         <TouchableOpacity
           disabled={inputMessage.length > 0 ? false : true}
@@ -237,3 +239,5 @@ const PostDetail = () => {
   );
 };
 export default PostDetail;
+
+

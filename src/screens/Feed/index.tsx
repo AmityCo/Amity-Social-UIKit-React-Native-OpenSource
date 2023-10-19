@@ -11,8 +11,8 @@ import React, {
 
 import { FlatList, View } from 'react-native';
 import useAuth from '../../hooks/useAuth';
-import PostList, { IPost } from '../../components/Social/PostList';
-import styles from './styles';
+import PostList, { type IPost } from '../../components/Social/PostList';
+import { getStyles } from './styles';
 import { getAmityUser } from '../../providers/user-provider';
 import type { UserInterface } from '../../types/user.interface';
 import { PostRepository } from '@amityco/ts-sdk-react-native';
@@ -24,6 +24,8 @@ interface IFeed {
   targetType: string;
 }
 function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
+
+  const styles = getStyles();
   const { client } = useAuth();
   const [postData, setPostData] =
     useState<Amity.LiveCollection<Amity.Post<any>>>();
@@ -42,6 +44,7 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
   }
   const handleLoadMore = () => {
     if (hasNextPage) {
+      console.log('hasNextPage:', hasNextPage)
       onNextPage && onNextPage();
     }
   };
@@ -117,7 +120,7 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
         )}
         keyExtractor={(item) => item.postId.toString()}
         onEndReachedThreshold={0.8}
-        // onEndReached={handleLoadMore}
+        onEndReached={handleLoadMore}
         ref={flatListRef}
         scrollEnabled={false}
       />

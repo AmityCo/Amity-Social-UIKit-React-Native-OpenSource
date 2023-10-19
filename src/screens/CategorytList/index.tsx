@@ -8,7 +8,7 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import { styles } from './styles';
+import { getStyles } from './styles';
 import CloseButton from '../../components/BackButton';
 import useAuth from '../../hooks/useAuth';
 
@@ -19,6 +19,7 @@ export default function CategoryList({ navigation }: any) {
   const [loading, setLoading] = useState(false);
   const [hasNextPage, setHasNextPage] = useState(false);
 
+  const styles = getStyles();
   const onNextPageRef = useRef<(() => void) | null>(null);
   const isFetchingRef = useRef(false);
   const onEndReachedCalledDuringMomentumRef = useRef(true);
@@ -74,8 +75,8 @@ export default function CategoryList({ navigation }: any) {
           source={
             item.avatarFileId
               ? {
-                  uri: `https://api.${apiRegion}.amity.co/api/v3/files/${item.avatarFileId}/download`,
-                }
+                uri: `https://api.${apiRegion}.amity.co/api/v3/files/${item.avatarFileId}/download`,
+              }
               : require('../../../assets/icon/Placeholder.png')
           }
         />

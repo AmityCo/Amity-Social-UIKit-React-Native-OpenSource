@@ -1,19 +1,21 @@
-import React, { ReactElement, useState } from 'react';
+import React, { type ReactElement, useState } from 'react';
 import {
   Animated,
-  LayoutChangeEvent,
-  StyleProp,
+  type LayoutChangeEvent,
+  type StyleProp,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import { styles } from './styles';
+import { getStyles } from './styles';
 
 interface ICustomTab {
   onTabChange: (tabIndex: number) => any;
   tabName: string[];
 }
 const CustomTab = ({ tabName, onTabChange }: ICustomTab): ReactElement => {
+
+  const styles = getStyles();
   const [activeTab, setActiveTab] = useState(1);
   const [indicatorAnim] = useState(new Animated.Value(0));
   const [tabOneWidth, setTabOneWidth] = useState<number>(0);

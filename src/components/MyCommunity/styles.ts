@@ -1,8 +1,15 @@
-import { StyleSheet } from 'react-native';
 
-export const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#FFFFFF',
+
+import { StyleSheet } from 'react-native';
+import { useTheme } from 'react-native-paper';
+import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
+export const getStyles = () => {
+
+const theme = useTheme() as MyMD3Theme ;
+
+const styles = StyleSheet.create({
+ container: {
+    backgroundColor: theme.colors.background,
     paddingVertical: 16,
     paddingLeft: 16
   },
@@ -10,6 +17,7 @@ export const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: '600',
     margin: 1,
+    color: theme.colors.base
   },
   scrollView: {
     paddingTop: 16,
@@ -27,7 +35,8 @@ export const styles = StyleSheet.create({
   },
   itemText: {
     fontSize: 12,
-    marginHorizontal: 3
+    marginHorizontal: 3,
+    color: theme.colors.base
   },
   textRow: {
     marginTop: 6,
@@ -59,3 +68,7 @@ export const styles = StyleSheet.create({
   }
   
 });
+
+return styles;
+}
+

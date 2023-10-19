@@ -1,8 +1,12 @@
 import React from 'react';
 import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native';
-import { styles } from './styles';
+import { getStyles } from './styles';
 import { CommunityRepository } from '@amityco/ts-sdk-react-native';
 import CloseButton from '../../components/BackButton';
+import { SvgXml } from 'react-native-svg';
+import { arrowOutlined } from '../../svg/svg-xml-list';
+import { useTheme } from 'react-native-paper';
+import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
 
 interface ChatDetailProps {
   navigation: any;
@@ -13,6 +17,8 @@ export const CommunitySetting: React.FC<ChatDetailProps> = ({
   navigation,
   route,
 }) => {
+  const theme = useTheme() as MyMD3Theme;
+  const styles = getStyles();
   const { communityId, communityName } = route.params;
   React.useLayoutEffect(() => {
     // Set the headerRight component to a TouchableOpacity
@@ -35,25 +41,7 @@ export const CommunitySetting: React.FC<ChatDetailProps> = ({
 
   const renderItem = ({ item }: any) => {
     switch (item.id) {
-      // case 1:
-      //   return (
-      //     <TouchableOpacity
-      //       style={styles.rowContainer}
-      //       onPress={handleGroupProfilePress}
-      //     >
-      //       <View style={styles.iconContainer}>
-      //         <Image
-      //           source={require('../../../assets/icon/editPencil.png')}
-      //           style={styles.icon}
-      //         />
-      //       </View>
-      //       <Text style={styles.rowText}>Group profile</Text>
-      //       <Image
-      //         source={require('../../../assets/icon/arrowRight.png')}
-      //         style={styles.arrowIcon}
-      //       />
-      //     </TouchableOpacity>
-      //   );
+  
       case 1:
         return (
           <TouchableOpacity
@@ -67,10 +55,7 @@ export const CommunitySetting: React.FC<ChatDetailProps> = ({
               />
             </View>
             <Text style={styles.rowText}>Members</Text>
-            <Image
-              source={require('../../../assets/icon/arrowRight.png')}
-              style={styles.arrowIcon}
-            />
+           <SvgXml xml={arrowOutlined(theme.colors.base)} width={24}/>
           </TouchableOpacity>
         );
       case 2:
