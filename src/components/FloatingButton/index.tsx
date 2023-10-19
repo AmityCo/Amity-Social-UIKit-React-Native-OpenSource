@@ -21,7 +21,7 @@ export default function FloatingButton({ onPress }: IBackBtn) {
             onPress && onPress();
           }}
         >
-          <SvgXml xml={postIcon} width="30" height="30" />
+          <SvgXml xml={postIcon('#FFFFFF')} width="30" height="30" />
         </TouchableOpacity>
       </Pressable>
     </View>

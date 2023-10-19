@@ -4,13 +4,14 @@ import { useState, useEffect } from 'react';
 // import { useTranslation } from 'react-i18next';
 
 import { View, Text, ScrollView, Image, TouchableOpacity } from 'react-native';
-import { styles } from './styles';
+import { getStyles } from './styles';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import useAuth from '../../hooks/useAuth';
 
 export default function Explore() {
 
+  const styles = getStyles()
   const { apiRegion } = useAuth();
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const [recommendCommunityList, setRecommendCommunityList] = useState<
@@ -201,59 +202,6 @@ export default function Explore() {
           </TouchableOpacity>
         </View>
         {categoryListComponent()}
-        {/* {categoryList
-            .filter((_, i) => i % 2 === 0)
-            .map((category, index) => (
-              <View style={styles.rowContainer} key={index}>
-                <TouchableOpacity
-                  style={styles.column}
-                  onPress={() =>
-                    handleCategoryClick(category.categoryId, category.name)
-                  }
-                >
-                  <Text>{index}</Text>
-                  <Image
-                    style={styles.avatar}
-                    source={
-                      category.avatarFileId
-                        ? {
-                            uri: `https://api.${apiRegion}.amity.co/api/v3/files/${category.avatarFileId}/download`,
-                          }
-                        : require('../../../assets/icon/Placeholder.png')
-                    }
-                  />
-                  <Text style={styles.columnText}>{category.name}</Text>
-                </TouchableOpacity>
-                {index + 1 < categoryList.length && (
-                  <TouchableOpacity
-                    style={styles.column}
-                    onPress={() =>
-                      handleCategoryClick(
-                        categoryList[index + 1]!.categoryId,
-                        categoryList[index + 1]!.name
-                      )
-                    }
-                  >
-                    <Text>{index + 1}</Text>
-                    <Image
-                      style={styles.avatar}
-                      source={
-                        categoryList[index + 1]?.avatarFileId
-                          ? {
-                              uri: `https://api.${apiRegion}.amity.co/api/v3/files/${
-                                categoryList[index + 1]?.avatarFileId
-                              }/download`,
-                            }
-                          : require('../../../assets/icon/Placeholder.png')
-                      }
-                    />
-                    <Text style={styles.columnText}>
-                      {categoryList[index + 1]?.name}
-                    </Text>
-                  </TouchableOpacity>
-                )}
-              </View>
-            ))} */}
       </View>
     </ScrollView>
   );

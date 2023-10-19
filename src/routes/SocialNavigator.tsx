@@ -21,11 +21,14 @@ import UserProfileSetting from '../screens/UserProfileSetting/UserProfileSetting
 import CommunitySearch from '../screens/CommunitySearch';
 import AllMyCommunity from '../screens/AllMyCommunity';
 import CreateCommunity from '../screens/CreateCommunity';
+import VideoPlayerFull from '../screens/VideoPlayerFullScreen';
+import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
+import { useTheme } from 'react-native-paper';
 
 export default function SocialNavigator() {
   const Stack = createNativeStackNavigator<RootStackParamList>();
   const { isConnected } = useAuth();
-
+  const theme = useTheme() as MyMD3Theme;
   // const renderPostDeatil = () => {
   //   return <PostDetail />;
   // };
@@ -38,6 +41,12 @@ export default function SocialNavigator() {
             contentStyle: {
               backgroundColor: 'white',
             },
+            headerStyle:{
+              backgroundColor: theme.colors.background,
+            },
+            headerTitleStyle:{
+              color: theme.colors.base
+            }
 
           }}
         >
@@ -55,10 +64,10 @@ export default function SocialNavigator() {
           <Stack.Screen name="CommunityHome" component={CommunityHome} />
           <Stack.Screen
             name="CommunitySearch"
-            options={{
-              headerShown: false,
-            }}
             component={CommunitySearch}
+            options={{
+              headerShown: false, // Remove the back button
+            }}
           />
           <Stack.Screen
             name="CommunityMemberDetail"
@@ -69,6 +78,10 @@ export default function SocialNavigator() {
           <Stack.Screen name="CommunityList" component={CommunityList} />
           <Stack.Screen name="AllMyCommunity" component={AllMyCommunity} />
           <Stack.Screen name="CreatePost" component={CreatePost} />
+          <Stack.Screen name="VideoPlayer"
+            options={{
+              headerShown: false,
+            }} component={VideoPlayerFull} />
           <Stack.Screen name="UserProfile" component={UserProfile} />
           <Stack.Screen name="EditProfile" component={EditProfile} />
           <Stack.Screen

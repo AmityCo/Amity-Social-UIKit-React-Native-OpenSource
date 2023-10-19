@@ -14,11 +14,11 @@ import {
 import {
   launchCamera,
   launchImageLibrary,
-  CameraOptions,
-  ImageLibraryOptions,
-  ImagePickerResponse,
+  type CameraOptions,
+  type ImageLibraryOptions,
+  type   ImagePickerResponse,
 } from 'react-native-image-picker';
-import { styles } from './styles';
+import { getStyles } from './styles';
 import CloseButton from '../../components/BackButton/index';
 import DoneButton from '../../components/DoneButton/index';
 import { LoadingOverlay } from '../../components/LoadingOverlay/index';
@@ -61,9 +61,9 @@ export const EditProfile: React.FC<EditProfileProps> = ({
   navigation,
   route,
 }) => {
-
-  const { apiRegion } = useAuth();
+  const styles = getStyles();
   const MAX_CHARACTER_COUNT = 100;
+  const { apiRegion } = useAuth();
   const [imageUri, setImageUri] = useState<string | undefined>();
   const imageUriRef = useRef(imageUri);
   const [displayName, setDisplayName] = useState<string | undefined>();
@@ -76,7 +76,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
   const { user } = route.params;
 
   React.useLayoutEffect(() => {
-    // Set the headerRight component to a TouchableOpacity
+
     navigation.setOptions({
       headerLeft: () => <CloseButton />,
       title: 'Edit Profile',

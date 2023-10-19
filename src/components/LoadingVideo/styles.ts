@@ -4,9 +4,8 @@ export const createStyles = () => {
   return StyleSheet.create({
     container: {
       flex: 1,
-      position: 'relative',
       maxWidth: Dimensions.get('window').height / 4,
-      height: Dimensions.get('window').height / 5,
+      height: Dimensions.get('window').height / 3,
       margin: 3,
     },
     image: {
@@ -17,10 +16,18 @@ export const createStyles = () => {
       borderRadius: 5,
       backgroundColor: '#bcbcbc',
     },
+    thumbnail: {
+      flex: 1,
+      width: '100%',
+      height: '100%',
+      borderRadius: 5,
+    },
     overlay: {
-      ...StyleSheet.absoluteFillObject,
-      justifyContent: 'center',
-      alignItems: 'center',
+      position: 'absolute',
+      top: '27%',
+      left: '50%',
+      transform: [{ translateX: -25 }, { translateY: -25 }],
+
     },
     progressBar: {
       marginVertical: 10,
@@ -44,7 +51,7 @@ export const createStyles = () => {
       height: 100,
       borderRadius: 50,
       position: 'absolute',
-      top: '50%',
+      top: '27%',
       left: '50%',
       transform: [{ translateX: -25 }, { translateY: -25 }],
       zIndex: 1,

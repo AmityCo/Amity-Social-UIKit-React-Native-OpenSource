@@ -42,4 +42,5 @@ export type RootStackParamList = {
   };
   AllMyCommunity: undefined;
   CreateCommunity: undefined;
+  VideoPlayer: {source: string}
 };

@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import React, { useCallback, useRef, useEffect } from 'react';
+import React, { useCallback, useRef, useEffect, useState } from 'react';
 import {
   Animated,
   Dimensions,
@@ -14,6 +14,7 @@ import {
   VirtualizedList,
   Modal,
   TouchableOpacity,
+  Platform,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { playBtn } from '../../../svg/svg-xml-list';
@@ -23,8 +24,9 @@ import StatusBarManager from './components/StatusBarManager';
 import useAnimatedComponents from './hooks/useAnimatedComponents';
 import useImageIndexChange from './hooks/useImageIndexChange';
 import useRequestClose from './hooks/useRequestClose';
-import { Video, ResizeMode } from 'expo-av';
-import useAuth from '../../../hooks/useAuth'
+import Video from 'react-native-video';
+import useAuth from '../../../hooks/useAuth';
+import { useNavigation } from '@react-navigation/native';
 
 const DEFAULT_ANIMATION_TYPE = 'fade';
 const DEFAULT_BG_COLOR = '#000';
@@ -37,7 +39,7 @@ function ImageViewing({
   imageIndex,
   visible,
   onRequestClose,
-  onLongPress = () => {},
+  onLongPress = () => { },
   onImageIndexChange,
   animationType = DEFAULT_ANIMATION_TYPE,
   backgroundColor = DEFAULT_BG_COLOR,
@@ -48,17 +50,20 @@ function ImageViewing({
   HeaderComponent,
   FooterComponent,
   isVideoButton,
-  onClickPlayButton = () => {},
+  onClickPlayButton = () => { },
   videoPosts,
 }) {
-
   const { apiRegion } = useAuth();
+  const navigation = useNavigation();
   const imageList = useRef(null);
   const [opacity, onRequestCloseEnhanced] = useRequestClose(onRequestClose);
   const [currentImageIndex, onScroll] = useImageIndexChange(imageIndex, SCREEN);
-  const [headerTransform, footerTransform, toggleBarsVisible] =
-    useAnimatedComponents();
-  const videoRef = React.useRef(null);
+  const [headerTransform, footerTransform, toggleBarsVisible] = useAnimatedComponents();
+
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [playingUri, setPlayingUri] = useState('')
+  const videoPlayerRef = useRef(null);
+
   useEffect(() => {
     if (onImageIndexChange) {
       onImageIndexChange(currentImageIndex);
@@ -79,18 +84,29 @@ function ImageViewing({
     [imageList]
   );
   const playVideoFullScreen = async () => {
-    onClickPlayButton(currentImageIndex);
-    if (videoRef) {
-      await videoRef.current.loadAsync({
-        uri: `https://api.${apiRegion}.amity.co/api/v3/files/${videoPosts[currentImageIndex]?.videoFileId?.original}/download`,
-      });
-
-      await videoRef.current.presentFullscreenPlayer();
-      await videoRef.current.playAsync();
+    if(Platform.OS === 'ios'){
+      onClickPlayButton(currentImageIndex);
+      setIsPlaying(true)
+      setPlayingUri(`https://api.${apiRegion}.amity.co/api/v3/files/${videoPosts[currentImageIndex]?.videoFileId?.original}/download`)
+    }else{
+      navigation.navigate('VideoPlayer', { source: `https://api.${apiRegion}.amity.co/api/v3/files/${videoPosts[currentImageIndex]?.videoFileId?.original}/download` })
     }
+
   };
+
+  useEffect(() => {
+     if (videoPlayerRef && playingUri && isPlaying) {
+       videoPlayerRef.current.presentFullscreenPlayer();
+    }
+  }, [playingUri, isPlaying])
+  
   if (!visible) {
     return null;
+  }
+
+  const onClosePlayer = () => {
+    setIsPlaying(false);
+    setPlayingUri('')
   }
 
   return (
@@ -161,8 +177,8 @@ function ImageViewing({
             keyExtractor
               ? keyExtractor(imageSrc, index)
               : typeof imageSrc === 'number'
-              ? `${imageSrc}`
-              : imageSrc.uri
+                ? `${imageSrc}`
+                : imageSrc.uri
           }
         />
         {typeof FooterComponent !== 'undefined' && (
@@ -175,9 +191,17 @@ function ImageViewing({
           </Animated.View>
         )}
       </View>
-      <View style={styles.videoContainer}>
-        <Video ref={videoRef} resizeMode={ResizeMode.CONTAIN} />
-      </View>
+
+    
+        <Video
+          source={{ uri: playingUri }}
+          onVideoFullscreenPlayerWillDismiss={onClosePlayer}
+          ref={videoPlayerRef}
+          fullscreen={true}
+
+        />
+
+
     </Modal>
   );
 }

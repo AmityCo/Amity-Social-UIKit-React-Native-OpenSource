@@ -112,7 +112,7 @@ export const AuthContextProvider: FC<IAmityUIkitProvider> = ({
         logout,
         isConnected,
         sessionState,
-        apiRegion: apiRegion?.toLowerCase() as string
+        apiRegion: apiRegion.toLowerCase()
       }}
     >
       {children}

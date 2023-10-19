@@ -1,8 +1,13 @@
 import { StyleSheet } from 'react-native';
+import { useTheme } from 'react-native-paper';
+import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
+
+export const getStyles = () => {
+  const theme = useTheme() as MyMD3Theme ;
 
 const styles = StyleSheet.create({
   postWrap: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: theme.colors.background,
     marginTop: 8,
     paddingHorizontal: 16,
     paddingTop: 4,
@@ -15,6 +20,7 @@ const styles = StyleSheet.create({
   headerText: {
     fontWeight: '600',
     fontSize: 15,
+    color: theme.colors.base
   },
   user: {
     paddingVertical: 8,
@@ -25,7 +31,7 @@ const styles = StyleSheet.create({
   headerTextTime: {
     fontSize: 13,
     fontWeight: '400',
-    color: '#636878',
+    color: theme.colors.baseShade1,
     marginVertical: 4,
   },
   bodySection: {
@@ -51,9 +57,10 @@ const styles = StyleSheet.create({
     fontStyle: 'normal',
     fontWeight: '400',
     marginBottom: 8,
+    color: theme.colors.base
   },
   actionSection: {
-    borderTopColor: '#EBECEF',
+    borderTopColor: theme.colors.border,
     borderTopWidth: 1,
     flexDirection: 'row',
     marginTop: 8,
@@ -70,7 +77,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   btnText: {
-    color: '#898E9E',
+    color: theme.colors.base,
     fontSize: 15,
     fontWeight: '600',
     marginHorizontal: 4,
@@ -85,7 +92,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   likedText: {
-    color: '#1054DE',
+    color: theme.colors.primary,
     fontSize: 15,
     fontWeight: '600',
     marginHorizontal: 4,
@@ -203,7 +210,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
-    backgroundColor: '#FFF',
+    backgroundColor: theme.colors.background,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
     padding: 10,
@@ -221,16 +228,19 @@ const styles = StyleSheet.create({
   deleteText: {
     paddingLeft: 12,
     fontWeight: '600',
+    color: theme.colors.base
   },
   timeRow:{
     flexDirection:'row',
     alignItems: 'center'
   },
   dot:{
-    color: '#636878',
+    color: theme.colors.baseShade1,
     fontWeight: '900',
     paddingHorizontal:5
   }
 });
 
-export default styles;
+return styles;
+}
+

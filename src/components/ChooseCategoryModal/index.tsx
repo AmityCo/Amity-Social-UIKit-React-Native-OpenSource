@@ -5,16 +5,17 @@ import {
   View,
   Text,
   Modal,
-  StyleSheet,
-  Platform,
   Image,
   FlatList,
-  NativeSyntheticEvent,
-  NativeScrollEvent,
+  type NativeSyntheticEvent,
+  type NativeScrollEvent,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { categoryIcon, closeIcon } from '../../svg/svg-xml-list';
 import useAuth from '../../hooks/useAuth';
+import { getStyles } from './styles';
+import { useTheme } from 'react-native-paper';
+import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
 
 interface IModal {
   visible: boolean;
@@ -23,13 +24,12 @@ interface IModal {
   onSelect: (categoryId: string, categoryName: string) => void;
 }
 const ChooseCategoryModal = ({ visible, onClose, onSelect }: IModal) => {
-
+  const theme = useTheme() as MyMD3Theme;
+  const styles = getStyles();
   const { apiRegion } = useAuth();
   const [categories, setCategories] = useState<Amity.LiveCollection<Amity.Category>>();
   const { data: categoriesList, onNextPage } = categories ?? {}
   const [unSubFunc, setUnSubPageFunc] = useState<() => void>();
-
-
 
 
   useEffect(() => {
@@ -105,7 +105,7 @@ const ChooseCategoryModal = ({ visible, onClose, onSelect }: IModal) => {
       <View style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity style={styles.closeButton} onPress={handleOnClose}>
-            <SvgXml xml={closeIcon} width="17" height="17" />
+            <SvgXml xml={closeIcon(theme.colors.base)} width="17" height="17" />
           </TouchableOpacity>
           <View style={styles.headerTextContainer}>
             <Text style={styles.headerText}>Select Category</Text>
@@ -124,75 +124,3 @@ const ChooseCategoryModal = ({ visible, onClose, onSelect }: IModal) => {
 
 export default ChooseCategoryModal;
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'white',
-    paddingTop: Platform.OS === 'android' ? 35 : 10, // Adjust for Android status bar
-  },
-  header: {
-    paddingTop: Platform.OS === 'ios' ? 50 : 20, // Adjust for iOS notch
-    zIndex: 1,
-    padding: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  closeButton: {
-    position: 'absolute',
-    left: 10,
-    bottom: 8,
-    zIndex: 1,
-    padding: 10,
-  },
-  headerTextContainer: {
-    flex: 1,
-    flexDirection:'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerText: {
-    fontWeight: '600',
-    fontSize: 17,
-    textAlign: 'center',
-  },
-  communityText: {
-    marginLeft: 12,
-    marginBottom: 10,
-    fontSize: 15,
-    fontWeight: '600',
-  },
-  myCommunityText: {
-    color: '#292B32',
-    padding: 16,
-    opacity: 0.4,
-    fontSize: 17,
-  },
-  rowContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-  },
-  rowContainerMyTimeLine: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingBottom: 16,
-    paddingTop: 26,
-    paddingHorizontal: 16,
-    borderBottomColor: '#EBECEF',
-    borderBottomWidth: 1,
-  },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    marginBottom: 10,
-    backgroundColor: '#D9E5FC',
-  },
-  categoryIcon: {
-    alignItems: 'center'
-  },
-  LoadingIndicator: {
-    paddingVertical: 20,
-  },
-});

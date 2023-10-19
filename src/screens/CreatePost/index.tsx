@@ -21,15 +21,13 @@ import {
   galleryIcon,
   playVideoIcon,
 } from '../../svg/svg-xml-list';
-import { styles } from './styles';
-
-import * as ImagePicker from 'expo-image-picker';
-
+import { getStyles } from './styles';
+import ImagePicker, { launchImageLibrary, type Asset, launchCamera } from 'react-native-image-picker';
 import LoadingImage from '../../components/LoadingImage';
 import { createPostToFeed } from '../../providers/Social/feed-sdk';
 import LoadingVideo from '../../components/LoadingVideo';
-import * as VideoThumbnails from 'expo-video-thumbnails';
-import { Video, ResizeMode } from 'expo-av';
+import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
+import { useTheme } from 'react-native-paper';
 
 export interface IDisplayImage {
   url: string;
@@ -39,6 +37,8 @@ export interface IDisplayImage {
   thumbNail?: string;
 }
 const CreatePost = ({ route }: any) => {
+  const theme = useTheme() as MyMD3Theme;
+  const styles = getStyles();
   const { targetId, targetType, targetName } = route.params;
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const [inputMessage, setInputMessage] = useState('');
@@ -47,19 +47,6 @@ const CreatePost = ({ route }: any) => {
   const [displayImages, setDisplayImages] = useState<IDisplayImage[]>([]);
   const [displayVideos, setDisplayVideos] = useState<IDisplayImage[]>([]);
 
-  const videoRef = React.useRef(null);
-
-  const playVideoFullScreen = async (fileUrl: string) => {
-    if (videoRef) {
-      await (videoRef as React.MutableRefObject<any>).current.loadAsync({
-        uri: fileUrl,
-      });
-      await (
-        videoRef as React.MutableRefObject<any>
-      ).current.presentFullscreenPlayer();
-      await (videoRef as React.MutableRefObject<any>).current.playAsync()();
-    }
-  };
   const goBack = () => {
     navigation.navigate('Home');
   };
@@ -69,7 +56,7 @@ const CreatePost = ({ route }: any) => {
       <SafeAreaView style={styles.barContainer} edges={['top']}>
         <View style={styles.header}>
           <TouchableOpacity style={styles.closeButton} onPress={goBack}>
-            <SvgXml xml={closeIcon} width="17" height="17" />
+            <SvgXml xml={closeIcon(theme.colors.base)} width="17" height="17" />
           </TouchableOpacity>
           <View style={styles.headerTextContainer}>
             <Text style={styles.headerText}>{targetName}</Text>
@@ -77,8 +64,8 @@ const CreatePost = ({ route }: any) => {
           <TouchableOpacity
             disabled={
               inputMessage.length > 0 ||
-              displayImages.length > 0 ||
-              displayVideos.length > 0
+                displayImages.length > 0 ||
+                displayVideos.length > 0
                 ? false
                 : true
             }
@@ -87,8 +74,8 @@ const CreatePost = ({ route }: any) => {
             <Text
               style={
                 inputMessage.length > 0 ||
-                displayImages.length > 0 ||
-                displayVideos.length > 0
+                  displayImages.length > 0 ||
+                  displayVideos.length > 0
                   ? styles.postText
                   : [styles.postText, styles.disabled]
               }
@@ -143,26 +130,39 @@ const CreatePost = ({ route }: any) => {
 
   const pickCamera = async () => {
 
-    const permission = await ImagePicker.requestCameraPermissionsAsync();
-    if (permission.granted) {
-      let result: ImagePicker.ImagePickerResult =
-        await ImagePicker.launchCameraAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.All,
-          allowsEditing: false,
-          aspect: [4, 3],
-        });
+    // const permission = await ImagePicker();
 
-      if (
-        result.assets &&
-        result.assets.length > 0 &&
-        result.assets[0] !== null &&
-        result.assets[0]
-      ) {
-        const imagesArr = [...imageMultipleUri];
-        imagesArr.push(result.assets[0].uri);
+    const result: ImagePicker.ImagePickerResponse = await launchCamera({
+      mediaType: 'mixed',
+      quality: 1,
+      presentationStyle: 'fullScreen',
+      videoQuality: 'high',
+
+    });
+
+
+
+    if (
+      result.assets &&
+
+      result.assets.length > 0 &&
+      result.assets[0] !== null &&
+      result.assets[0]
+    ) {
+      if (result.assets[0].type?.includes('image')) {
+        const imagesArr: string[]= [...imageMultipleUri];
+        imagesArr.push(result.assets[0].uri as string);
         setImageMultipleUri(imagesArr);
+      } else {
+        const selectedVideos: Asset[] = result.assets;
+        const imageUriArr: string[] = selectedVideos.map((item: Asset) => item.uri) as string[];
+        const videosArr: string[] = [...videoMultipleUri];
+        const totalVideos: string[] = videosArr.concat(imageUriArr);
+        setVideoMultipleUri(totalVideos);
       }
+
     }
+
 
   };
 
@@ -201,7 +201,6 @@ const CreatePost = ({ route }: any) => {
       );
       setDisplayImages((prev) => [...prev, ...imagesObject]);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imageMultipleUri]);
 
   const processVideo = async () => {
@@ -209,13 +208,13 @@ const CreatePost = ({ route }: any) => {
       const videosObject: IDisplayImage[] = await Promise.all(
         videoMultipleUri.map(async (url: string) => {
           const fileName: string = url.substring(url.lastIndexOf('/') + 1);
-          const thumbnail = await VideoThumbnails.getThumbnailAsync(url);
+
           return {
             url: url,
             fileName: fileName,
             fileId: '',
             isUploaded: false,
-            thumbNail: thumbnail.uri,
+            thumbNail: '',
           };
         })
       );
@@ -228,13 +227,13 @@ const CreatePost = ({ route }: any) => {
       const videosObject: IDisplayImage[] = await Promise.all(
         filteredDuplicate.map(async (url: string) => {
           const fileName: string = url.substring(url.lastIndexOf('/') + 1);
-          const thumbnail = await VideoThumbnails.getThumbnailAsync(url);
           return {
             url: url,
             fileName: fileName,
             fileId: '',
             isUploaded: false,
-            thumbNail: thumbnail.uri,
+            thumbNail: '',
+
           };
         })
       );
@@ -243,39 +242,34 @@ const CreatePost = ({ route }: any) => {
   };
   useEffect(() => {
     processVideo();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [videoMultipleUri]);
 
   const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: false,
+
+    const result: ImagePicker.ImagePickerResponse = await launchImageLibrary({
+
+      mediaType: 'photo',
       quality: 1,
-      allowsMultipleSelection: true,
+      selectionLimit: 10
+
     });
-
-
-    if (!result.canceled && result.assets && result.assets.length > 0) {
-      const selectedImages = result.assets;
-      const imageUriArr: string[] = selectedImages.map((item) => item.uri);
+    if (!result.didCancel && result.assets && result.assets.length > 0) {
+      const selectedImages: Asset[] = result.assets;
+      const imageUriArr: string[] = selectedImages.map((item: Asset) => item.uri) as string[];
       const imagesArr = [...imageMultipleUri];
       const totalImages = imagesArr.concat(imageUriArr);
       setImageMultipleUri(totalImages);
     }
   };
   const pickVideo = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Videos,
-      allowsEditing: false,
+    const result: ImagePicker.ImagePickerResponse = await launchImageLibrary({
+      mediaType: 'video',
       quality: 1,
-      allowsMultipleSelection: true,
+      selectionLimit: 10,
     });
-
-
-    if (!result.canceled && result.assets && result.assets.length > 0) {
-      const selectedVideos = result.assets;
-      const imageUriArr: string[] = selectedVideos.map((item) => item.uri);
+    if (!result.didCancel && result.assets && result.assets.length > 0) {
+      const selectedVideos: Asset[] = result.assets;
+      const imageUriArr: string[] = selectedVideos.map((item: Asset) => item.uri) as string[];
       const videosArr = [...videoMultipleUri];
       const totalVideos = videosArr.concat(imageUriArr);
       setVideoMultipleUri(totalVideos);
@@ -346,6 +340,7 @@ const CreatePost = ({ route }: any) => {
     });
   };
 
+
   return (
     <View style={styles.AllInputWrap}>
       <KeyboardAvoidingView
@@ -360,6 +355,7 @@ const CreatePost = ({ route }: any) => {
             style={styles.textInput}
             value={inputMessage}
             onChangeText={(text) => setInputMessage(text)}
+            placeholderTextColor={theme.colors.baseShade3}
           />
           <View style={styles.imageContainer}>
             {displayImages.length > 0 && (
@@ -390,7 +386,6 @@ const CreatePost = ({ route }: any) => {
                     isUploaded={item.isUploaded}
                     fileId={item.fileId}
                     thumbNail={item.thumbNail as string}
-                    onPlay={playVideoFullScreen}
                   />
                 )}
                 numColumns={3}
@@ -426,11 +421,12 @@ const CreatePost = ({ route }: any) => {
             </View>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => Keyboard.dismiss()}>
-            <SvgXml xml={arrowDown} width="20" height="20" />
+            <SvgXml xml={arrowDown(theme.colors.base)} width="20" height="20" />
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
-      <Video ref={videoRef} resizeMode={ResizeMode.CONTAIN} />
+
+
     </View>
   );
 };

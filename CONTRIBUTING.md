@@ -34,12 +34,6 @@ To run the example app on iOS:
 yarn example ios
 ```
 
-To run the example app on Web:
-
-```sh
-yarn example web
-```
-
 Make sure your code passes TypeScript and ESLint. Run the following to verify:
 
 ```sh
@@ -58,6 +52,10 @@ Remember to add tests for your change if possible. Run the unit tests by:
 ```sh
 yarn test
 ```
+
+To edit the Objective-C or Swift files, open `example/ios/AmityReactNativeSocialUiKitExample.xcworkspace` in XCode and find the source files at `Pods > Development Pods > amity-react-native-social-ui-kit`.
+
+To edit the Java or Kotlin files, open `example/android` in Android studio and find the source files at `amity-react-native-social-ui-kit` under `Android`.
 
 
 ### Commit message convention
