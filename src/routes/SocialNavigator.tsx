@@ -21,8 +21,7 @@ import UserProfileSetting from '../screens/UserProfileSetting/UserProfileSetting
 import CommunitySearch from '../screens/CommunitySearch';
 import AllMyCommunity from '../screens/AllMyCommunity';
 import CreateCommunity from '../screens/CreateCommunity';
-import VideoPlayerFull from '../screens/VideoPlayerFullScreen';
-import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
+import type { MyMD3Theme } from '../providers/amity-ui-kit-provider';
 import { useTheme } from 'react-native-paper';
 
 export default function SocialNavigator() {

@@ -103,7 +103,7 @@ const EditPostModal = ({ visible, onClose, postDetail, videoPosts = [], imagePos
 
           return {
             url: url,
-            fileName: fileId,
+            fileName: fileId as string,
             fileId: fileId,
             isUploaded: true,
           };
