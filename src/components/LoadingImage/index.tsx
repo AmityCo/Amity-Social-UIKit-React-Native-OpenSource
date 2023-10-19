@@ -8,6 +8,8 @@ import {
 } from '../../providers/file-provider';
 import { closeIcon } from '../../svg/svg-xml-list';
 import { createStyles } from './styles';
+import { useTheme } from 'react-native-paper';
+import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 
 interface OverlayImageProps {
   source: string;
@@ -33,6 +35,7 @@ const LoadingImage = ({
   fileId = '',
   isEditMode = false
 }: OverlayImageProps) => {
+  const theme = useTheme() as MyMD3Theme;
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
   const [isProcess, setIsProcess] = useState<boolean>(false);
@@ -111,7 +114,7 @@ const LoadingImage = ({
       )}
       {!loading && (
         <TouchableOpacity style={styles.closeButton} onPress={handleDelete}>
-          <SvgXml xml={closeIcon} width="12" height="12" />
+          <SvgXml xml={closeIcon(theme.colors.base)} width="12" height="12" />
         </TouchableOpacity>
       )}
     </View>

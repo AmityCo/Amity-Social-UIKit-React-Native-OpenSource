@@ -11,7 +11,7 @@ import {
   Animated,
   Alert,
 } from 'react-native';
-import styles from './styles';
+import { getStyles } from './styles';
 import { SvgXml } from 'react-native-svg';
 import {
   likedXml,
@@ -37,6 +37,8 @@ import {
   unReportTargetById,
 } from '../../../providers/Social/feed-sdk';
 import EditCommentModal from '../../../components/EditCommentModal';
+import { useTheme } from 'react-native-paper';
+import type { MyMD3Theme } from '../../../providers/amity-ui-kit-provider';
 
 export interface IComment {
   commentId: string;
@@ -72,6 +74,8 @@ export default function CommentList({
     childrenComment,
     editedAt
   } = commentDetail;
+  const theme = useTheme() as MyMD3Theme;
+  const styles = getStyles();
   const [isLike, setIsLike] = useState<boolean>(
     myReactions ? myReactions.includes('like') : false
   );
@@ -288,17 +292,17 @@ export default function CommentList({
           </View>
 
           <View style={styles.timeRow}>
+            <Text style={styles.headerTextTime}>
+              {getTimeDifference(createdAt)}
+            </Text>
+            {(editedAt !== createdAt || isEditComment) && <Text style={styles.dot}>·</Text>}
+            {(editedAt !== createdAt || isEditComment) &&
+
               <Text style={styles.headerTextTime}>
-                {getTimeDifference(createdAt)}
-              </Text>
-              {(editedAt !== createdAt || isEditComment) && <Text style={styles.dot}>·</Text>}
-              {(editedAt !== createdAt || isEditComment) &&
+                Edited
+              </Text>}
 
-                <Text style={styles.headerTextTime}>
-                  Edited
-                </Text>}
-
-            </View>
+          </View>
           <View style={styles.commentBubble}>
             <Text style={styles.commentText}>{textComment}</Text>
           </View>
@@ -308,7 +312,7 @@ export default function CommentList({
               style={styles.likeBtn}
             >
               {isLike ? (
-                <SvgXml xml={likedXml} width="20" height="16" />
+                <SvgXml xml={likedXml(theme.colors.primary)} width="20" height="16" />
               ) : (
                 <SvgXml xml={likeXml} width="20" height="16" />
               )}
@@ -329,7 +333,7 @@ export default function CommentList({
             )} */}
 
             <TouchableOpacity onPress={openModal} style={styles.threeDots}>
-              <SvgXml xml={threeDots} width="20" height="16" />
+              <SvgXml xml={threeDots(theme.colors.base)} width="20" height="16" />
             </TouchableOpacity>
           </View>
           {/* {commentList.length > 0 && (

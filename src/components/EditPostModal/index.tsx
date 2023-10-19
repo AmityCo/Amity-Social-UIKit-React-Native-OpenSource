@@ -13,13 +13,15 @@ import {
 import { SvgXml } from 'react-native-svg';
 import { closeIcon } from '../../svg/svg-xml-list';
 
-import { styles } from './styles';
+import { getStyles } from './styles';
 import type { IDisplayImage } from '../../screens/CreatePost';
 import { editPost } from '../../providers/Social/feed-sdk';
 import LoadingImage from '../LoadingImage';
 import LoadingVideo from '../LoadingVideo';
 import type { IPost, IVideoPost } from '../Social/PostList';
 import useAuth from '../../hooks/useAuth';
+import { useTheme } from 'react-native-paper';
+import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 interface IModal {
   visible: boolean;
   userId?: string;
@@ -30,6 +32,8 @@ interface IModal {
   imagePosts?: string[];
 }
 const EditPostModal = ({ visible, onClose, postDetail, videoPosts = [], imagePosts = [], onFinishEdit }: IModal) => {
+  const theme = useTheme() as MyMD3Theme;
+  const styles =getStyles()
   const { apiRegion } = useAuth();
 
   const [inputMessage, setInputMessage] = useState(postDetail?.data?.text ?? '');
@@ -98,7 +102,7 @@ const EditPostModal = ({ visible, onClose, postDetail, videoPosts = [], imagePos
           const fileId = parts[parts.indexOf("files") + 1];
 
           return {
-            url: url ,
+            url: url,
             fileName: fileId as string,
             fileId: fileId,
             isUploaded: true,
@@ -164,7 +168,7 @@ const EditPostModal = ({ visible, onClose, postDetail, videoPosts = [], imagePos
     <Modal visible={visible} animationType="slide">
       <View style={styles.header}>
         <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-          <SvgXml xml={closeIcon} width="17" height="17" />
+          <SvgXml xml={closeIcon(theme.colors.base)} width="17" height="17" />
         </TouchableOpacity>
         <View style={styles.headerTextContainer}>
           <Text style={styles.headerText}>Edit Post</Text>
@@ -224,7 +228,37 @@ const EditPostModal = ({ visible, onClose, postDetail, videoPosts = [], imagePos
                 )}
               </View>
             </ScrollView>
-  
+            {/* 
+          <View style={styles.InputWrap}>
+            <TouchableOpacity
+              disabled={displayVideos.length > 0 ? true : false}
+              onPress={pickCamera}
+            >
+              <View style={styles.iconWrap}>
+                <SvgXml xml={cameraIcon} width="27" height="27" />
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              disabled={displayVideos.length > 0 ? true : false}
+              onPress={pickImage}
+            >
+              <View style={styles.iconWrap}>
+                <SvgXml xml={galleryIcon} width="27" height="27" />
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              disabled={displayImages.length > 0 ? true : false}
+              onPress={pickVideo}
+              style={displayImages.length > 0 ? styles.disabled : []}
+            >
+              <View style={styles.iconWrap}>
+                <SvgXml xml={playVideoIcon} width="27" height="27" />
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => Keyboard.dismiss()}>
+              <SvgXml xml={arrowDown} width="20" height="20" />
+            </TouchableOpacity>
+          </View> */}
           </KeyboardAvoidingView>
 
 

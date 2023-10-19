@@ -16,18 +16,23 @@ import { SvgXml } from 'react-native-svg';
 import { arrowOutlined, closeIcon, plusIcon, privateIcon, publicIcon } from '../../svg/svg-xml-list';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import * as ImagePicker from 'expo-image-picker';
-import { styles } from './styles';
+// import * as ImagePicker from 'expo-image-picker';
+import { getStyles } from './styles';
 import ChooseCategoryModal from '../../components/ChooseCategoryModal';
 import { RadioButton } from 'react-native-radio-buttons-group';
 import AddMembersModal from '../../components/AddMembersModal';
 import type { UserInterface } from 'src/types/user.interface';
 import { createCommunity, type ICreateCommunity } from '../../providers/Social/communities-sdk';
 import useAuth from '../../hooks/useAuth';
+import { useTheme } from 'react-native-paper';
+import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 
 export default function CreateCommunity() {
+
+  const styles = getStyles();
+  const theme = useTheme() as MyMD3Theme ;
   const { apiRegion } = useAuth();
-  const [image, setImage] = useState<string>();
+  const [image] = useState<string>();
   const [communityName, setCommunityName] = useState<string>('');
   const [categoryName, setCategoryName] = useState<string>('');
   const [categoryId, setCategoryId] = useState<string>('');
@@ -48,7 +53,7 @@ export default function CreateCommunity() {
   navigation.setOptions({
     // eslint-disable-next-line react/no-unstable-nested-components
     headerLeft: () => (<TouchableOpacity onPress={onClickBack} style={styles.btnWrap}>
-      <SvgXml xml={closeIcon} width="15" height="15" />
+      <SvgXml xml={closeIcon(theme.colors.base)} width="15" height="15" />
     </TouchableOpacity>),
 
     headerTitle: 'Create Community',
@@ -56,31 +61,28 @@ export default function CreateCommunity() {
 
 
 
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: false,
-      quality: 1,
-    });
+  // const pickImage = async () => {
+  //   let result = await ImagePicker.launchImageLibraryAsync({
+  //     mediaTypes: ImagePicker.MediaTypeOptions.Images,
+  //     allowsEditing: false,
+  //     quality: 1,
+  //   });
 
 
-    if (!result.canceled && result.assets &&
-      result.assets.length > 0 &&
-      result.assets[0] !== null &&
-      result.assets[0]) {
-      setImage(result.assets[0]?.uri);
-    }
-  };
+  //   if (!result.canceled && result.assets &&
+  //     result.assets.length > 0 &&
+  //     result.assets[0] !== null &&
+  //     result.assets[0]) {
+  //     setImage(result.assets[0]?.uri);
+  //   }
+  // };
 
   const handleSelectCategory = (categoryId: string, categoryName: string) => {
-    console.log('categoryName:', categoryName)
-    console.log('categoryId:', categoryId)
     setCategoryId(categoryId);
     setCategoryName(categoryName);
   }
 
   const handleAddMembers = (users: UserInterface[]) => {
-    console.log('userIds:', users)
     setSelectedUserList(users)
 
   }
@@ -100,24 +102,21 @@ export default function CreateCommunity() {
   };
 
   const onDeleteUserPressed = (user: UserInterface) => {
-    console.log('user:', user)
     const removedUser = selectedUserList.filter(item => item !== user)
     setSelectedUserList(removedUser)
-    console.log('removedUser:', removedUser)
   }
 
-const onCreateCommunity=async ()=>{
-  const userIds: string[] = selectedUserList.map(item => item.userId)
-  const isPublic: boolean = selectedId === 'private'? false : true
-  const communityParam: ICreateCommunity= {displayName: communityName, description: aboutText, isPublic: isPublic, userIds: userIds, category: categoryId }
-  const isCreated = await createCommunity(communityParam)
-  if(isCreated){
-    navigation.navigate('CommunityHome', { communityId: isCreated.communityId, communityName: isCreated.displayName });
+  const onCreateCommunity = async () => {
+    const userIds: string[] = selectedUserList.map(item => item.userId)
+    const isPublic: boolean = selectedId === 'private' ? false : true
+    const communityParam: ICreateCommunity = { displayName: communityName, description: aboutText, isPublic: isPublic, userIds: userIds, category: categoryId }
+    const isCreated = await createCommunity(communityParam)
+    if (isCreated) {
+      navigation.navigate('CommunityHome', { communityId: isCreated.communityId, communityName: isCreated.displayName });
+    }
   }
-  console.log('isCreated:', isCreated)
-}
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={styles.container} style={styles.container}>
       <View >
         <View style={styles.uploadContainer}>
 
@@ -129,7 +128,9 @@ const onCreateCommunity=async ()=>{
             />
           )}
 
-          <TouchableOpacity style={styles.button} onPress={pickImage}>
+          <TouchableOpacity style={styles.button}
+          //  onPress={pickImage}
+          >
             {/* You can use any icon library here or just text */}
             {/* For example, you can use an icon like: <YourIconName size={24} color="white" /> */}
             <Text style={styles.buttonText}>Upload Image</Text>
@@ -149,7 +150,7 @@ const onCreateCommunity=async ()=>{
             <TextInput
               style={styles.inputField}
               placeholder="Name your community"
-              placeholderTextColor="#A5A9B5"
+              placeholderTextColor={theme.colors.baseShade3}
               value={communityName}
               onChangeText={text => setCommunityName(text)}
               maxLength={MAX_COMMUNITY_NAME_LENGTH}
@@ -168,7 +169,7 @@ const onCreateCommunity=async ()=>{
             <TextInput
               style={styles.inputField}
               placeholder="Enter description"
-              placeholderTextColor="#A5A9B5"
+              placeholderTextColor={theme.colors.baseShade3}
               value={aboutText}
               onChangeText={text => setAboutText(text)}
               maxLength={MAX_ABOUT_TEXT_LENGTH}
@@ -184,8 +185,8 @@ const onCreateCommunity=async ()=>{
               </Text>
             </View>
             <Pressable onPress={() => setCategoryModal(true)} style={styles.categoryContainer}>
-              <Text style={!categoryName ? styles.placeHolderText : []}>{categoryName.length > 0 ? categoryName : 'Select Category'}</Text>
-              <SvgXml style={styles.arrowIcon} xml={arrowOutlined} width={15} height={15} />
+              <Text style={!categoryName ? styles.placeHolderText : [styles.categoryText]}>{categoryName.length > 0 ? categoryName : 'Select Category'}</Text>
+              <SvgXml style={styles.arrowIcon} xml={arrowOutlined(theme.colors.base)} width={15} height={15} />
             </Pressable>
           </View>
           <View style={styles.radioGroup}>
@@ -208,7 +209,7 @@ const onCreateCommunity=async ()=>{
                 onPress={(value) => setSelectedId(value)}
                 value={'public'}
                 selected={selectedId === 'public'}
-                color={selectedId === 'public' ? '#1054DE' : '#444'}
+                color={selectedId === 'public' ? theme.colors.primary : '#444'}
                 size={17}
 
               />
@@ -220,7 +221,7 @@ const onCreateCommunity=async ()=>{
                 <SvgXml
                   width={24}
                   height={24}
-                  xml={privateIcon}
+                  xml={privateIcon()}
                 />
               </View>
 
@@ -268,7 +269,7 @@ const onCreateCommunity=async ()=>{
                         <Text>{displayName(item.displayName)}</Text>
                       </View>
                       <TouchableOpacity onPress={() => onDeleteUserPressed(item)}>
-                        <SvgXml xml={closeIcon} width={12} height={12} />
+                        <SvgXml xml={closeIcon(theme.colors.base)} width={12} height={12} />
                       </TouchableOpacity>
 
                     </View>}
@@ -280,7 +281,7 @@ const onCreateCommunity=async ()=>{
 
               <Pressable onPress={() => setAddMembersModal(true)} style={styles.addIcon}>
                 <View style={styles.avatar}>
-                  <SvgXml style={styles.arrowIcon} xml={plusIcon} width={24} height={24} />
+                  <SvgXml style={styles.arrowIcon} xml={plusIcon(theme.colors.base)} width={24} height={24} />
                 </View>
               </Pressable>
             </View>
@@ -291,7 +292,7 @@ const onCreateCommunity=async ()=>{
 
       </View>
       <ChooseCategoryModal onSelect={handleSelectCategory} onClose={() => setCategoryModal(false)} visible={categoryModal} />
-      <AddMembersModal onSelect={handleAddMembers} onClose={() => setAddMembersModal(false)} visible={addMembersModal} initUserList={selectedUserList}/>
+      <AddMembersModal onSelect={handleAddMembers} onClose={() => setAddMembersModal(false)} visible={addMembersModal} initUserList={selectedUserList} />
     </ScrollView>
   );
 }

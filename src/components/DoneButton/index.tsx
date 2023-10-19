@@ -3,7 +3,7 @@ import {
   TouchableOpacity,
   View,
   Text,
-  GestureResponderEvent,
+  type GestureResponderEvent,
 } from 'react-native';
 import { styles } from './styles';
 export default function DoneButton({

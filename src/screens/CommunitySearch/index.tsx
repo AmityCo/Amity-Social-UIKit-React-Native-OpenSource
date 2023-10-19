@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -8,9 +8,8 @@ import {
   LogBox,
   ScrollView,
 } from 'react-native';
-import debounce from 'lodash.debounce';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { styles } from './styles';
+import { getStyles } from './styles';
 import { SvgXml } from 'react-native-svg';
 import { circleCloseIcon, searchIcon } from '../../svg/svg-xml-list';
 import { useNavigation } from '@react-navigation/native';
@@ -18,9 +17,13 @@ import CustomTab from '../../components/CustomTab';
 import { CommunityRepository, UserRepository } from '@amityco/ts-sdk-react-native';
 import type { ISearchItem } from '../../components/SearchItem';
 import SearchItem from '../../components/SearchItem';
+import { useTheme } from 'react-native-paper';
+import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 
 export default function CommunitySearch() {
+  const theme = useTheme() as MyMD3Theme;
   LogBox.ignoreAllLogs(true);
+  const styles = getStyles();
   const [searchTerm, setSearchTerm] = useState('');
   const [searchType, setSearchType] = useState('community');
   const [communities, setCommunities] =
@@ -47,16 +50,16 @@ export default function CommunitySearch() {
     setSearchTerm(text);
   };
   useEffect(() => {
-    if (searchTerm.length > 2 && searchType === 'community') {
+    if (searchTerm.length > 0 && searchType === 'community') {
       searchCommunities(searchTerm);
-    } else if (searchTerm.length > 2 && searchType === 'user') {
+    } else if (searchTerm.length > 0 && searchType === 'user') {
       searchAccounts(searchTerm);
     }
   }, [searchTerm]);
 
   const searchCommunities = (text: string) => {
     const unsubscribe = CommunityRepository.getCommunities(
-      { displayName: text, membership: 'notMember', limit: 20 },
+      { displayName: text, membership: 'notMember', limit: 20, sortBy: 'displayName' },
       (data) => {
         setCommunities(data);
         if (data.data.length === 0) {
@@ -66,20 +69,20 @@ export default function CommunitySearch() {
     );
     unsubscribe();
   };
-  const searchAccounts = (text: string) => {
-    if (searchTerm.length > 0) {
+  const searchAccounts = (text: string = '') => {
+    if (text.length > 2) {
       const unsubscribe = UserRepository.getUsers(
-        { displayName: text },
+        { displayName: text, limit: 20, sortBy: 'displayName' },
         (data) => {
-          if (data.data.length === 0) {
-            setSearchList([]);
-          } else {
-            setUsersObject(data);
-          }
+          setUsersObject(data);
+
         }
+
       );
-      unsubscribe();
+      unsubscribe()
+
     }
+
   };
 
   useEffect(() => {
@@ -98,7 +101,7 @@ export default function CommunitySearch() {
   }, [communitiesArr, searchType]);
 
   useEffect(() => {
-    if (userArr.length > 0 && searchType === 'user') {
+    if (userArr && userArr.length > 0 && searchType === 'user') {
       const searchUsers: ISearchItem[] = userArr.map((item) => {
         return {
           targetId: item?.userId,
@@ -109,17 +112,9 @@ export default function CommunitySearch() {
       });
       setSearchList(searchUsers);
     }
-  }, [usersObject, searchType]);
+  }, [userArr, searchType]);
 
-  const debouncedResults = useMemo(() => {
-    return debounce(handleChange, 500);
-  }, []);
 
-  useEffect(() => {
-    return () => {
-      debouncedResults.cancel();
-    };
-  });
 
   const clearButton = () => {
     setSearchTerm('');
@@ -143,11 +138,11 @@ export default function CommunitySearch() {
     }
   };
   return (
-    <SafeAreaView>
+    <SafeAreaView style={styles.container}>
       <View style={styles.headerWrap}>
         <View style={styles.inputWrap}>
           <TouchableOpacity onPress={() => searchAccounts(searchTerm)}>
-            <SvgXml xml={searchIcon} width="20" height="20" />
+            <SvgXml xml={searchIcon(theme.colors.base)} width="20" height="20" />
           </TouchableOpacity>
           <TextInput
             style={styles.input}

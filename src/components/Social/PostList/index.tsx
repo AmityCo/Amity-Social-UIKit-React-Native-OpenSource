@@ -22,7 +22,6 @@ import {
   Animated,
   Alert,
 } from 'react-native';
-import styles from './styles';
 import { SvgXml } from 'react-native-svg';
 import {
   arrowXml,
@@ -33,6 +32,7 @@ import {
   playBtn,
   threeDots,
 } from '../../../svg/svg-xml-list';
+import { getStyles } from './styles';
 
 import type { UserInterface } from '../../../types/user.interface';
 import {
@@ -49,6 +49,8 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import useAuth from '../../../hooks/useAuth';
 import EditPostModal from '../../../components/EditPostModal';
+import { useTheme } from 'react-native-paper';
+import type { MyMD3Theme } from '../../../providers/amity-ui-kit-provider';
 
 export interface IPost {
   postId: string;
@@ -101,9 +103,9 @@ export default function PostList({
     childrenPosts,
     editedAt
   } = postDetail ?? {};
-
+  const theme = useTheme() as MyMD3Theme;
   const { client, apiRegion } = useAuth();
-
+  const styles = getStyles();
   const [isLike, setIsLike] = useState<boolean>(false);
   const [likeReaction, setLikeReaction] = useState<number>(0);
   const [communityName, setCommunityName] = useState('');
@@ -639,7 +641,7 @@ export default function PostList({
           </View>
         </View>
         <TouchableOpacity onPress={openModal} style={styles.threeDots}>
-          <SvgXml xml={threeDots} width="20" height="16" />
+          <SvgXml xml={threeDots(theme.colors.base)} width="20" height="16" />
         </TouchableOpacity>
       </View>
       <View>
@@ -679,7 +681,7 @@ export default function PostList({
             style={styles.likeBtn}
           >
             {isLike ? (
-              <SvgXml xml={likedXml} width="20" height="16" />
+              <SvgXml xml={likedXml(theme.colors.primary)} width="20" height="16" />
             ) : (
               <SvgXml xml={likeXml} width="20" height="16" />
             )}

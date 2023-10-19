@@ -1,14 +1,14 @@
-import React, { useState, useEffect, useRef, MutableRefObject } from 'react';
+import React, { useState, useEffect, useRef, type MutableRefObject } from 'react';
 import {
   View,
   Text,
   TouchableOpacity,
   Image,
-  NativeSyntheticEvent,
-  NativeScrollEvent,
+  type NativeSyntheticEvent,
+  type NativeScrollEvent,
   ScrollView,
 } from 'react-native';
-import { styles } from './styles';
+import { getStyles } from './styles';
 import { UserRepository } from '@amityco/ts-sdk-react-native';
 import CloseButton from '../../components/BackButton';
 import Feed from '../Feed';
@@ -17,9 +17,14 @@ import type { FeedRefType } from '../CommunityHome';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import useAuth from '../../hooks/useAuth';
+import { SvgXml } from 'react-native-svg';
+import { editIcon } from '../../svg/svg-xml-list';
+import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
+import { useTheme } from 'react-native-paper';
 
 export default function UserProfile({ route }: any) {
-
+  const theme = useTheme() as MyMD3Theme ;
+  const styles = getStyles()
   const { apiRegion } = useAuth();
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const { userId } = route.params;
@@ -145,10 +150,7 @@ export default function UserProfile({ route }: any) {
         style={styles.editProfileButton}
         onPress={onEditProfileTap}
       >
-        <Image
-          source={require('../../../assets/icon/editPencil-not-filled.png')}
-          style={styles.icon}
-        />
+        <SvgXml width={24} height={20} xml={editIcon(theme.colors.base)}/>
         <Text style={styles.editProfileText}>Edit Profile</Text>
       </TouchableOpacity>
     );
@@ -189,17 +191,17 @@ export default function UserProfile({ route }: any) {
       onScroll={handleScroll}
       scrollEventThrottle={20}
     >
-      <View>
+      <View style={styles.profileContainer}>
         <View style={styles.userDetail}>
           <Image
             style={styles.avatar}
             source={
               user?.avatarFileId || user?.avatarCustomUrl
                 ? {
-                    uri: user.avatarFileId
-                      ? avatarFileURL(user.avatarFileId)
-                      : user.avatarCustomUrl,
-                  }
+                  uri: user.avatarFileId
+                    ? avatarFileURL(user.avatarFileId)
+                    : user.avatarCustomUrl,
+                }
                 : require('../../../assets/icon/Placeholder.png')
             }
           />
@@ -215,15 +217,17 @@ export default function UserProfile({ route }: any) {
             </View>
           </View>
         </View>
-        {user?.description ? (
-          <Text style={{ fontSize: 17, marginBottom: 10 }}>
-            {' '}
-            {user?.description}
-          </Text>
-        ) : (
-          <View />
-        )}
-        {console.log('check follow status ' + followStatus)}
+        <View style={styles.descriptionContainer}>
+          {user?.description ? (
+            <Text style={styles.descriptionText}>
+              {' '}
+              {user?.description}
+            </Text>
+          ) : (
+            <View />
+          )}
+        </View>
+
         {followStatus === 'none' ? (
           followButton()
         ) : followStatus === undefined ? ( // userID is the current user ID
@@ -243,3 +247,4 @@ export default function UserProfile({ route }: any) {
     </ScrollView>
   );
 }
+

@@ -1,13 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
-import { styles } from './styles';
+import { getStyles } from './styles';
 import { SvgXml } from 'react-native-svg';
 import { communityIcon } from '../../svg/svg-xml-list';
 import { CategoryRepository } from '@amityco/ts-sdk-react-native';
 import { useNavigation } from '@react-navigation/native';
 import useAuth from '../../hooks/useAuth';
-
 export interface ISearchItem {
   targetId: string;
   targetType: string;
@@ -22,6 +21,8 @@ export default function SearchItem({
   target: ISearchItem;
   onPress?: (target: ISearchItem) => void;
 }) {
+
+  const styles = getStyles();
   const { apiRegion } = useAuth();
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const [categoryName, setCategoryName] = useState<string>('');
@@ -32,9 +33,9 @@ export default function SearchItem({
     if (onPress) {
       onPress(target);
     }
-    if(target.targetType === 'community'){
+    if (target.targetType === 'community') {
       navigation.navigate('CommunityHome', { communityId: target.targetId, communityName: target.displayName });
-    }else{
+    } else {
       navigation.navigate('UserProfile', {
         userId: target.targetId
       });

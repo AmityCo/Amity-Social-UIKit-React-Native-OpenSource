@@ -8,12 +8,13 @@ import {
   ActionSheetIOS,
   Alert,
 } from 'react-native';
-import { styles } from './styles';
+import { getStyles } from './styles';
 import CloseButton from '../../components/BackButton';
 import UserItem from '../../components/UserItem';
 import type { UserInterface } from '../../types/user.interface';
 
 export default function CommunityMemberDetail({ navigation, route }: any) {
+  const styles = getStyles()
   const [memberList, setMemberList] = useState<Amity.Member<'community'>[]>([]);
   const [loading, setLoading] = useState(false);
   const [hasNextPage, setHasNextPage] = useState(false);
