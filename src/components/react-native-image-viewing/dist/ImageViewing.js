@@ -80,6 +80,7 @@ function ImageViewing({
   );
   const playVideoFullScreen = async () => {
     onClickPlayButton(currentImageIndex);
+    console.log('currentImageIndex:', `https://api.${apiRegion}.amity.co/api/v3/files/${videoPosts[currentImageIndex]?.videoFileId?.original}/download`)
     if (videoRef) {
       await videoRef.current.loadAsync({
         uri: `https://api.${apiRegion}.amity.co/api/v3/files/${videoPosts[currentImageIndex]?.videoFileId?.original}/download`,

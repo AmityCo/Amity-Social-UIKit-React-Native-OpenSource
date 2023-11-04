@@ -13,11 +13,10 @@ import { FlatList, View } from 'react-native';
 import useAuth from '../../hooks/useAuth';
 import PostList, { type IPost } from '../../components/Social/PostList';
 import { getStyles } from './styles';
-import { getAmityUser } from '../../providers/user-provider';
-import type { UserInterface } from '../../types/user.interface';
 import { PostRepository } from '@amityco/ts-sdk-react-native';
 import type { FeedRefType } from '../CommunityHome';
 import { deletePostById } from '../../providers/Social/feed-sdk';
+import { amityPostsFormatter } from '../../util/postDataFormatter';
 
 interface IFeed {
   targetId: string;
@@ -60,34 +59,7 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
 
   const getPostList = useCallback(async () => {
     if (posts && posts.length > 0) {
-      const formattedPostList = await Promise.all(
-        posts.map(async (item: Amity.Post<any>) => {
-          const { userObject } = await getAmityUser(item.postedUserId);
-          let formattedUserObject: UserInterface;
-
-          formattedUserObject = {
-            userId: userObject.data.userId,
-            displayName: userObject.data.displayName,
-            avatarFileId: userObject.data.avatarFileId,
-          };
-
-          return {
-            postId: item.postId,
-            data: item.data as Record<string, any>,
-            dataType: item.dataType,
-            myReactions: item.myReactions as string[],
-            reactionCount: item.reactions as Record<string, number>,
-            commentsCount: item.commentsCount,
-            user: formattedUserObject as UserInterface,
-            editedAt: item.editedAt,
-            createdAt: item.createdAt,
-            updatedAt: item.updatedAt,
-            targetType: item.targetType,
-            targetId: item.targetId,
-            childrenPosts: item.children,
-          };
-        })
-      );
+      const formattedPostList = await amityPostsFormatter(posts);
       setPostList([...formattedPostList]);
     }
   }, [posts]);

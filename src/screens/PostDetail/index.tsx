@@ -1,5 +1,5 @@
-import { type RouteProp, useRoute } from '@react-navigation/native';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { type RouteProp, useRoute, useNavigation } from '@react-navigation/native';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -12,51 +12,172 @@ import {
   FlatList,
   type NativeSyntheticEvent,
   type NativeScrollEvent,
+  Button,
 } from 'react-native';
 
 import type { RootStackParamList } from 'src/routes/RouteParamList';
-import PostList from '../../components/Social/PostList';
+import PostList, { IPost, IPostList } from '../../components/Social/PostList';
 
 import { getStyles } from './styles';
 import type { IComment } from '../../components/Social/CommentList';
 import type { UserInterface } from '../../types/user.interface';
 import { getAmityUser } from '../../providers/user-provider';
 import CommentList from '../../components/Social/CommentList';
-import { CommentRepository, CommunityRepository, SubscriptionLevels, UserRepository, getCommunityTopic, getUserTopic, subscribeTopic } from '@amityco/ts-sdk-react-native';
+import { CommentRepository, CommunityRepository, PostRepository, SubscriptionLevels, UserRepository, getCommunityTopic, getPostTopic, getUserTopic, subscribeTopic } from '@amityco/ts-sdk-react-native';
 import {
   createComment,
   deleteCommentById,
 } from '../../providers/Social/comment-sdk';
+
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import { useTheme } from 'react-native-paper';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import BackButton from '../../components/BackButton';
+import globalFeedSlice from '../../redux/slices/globalfeedSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
+import postDetailSlice from '../../redux/slices/postDetailSlice';
+import PostListForDetailPage from '../../components/Social/PostListForDetailPage';
+
+
 
 const PostDetail = () => {
 
-  const theme = useTheme() as MyMD3Theme ;
+  const theme = useTheme() as MyMD3Theme;
   const styles = getStyles();
   const route = useRoute<RouteProp<RootStackParamList, 'PostDetail'>>();
+
   const {
-    postDetail,
-    initImagePosts,
-    initVideoPosts,
-    initVideoPostsFullSize,
-    initImagePostsFullSize,
+    postId,
+    postIndex
   } = route.params;
+
+  console.log('postId:', postId)
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
+
   const [commentList, setCommentList] = useState<IComment[]>([]);
-  const [commentCollection, setCommentCollection] =useState<Amity.LiveCollection<Amity.Comment>>();
+  const [commentCollection, setCommentCollection] = useState<Amity.LiveCollection<Amity.Comment>>();
   const { data: comments, hasNextPage, onNextPage } = commentCollection ?? {};
-  const [unSubscribeFunc, setUnSubscribeFunc] = useState<() => void>();
+  const [unSubscribeComment, setUnSubscribeComment] = useState<() => void>();
+  console.log('unSubscribeComment:', unSubscribeComment)
+  const [unSubscribePost, setUnSubscribePost] = useState<() => void>();
+  // console.log('unSubscribePost:', unSubscribePost)
   const [inputMessage, setInputMessage] = useState('');
   const [communityObject, setCommunityObject] = useState<Amity.Community>()
   const [userObject, setUserObject] = useState<Amity.User>()
-  console.log('unSubscribeFunc: ', unSubscribeFunc);
+
   const flatListRef = useRef(null);
   let isSubscribed = false;
   const disposers: Amity.Unsubscriber[] = [];
-  
+
+  const [postCollection, setPostCollection] = useState<Amity.Post<any>>();
+
+  const [loading, setLoading] = useState<boolean>(true)
+  const { currentPostdetail } = useSelector((state: RootState) => state.postDetail)
+  	// console.log('currentPostdetail:', currentPostdetail)
+  // console.log('currentIndex:', currentIndex)
+  // console.log('postList:', postList)
+  const { postList } = useSelector((state: RootState) => state.globalFeed)
+
+
+
+  const { updateByPostId } = globalFeedSlice.actions
+  const { updatePostDetail } = postDetailSlice.actions
+  const dispatch = useDispatch()
+
+
+  // useEffect(() => {
+  //   if (postDetail) {
+  //     setPostData(postDetail)
+  //   }
+
+  // }, [route.params])
+
+  const onBackPress = () => {
+    // navigation.navigate('Home', { postIdCallBack: postData.postId })
+    // navigation.goBack()
+
+
+    navigation.goBack()
+
+  }
+  navigation.setOptions({
+    headerLeft: () => <BackButton onPress={onBackPress} goBack={false} />,
+    title: ''
+
+  });
+
+  const getPost = (postId: string) => {
+    const unsubscribePost = PostRepository.getPost(
+      postId,
+      async ({ data }) => {
+        console.log('data========:', data)
+        setPostCollection(data);
+      }
+    );
+    console.log('unSubscribePost:', unsubscribePost)
+    setUnSubscribePost(() => unsubscribePost);
+  };
+
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false)
+    }, 100);
+    getPost(postId)
+
+  }, [postId])
+
+  // useEffect(() => {
+  //   // setPostData(postList[])
+  //   const index = postList.findIndex(item => item.postId === postId);
+
+  // }, [postList])
+
+
+  const formattedPostCollection = async () => {
+    const item = postCollection
+    const { userObject } = await getAmityUser(item.postedUserId);
+    let formattedUserObject: UserInterface;
+
+    formattedUserObject = {
+      userId: userObject.data.userId,
+      displayName: userObject.data.displayName,
+      avatarFileId: userObject.data.avatarFileId,
+    };
+    const post = {
+      postId: item.postId,
+      data: item.data as Record<string, any>,
+      dataType: item.dataType,
+      myReactions: item.myReactions as string[],
+      reactionCount: item.reactions as Record<string, number>,
+      commentsCount: item.commentsCount,
+      editedAt: item.editedAt,
+      createdAt: item.createdAt,
+      updatedAt: item.updatedAt,
+      targetType: item.targetType,
+      targetId: item.targetId,
+      childrenPosts: item.children,
+      user: formattedUserObject
+
+
+    }
+    // dispatch(updatePostDetail(post))
+    // setPostData(post)
+
+
+  }
+  useEffect(() => {
+    if (postCollection) {
+      console.log('postCollection:', postCollection)
+      formattedPostCollection()
+      subscribeTopic(getPostTopic(postCollection));
+    }
+  }, [postCollection]);
+
+
   const subscribeCommentTopic = (targetType: string) => {
     if (isSubscribed) return;
-  
+
     if (targetType === 'user') {
       const user = userObject as Amity.User; // use getUser to get user by targetId
       disposers.push(
@@ -67,7 +188,7 @@ const PostDetail = () => {
       isSubscribed = true;
       return;
     }
-  
+
     if (targetType === 'community') {
       const community = communityObject as Amity.Community; // use getCommunity to get community by targetId
       disposers.push(
@@ -92,28 +213,29 @@ const PostDetail = () => {
         }
       }
     );
-    setUnSubscribeFunc(() => unsubscribe);
+    setUnSubscribeComment(() => unsubscribe);
   }
+
   useEffect(() => {
-    if(communityObject || userObject){
-      subscribeCommentTopic(postDetail.targetType as string);
+    if (communityObject || userObject) {
+      subscribeCommentTopic(postList[postIndex]?.targetType as string);
     }
- 
-  }, [communityObject,userObject])
-  
+
+  }, [communityObject, userObject])
+
   useEffect(() => {
 
-    if(postDetail.targetType === 'community'){
-      CommunityRepository.getCommunity(postDetail.targetId, ({data: community})=>{
+    if (postList[postIndex] && postList[postIndex].targetType === 'community') {
+      CommunityRepository.getCommunity(postList[postIndex].targetId, ({ data: community }) => {
         setCommunityObject(community)
       });
-    }else if(postDetail.targetType === 'user'){
-      UserRepository.getUser(postDetail.targetId, ({data: user})=>{
+    } else if (postList[postIndex] && postList[postIndex].targetType === 'user') {
+      UserRepository.getUser(postList[postIndex].targetId, ({ data: user }) => {
         setUserObject(user)
       });
     }
-    getCommentsByPostId(postDetail.postId);
-  }, [postDetail]);
+    getCommentsByPostId(postList[postIndex]?.postId);
+  }, []);
 
   const queryComment = useCallback(async () => {
     if (comments && comments.length > 0) {
@@ -171,7 +293,7 @@ const PostDetail = () => {
     }
     Keyboard.dismiss();
     setInputMessage('');
-    await createComment(inputMessage, postDetail.postId);
+    await createComment(inputMessage, postId);
     setInputMessage('');
   };
   const onDeleteComment = async (commentId: string) => {
@@ -184,58 +306,66 @@ const PostDetail = () => {
       setCommentList(updatedCommentList);
     }
   };
+
+  const onPostChange = (post: IPost) => {
+    console.log('post:', post)
+    // dispatch(updateByPostId({ postId: post.postId, postDetail: post }))
+
+
+
+  }
+
+
+
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.select({ ios: 80, android: 80 })}
-      style={styles.AllInputWrap}
-    >
-      <ScrollView onScroll={handleScroll} style={styles.container}>
-        {postDetail && (
-          <PostList
-            postDetail={postDetail}
-            initImagePosts={initImagePosts}
-            initVideoPosts={initVideoPosts}
-            initImagePostsFullSize={initImagePostsFullSize}
-            initVideoPostsFullSize={initVideoPostsFullSize}
-          />
-        )}
+    loading ? <View>
 
-        <View style={styles.commentListWrap}>
-          <FlatList
-            data={commentList}
-            renderItem={({ item }) => (
-              <CommentList onDelete={onDeleteComment} commentDetail={item} />
-            )}
-            keyExtractor={(item) => item.commentId.toString()}
-            onEndReachedThreshold={0.8}
-            ref={flatListRef}
+    </View> :
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.select({ ios: 80, android: 80 })}
+        style={styles.AllInputWrap}
+      >
+        <ScrollView onScroll={handleScroll} style={styles.container}>
+        <PostList
+            onChange={onPostChange}
+            postDetail={currentPostdetail as IPost}
           />
-        </View>
-      </ScrollView>
 
-      <View style={styles.InputWrap}>
-        <TextInput
-          onChangeText={(text) => setInputMessage(text)}
-          style={styles.input}
-          placeholder="Say something nice..."
-          value={inputMessage}
-          placeholderTextColor={theme.colors.baseShade3}
-        />
-        <TouchableOpacity
-          disabled={inputMessage.length > 0 ? false : true}
-          onPress={handleSend}
-        >
-          <Text
-            style={
-              inputMessage.length > 0 ? styles.postBtn : styles.postDisabledBtn
-            }
+          <View style={styles.commentListWrap}>
+            <FlatList
+              data={commentList}
+              renderItem={({ item }) => (
+                <CommentList onDelete={onDeleteComment} commentDetail={item} />
+              )}
+              keyExtractor={(item) => item.commentId.toString()}
+              onEndReachedThreshold={0.8}
+              ref={flatListRef}
+            />
+          </View>
+        </ScrollView>
+        <View style={styles.InputWrap}>
+          <TextInput
+            onChangeText={(text) => setInputMessage(text)}
+            style={styles.input}
+            placeholder="Say something nice..."
+            value={inputMessage}
+            placeholderTextColor={theme.colors.baseShade3}
+          />
+          <TouchableOpacity
+            disabled={inputMessage.length > 0 ? false : true}
+            onPress={handleSend}
           >
-            Post
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </KeyboardAvoidingView>
+            <Text
+              style={
+                inputMessage.length > 0 ? styles.postBtn : styles.postDisabledBtn
+              }
+            >
+              Post
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
   );
 };
 export default PostDetail;

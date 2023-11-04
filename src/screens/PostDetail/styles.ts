@@ -7,6 +7,7 @@ export const getStyles=()=>{
   const styles = StyleSheet.create({
     container: {
       flex: 1,
+      backgroundColor: theme.colors.background
     },
     input: {
       backgroundColor: theme.colors.secondary,

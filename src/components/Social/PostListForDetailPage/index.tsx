@@ -46,6 +46,7 @@ import {
   unReportTargetById,
 } from '../../../providers/Social/feed-sdk';
 import { getCommunityById } from '../../../providers/Social/communities-sdk';
+import ImageView from '../../../components/react-native-image-viewing/dist';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import useAuth from '../../../hooks/useAuth';
@@ -88,15 +89,15 @@ export interface IVideoPost {
     original: string;
   };
 }
-export default function PostList({
+export default function PostListForDetailPage({
   postDetail,
   postIndex,
   onDelete,
   onChange,
 
 }: IPostList) {
-  const [postData, setPostData] = useState<IPost>(postDetail)
-
+  // const [postData, setPostData] = useState<IPost>(postDetail)
+  console.log('postDetail in detail:', postDetail)
 
   const theme = useTheme() as MyMD3Theme;
   const { client, apiRegion } = useAuth();
@@ -121,7 +122,7 @@ export default function PostList({
   const { postList } = useSelector((state: RootState) => state.globalFeed)
 
   const { updateByPostId } = globalFeedSlice.actions
-  const { updatePostDetail } = postDetailSlice.actions
+  const { updateCurrentIndex } = postDetailSlice.actions
   const {
     postId,
     data,
@@ -134,13 +135,12 @@ export default function PostList({
     targetId,
     childrenPosts = [],
     editedAt
-  } = postData ?? {};
+  } = postList[postIndex] ?? {};
+  // useEffect(() => {
 
-  useEffect(() => {
+  //   setPostData(postDetail)
 
-    setPostData(postDetail)
-
-  }, [postDetail])
+  // }, [postDetail])
 
   // useEffect(() => {
   //   onChange && onChange(postData)
@@ -158,7 +158,7 @@ export default function PostList({
     } else {
       setLikeReaction(0)
     }
-  }, [myReactions, reactionCount, postDetail])
+  }, [myReactions, reactionCount])
 
 
   const openModal = () => {
@@ -206,7 +206,7 @@ export default function PostList({
   useEffect(() => {
     checkIsReport();
 
-  }, [postDetail]);
+  }, [postList[postIndex]]);
 
   useEffect(() => {
     setTextPost(data?.text)
@@ -220,7 +220,7 @@ export default function PostList({
       getCommunityInfo(targetId);
     }
 
-  }, [postDetail]);
+  }, [postList[postIndex]]);
 
   function renderLikeText(likeNumber: number | undefined): string {
     if (!likeNumber) {
@@ -284,17 +284,17 @@ export default function PostList({
   async function addReactionToPost() {
     setIsLike((prev) => !prev);
     if (isLike && likeReaction) {
-      setLikeReaction(likeReaction - 1);
       let post: IPost = { ...postDetail }
       post.reactionCount = likeReaction - 1 > 0 ? { like: likeReaction - 1 } : {}
       post.myReactions = []
       // setPostData(post)
       dispatch(updateByPostId({ postId: postId, postDetail: post }))
+      setLikeReaction(likeReaction - 1);
 
       await removePostReaction(postId, 'like');
     } else {
       setLikeReaction(likeReaction + 1);
-      let post: IPost = { ...postDetail }
+      let post: IPost = { ... dpostDetail }
       post.reactionCount = { like: likeReaction + 1 }
       post.myReactions = ["like"]
       // setPostData(post)
@@ -312,12 +312,6 @@ export default function PostList({
   function onClickComment() {
     // const index = postList.findIndex(item => item.postId === postDetail.postId)
     // dispatch(updateCurrentIndex(index))
-    dispatch(updatePostDetail({
-      ...postDetail,
-      myReactions: isLike ? ["like"] : [],
-      reactionCount: { like: likeReaction },
-      commentsCount: commentsCount
-    }))
     navigation.navigate('PostDetail', {
       postId: postDetail.postId,
       postIndex: postIndex
@@ -435,14 +429,7 @@ export default function PostList({
     setEditPostModalVisible(true)
 
   }
-  const memoizedMediaSection = useMemo(() => {
-    return (
-      childrenPosts.length > 0 &&
-      <View style={styles.mediaWrap}>
-        <MediaSection childrenPosts={childrenPosts} />
-      </View>
-    );
-  }, [postDetail]);
+
   const handleOnFinishEdit = (postData: { text: string, mediaUrls: string[] | IVideoPost[] }, type: string) => {
     console.log('Finish:', postData)
 
@@ -517,12 +504,12 @@ export default function PostList({
       <View>
         <View style={styles.bodySection}>
           {textPost && <Text style={styles.bodyText}>{textPost}</Text>}
-          {memoizedMediaSection}
-          {/* {childrenPosts.length > 0 && (
+
+          {childrenPosts.length > 0 && (
             <View style={styles.mediaWrap}>
               <MediaSection childrenPosts={childrenPosts} />
             </View>
-          )} */}
+          )}
         </View>
 
         {likeReaction === 0 && commentsCount === 0 ? (
@@ -574,7 +561,7 @@ export default function PostList({
         <EditPostModal
           visible={editPostModalVisible}
           onClose={closeEditPostModal}
-          postDetail={postDetail}
+          postDetail={postList[currentIndex]}
           onFinishEdit={handleOnFinishEdit}
         />}
 

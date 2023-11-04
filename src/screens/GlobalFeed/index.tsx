@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 // import { useTranslation } from 'react-i18next';
 
-import { FlatList, View } from 'react-native';
+import { FlatList, ScrollView, View } from 'react-native';
 import {
   deletePostById,
   getGlobalFeed,
@@ -14,18 +14,83 @@ import { getStyles } from './styles';
 import { getAmityUser } from '../../providers/user-provider';
 import type { UserInterface } from '../../types/user.interface';
 import MyCommunity from '../../components/MyCommunity';
-
+import { RouteProp, useFocusEffect, useRoute } from '@react-navigation/native';
+import { RootStackParamList } from '../../routes/RouteParamList';
+import { PostRepository } from '@amityco/ts-sdk-react-native';
+import { amityPostsFormatter } from '../../util/postDataFormatter';
+import { useDispatch, useSelector } from 'react-redux'
+import globalFeedSlice from '../../redux/slices/globalfeedSlice';
+import { RootState } from 'src/redux/store';
 
 export default function GlobalFeed() {
+  const route = useRoute<RouteProp<RootStackParamList, 'Home'>>();
+  const { postIdCallBack } = route?.params || {}
+
+
+  const { postList } = useSelector((state: RootState) => state.globalFeed)
+
+  const { updateGlobalFeed, deleteByPostId, updateByPostId } = globalFeedSlice.actions
+  const dispatch = useDispatch() // ()=> dispatch(updateGlobalFeed())
 
   const styles = getStyles();
   const { client, isConnected } = useAuth();
   const [postData, setPostData] = useState<IGlobalFeedRes>();
-  const [postList, setPostList] = useState<IPost[]>([]);
+
+
+  // console.log('postList:', postList)
   const { data: posts = [], nextPage } = postData ?? {};
 
 
+
+  // const getPost = (postId: string) => {
+  //   const unsubscribePost = PostRepository.getPost(
+  //     postId,
+  //     async ({ data }) => {
+  //       // console.log('data:', data)
+  //       const formattedPostList = await amityPostsFormatter([data])
+  //       // console.log('formattedPostList:', formattedPostList)
+  //       const oldPostList = [...postList]
+  //       const updatedPostList = oldPostList.map((item: IPost) => {
+  //         if (item.postId === formattedPostList[0].postId) {
+
+  //           return formattedPostList[0]
+  //         } else {
+  //           return item
+  //         }
+  //       })
+  //       // setPostList(updatedPostList)
+
+
+
+  //     }
+  //   );
+  //   unsubscribePost();
+  // };
+
+
+
   const flatListRef = useRef(null);
+
+  // useFocusEffect(
+  //   useCallback(
+  //     () => {
+  //       if (postIdCallBack) {
+
+  //         getPost(postIdCallBack)
+  //       }
+  //     },
+  //     [postIdCallBack],
+  //   )
+
+  // )
+  // useEffect(() => {
+  //   if (postIdCallBack) {
+
+  //     getPost(postIdCallBack)
+  //   }
+
+  // }, [postIdCallBack])
+
   async function getGlobalFeedList(
     page: Amity.Page<number> = { after: 0, limit: 8 }
   ): Promise<void> {
@@ -45,68 +110,52 @@ export default function GlobalFeed() {
     }
 
   }, [client]);
-  const getPostList = useCallback(async () => {
+  const getPostList = async () => {
     if (posts.length > 0) {
-      const formattedPostList = await Promise.all(
-        posts.map(async (item: Amity.Post<any>) => {
-          const { userObject } = await getAmityUser(item.postedUserId);
-          let formattedUserObject: UserInterface;
-
-          formattedUserObject = {
-            userId: userObject.data.userId,
-            displayName: userObject.data.displayName,
-            avatarFileId: userObject.data.avatarFileId,
-          };
-
-          return {
-            postId: item.postId,
-            data: item.data as Record<string, any>,
-            dataType: item.dataType,
-            myReactions: item.myReactions as string[],
-            reactionCount: item.reactions as Record<string, number>,
-            commentsCount: item.commentsCount,
-            user: formattedUserObject as UserInterface,
-            editedAt: item.editedAt,
-            createdAt: item.createdAt,
-            updatedAt: item.updatedAt,
-            targetType: item.targetType,
-            targetId: item.targetId,
-            childrenPosts: item.children,
-          };
-        })
-      );
-      setPostList((prev) => [...prev, ...formattedPostList]);
+      const formattedPostList = await amityPostsFormatter(posts)
+      dispatch(updateGlobalFeed(formattedPostList))
+      // setPostList((prev) => [...prev, ...formattedPostList]);
     }
-  }, [posts]);
+  }
+
   useEffect(() => {
     getPostList();
-  }, [getPostList]);
+  }, [posts]);
 
   const onDeletePost = async (postId: string) => {
     const isDeleted = await deletePostById(postId);
     if (isDeleted) {
-      const prevPostList: IPost[] = [...postList];
-      const updatedPostList: IPost[] = prevPostList.filter(
-        (item) => item.postId !== postId
-      );
-      setPostList(updatedPostList);
+      dispatch(deleteByPostId({ postId }))
+      // const prevPostList: IPost[] = [...postList];
+      // const updatedPostList: IPost[] = prevPostList.filter(
+      //   (item) => item.postId !== postId
+      // );
+      // setPostList(updatedPostList);
     }
   };
+  const onPostChange = (post: IPost) => {
+    console.log('post:', post)
+    // dispatch(updateByPostId({ postId: post.postId, postDetail: post }))
+
+  }
+
   return (
     <View style={styles.feedWrap}>
       <View style={styles.feedWrap}>
 
         <FlatList
           data={postList}
-          renderItem={({ item }) => (
-            <PostList onDelete={onDeletePost} postDetail={item} />
+          renderItem={({ item, index }) => (
+            <PostList onDelete={onDeletePost} postDetail={item} onChange={onPostChange} postIndex={index} />
           )}
           keyExtractor={(item) => item.postId.toString()}
           onEndReachedThreshold={0.5}
           onEndReached={handleLoadMore}
           ref={flatListRef}
           ListHeaderComponent={<MyCommunity />}
+          extraData={postList}
         />
+
       </View>
     </View>
   );
