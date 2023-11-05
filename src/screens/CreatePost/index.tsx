@@ -13,6 +13,7 @@ import {
   Keyboard,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
+// import { TextInput } from 'react-native-paper'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   arrowDown,
@@ -32,6 +33,8 @@ import * as VideoThumbnails from 'expo-video-thumbnails';
 import { Video, ResizeMode } from 'expo-av';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
+import MentionPopup from '../../components/MentionPopup';
+import { ISearchItem } from '../../components/SearchItem';
 
 export interface IDisplayImage {
   url: string;
@@ -46,12 +49,52 @@ const CreatePost = ({ route }: any) => {
   const { targetId, targetType, targetName } = route.params;
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const [inputMessage, setInputMessage] = useState('');
+  console.log('inputMessage:', inputMessage)
   const [imageMultipleUri, setImageMultipleUri] = useState<string[]>([]);
   const [videoMultipleUri, setVideoMultipleUri] = useState<string[]>([]);
   const [displayImages, setDisplayImages] = useState<IDisplayImage[]>([]);
   const [displayVideos, setDisplayVideos] = useState<IDisplayImage[]>([]);
+  const [isShowMention, setIsShowMention] = useState<boolean>(false)
+  const [mentionNames, setMentionNames] = useState<ISearchItem[]>([])
+  console.log('mentionNames:', mentionNames)
+  const [currentSearchUserName, setCurrentSearchUserName] = useState<string>()
+  console.log('currentSearchUserName:', currentSearchUserName)
+  const [cursorIndex, setCursorIndex] = useState(0);
+  console.log('cursorIndex:', cursorIndex)
+
 
   const videoRef = React.useRef(null);
+
+  const checkMention = (inputString: string) => {
+    // Check if "@" is at the first letter
+    const startsWithAt = /^@/.test(inputString);
+
+    // Check if "@" is inside the sentence without any letter before "@"
+    const insideWithoutLetterBefore = /[^a-zA-Z]@/.test(inputString);
+
+    const atSigns = inputString.match(/@/g);
+    const atSignsNumber = atSigns ? atSigns.length : 0;
+    if ((startsWithAt || insideWithoutLetterBefore) && atSignsNumber > mentionNames.length) {
+      setIsShowMention(true)
+    } else {
+      setIsShowMention(false)
+    }
+
+
+  };
+  useEffect(() => {
+    if (isShowMention) {
+      const substringBeforeCursor = inputMessage.substring(0, cursorIndex)
+      const lastAtsIndex = substringBeforeCursor.lastIndexOf('@');
+      const searchText: string = inputMessage.substring(lastAtsIndex + 1, cursorIndex + 1)
+
+      setCurrentSearchUserName(searchText)
+    }
+  }, [cursorIndex])
+
+  useEffect(() => {
+    checkMention(inputMessage)
+  }, [inputMessage])
 
   const playVideoFullScreen = async (fileUrl: string) => {
     if (videoRef) {
@@ -106,6 +149,7 @@ const CreatePost = ({ route }: any) => {
     headerTitle: '',
   });
   const handleCreatePost = async () => {
+    const mentionUserIds: string[] = mentionNames.map(item => item.targetId)
     if (displayImages.length > 0) {
       const fileIdArr: (string | undefined)[] = displayImages.map(
         (item) => item.fileId
@@ -119,7 +163,8 @@ const CreatePost = ({ route }: any) => {
           text: inputMessage,
           fileIds: fileIdArr as string[],
         },
-        type
+        type,
+        mentionUserIds.length > 0 ? mentionUserIds: []
       );
       if (response) {
         navigation.navigate('Home');
@@ -130,6 +175,7 @@ const CreatePost = ({ route }: any) => {
       );
 
       const type: string = displayVideos.length > 0 ? 'video' : 'text';
+     
       const response = await createPostToFeed(
         targetType,
         targetId,
@@ -137,7 +183,8 @@ const CreatePost = ({ route }: any) => {
           text: inputMessage,
           fileIds: fileIdArr as string[],
         },
-        type
+        type,
+        mentionUserIds.length > 0 ? mentionUserIds: []
       );
       if (response) {
         navigation.navigate('Home');
@@ -350,6 +397,32 @@ const CreatePost = ({ route }: any) => {
     });
   };
 
+  const onSelectUserMention = (user: ISearchItem) => {
+    console.log('user:', user)
+    const textBeforeCursor: string = inputMessage.substring(0, cursorIndex)
+    const textAfterCursor: string = inputMessage.substring(cursorIndex, inputMessage.length + 1)
+    const atsBeforeCursorIndex: number = textBeforeCursor.lastIndexOf('@')
+    const newTextAfterReplacement = textBeforeCursor.slice(0, atsBeforeCursorIndex + 1) + user.displayName + textBeforeCursor.slice(cursorIndex + 1);
+    const newInputMessage = newTextAfterReplacement + textAfterCursor + ' '
+    setInputMessage(newInputMessage)
+    setMentionNames(prev => [...prev, user])
+  }
+  const handleSelectionChange = (event) => {
+    setCursorIndex(event.nativeEvent.selection.start);
+  };
+
+  const renderTextWithMention = () => {
+    const textArr: string[] = inputMessage.split(/(@\w+)(\s*)/).filter(Boolean);
+    console.log('textArr:', textArr)
+
+    const textElement = textArr.map((item: string) => {
+      const atsIndex = item.indexOf('@')
+      const mentionName = atsIndex > -1 ? item.replace(/@/g, '') : '';
+      const isTextIncluded = mentionNames.some(item => item.displayName.toLowerCase().includes(mentionName.toLowerCase()));
+      return (mentionName !== '' && isTextIncluded) ? <Text style={styles.mentionText}>{item}</Text> : <Text style={styles.inputText}>{item}</Text>
+    })
+    return <View style={{ flexDirection: 'row' }}>{textElement}</View>
+  }
   return (
     <View style={styles.AllInputWrap}>
       <KeyboardAvoidingView
@@ -358,14 +431,22 @@ const CreatePost = ({ route }: any) => {
         style={styles.AllInputWrap}
       >
         <ScrollView style={styles.container}>
-          <TextInput
-            multiline
-            placeholder="What's going on..."
-            style={styles.textInput}
-            value={inputMessage}
-            onChangeText={(text) => setInputMessage(text)}
-            placeholderTextColor={theme.colors.baseShade3}
-          />
+          <View style={styles.inputContainer}>
+            <TextInput
+              multiline
+              placeholder="What's going on..."
+              style={styles.textInput}
+              value={inputMessage}
+              onChangeText={(text) => setInputMessage(text)}
+              placeholderTextColor={theme.colors.baseShade3}
+              onSelectionChange={handleSelectionChange}
+            />
+            <View style={styles.overlay}>
+              {renderTextWithMention()}
+              {/* <Text style={styles.inputText}>{inputMessage}</Text> */}
+            </View>
+          </View>
+
           <View style={styles.imageContainer}>
             {displayImages.length > 0 && (
               <FlatList
@@ -403,8 +484,12 @@ const CreatePost = ({ route }: any) => {
             )}
           </View>
         </ScrollView>
+        {
+          isShowMention && <MentionPopup userName={currentSearchUserName} onSelectMention={onSelectUserMention} />
+        }
 
         <View style={styles.InputWrap}>
+
           <TouchableOpacity
             disabled={displayVideos.length > 0 ? true : false}
             onPress={pickCamera}

@@ -28,6 +28,7 @@ export default function GlobalFeed() {
 
 
   const { postList } = useSelector((state: RootState) => state.globalFeed)
+  	console.log('postList:', postList)
 
   const { updateGlobalFeed, deleteByPostId, updateByPostId } = globalFeedSlice.actions
   const dispatch = useDispatch() // ()=> dispatch(updateGlobalFeed())

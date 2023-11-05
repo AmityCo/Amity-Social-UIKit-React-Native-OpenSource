@@ -56,7 +56,8 @@ import MediaSection from '../../../components/MediaSection';
 import postDetailSlice from '../../../redux/slices/postDetailSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import globalFeedSlice from '../../../redux/slices/globalfeedSlice';
-import { RootState } from 'src/redux/store';
+import { RootState } from '../../../redux/store';
+import { getAmityUser } from '../../../providers/user-provider';
 
 export interface IPost {
   postId: string;
@@ -72,6 +73,7 @@ export interface IPost {
   targetType: string;
   targetId: string;
   childrenPosts: string[];
+  mentionees: string[]
 }
 export interface IPostList {
   onDelete?: (postId: string) => void;
@@ -106,11 +108,7 @@ export default function PostList({
   const [communityName, setCommunityName] = useState('');
   const [imagePosts, setImagePosts] = useState<string[]>([]);
   const [textPost, setTextPost] = useState<string>()
-  const [imagePostsFullSize, setImagePostsFullSize] = useState<MediaUri[]>([]);
-  const [videoPostsFullSize, setVideoPostsFullSize] = useState<MediaUri[]>([]);
-  const [videoPosts, setVideoPosts] = useState<IVideoPost[]>([]);
-  const [visibleFullImage, setIsVisibleFullImage] = useState<boolean>(false);
-  const [imageIndex, setImageIndex] = useState<number>(0);
+
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [isReportByMe, setIsReportByMe] = useState<boolean>(false);
@@ -118,7 +116,7 @@ export default function PostList({
   const slideAnimation = useRef(new Animated.Value(0)).current;
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const dispatch = useDispatch()
-  const { postList } = useSelector((state: RootState) => state.globalFeed)
+const [mentionUsers, setMentionUsers] = useState<UserInterface[]>([])
 
   const { updateByPostId } = globalFeedSlice.actions
   const { updatePostDetail } = postDetailSlice.actions
@@ -133,8 +131,35 @@ export default function PostList({
     targetType,
     targetId,
     childrenPosts = [],
-    editedAt
+    editedAt,
+    mentionees
   } = postData ?? {};
+
+
+  const queryUserList = async () => {
+    const userList = await Promise.all(mentionees.map(async (item: string) => {
+      const { userObject } = await getAmityUser(item);
+      let formattedUserObject: UserInterface;
+
+      formattedUserObject = {
+        userId: userObject.data.userId,
+        displayName: userObject.data.displayName,
+        avatarFileId: userObject.data.avatarFileId,
+      };
+
+      return formattedUserObject
+    }))
+    if(userList){
+      setMentionUsers(userList)
+    }
+
+    console.log('userList:', userList)
+  }
+  useEffect(() => {
+    if (mentionees?.length > 0) {
+      queryUserList()
+    }
+  }, [mentionees])
 
   useEffect(() => {
 
@@ -459,7 +484,18 @@ export default function PostList({
     setIsEdit(true)
   }
 
+  const renderTextWithMention = () => {
+    const textArr: string[] = data?.text.split(/(@\w+)(\s*)/).filter(Boolean);
+    console.log('textArr:', textArr)
 
+    const textElement = textArr.map((item: string) => {
+      const atsIndex = item.indexOf('@')
+      const mentionName = atsIndex > -1 ? item.replace(/@/g, '') : '';
+      const isTextIncluded = mentionUsers.some(item => item.userId.includes(mentionName));
+      return (mentionName !== '' && isTextIncluded) ? <Text style={styles.mentionText}>{item}</Text> : <Text style={styles.inputText}>{item}</Text>
+    })
+    return <View style={{ flexDirection: 'row' }}>{textElement}</View>
+  }
   return (
     <View key={postId} style={styles.postWrap}>
       <View style={styles.headerSection}>
@@ -516,7 +552,8 @@ export default function PostList({
       </View>
       <View>
         <View style={styles.bodySection}>
-          {textPost && <Text style={styles.bodyText}>{textPost}</Text>}
+          {/* {textPost && <Text style={styles.bodyText}>{textPost}</Text>} */}
+          {textPost && renderTextWithMention()}
           {memoizedMediaSection}
           {/* {childrenPosts.length > 0 && (
             <View style={styles.mediaWrap}>

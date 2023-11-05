@@ -95,11 +95,13 @@ export async function createPostToFeed(
   targetType: string,
   targetId: string,
   content: { text: string; fileIds: string[] },
-  postType: string
+  postType: string,
+  mentionees: string[]
 ): Promise<Amity.Post<any>> {
   let postParam = {
     targetType: targetType,
     targetId: targetId,
+    mentionees: mentionees.length > 0 ? [{ type: 'user', userIds: mentionees }] as Amity.MentionType['user'][] : [],
   };
   if (postType === 'text') {
     const newPostParam = {

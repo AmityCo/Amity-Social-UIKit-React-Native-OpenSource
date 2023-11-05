@@ -238,7 +238,16 @@ const styles = StyleSheet.create({
     color: theme.colors.baseShade1,
     fontWeight: '900',
     paddingHorizontal:5
-  }
+  },
+  mentionText: {
+    color: theme.colors.primary,
+     fontSize: 15,
+  },
+  inputText: {
+
+    color: theme.colors.base,
+    fontSize: 15,
+  },
 });
 
 return styles;

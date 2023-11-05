@@ -33,6 +33,7 @@ export default function MediaSection({ childrenPosts }: IMediaSection) {
   const [videoPostsFullSize, setVideoPostsFullSize] = useState<MediaUri[]>([]);
   const [visibleFullImage, setIsVisibleFullImage] = useState<boolean>(false);
   const [imageIndex, setImageIndex] = useState<number>(0);
+  
   const styles = getStyles()
   let imageStyle: StyleProp<ImageStyle> | StyleProp<ImageStyle>[] =
     styles.imageLargePost;
@@ -41,6 +42,8 @@ export default function MediaSection({ childrenPosts }: IMediaSection) {
   	console.log('currentPostdetail:', currentPostdetail)
 
   useEffect(() => {
+    setImagePostsFullSize([])
+    setVideoPostsFullSize([])
     if (imagePosts.length > 0) {
       const updatedUrls: MediaUri[] = imagePosts.map((url: string) => {
         return {
@@ -62,8 +65,6 @@ export default function MediaSection({ childrenPosts }: IMediaSection) {
   }, [imagePosts, videoPosts])
 
   const getPostInfo =  async () => {
-    setImagePosts([])
-    setVideoPosts([])
     try {
       const response = await Promise.all(
         childrenPosts.map(async (id) => {
@@ -110,14 +111,16 @@ export default function MediaSection({ childrenPosts }: IMediaSection) {
 
 
 
-  const memoizedRenderMediaPosts = useMemo(() => {
+  const RenderMediaPosts = () => {
     const thumbnailFileIds: string[] =
     videoPosts.length > 0
       ? videoPosts.map((item) => {
         return `https://api.${apiRegion}.amity.co/api/v3/files/${item?.thumbnailFileId}/download?size=medium`;
       })
       : [];
-    let mediaPosts: string[] = imagePosts.length > 0 ? imagePosts : thumbnailFileIds;
+    let mediaPosts: string[] = []
+    mediaPosts = [...imagePosts].length > 0 ? [...imagePosts] : [...thumbnailFileIds];
+    console.log('mediaPosts:', mediaPosts)
     const imageElement = mediaPosts.map(
       (item: string, index: number) => {
         if (mediaPosts.length === 1) {
@@ -240,7 +243,7 @@ export default function MediaSection({ childrenPosts }: IMediaSection) {
         </View>
       );
     }
-  }, [imagePosts, videoPosts]);
+  }
   // if (initImagePostsFullSize.length > 0) {
   //   mediaPosts = initImagePostsFullSize.map((item) => item.uri);
   // } else if (initVideoPostsFullSize.length > 0) {
@@ -260,7 +263,7 @@ export default function MediaSection({ childrenPosts }: IMediaSection) {
 
   return (
     <View>
-      {memoizedRenderMediaPosts}
+      <RenderMediaPosts/>
       <ImageView
         images={
           imagePostsFullSize.length > 0
