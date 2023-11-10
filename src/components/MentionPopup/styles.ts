@@ -10,7 +10,7 @@ export const getStyles=()=>{
     mentionContainer:{
       borderTopColor: theme.colors.border,
       borderTopWidth: 1,
-      paddingHorizontal: 16,
+      paddingHorizontal: 0,
       maxHeight: 240
 
     }

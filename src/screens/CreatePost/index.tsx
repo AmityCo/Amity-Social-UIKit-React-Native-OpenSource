@@ -35,6 +35,7 @@ import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import MentionPopup from '../../components/MentionPopup';
 import { ISearchItem } from '../../components/SearchItem';
+import InputWithMention from '../../components/InputWithMention';
 
 export interface IDisplayImage {
   url: string;
@@ -43,25 +44,30 @@ export interface IDisplayImage {
   isUploaded: boolean;
   thumbNail?: string;
 }
+export interface IMentionPosition {
+  index: number;
+  type: string;
+  userId: string;
+  length: number;
+  displayName?: string;
+}
 const CreatePost = ({ route }: any) => {
   const theme = useTheme() as MyMD3Theme;
   const styles = getStyles();
   const { targetId, targetType, targetName } = route.params;
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const [inputMessage, setInputMessage] = useState('');
-  console.log('inputMessage:', inputMessage)
   const [imageMultipleUri, setImageMultipleUri] = useState<string[]>([]);
   const [videoMultipleUri, setVideoMultipleUri] = useState<string[]>([]);
   const [displayImages, setDisplayImages] = useState<IDisplayImage[]>([]);
   const [displayVideos, setDisplayVideos] = useState<IDisplayImage[]>([]);
   const [isShowMention, setIsShowMention] = useState<boolean>(false)
   const [mentionNames, setMentionNames] = useState<ISearchItem[]>([])
-  console.log('mentionNames:', mentionNames)
-  const [currentSearchUserName, setCurrentSearchUserName] = useState<string>()
-  console.log('currentSearchUserName:', currentSearchUserName)
-  const [cursorIndex, setCursorIndex] = useState(0);
-  console.log('cursorIndex:', cursorIndex)
 
+  const [currentSearchUserName, setCurrentSearchUserName] = useState<string>('')
+  // console.log('currentSearchUserName:', currentSearchUserName)
+  const [cursorIndex, setCursorIndex] = useState(0);
+  const [mentionsPosition, setMentionsPosition] = useState<IMentionPosition[]>([])
 
   const videoRef = React.useRef(null);
 
@@ -86,9 +92,11 @@ const CreatePost = ({ route }: any) => {
     if (isShowMention) {
       const substringBeforeCursor = inputMessage.substring(0, cursorIndex)
       const lastAtsIndex = substringBeforeCursor.lastIndexOf('@');
-      const searchText: string = inputMessage.substring(lastAtsIndex + 1, cursorIndex + 1)
+      if (lastAtsIndex !== -1) {
+        const searchText: string = inputMessage.substring(lastAtsIndex + 1, cursorIndex + 1)
+        setCurrentSearchUserName(searchText)
+      }
 
-      setCurrentSearchUserName(searchText)
     }
   }, [cursorIndex])
 
@@ -164,7 +172,8 @@ const CreatePost = ({ route }: any) => {
           fileIds: fileIdArr as string[],
         },
         type,
-        mentionUserIds.length > 0 ? mentionUserIds: []
+        mentionUserIds.length > 0 ? mentionUserIds : [],
+        mentionsPosition
       );
       if (response) {
         navigation.navigate('Home');
@@ -175,7 +184,7 @@ const CreatePost = ({ route }: any) => {
       );
 
       const type: string = displayVideos.length > 0 ? 'video' : 'text';
-     
+
       const response = await createPostToFeed(
         targetType,
         targetId,
@@ -184,7 +193,8 @@ const CreatePost = ({ route }: any) => {
           fileIds: fileIdArr as string[],
         },
         type,
-        mentionUserIds.length > 0 ? mentionUserIds: []
+        mentionUserIds.length > 0 ? mentionUserIds : [],
+        mentionsPosition
       );
       if (response) {
         navigation.navigate('Home');
@@ -399,29 +409,60 @@ const CreatePost = ({ route }: any) => {
 
   const onSelectUserMention = (user: ISearchItem) => {
     console.log('user:', user)
-    const textBeforeCursor: string = inputMessage.substring(0, cursorIndex)
     const textAfterCursor: string = inputMessage.substring(cursorIndex, inputMessage.length + 1)
-    const atsBeforeCursorIndex: number = textBeforeCursor.lastIndexOf('@')
-    const newTextAfterReplacement = textBeforeCursor.slice(0, atsBeforeCursorIndex + 1) + user.displayName + textBeforeCursor.slice(cursorIndex + 1);
-    const newInputMessage = newTextAfterReplacement + textAfterCursor + ' '
+    const newTextAfterReplacement = inputMessage.slice(0, cursorIndex - currentSearchUserName.length) + user.displayName + inputMessage.slice(cursorIndex, inputMessage.length);
+    const newInputMessage = newTextAfterReplacement + textAfterCursor
+    const position: IMentionPosition = { type: 'user', length: user.displayName.length + 1, index: cursorIndex - 1 - currentSearchUserName.length, userId: user.targetId, displayName: user.displayName }
+    console.log('position:', position)
     setInputMessage(newInputMessage)
     setMentionNames(prev => [...prev, user])
+    setMentionsPosition(prev => [...prev, position])
+    setCurrentSearchUserName('')
   }
   const handleSelectionChange = (event) => {
     setCursorIndex(event.nativeEvent.selection.start);
   };
 
-  const renderTextWithMention = () => {
-    const textArr: string[] = inputMessage.split(/(@\w+)(\s*)/).filter(Boolean);
-    console.log('textArr:', textArr)
 
-    const textElement = textArr.map((item: string) => {
-      const atsIndex = item.indexOf('@')
-      const mentionName = atsIndex > -1 ? item.replace(/@/g, '') : '';
-      const isTextIncluded = mentionNames.some(item => item.displayName.toLowerCase().includes(mentionName.toLowerCase()));
-      return (mentionName !== '' && isTextIncluded) ? <Text style={styles.mentionText}>{item}</Text> : <Text style={styles.inputText}>{item}</Text>
-    })
-    return <View style={{ flexDirection: 'row' }}>{textElement}</View>
+
+
+  const renderTextWithMention = () => {
+
+    if (mentionsPosition.length === 0) {
+      return <Text style={styles.inputText}>{inputMessage}</Text>
+    } else {
+      let currentPosition = 0;
+      const result = [];
+  
+      mentionsPosition.forEach(({ index, length }, i) => {
+        // Add non-highlighted text before the mention
+        result.push(
+          <Text key={`nonHighlighted-${i}`} style={styles.inputText}>
+            {inputMessage.slice(currentPosition, index)}
+          </Text>
+        );
+  
+        // Add highlighted text
+        result.push(
+          <Text key={`highlighted-${i}`} style={styles.mentionText}>
+            {inputMessage.slice(index, index + length)}
+          </Text>
+        );
+  
+        // Update currentPosition for the next iteration
+        currentPosition = index + length;
+      });
+  
+      // Add any remaining non-highlighted text after the mentions
+      result.push(
+        <Text key="nonHighlighted-last" style={styles.inputText}>
+          {inputMessage.slice(currentPosition)}
+        </Text>
+      );
+      console.log('result:', result)
+      return <Text>{result}</Text>;
+
+    }
   }
   return (
     <View style={styles.AllInputWrap}>
@@ -443,10 +484,10 @@ const CreatePost = ({ route }: any) => {
             />
             <View style={styles.overlay}>
               {renderTextWithMention()}
-              {/* <Text style={styles.inputText}>{inputMessage}</Text> */}
+
             </View>
           </View>
-
+          {/* <InputWithMention /> */}
           <View style={styles.imageContainer}>
             {displayImages.length > 0 && (
               <FlatList

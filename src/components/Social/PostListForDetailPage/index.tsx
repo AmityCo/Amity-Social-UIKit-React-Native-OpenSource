@@ -97,7 +97,6 @@ export default function PostListForDetailPage({
 
 }: IPostList) {
   // const [postData, setPostData] = useState<IPost>(postDetail)
-  console.log('postDetail in detail:', postDetail)
 
   const theme = useTheme() as MyMD3Theme;
   const { client, apiRegion } = useAuth();

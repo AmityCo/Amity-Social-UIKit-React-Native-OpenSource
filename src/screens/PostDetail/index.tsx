@@ -38,6 +38,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import postDetailSlice from '../../redux/slices/postDetailSlice';
 import PostListForDetailPage from '../../components/Social/PostListForDetailPage';
+import { ISearchItem } from '../../components/SearchItem';
+import MentionPopup from '../../components/MentionPopup';
+import { IMentionPosition } from '../CreatePost';
 
 
 
@@ -56,6 +59,7 @@ const PostDetail = () => {
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
   const [commentList, setCommentList] = useState<IComment[]>([]);
+  console.log('commentList:', commentList)
   const [commentCollection, setCommentCollection] = useState<Amity.LiveCollection<Amity.Comment>>();
   const { data: comments, hasNextPage, onNextPage } = commentCollection ?? {};
   const [unSubscribeComment, setUnSubscribeComment] = useState<() => void>();
@@ -74,17 +78,19 @@ const PostDetail = () => {
 
   const [loading, setLoading] = useState<boolean>(true)
   const { currentPostdetail } = useSelector((state: RootState) => state.postDetail)
-  	// console.log('currentPostdetail:', currentPostdetail)
+  // console.log('currentPostdetail:', currentPostdetail)
   // console.log('currentIndex:', currentIndex)
   // console.log('postList:', postList)
   const { postList } = useSelector((state: RootState) => state.globalFeed)
 
-
-
-  const { updateByPostId } = globalFeedSlice.actions
-  const { updatePostDetail } = postDetailSlice.actions
-  const dispatch = useDispatch()
-
+  const [isShowMention, setIsShowMention] = useState<boolean>(false)
+  console.log('isShowMention:', isShowMention)
+  const [mentionNames, setMentionNames] = useState<ISearchItem[]>([])
+  console.log('mentionNames:', mentionNames)
+  const [currentSearchUserName, setCurrentSearchUserName] = useState<string>()
+  console.log('currentSearchUserName:', currentSearchUserName)
+  const [cursorIndex, setCursorIndex] = useState<number>(0)
+  const [mentionsPosition, setMentionsPosition] = useState<IMentionPosition[]>([])
 
   // useEffect(() => {
   //   if (postDetail) {
@@ -262,6 +268,8 @@ const PostDetail = () => {
             createdAt: item.createdAt,
             childrenComment: item.children,
             referenceId: item.referenceId,
+            mentionPosition: item?.metadata?.mentioned
+            
           };
         })
       );
@@ -293,7 +301,7 @@ const PostDetail = () => {
     }
     Keyboard.dismiss();
     setInputMessage('');
-    await createComment(inputMessage, postId);
+    await createComment(inputMessage, postId, mentionNames?.map(item => item.targetId), mentionsPosition);
     setInputMessage('');
   };
   const onDeleteComment = async (commentId: string) => {
@@ -316,7 +324,95 @@ const PostDetail = () => {
   }
 
 
+  const handleSelectionChange = (event) => {
+    setCursorIndex(event.nativeEvent.selection.start);
+  };
+  function tokenizeMentions(text: string, mentions: string[]): string[] {
+    const regex = new RegExp(`(@(${mentions.join('|')}))\\b|\\S+`, 'gi');
+    const tokens = text.match(regex) || [];
 
+    return tokens;
+  }
+  const onSelectUserMention = (user: ISearchItem) => {
+    const textAfterCursor: string = inputMessage.substring(cursorIndex, inputMessage.length + 1)
+    const newTextAfterReplacement = inputMessage.slice(0, cursorIndex - currentSearchUserName.length) + user.displayName + inputMessage.slice(cursorIndex, inputMessage.length);
+    const newInputMessage = newTextAfterReplacement + textAfterCursor
+    const position: IMentionPosition = { type: 'user', length: user.displayName.length + 1, index: cursorIndex - 1 - currentSearchUserName.length, userId: user.targetId, displayName: user.displayName }
+    console.log('position:', position)
+    setInputMessage(newInputMessage)
+    setMentionNames(prev => [...prev, user])
+    setMentionsPosition(prev => [...prev, position])
+    setCurrentSearchUserName('')
+  }
+  useEffect(() => {
+    checkMention(inputMessage)
+  }, [inputMessage])
+  const checkMention = (inputString: string) => {
+    // Check if "@" is at the first letter
+    const startsWithAt = /^@/.test(inputString);
+
+    // Check if "@" is inside the sentence without any letter before "@"
+    const insideWithoutLetterBefore = /[^a-zA-Z]@/.test(inputString);
+
+    const atSigns = inputString.match(/@/g);
+    const atSignsNumber = atSigns ? atSigns.length : 0;
+    if ((startsWithAt || insideWithoutLetterBefore) && atSignsNumber > mentionNames.length) {
+      setIsShowMention(true)
+    } else {
+      setIsShowMention(false)
+    }
+
+
+  };
+  useEffect(() => {
+    if (isShowMention) {
+      const substringBeforeCursor = inputMessage.substring(0, cursorIndex)
+      const lastAtsIndex = substringBeforeCursor.lastIndexOf('@');
+      if (lastAtsIndex !== -1) {
+        const searchText: string = inputMessage.substring(lastAtsIndex + 1, cursorIndex + 1)
+        setCurrentSearchUserName(searchText)
+      }
+
+    }
+  }, [cursorIndex])
+  const renderTextWithMention = () => {
+
+    if (mentionsPosition.length === 0) {
+      return <Text style={styles.inputText}>{inputMessage}</Text>
+    } else {
+      let currentPosition = 0;
+      const result = [];
+  
+      mentionsPosition.forEach(({ index, length }, i) => {
+        // Add non-highlighted text before the mention
+        result.push(
+          <Text key={`nonHighlighted-${i}`} style={styles.inputText}>
+            {inputMessage.slice(currentPosition, index)}
+          </Text>
+        );
+  
+        // Add highlighted text
+        result.push(
+          <Text key={`highlighted-${i}`} style={styles.mentionText}>
+            {inputMessage.slice(index, index + length)}
+          </Text>
+        );
+  
+        // Update currentPosition for the next iteration
+        currentPosition = index + length;
+      });
+  
+      // Add any remaining non-highlighted text after the mentions
+      result.push(
+        <Text key="nonHighlighted-last" style={styles.inputText}>
+          {inputMessage.slice(currentPosition)}
+        </Text>
+      );
+      console.log('result:', result)
+      return <Text>{result}</Text>;
+
+    }
+  }
   return (
     loading ? <View>
 
@@ -327,7 +423,7 @@ const PostDetail = () => {
         style={styles.AllInputWrap}
       >
         <ScrollView onScroll={handleScroll} style={styles.container}>
-        <PostList
+          <PostList
             onChange={onPostChange}
             postDetail={currentPostdetail as IPost}
           />
@@ -343,22 +439,43 @@ const PostDetail = () => {
               ref={flatListRef}
             />
           </View>
+
         </ScrollView>
+        {isShowMention && <MentionPopup userName={currentSearchUserName} onSelectMention={onSelectUserMention} />}
+
         <View style={styles.InputWrap}>
-          <TextInput
+          <View style={styles.inputContainer}>
+            <TextInput
+              multiline
+              placeholder="Say something nice..."
+              style={styles.textInput}
+              value={inputMessage}
+              onChangeText={(text) => setInputMessage(text)}
+              placeholderTextColor={theme.colors.baseShade3}
+              onSelectionChange={handleSelectionChange}
+            />
+            <View style={styles.overlay}>
+              {renderTextWithMention()}
+            </View>
+          </View>
+
+
+
+          {/* <TextInput
             onChangeText={(text) => setInputMessage(text)}
             style={styles.input}
             placeholder="Say something nice..."
             value={inputMessage}
             placeholderTextColor={theme.colors.baseShade3}
-          />
+          /> */}
           <TouchableOpacity
             disabled={inputMessage.length > 0 ? false : true}
             onPress={handleSend}
+            style={styles.postBtn}
           >
             <Text
               style={
-                inputMessage.length > 0 ? styles.postBtn : styles.postDisabledBtn
+                inputMessage.length > 0 ? styles.postBtnText : styles.postDisabledBtn
               }
             >
               Post

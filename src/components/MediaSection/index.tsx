@@ -23,12 +23,10 @@ interface IMediaSection {
   childrenPosts: string[],
 }
 export default function MediaSection({ childrenPosts }: IMediaSection) {
-  console.log('childrenPosts=====:', childrenPosts)
+
   const { apiRegion } = useAuth();
   const [imagePosts, setImagePosts] = useState<string[]>([]);
-  // console.log('imagePosts:', imagePosts)
   const [videoPosts, setVideoPosts] = useState<IVideoPost[]>([]);
-  console.log('videoPosts:', videoPosts)
   const [imagePostsFullSize, setImagePostsFullSize] = useState<MediaUri[]>([]);
   const [videoPostsFullSize, setVideoPostsFullSize] = useState<MediaUri[]>([]);
   const [visibleFullImage, setIsVisibleFullImage] = useState<boolean>(false);
@@ -39,7 +37,6 @@ export default function MediaSection({ childrenPosts }: IMediaSection) {
     styles.imageLargePost;
   let colStyle: StyleProp<ImageStyle> = styles.col2;
   const { currentPostdetail } = useSelector((state: RootState) => state.postDetail)
-  	console.log('currentPostdetail:', currentPostdetail)
 
   useEffect(() => {
     setImagePostsFullSize([])
@@ -72,7 +69,6 @@ export default function MediaSection({ childrenPosts }: IMediaSection) {
           return { dataType: post.dataType, data: post.data };
         })
       );
-      console.log('childrenPosts:', response);
 
       response.forEach((item) => {
         if (item.dataType === 'image') {
@@ -95,7 +91,6 @@ export default function MediaSection({ childrenPosts }: IMediaSection) {
 
 
   useEffect(() => {
-    console.log('enter media section =======')
 
     getPostInfo();
 
@@ -120,7 +115,6 @@ export default function MediaSection({ childrenPosts }: IMediaSection) {
       : [];
     let mediaPosts: string[] = []
     mediaPosts = [...imagePosts].length > 0 ? [...imagePosts] : [...thumbnailFileIds];
-    console.log('mediaPosts:', mediaPosts)
     const imageElement = mediaPosts.map(
       (item: string, index: number) => {
         if (mediaPosts.length === 1) {

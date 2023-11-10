@@ -131,7 +131,6 @@ const EditPostModal = ({ visible, onClose, postDetail, onFinishEdit }: IModal) =
       );
       if (response) {
         const formattedPost = await amityPostsFormatter([response])
-        console.log('formattedPost:', formattedPost)
         dispatch(updateByPostId({ postId: postDetail.postId, postDetail: formattedPost[0] }))
         dispatch(updatePostDetail(formattedPost[0]))
         onFinishEdit && onFinishEdit({

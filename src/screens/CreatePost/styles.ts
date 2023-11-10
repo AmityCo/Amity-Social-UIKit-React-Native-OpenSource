@@ -51,7 +51,9 @@ export const getStyles = () => {
       fontSize: 15,
       marginHorizontal: 3,
       color: 'transparent',
-      zIndex: 999
+      zIndex: 999,
+      paddingVertical: 5,
+
       // Additional styles if needed
     },
     inputContainer: {
@@ -61,12 +63,13 @@ export const getStyles = () => {
     },
     mentionText: {
       color: theme.colors.primary,
-       fontSize: 15,
+      fontSize: 15,
     },
     inputText: {
-
       color: theme.colors.base,
       fontSize: 15,
+      letterSpacing: 0, 
+
     },
     overlay: {
       ...StyleSheet.absoluteFillObject, // Take up the whole screen

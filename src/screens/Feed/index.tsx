@@ -29,6 +29,7 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
   const [postData, setPostData] =
     useState<Amity.LiveCollection<Amity.Post<any>>>();
   const [postList, setPostList] = useState<IPost[]>([]);
+  console.log('postList commu:', postList)
   const { data: posts, onNextPage, hasNextPage } = postData ?? {};
   const flatListRef = useRef(null);
 
@@ -60,6 +61,7 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
   const getPostList = useCallback(async () => {
     if (posts && posts.length > 0) {
       const formattedPostList = await amityPostsFormatter(posts);
+      console.log('formattedPostList 555:', formattedPostList[0].mentionPostion)
       setPostList([...formattedPostList]);
     }
   }, [posts]);

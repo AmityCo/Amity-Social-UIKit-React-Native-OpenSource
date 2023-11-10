@@ -29,7 +29,8 @@ export const amityPostsFormatter = async (posts: Amity.Post<any>[]): Promise<IPo
         targetType: item.targetType,
         targetId: item.targetId,
         childrenPosts: item.children,
-        mentionees:  item.mentionees[0]?.userIds
+        mentionees:  item.mentionees[0]?.userIds,
+        mentionPosition: item?.metadata?.mentioned || undefined
      
       } as IPost;
     })

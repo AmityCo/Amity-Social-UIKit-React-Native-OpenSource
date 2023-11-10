@@ -114,6 +114,7 @@ export default function GlobalFeed() {
   const getPostList = async () => {
     if (posts.length > 0) {
       const formattedPostList = await amityPostsFormatter(posts)
+      console.log('formattedPostList:', formattedPostList)
       dispatch(updateGlobalFeed(formattedPostList))
       // setPostList((prev) => [...prev, ...formattedPostList]);
     }

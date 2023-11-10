@@ -52,7 +52,6 @@ export default function MentionPopup({
   };
 
   const handleLoadMore = () => {
-    console.log('trigger')
     onNextPage && onNextPage()
   }
   useEffect(() => {

@@ -58,6 +58,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import globalFeedSlice from '../../../redux/slices/globalfeedSlice';
 import { RootState } from '../../../redux/store';
 import { getAmityUser } from '../../../providers/user-provider';
+import { IMentionPosition } from '../../../screens/CreatePost';
 
 export interface IPost {
   postId: string;
@@ -73,7 +74,8 @@ export interface IPost {
   targetType: string;
   targetId: string;
   childrenPosts: string[];
-  mentionees: string[]
+  mentionees: string[];
+  mentionPosition?: IMentionPosition[]
 }
 export interface IPostList {
   onDelete?: (postId: string) => void;
@@ -116,7 +118,8 @@ export default function PostList({
   const slideAnimation = useRef(new Animated.Value(0)).current;
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const dispatch = useDispatch()
-const [mentionUsers, setMentionUsers] = useState<UserInterface[]>([])
+  const [mentionUsers, setMentionUsers] = useState<UserInterface[]>([])
+  const [mentionsPosition, setMentionsPosition] = useState<IMentionPosition[]>([])
 
   const { updateByPostId } = globalFeedSlice.actions
   const { updatePostDetail } = postDetailSlice.actions
@@ -132,8 +135,10 @@ const [mentionUsers, setMentionUsers] = useState<UserInterface[]>([])
     targetId,
     childrenPosts = [],
     editedAt,
-    mentionees
+    mentionees,
+    mentionPosition
   } = postData ?? {};
+
 
 
   const queryUserList = async () => {
@@ -149,11 +154,11 @@ const [mentionUsers, setMentionUsers] = useState<UserInterface[]>([])
 
       return formattedUserObject
     }))
-    if(userList){
+    if (userList) {
       setMentionUsers(userList)
     }
 
-    console.log('userList:', userList)
+
   }
   useEffect(() => {
     if (mentionees?.length > 0) {
@@ -162,8 +167,17 @@ const [mentionUsers, setMentionUsers] = useState<UserInterface[]>([])
   }, [mentionees])
 
   useEffect(() => {
+    if(mentionPosition){
+      setMentionsPosition(mentionPosition)
+    }
+
+  }, [mentionPosition])
+
+
+  useEffect(() => {
 
     setPostData(postDetail)
+    console.log('postDetail:', postDetail)
 
   }, [postDetail])
 
@@ -469,7 +483,7 @@ const [mentionUsers, setMentionUsers] = useState<UserInterface[]>([])
     );
   }, [postDetail]);
   const handleOnFinishEdit = (postData: { text: string, mediaUrls: string[] | IVideoPost[] }, type: string) => {
-    console.log('Finish:', postData)
+
 
     if (type === 'image') {
       setImagePosts(postData.mediaUrls as string[])
@@ -485,16 +499,41 @@ const [mentionUsers, setMentionUsers] = useState<UserInterface[]>([])
   }
 
   const renderTextWithMention = () => {
-    const textArr: string[] = data?.text.split(/(@\w+)(\s*)/).filter(Boolean);
-    console.log('textArr:', textArr)
 
-    const textElement = textArr.map((item: string) => {
-      const atsIndex = item.indexOf('@')
-      const mentionName = atsIndex > -1 ? item.replace(/@/g, '') : '';
-      const isTextIncluded = mentionUsers.some(item => item.userId.includes(mentionName));
-      return (mentionName !== '' && isTextIncluded) ? <Text style={styles.mentionText}>{item}</Text> : <Text style={styles.inputText}>{item}</Text>
-    })
-    return <View style={{ flexDirection: 'row' }}>{textElement}</View>
+    if (textPost.length === 0) {
+      return <Text style={styles.inputText}>{textPost}</Text>
+    } else {
+      let currentPosition = 0;
+      const result = [];
+
+      mentionsPosition.forEach(({ index, length }, i) => {
+        // Add non-highlighted text before the mention
+        result.push(
+          <Text key={`nonHighlighted-${i}`} style={styles.inputText}>
+            {textPost.slice(currentPosition, index)}
+          </Text>
+        );
+
+        // Add highlighted text
+        result.push(
+          <Text key={`highlighted-${i}`} style={styles.mentionText}>
+            {textPost.slice(index, index + length)}
+          </Text>
+        );
+
+        // Update currentPosition for the next iteration
+        currentPosition = index + length;
+      });
+
+      // Add any remaining non-highlighted text after the mentions
+      result.push(
+        <Text key="nonHighlighted-last" style={styles.inputText}>
+          {textPost.slice(currentPosition)}
+        </Text>
+      );
+      return <Text>{result}</Text>;
+
+    }
   }
   return (
     <View key={postId} style={styles.postWrap}>

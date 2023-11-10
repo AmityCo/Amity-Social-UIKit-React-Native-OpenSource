@@ -244,7 +244,6 @@ const styles = StyleSheet.create({
      fontSize: 15,
   },
   inputText: {
-
     color: theme.colors.base,
     fontSize: 15,
   },

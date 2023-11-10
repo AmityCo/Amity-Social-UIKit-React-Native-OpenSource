@@ -39,6 +39,7 @@ import {
 import EditCommentModal from '../../../components/EditCommentModal';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../../providers/amity-ui-kit-provider';
+import { IMentionPosition } from '../../../screens/CreatePost';
 
 export interface IComment {
   commentId: string;
@@ -52,6 +53,8 @@ export interface IComment {
   createdAt: string;
   childrenComment: string[];
   referenceId: string;
+  mentionees?: string[];
+  mentionPosition?: IMentionPosition[]
 }
 export interface ICommentList {
   commentDetail: IComment;
@@ -72,7 +75,9 @@ export default function CommentList({
     reactions,
     myReactions,
     childrenComment,
-    editedAt
+    editedAt,
+    mentionees,
+    mentionPosition
   } = commentDetail;
   const theme = useTheme() as MyMD3Theme;
   const styles = getStyles();
@@ -91,7 +96,40 @@ export default function CommentList({
   const [editCommentModal, setEditCommentModal] = useState<boolean>(false)
   const [isEditComment, setIsEditComment] = useState<boolean>(false)
   const slideAnimation = useRef(new Animated.Value(0)).current;
+  const [mentionUsers, setMentionUsers] = useState<UserInterface[]>([])
+  const [commentMentionPosition, setCommentMentionPosition] = useState<IMentionPosition[]>([])
+  console.log('commentMentionPosition:', commentMentionPosition)
 
+  const queryUserList = async () => {
+    const userList = await Promise.all(mentionees.map(async (item: string) => {
+      const { userObject } = await getAmityUser(item);
+      let formattedUserObject: UserInterface;
+
+      formattedUserObject = {
+        userId: userObject.data.userId,
+        displayName: userObject.data.displayName,
+        avatarFileId: userObject.data.avatarFileId,
+      };
+
+      return formattedUserObject
+    }))
+    if(userList){
+      setMentionUsers(userList)
+    }
+
+  }
+  useEffect(() => {
+    if (mentionees?.length > 0) {
+      queryUserList()
+    }
+  }, [mentionees])
+
+  useEffect(() => {
+  if(mentionPosition){
+    setCommentMentionPosition(mentionPosition)
+  }
+  }, [mentionPosition])
+  
   const openModal = () => {
     setIsVisible(true);
   };
@@ -175,6 +213,7 @@ export default function CommentList({
             createdAt: item.createdAt,
             childrenComment: item.children,
             referenceId: item.referenceId,
+            mentionPosition: item.metadata.mentioned
           };
         })
       );
@@ -263,6 +302,43 @@ export default function CommentList({
   const onCloseEditCommentModal = () => {
     setEditCommentModal(false)
   }
+  const renderTextWithMention = () => {
+
+    if (textComment.length === 0) {
+      return <Text style={styles.inputText}>{textComment}</Text>
+    } else {
+      let currentPosition = 0;
+      const result = [];
+
+      commentMentionPosition.forEach(({ index, length }, i) => {
+        // Add non-highlighted text before the mention
+        result.push(
+          <Text key={`nonHighlighted-${i}`} style={styles.inputText}>
+            {textComment.slice(currentPosition, index)}
+          </Text>
+        );
+
+        // Add highlighted text
+        result.push(
+          <Text key={`highlighted-${i}`} style={styles.mentionText}>
+            {textComment.slice(index, index + length)}
+          </Text>
+        );
+
+        // Update currentPosition for the next iteration
+        currentPosition = index + length;
+      });
+
+      // Add any remaining non-highlighted text after the mentions
+      result.push(
+        <Text key="nonHighlighted-last" style={styles.inputText}>
+          {textComment.slice(currentPosition)}
+        </Text>
+      );
+      return <Text>{result}</Text>;
+
+    }
+  }
   return (
     <View
       key={commentId}
@@ -303,7 +379,8 @@ export default function CommentList({
 
           </View>
           <View style={styles.commentBubble}>
-            <Text style={styles.commentText}>{textComment}</Text>
+          {textComment && renderTextWithMention()}
+            {/* <Text style={styles.commentText}>{textComment}</Text> */}
           </View>
           <View style={styles.actionSection}>
             <TouchableOpacity
