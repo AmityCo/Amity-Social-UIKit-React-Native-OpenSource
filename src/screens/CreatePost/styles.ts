@@ -50,11 +50,13 @@ export const getStyles = () => {
       backgroundColor: 'transparent',
       fontSize: 15,
       marginHorizontal: 3,
-      color: 'transparent',
       zIndex: 999,
       paddingVertical: 5,
 
       // Additional styles if needed
+    },
+    transparentText:{
+      color: 'transparent',
     },
     inputContainer: {
       flex: 1,

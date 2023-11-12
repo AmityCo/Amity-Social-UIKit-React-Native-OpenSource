@@ -41,7 +41,7 @@ import PostListForDetailPage from '../../components/Social/PostListForDetailPage
 import { ISearchItem } from '../../components/SearchItem';
 import MentionPopup from '../../components/MentionPopup';
 import { IMentionPosition } from '../CreatePost';
-
+import _ from 'lodash';
 
 
 const PostDetail = () => {
@@ -84,11 +84,8 @@ const PostDetail = () => {
   const { postList } = useSelector((state: RootState) => state.globalFeed)
 
   const [isShowMention, setIsShowMention] = useState<boolean>(false)
-  console.log('isShowMention:', isShowMention)
   const [mentionNames, setMentionNames] = useState<ISearchItem[]>([])
-  console.log('mentionNames:', mentionNames)
   const [currentSearchUserName, setCurrentSearchUserName] = useState<string>()
-  console.log('currentSearchUserName:', currentSearchUserName)
   const [cursorIndex, setCursorIndex] = useState<number>(0)
   const [mentionsPosition, setMentionsPosition] = useState<IMentionPosition[]>([])
 
@@ -98,6 +95,18 @@ const PostDetail = () => {
   //   }
 
   // }, [route.params])
+  useEffect(() => {
+    const checkMentionNames = mentionNames.filter((item) => {
+
+      return inputMessage.includes(item.displayName)
+    })
+    const checkMentionPosition = mentionsPosition.filter((item) => {
+
+      return inputMessage.includes(item.displayName)
+    })
+    setMentionNames(checkMentionNames)
+    setMentionsPosition(checkMentionPosition)
+  }, [inputMessage])
 
   const onBackPress = () => {
     // navigation.navigate('Home', { postIdCallBack: postData.postId })
@@ -117,7 +126,6 @@ const PostDetail = () => {
     const unsubscribePost = PostRepository.getPost(
       postId,
       async ({ data }) => {
-        console.log('data========:', data)
         setPostCollection(data);
       }
     );
@@ -174,7 +182,6 @@ const PostDetail = () => {
   }
   useEffect(() => {
     if (postCollection) {
-      console.log('postCollection:', postCollection)
       formattedPostCollection()
       subscribeTopic(getPostTopic(postCollection));
     }
@@ -269,7 +276,7 @@ const PostDetail = () => {
             childrenComment: item.children,
             referenceId: item.referenceId,
             mentionPosition: item?.metadata?.mentioned
-            
+
           };
         })
       );
@@ -303,6 +310,8 @@ const PostDetail = () => {
     setInputMessage('');
     await createComment(inputMessage, postId, mentionNames?.map(item => item.targetId), mentionsPosition);
     setInputMessage('');
+    setMentionNames([])
+    setMentionsPosition([])
   };
   const onDeleteComment = async (commentId: string) => {
     const isDeleted = await deleteCommentById(commentId);
@@ -319,20 +328,12 @@ const PostDetail = () => {
     console.log('post:', post)
     // dispatch(updateByPostId({ postId: post.postId, postDetail: post }))
 
-
-
   }
-
 
   const handleSelectionChange = (event) => {
     setCursorIndex(event.nativeEvent.selection.start);
   };
-  function tokenizeMentions(text: string, mentions: string[]): string[] {
-    const regex = new RegExp(`(@(${mentions.join('|')}))\\b|\\S+`, 'gi');
-    const tokens = text.match(regex) || [];
 
-    return tokens;
-  }
   const onSelectUserMention = (user: ISearchItem) => {
     const textAfterCursor: string = inputMessage.substring(cursorIndex, inputMessage.length + 1)
     const newTextAfterReplacement = inputMessage.slice(0, cursorIndex - currentSearchUserName.length) + user.displayName + inputMessage.slice(cursorIndex, inputMessage.length);
@@ -347,6 +348,7 @@ const PostDetail = () => {
   useEffect(() => {
     checkMention(inputMessage)
   }, [inputMessage])
+
   const checkMention = (inputString: string) => {
     // Check if "@" is at the first letter
     const startsWithAt = /^@/.test(inputString);
@@ -375,44 +377,41 @@ const PostDetail = () => {
 
     }
   }, [cursorIndex])
-  const renderTextWithMention = () => {
 
+
+  const RenderTextWithMention = () => {
     if (mentionsPosition.length === 0) {
-      return <Text style={styles.inputText}>{inputMessage}</Text>
-    } else {
-      let currentPosition = 0;
-      const result = [];
-  
-      mentionsPosition.forEach(({ index, length }, i) => {
+      return <Text style={styles.inputText}>{inputMessage}</Text>;
+    }
+
+    let currentPosition = 0;
+    const result: (string | JSX.Element)[][] = mentionsPosition.map(
+      ({ index, length }, i) => {
         // Add non-highlighted text before the mention
-        result.push(
-          <Text key={`nonHighlighted-${i}`} style={styles.inputText}>
-            {inputMessage.slice(currentPosition, index)}
-          </Text>
-        );
-  
+        const nonHighlightedText = inputMessage.slice(currentPosition, index);
+
         // Add highlighted text
-        result.push(
+        const highlightedText = (
           <Text key={`highlighted-${i}`} style={styles.mentionText}>
             {inputMessage.slice(index, index + length)}
           </Text>
         );
-  
+
         // Update currentPosition for the next iteration
         currentPosition = index + length;
-      });
-  
-      // Add any remaining non-highlighted text after the mentions
-      result.push(
-        <Text key="nonHighlighted-last" style={styles.inputText}>
-          {inputMessage.slice(currentPosition)}
-        </Text>
-      );
-      console.log('result:', result)
-      return <Text>{result}</Text>;
 
-    }
-  }
+        // Return an array of non-highlighted and highlighted text
+        return [nonHighlightedText, highlightedText];
+      }
+    );
+
+    // Add any remaining non-highlighted text after the mentions
+    const remainingText = inputMessage.slice(currentPosition);
+    result.push([<Text key="nonHighlighted-last" style={styles.inputText}>{remainingText}</Text>]);
+
+    // Flatten the array and render
+    return <Text style={styles.inputText}>{result.flat()}</Text>;
+  };
   return (
     loading ? <View>
 
@@ -448,15 +447,18 @@ const PostDetail = () => {
             <TextInput
               multiline
               placeholder="Say something nice..."
-              style={styles.textInput}
+              style={mentionNames.length > 0 ?[styles.textInput, styles.transparentText]:styles.textInput}
               value={inputMessage}
               onChangeText={(text) => setInputMessage(text)}
               placeholderTextColor={theme.colors.baseShade3}
               onSelectionChange={handleSelectionChange}
             />
-            <View style={styles.overlay}>
-              {renderTextWithMention()}
-            </View>
+            {mentionNames.length > 0 && 
+              <View style={styles.overlay}>
+                {/* {renderTextWithMention()} */}
+                <RenderTextWithMention />
+              </View>}
+
           </View>
 
 

@@ -119,7 +119,7 @@ export default function PostList({
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const dispatch = useDispatch()
   const [mentionUsers, setMentionUsers] = useState<UserInterface[]>([])
-  const [mentionsPosition, setMentionsPosition] = useState<IMentionPosition[]>([])
+  const [mentionPositionArr, setMentionsPositionArr] = useState<IMentionPosition[]>([])
 
   const { updateByPostId } = globalFeedSlice.actions
   const { updatePostDetail } = postDetailSlice.actions
@@ -168,7 +168,7 @@ export default function PostList({
 
   useEffect(() => {
     if(mentionPosition){
-      setMentionsPosition(mentionPosition)
+      setMentionsPositionArr(mentionPosition)
     }
 
   }, [mentionPosition])
@@ -498,43 +498,44 @@ export default function PostList({
     setIsEdit(true)
   }
 
-  const renderTextWithMention = () => {
-
-    if (textPost.length === 0) {
-      return <Text style={styles.inputText}>{textPost}</Text>
-    } else {
-      let currentPosition = 0;
-      const result = [];
-
-      mentionsPosition.forEach(({ index, length }, i) => {
+  const RenderTextWithMention = () => {
+    if (mentionPositionArr.length === 0) {
+      return <Text style={styles.inputText}>{textPost}</Text>;
+    }
+    const mentionClick = (userId: string) => {
+      navigation.navigate('UserProfile', {
+        userId: userId
+      });
+    };
+    let currentPosition = 0;
+    const result: (string | JSX.Element)[][] = mentionPositionArr.map(
+      ({ index, length, userId }, i) => {
         // Add non-highlighted text before the mention
-        result.push(
-          <Text key={`nonHighlighted-${i}`} style={styles.inputText}>
-            {textPost.slice(currentPosition, index)}
-          </Text>
-        );
+        const nonHighlightedText = textPost.slice(currentPosition, index);
 
         // Add highlighted text
-        result.push(
-          <Text key={`highlighted-${i}`} style={styles.mentionText}>
+        const highlightedText = (
+          <Text onPress={() => mentionClick(userId)} key={`highlighted-${i}`} style={styles.mentionText}>
             {textPost.slice(index, index + length)}
           </Text>
         );
 
         // Update currentPosition for the next iteration
         currentPosition = index + length;
-      });
 
-      // Add any remaining non-highlighted text after the mentions
-      result.push(
-        <Text key="nonHighlighted-last" style={styles.inputText}>
-          {textPost.slice(currentPosition)}
-        </Text>
-      );
-      return <Text>{result}</Text>;
+        // Return an array of non-highlighted and highlighted text
+        return [nonHighlightedText, highlightedText];
+      }
+    );
 
-    }
-  }
+    // Add any remaining non-highlighted text after the mentions
+    const remainingText = textPost.slice(currentPosition);
+    result.push([<Text key="nonHighlighted-last" style={styles.inputText}>{remainingText}</Text>]);
+
+    // Flatten the array and render
+    return <Text style={styles.inputText}>{result.flat()}</Text>;
+  };
+
   return (
     <View key={postId} style={styles.postWrap}>
       <View style={styles.headerSection}>
@@ -592,7 +593,7 @@ export default function PostList({
       <View>
         <View style={styles.bodySection}>
           {/* {textPost && <Text style={styles.bodyText}>{textPost}</Text>} */}
-          {textPost && renderTextWithMention()}
+          {textPost && <RenderTextWithMention/>}
           {memoizedMediaSection}
           {/* {childrenPosts.length > 0 && (
             <View style={styles.mediaWrap}>

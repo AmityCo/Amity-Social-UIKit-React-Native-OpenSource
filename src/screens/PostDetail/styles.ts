@@ -64,19 +64,23 @@ export const getStyles = () => {
       backgroundColor: 'transparent',
       fontSize: 15,
       marginHorizontal: 3,
-      color: 'transparent',
-      zIndex: 999,
-      paddingVertical: 10,
+      zIndex: 999, 
+      paddingTop: 0,
       width: '100%',
       borderRadius: 20,
-      paddingHorizontal: 0,
 
       // Additional styles if needed
+    },
+    transparentText:{
+      color: 'transparent',
     },
     inputContainer: {
       flex: 1,
       justifyContent: 'center',
       alignItems: 'flex-start',
+      paddingVertical:10,
+      backgroundColor: theme.colors.secondary,
+      borderRadius: 20,
     },
     mentionText: {
       color: theme.colors.primary,
@@ -85,15 +89,14 @@ export const getStyles = () => {
     inputText: {
       color: theme.colors.base,
       fontSize: 15,
+      letterSpacing: 0, 
     },
     overlay: {
       ...StyleSheet.absoluteFillObject, // Take up the whole screen
       justifyContent: 'center',
       alignItems: 'flex-start',
       paddingHorizontal: 3,
-      backgroundColor: theme.colors.secondary,
-      borderRadius: 20,
-      paddingVertical: 8
+      paddingVertical: 0
     },
     inputTextOverlayWrap: {
       flexDirection: 'row',

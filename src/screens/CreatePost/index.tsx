@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React, { useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import {
   TouchableOpacity,
   View,
@@ -11,6 +11,7 @@ import {
   KeyboardAvoidingView,
   ScrollView,
   Keyboard,
+  Pressable,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 // import { TextInput } from 'react-native-paper'
@@ -36,7 +37,8 @@ import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import MentionPopup from '../../components/MentionPopup';
 import { ISearchItem } from '../../components/SearchItem';
 import InputWithMention from '../../components/InputWithMention';
-
+import MentionHashtagTextView from "react-native-mention-hashtag-text";
+import { MentionInput, MentionSuggestionsProps } from 'react-native-controlled-mentions'
 export interface IDisplayImage {
   url: string;
   fileId: string | undefined;
@@ -422,28 +424,52 @@ const CreatePost = ({ route }: any) => {
   const handleSelectionChange = (event) => {
     setCursorIndex(event.nativeEvent.selection.start);
   };
+  const suggestions = [
+    {id: '1', name: 'David Tabaka'},
+    {id: '2', name: 'Mary'},
+    {id: '3', name: 'Tony'},
+    {id: '4', name: 'Mike'},
+    {id: '5', name: 'Grey'},
+  ];
+
+  const renderSuggestions: FC<MentionSuggestionsProps> = ({ keyword, onSuggestionPress }) => {
+    if (keyword == null) {
+      return null;
+    }
+
+    return (
+      <View>
+        {suggestions
+          .filter(one => one.name.toLocaleLowerCase().includes(keyword.toLocaleLowerCase()))
+          .map(one => (
+            <Pressable
+              key={one.id}
+              onPress={() => onSuggestionPress(one)}
+
+              style={{ padding: 12 }}
+            >
+              <Text>{one.name}</Text>
+            </Pressable>
+          ))
+        }
+      </View>
+    );
+  };
 
 
-
-
-  const renderTextWithMention = () => {
-
+  const RenderTextWithMention = () => {
     if (mentionsPosition.length === 0) {
-      return <Text style={styles.inputText}>{inputMessage}</Text>
-    } else {
-      let currentPosition = 0;
-      const result = [];
+      return <Text style={styles.inputText}>{inputMessage}</Text>;
+    }
   
-      mentionsPosition.forEach(({ index, length }, i) => {
+    let currentPosition = 0;
+    const result: (string | JSX.Element)[][] = mentionsPosition.map(
+      ({ index, length }, i) => {
         // Add non-highlighted text before the mention
-        result.push(
-          <Text key={`nonHighlighted-${i}`} style={styles.inputText}>
-            {inputMessage.slice(currentPosition, index)}
-          </Text>
-        );
+        const nonHighlightedText = inputMessage.slice(currentPosition, index);
   
         // Add highlighted text
-        result.push(
+        const highlightedText = (
           <Text key={`highlighted-${i}`} style={styles.mentionText}>
             {inputMessage.slice(index, index + length)}
           </Text>
@@ -451,19 +477,36 @@ const CreatePost = ({ route }: any) => {
   
         // Update currentPosition for the next iteration
         currentPosition = index + length;
-      });
   
-      // Add any remaining non-highlighted text after the mentions
-      result.push(
-        <Text key="nonHighlighted-last" style={styles.inputText}>
-          {inputMessage.slice(currentPosition)}
-        </Text>
-      );
-      console.log('result:', result)
-      return <Text>{result}</Text>;
+        // Return an array of non-highlighted and highlighted text
+        return [nonHighlightedText, highlightedText];
+      }
+    );
+  
+    // Add any remaining non-highlighted text after the mentions
+    const remainingText = inputMessage.slice(currentPosition);
+    result.push([<Text key="nonHighlighted-last" style={styles.inputText}>{remainingText}</Text>]);
+  
+    // Flatten the array and render
+    return <Text style={styles.inputText}>{result.flat()}</Text>;
+  };
+  const mentionHashtagClick = (text) => {
+    console.log("Clicked to + " + text);
+  };
 
-    }
-  }
+  useEffect(() => {
+const checkMentionNames = mentionNames.filter((item)=>{
+
+  return inputMessage.includes(item.displayName)
+})
+const checkMentionPosition = mentionsPosition.filter((item)=>{
+
+  return inputMessage.includes(item.displayName)
+})
+setMentionNames(checkMentionNames)
+setMentionsPosition(checkMentionPosition)
+  }, [inputMessage])
+  
   return (
     <View style={styles.AllInputWrap}>
       <KeyboardAvoidingView
@@ -476,16 +519,17 @@ const CreatePost = ({ route }: any) => {
             <TextInput
               multiline
               placeholder="What's going on..."
-              style={styles.textInput}
+              style={mentionNames.length > 0 ?[styles.textInput, styles.transparentText]:styles.textInput}
               value={inputMessage}
               onChangeText={(text) => setInputMessage(text)}
               placeholderTextColor={theme.colors.baseShade3}
               onSelectionChange={handleSelectionChange}
             />
-            <View style={styles.overlay}>
-              {renderTextWithMention()}
-
-            </View>
+           {mentionNames.length > 0 && 
+              <View style={styles.overlay}>
+                {/* {renderTextWithMention()} */}
+                <RenderTextWithMention />
+              </View>}
           </View>
           {/* <InputWithMention /> */}
           <View style={styles.imageContainer}>

@@ -40,6 +40,7 @@ import EditCommentModal from '../../../components/EditCommentModal';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../../providers/amity-ui-kit-provider';
 import { IMentionPosition } from '../../../screens/CreatePost';
+import { useNavigation } from '@react-navigation/native';
 
 export interface IComment {
   commentId: string;
@@ -98,7 +99,7 @@ export default function CommentList({
   const slideAnimation = useRef(new Animated.Value(0)).current;
   const [mentionUsers, setMentionUsers] = useState<UserInterface[]>([])
   const [commentMentionPosition, setCommentMentionPosition] = useState<IMentionPosition[]>([])
-  console.log('commentMentionPosition:', commentMentionPosition)
+  const navigation = useNavigation<any>();
 
   const queryUserList = async () => {
     const userList = await Promise.all(mentionees.map(async (item: string) => {
@@ -113,7 +114,7 @@ export default function CommentList({
 
       return formattedUserObject
     }))
-    if(userList){
+    if (userList) {
       setMentionUsers(userList)
     }
 
@@ -125,11 +126,11 @@ export default function CommentList({
   }, [mentionees])
 
   useEffect(() => {
-  if(mentionPosition){
-    setCommentMentionPosition(mentionPosition)
-  }
+    if (mentionPosition) {
+      setCommentMentionPosition(mentionPosition)
+    }
   }, [mentionPosition])
-  
+
   const openModal = () => {
     setIsVisible(true);
   };
@@ -302,43 +303,43 @@ export default function CommentList({
   const onCloseEditCommentModal = () => {
     setEditCommentModal(false)
   }
-  const renderTextWithMention = () => {
-
-    if (textComment.length === 0) {
-      return <Text style={styles.inputText}>{textComment}</Text>
-    } else {
-      let currentPosition = 0;
-      const result = [];
-
-      commentMentionPosition.forEach(({ index, length }, i) => {
+  const RenderTextWithMention = () => {
+    if (commentMentionPosition.length === 0) {
+      return <Text style={styles.inputText}>{textComment}</Text>;
+    }
+    const mentionClick = (userId: string) => {
+      navigation.navigate('UserProfile', {
+        userId: userId
+      });
+    };
+    let currentPosition = 0;
+    const result: (string | JSX.Element)[][] = commentMentionPosition.map(
+      ({ index, length, userId }, i) => {
         // Add non-highlighted text before the mention
-        result.push(
-          <Text key={`nonHighlighted-${i}`} style={styles.inputText}>
-            {textComment.slice(currentPosition, index)}
-          </Text>
-        );
+        const nonHighlightedText = textComment.slice(currentPosition, index);
 
         // Add highlighted text
-        result.push(
-          <Text key={`highlighted-${i}`} style={styles.mentionText}>
+        const highlightedText = (
+          <Text onPress={() => mentionClick(userId)} key={`highlighted-${i}`} style={styles.mentionText}>
             {textComment.slice(index, index + length)}
           </Text>
         );
 
         // Update currentPosition for the next iteration
         currentPosition = index + length;
-      });
 
-      // Add any remaining non-highlighted text after the mentions
-      result.push(
-        <Text key="nonHighlighted-last" style={styles.inputText}>
-          {textComment.slice(currentPosition)}
-        </Text>
-      );
-      return <Text>{result}</Text>;
+        // Return an array of non-highlighted and highlighted text
+        return [nonHighlightedText, highlightedText];
+      }
+    );
 
-    }
-  }
+    // Add any remaining non-highlighted text after the mentions
+    const remainingText = textComment.slice(currentPosition);
+    result.push([<Text key="nonHighlighted-last" style={styles.inputText}>{remainingText}</Text>]);
+
+    // Flatten the array and render
+    return <Text style={styles.inputText}>{result.flat()}</Text>;
+  };
   return (
     <View
       key={commentId}
@@ -379,7 +380,7 @@ export default function CommentList({
 
           </View>
           <View style={styles.commentBubble}>
-          {textComment && renderTextWithMention()}
+            {textComment && <RenderTextWithMention />}
             {/* <Text style={styles.commentText}>{textComment}</Text> */}
           </View>
           <View style={styles.actionSection}>
