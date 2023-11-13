@@ -17,6 +17,10 @@ import { PostRepository } from '@amityco/ts-sdk-react-native';
 import type { FeedRefType } from '../CommunityHome';
 import { deletePostById } from '../../providers/Social/feed-sdk';
 import { amityPostsFormatter } from '../../util/postDataFormatter';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
+import feedSlice from '../../redux/slices/feedSlice';
+import globalFeedSlice from '../../redux/slices/globalfeedSlice';
 
 interface IFeed {
   targetId: string;
@@ -26,16 +30,18 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
 
   const styles = getStyles();
   const { client } = useAuth();
-  const [postData, setPostData] =
-    useState<Amity.LiveCollection<Amity.Post<any>>>();
-  const [postList, setPostList] = useState<IPost[]>([]);
+  const [postData, setPostData] = useState<Amity.LiveCollection<Amity.Post<any>>>();
+  const { postList } = useSelector((state: RootState) => state.feed)
+  const { clearFeed, updateFeed } = feedSlice.actions
+  // const [postList, setPostList] = useState<IPost[]>([]);
   console.log('postList commu:', postList)
   const { data: posts, onNextPage, hasNextPage } = postData ?? {};
   const flatListRef = useRef(null);
+  const dispatch = useDispatch()
 
   async function getFeed(): Promise<void> {
     const unsubscribe = PostRepository.getPosts(
-      { targetId, targetType, sortBy: 'lastCreated' },
+      { targetId, targetType, sortBy: 'lastCreated', limit: 10 },
       (data) => {
         setPostData(data);
       }
@@ -51,24 +57,24 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
   useEffect(() => {
     return () => {
       setPostData(undefined);
-      setPostList([]);
+      clearFeed()
     };
   }, []);
   useEffect(() => {
     getFeed();
   }, [client]);
 
-  const getPostList = useCallback(async () => {
-    if (posts && posts.length > 0) {
-      const formattedPostList = await amityPostsFormatter(posts);
-      console.log('formattedPostList 555:', formattedPostList[0].mentionPostion)
-      setPostList([...formattedPostList]);
+  const getPostList = async () => {
+    if (posts.length > 0) {
+      const formattedPostList = await amityPostsFormatter(posts)
+      console.log('formattedPostList:', formattedPostList)
+      dispatch(updateFeed(formattedPostList))
+      // setPostList((prev) => [...prev, ...formattedPostList]);
     }
-  }, [posts]);
+  }
+
   useEffect(() => {
-    if (posts) {
-      getPostList();
-    }
+    getPostList();
   }, [posts]);
 
   useImperativeHandle(ref, () => ({
@@ -78,25 +84,22 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
   const onDeletePost = async (postId: string) => {
     const isDeleted = await deletePostById(postId);
     if (isDeleted) {
-      const prevPostList: IPost[] = [...postList];
-      const updatedPostList: IPost[] = prevPostList.filter(
-        (item) => item.postId !== postId
-      );
-      setPostList(updatedPostList);
+      // const prevPostList: IPost[] = [...postList];
+      // const updatedPostList: IPost[] = prevPostList.filter(
+      //   (item) => item.postId !== postId
+      // );
+      // setPostList(updatedPostList);
     }
   };
   return (
     <View style={styles.feedWrap}>
       <FlatList
         data={postList}
-        renderItem={({ item }) => (
-          <PostList onDelete={onDeletePost} postDetail={item} />
+        renderItem={({ item, index }) => (
+          <PostList onDelete={onDeletePost} postDetail={item} isGlobalfeed={false} postIndex={index} />
         )}
         keyExtractor={(item) => item.postId.toString()}
-        onEndReachedThreshold={0.8}
-        onEndReached={handleLoadMore}
-        ref={flatListRef}
-        scrollEnabled={false}
+        extraData={postList}
       />
     </View>
   );

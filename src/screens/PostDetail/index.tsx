@@ -52,10 +52,12 @@ const PostDetail = () => {
 
   const {
     postId,
-    postIndex
+    postIndex,
+    isFromGlobalfeed
   } = route.params;
-
+  console.log('postIndex:', postIndex)
   console.log('postId:', postId)
+  console.log('isFromGlobalfeed:', isFromGlobalfeed)
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
   const [commentList, setCommentList] = useState<IComment[]>([]);
@@ -81,7 +83,8 @@ const PostDetail = () => {
   // console.log('currentPostdetail:', currentPostdetail)
   // console.log('currentIndex:', currentIndex)
   // console.log('postList:', postList)
-  const { postList } = useSelector((state: RootState) => state.globalFeed)
+  const { postList: postListGlobal } = useSelector((state: RootState) => state.globalFeed)
+  const { postList: postListFeed } = useSelector((state: RootState) => state.feed)
 
   const [isShowMention, setIsShowMention] = useState<boolean>(false)
   const [mentionNames, setMentionNames] = useState<ISearchItem[]>([])
@@ -230,6 +233,7 @@ const PostDetail = () => {
   }
 
   useEffect(() => {
+    const postList = isFromGlobalfeed ? postListGlobal : postListFeed
     if (communityObject || userObject) {
       subscribeCommentTopic(postList[postIndex]?.targetType as string);
     }
@@ -238,6 +242,7 @@ const PostDetail = () => {
 
   useEffect(() => {
 
+    const postList = isFromGlobalfeed ? postListGlobal : postListFeed
     if (postList[postIndex] && postList[postIndex].targetType === 'community') {
       CommunityRepository.getCommunity(postList[postIndex].targetId, ({ data: community }) => {
         setCommunityObject(community)
@@ -425,6 +430,7 @@ const PostDetail = () => {
           <PostList
             onChange={onPostChange}
             postDetail={currentPostdetail as IPost}
+            isGlobalfeed={isFromGlobalfeed}
           />
 
           <View style={styles.commentListWrap}>
@@ -447,13 +453,13 @@ const PostDetail = () => {
             <TextInput
               multiline
               placeholder="Say something nice..."
-              style={mentionNames.length > 0 ?[styles.textInput, styles.transparentText]:styles.textInput}
+              style={mentionNames.length > 0 ? [styles.textInput, styles.transparentText] : styles.textInput}
               value={inputMessage}
               onChangeText={(text) => setInputMessage(text)}
               placeholderTextColor={theme.colors.baseShade3}
               onSelectionChange={handleSelectionChange}
             />
-            {mentionNames.length > 0 && 
+            {mentionNames.length > 0 &&
               <View style={styles.overlay}>
                 {/* {renderTextWithMention()} */}
                 <RenderTextWithMention />

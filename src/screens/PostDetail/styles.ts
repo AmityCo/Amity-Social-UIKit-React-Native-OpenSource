@@ -79,6 +79,7 @@ export const getStyles = () => {
       justifyContent: 'center',
       alignItems: 'flex-start',
       paddingVertical:10,
+      paddingHorizontal:12,
       backgroundColor: theme.colors.secondary,
       borderRadius: 20,
     },

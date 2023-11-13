@@ -1,11 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit'
 
 import globalFeedSlice from '../slices/globalfeedSlice'
+import feedSlice from '../slices/feedSlice'
 import postDetailSlice from '../slices/postDetailSlice'
 export const store = configureStore({
   reducer: {
     globalFeed: globalFeedSlice.reducer,
-    postDetail: postDetailSlice.reducer
+    postDetail: postDetailSlice.reducer,
+    feed: feedSlice.reducer
   },
 })
 

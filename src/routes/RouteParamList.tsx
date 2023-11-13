@@ -1,8 +1,4 @@
-import type {
-  IPost,
-  IVideoPost,
-  MediaUri,
-} from '../components/Social/PostList';
+
 
 export type RootStackParamList = {
   Home: { postIdCallBack?: string };
@@ -26,6 +22,7 @@ export type RootStackParamList = {
   PostDetail: {
     postId: string;
     postIndex: number;
+    isFromGlobalfeed?: boolean;
     // initVideoPosts?: IVideoPost[];
     // initImagePosts?: string[];
     // initVideoPostsFullSize?: MediaUri[];

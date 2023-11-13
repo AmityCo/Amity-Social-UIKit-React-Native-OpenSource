@@ -59,6 +59,7 @@ import globalFeedSlice from '../../../redux/slices/globalfeedSlice';
 import { RootState } from '../../../redux/store';
 import { getAmityUser } from '../../../providers/user-provider';
 import { IMentionPosition } from '../../../screens/CreatePost';
+import feedSlice from '../../../redux/slices/feedSlice';
 
 export interface IPost {
   postId: string;
@@ -81,7 +82,8 @@ export interface IPostList {
   onDelete?: (postId: string) => void;
   onChange?: (postDetail: IPost) => void;
   postDetail: IPost;
-  postIndex?: number
+  postIndex?: number;
+  isGlobalfeed?: boolean
 }
 export interface MediaUri {
   uri: string;
@@ -97,6 +99,7 @@ export default function PostList({
   postIndex,
   onDelete,
   onChange,
+  isGlobalfeed = true
 
 }: IPostList) {
   const [postData, setPostData] = useState<IPost>(postDetail)
@@ -108,7 +111,6 @@ export default function PostList({
   const [isLike, setIsLike] = useState<boolean>(false);
   const [likeReaction, setLikeReaction] = useState<number>(0);
   const [communityName, setCommunityName] = useState('');
-  const [imagePosts, setImagePosts] = useState<string[]>([]);
   const [textPost, setTextPost] = useState<string>()
 
   const [isVisible, setIsVisible] = useState<boolean>(false);
@@ -118,10 +120,11 @@ export default function PostList({
   const slideAnimation = useRef(new Animated.Value(0)).current;
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const dispatch = useDispatch()
-  const [mentionUsers, setMentionUsers] = useState<UserInterface[]>([])
+
   const [mentionPositionArr, setMentionsPositionArr] = useState<IMentionPosition[]>([])
 
-  const { updateByPostId } = globalFeedSlice.actions
+  const { updateByPostId: updateByPostIdGlobalFeed } = globalFeedSlice.actions
+  const { updateByPostId } = feedSlice.actions
   const { updatePostDetail } = postDetailSlice.actions
   const {
     postId,
@@ -135,39 +138,13 @@ export default function PostList({
     targetId,
     childrenPosts = [],
     editedAt,
-    mentionees,
     mentionPosition
   } = postData ?? {};
 
 
 
-  const queryUserList = async () => {
-    const userList = await Promise.all(mentionees.map(async (item: string) => {
-      const { userObject } = await getAmityUser(item);
-      let formattedUserObject: UserInterface;
-
-      formattedUserObject = {
-        userId: userObject.data.userId,
-        displayName: userObject.data.displayName,
-        avatarFileId: userObject.data.avatarFileId,
-      };
-
-      return formattedUserObject
-    }))
-    if (userList) {
-      setMentionUsers(userList)
-    }
-
-
-  }
   useEffect(() => {
-    if (mentionees?.length > 0) {
-      queryUserList()
-    }
-  }, [mentionees])
-
-  useEffect(() => {
-    if(mentionPosition){
+    if (mentionPosition) {
       setMentionsPositionArr(mentionPosition)
     }
 
@@ -177,7 +154,7 @@ export default function PostList({
   useEffect(() => {
 
     setPostData(postDetail)
-    console.log('postDetail:', postDetail)
+    // console.log('postDetail:', postDetail)
 
   }, [postDetail])
 
@@ -214,26 +191,6 @@ export default function PostList({
 
 
 
-  // useEffect(() => {
-  //   if (imagePosts.length > 0) {
-  //     const updatedUrls: MediaUri[] = imagePosts.map((url: string) => {
-  //       return {
-  //         uri: url.replace('size=medium', 'size=large')
-  //       }
-  //     })
-  //     setImagePostsFullSize(updatedUrls)
-
-  //   }
-  //   if (videoPosts.length > 0) {
-  //     const updatedUrls: MediaUri[] = videoPosts.map((item: IVideoPost) => {
-  //       return {
-  //         uri: `https://api.${apiRegion}.amity.co/api/v3/files/${item?.thumbnailFileId}/download?size=large`
-  //       }
-  //     })
-  //     setVideoPostsFullSize(updatedUrls)
-  //   }
-
-  // }, [imagePosts, videoPosts])
 
   const checkIsReport = async () => {
     const isReport = await isReportTarget('post', postId);
@@ -327,8 +284,12 @@ export default function PostList({
       let post: IPost = { ...postDetail }
       post.reactionCount = likeReaction - 1 > 0 ? { like: likeReaction - 1 } : {}
       post.myReactions = []
-      // setPostData(post)
-      dispatch(updateByPostId({ postId: postId, postDetail: post }))
+      if (isGlobalfeed) {
+        dispatch(updateByPostIdGlobalFeed({ postId: postId, postDetail: post }))
+      } else {
+        console.log('enter this remove like =======')
+        dispatch(updateByPostId({ postId: postId, postDetail: post }))
+      }
 
       await removePostReaction(postId, 'like');
     } else {
@@ -336,8 +297,13 @@ export default function PostList({
       let post: IPost = { ...postDetail }
       post.reactionCount = { like: likeReaction + 1 }
       post.myReactions = ["like"]
-      // setPostData(post)
-      dispatch(updateByPostId({ postId: post.postId, postDetail: post }))
+      if (isGlobalfeed) {
+        dispatch(updateByPostIdGlobalFeed({ postId: postId, postDetail: post }))
+      } else {
+        console.log('enter this add like =======')
+        dispatch(updateByPostId({ postId: post.postId, postDetail: post }))
+      }
+
       await addPostReaction(postId, 'like');
     }
   }
@@ -349,17 +315,17 @@ export default function PostList({
 
 
   function onClickComment() {
-    // const index = postList.findIndex(item => item.postId === postDetail.postId)
-    // dispatch(updateCurrentIndex(index))
+
     dispatch(updatePostDetail({
       ...postDetail,
       myReactions: isLike ? ["like"] : [],
       reactionCount: { like: likeReaction },
-      commentsCount: commentsCount
+      commentsCount: commentsCount,
     }))
     navigation.navigate('PostDetail', {
       postId: postDetail.postId,
-      postIndex: postIndex
+      postIndex: postIndex,
+      isFromGlobalfeed: isGlobalfeed
     });
   }
   const handleDisplayNamePress = () => {
@@ -474,25 +440,9 @@ export default function PostList({
     setEditPostModalVisible(true)
 
   }
-  const memoizedMediaSection = useMemo(() => {
-    return (
-      childrenPosts.length > 0 &&
-      <View style={styles.mediaWrap}>
-        <MediaSection childrenPosts={childrenPosts} />
-      </View>
-    );
-  }, [postDetail]);
+
   const handleOnFinishEdit = (postData: { text: string, mediaUrls: string[] | IVideoPost[] }, type: string) => {
 
-
-    if (type === 'image') {
-      setImagePosts(postData.mediaUrls as string[])
-
-    }
-    else if (type === 'video') {
-      const videoPostsCallBack: unknown[] = postData.mediaUrls
-      setVideoPosts(videoPostsCallBack as IVideoPost[])
-    }
     setTextPost(postData.text)
     setEditPostModalVisible(false)
     setIsEdit(true)
@@ -536,6 +486,9 @@ export default function PostList({
     return <Text style={styles.inputText}>{result.flat()}</Text>;
   };
 
+  const memoizedMediaSection = useMemo(() => {
+    return <MediaSection childrenPosts={childrenPosts} />;
+  }, [childrenPosts]);
   return (
     <View key={postId} style={styles.postWrap}>
       <View style={styles.headerSection}>
@@ -593,13 +546,12 @@ export default function PostList({
       <View>
         <View style={styles.bodySection}>
           {/* {textPost && <Text style={styles.bodyText}>{textPost}</Text>} */}
-          {textPost && <RenderTextWithMention/>}
-          {memoizedMediaSection}
-          {/* {childrenPosts.length > 0 && (
+          {textPost && <RenderTextWithMention />}
+          {childrenPosts.length > 0 && (
             <View style={styles.mediaWrap}>
-              <MediaSection childrenPosts={childrenPosts} />
+              {memoizedMediaSection}
             </View>
-          )} */}
+          )}
         </View>
 
         {likeReaction === 0 && commentsCount === 0 ? (

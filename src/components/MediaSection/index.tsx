@@ -79,7 +79,11 @@ export default function MediaSection({ childrenPosts }: IMediaSection) {
           );
           // dispatch(updateLoading(false))
         } else if (item.dataType === 'video') {
-          setVideoPosts((prev) => [...prev, item.data]);
+          setVideoPosts((prev) => {
+            return !prev.includes(item.data) ? [...prev, item.data] : [...prev]
+          }
+          );
+          // setVideoPosts((prev) => [...prev, item.data]);
           // dispatch(updateLoading(false))
         }
       });

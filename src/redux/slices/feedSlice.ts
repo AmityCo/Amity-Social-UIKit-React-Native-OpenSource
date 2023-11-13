@@ -1,37 +1,27 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { IPost } from '../../components/Social/PostList';
 
-interface GlobalFeedState {
+interface FeedState {
     postList: IPost[];
 }
-const initialState: GlobalFeedState = {
+const initialState: FeedState = {
     postList: [],
 };
 
 
-const globalFeedSlice = createSlice({
-    name: 'globalFeed',
+const feedSlice = createSlice({
+    name: 'feed',
     initialState,
     reducers: {
-        updateGlobalFeed: (state, action: PayloadAction<IPost[]>) => {
-            state.postList = [...state.postList, ...action.payload]
+        updateFeed: (state, action: PayloadAction<IPost[]>) => {
+            state.postList = [...action.payload]
         },
 
         updateByPostId:(state, action: PayloadAction<{postId: string; postDetail: IPost}>)=>{
             const { postId, postDetail } = action.payload;
 
             const index = state.postList.findIndex(item => item.postId === postId)
-            // const updatedPostList = state.postList.map((item: IPost) => {
-            //     if (item.postId === postId) {
-          
-            //       return postDetail
-            //     } else {
-            //       return item
-            //     }
-            //   })
-
               state.postList[index] = postDetail
-
 
         },
         deleteByPostId:(state, action: PayloadAction<{postId: string}>)=>{
@@ -51,4 +41,4 @@ const globalFeedSlice = createSlice({
 })
 
 // const {actions: globalFeedActions, reducer: globalFeedReducer } = globalFeedSlice
-export default globalFeedSlice
+export default feedSlice
