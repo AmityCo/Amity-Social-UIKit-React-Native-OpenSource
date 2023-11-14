@@ -64,22 +64,22 @@ export const getStyles = () => {
       backgroundColor: 'transparent',
       fontSize: 15,
       marginHorizontal: 3,
-      zIndex: 999, 
+      zIndex: 999,
       paddingTop: 0,
       width: '100%',
       borderRadius: 20,
 
       // Additional styles if needed
     },
-    transparentText:{
+    transparentText: {
       color: 'transparent',
     },
     inputContainer: {
       flex: 1,
       justifyContent: 'center',
       alignItems: 'flex-start',
-      paddingVertical:10,
-      paddingHorizontal:12,
+      paddingVertical: 10,
+      paddingHorizontal: 12,
       backgroundColor: theme.colors.secondary,
       borderRadius: 20,
     },
@@ -90,14 +90,13 @@ export const getStyles = () => {
     inputText: {
       color: theme.colors.base,
       fontSize: 15,
-      letterSpacing: 0, 
+      letterSpacing: 0,
     },
     overlay: {
       ...StyleSheet.absoluteFillObject, // Take up the whole screen
       justifyContent: 'center',
       alignItems: 'flex-start',
-      paddingHorizontal: 3,
-      paddingVertical: 0
+      paddingHorizontal: 12,
     },
     inputTextOverlayWrap: {
       flexDirection: 'row',

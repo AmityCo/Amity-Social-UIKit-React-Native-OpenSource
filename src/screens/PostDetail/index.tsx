@@ -1,5 +1,5 @@
 import { type RouteProp, useRoute, useNavigation } from '@react-navigation/native';
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -12,11 +12,10 @@ import {
   FlatList,
   type NativeSyntheticEvent,
   type NativeScrollEvent,
-  Button,
 } from 'react-native';
 
 import type { RootStackParamList } from 'src/routes/RouteParamList';
-import PostList, { IPost, IPostList } from '../../components/Social/PostList';
+import PostList, { IPost } from '../../components/Social/PostList';
 
 import { getStyles } from './styles';
 import type { IComment } from '../../components/Social/CommentList';
@@ -33,11 +32,8 @@ import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import { useTheme } from 'react-native-paper';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import BackButton from '../../components/BackButton';
-import globalFeedSlice from '../../redux/slices/globalfeedSlice';
-import { useDispatch, useSelector } from 'react-redux';
+import {  useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
-import postDetailSlice from '../../redux/slices/postDetailSlice';
-import PostListForDetailPage from '../../components/Social/PostListForDetailPage';
 import { ISearchItem } from '../../components/SearchItem';
 import MentionPopup from '../../components/MentionPopup';
 import { IMentionPosition } from '../CreatePost';
@@ -55,18 +51,15 @@ const PostDetail = () => {
     postIndex,
     isFromGlobalfeed
   } = route.params;
-  console.log('postIndex:', postIndex)
-  console.log('postId:', postId)
-  console.log('isFromGlobalfeed:', isFromGlobalfeed)
+
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
   const [commentList, setCommentList] = useState<IComment[]>([]);
-  console.log('commentList:', commentList)
   const [commentCollection, setCommentCollection] = useState<Amity.LiveCollection<Amity.Comment>>();
   const { data: comments, hasNextPage, onNextPage } = commentCollection ?? {};
-  const [unSubscribeComment, setUnSubscribeComment] = useState<() => void>();
-  console.log('unSubscribeComment:', unSubscribeComment)
-  const [unSubscribePost, setUnSubscribePost] = useState<() => void>();
+  // const [unSubscribeComment, setUnSubscribeComment] = useState<() => void>();
+  // console.log('unSubscribeComment:', unSubscribeComment)
+  // const [unSubscribePost, setUnSubscribePost] = useState<() => void>();
   // console.log('unSubscribePost:', unSubscribePost)
   const [inputMessage, setInputMessage] = useState('');
   const [communityObject, setCommunityObject] = useState<Amity.Community>()
@@ -80,9 +73,7 @@ const PostDetail = () => {
 
   const [loading, setLoading] = useState<boolean>(true)
   const { currentPostdetail } = useSelector((state: RootState) => state.postDetail)
-  // console.log('currentPostdetail:', currentPostdetail)
-  // console.log('currentIndex:', currentIndex)
-  // console.log('postList:', postList)
+
   const { postList: postListGlobal } = useSelector((state: RootState) => state.globalFeed)
   const { postList: postListFeed } = useSelector((state: RootState) => state.feed)
 
@@ -92,12 +83,6 @@ const PostDetail = () => {
   const [cursorIndex, setCursorIndex] = useState<number>(0)
   const [mentionsPosition, setMentionsPosition] = useState<IMentionPosition[]>([])
 
-  // useEffect(() => {
-  //   if (postDetail) {
-  //     setPostData(postDetail)
-  //   }
-
-  // }, [route.params])
   useEffect(() => {
     const checkMentionNames = mentionNames.filter((item) => {
 
@@ -133,7 +118,7 @@ const PostDetail = () => {
       }
     );
     console.log('unSubscribePost:', unsubscribePost)
-    setUnSubscribePost(() => unsubscribePost);
+    // setUnSubscribePost(() => unsubscribePost);
   };
 
   useEffect(() => {
@@ -144,48 +129,39 @@ const PostDetail = () => {
 
   }, [postId])
 
-  // useEffect(() => {
-  //   // setPostData(postList[])
-  //   const index = postList.findIndex(item => item.postId === postId);
-
-  // }, [postList])
 
 
-  const formattedPostCollection = async () => {
-    const item = postCollection
-    const { userObject } = await getAmityUser(item.postedUserId);
-    let formattedUserObject: UserInterface;
+  // const formattedPostCollection = async () => {
+  //   const item = postCollection
+  //   const { userObject } = await getAmityUser(item.postedUserId);
+  //   let formattedUserObject: UserInterface;
 
-    formattedUserObject = {
-      userId: userObject.data.userId,
-      displayName: userObject.data.displayName,
-      avatarFileId: userObject.data.avatarFileId,
-    };
-    const post = {
-      postId: item.postId,
-      data: item.data as Record<string, any>,
-      dataType: item.dataType,
-      myReactions: item.myReactions as string[],
-      reactionCount: item.reactions as Record<string, number>,
-      commentsCount: item.commentsCount,
-      editedAt: item.editedAt,
-      createdAt: item.createdAt,
-      updatedAt: item.updatedAt,
-      targetType: item.targetType,
-      targetId: item.targetId,
-      childrenPosts: item.children,
-      user: formattedUserObject
-
-
-    }
-    // dispatch(updatePostDetail(post))
-    // setPostData(post)
+  //   formattedUserObject = {
+  //     userId: userObject.data.userId,
+  //     displayName: userObject.data.displayName,
+  //     avatarFileId: userObject.data.avatarFileId,
+  //   };
+  //   const post = {
+  //     postId: item.postId,
+  //     data: item.data as Record<string, any>,
+  //     dataType: item.dataType,
+  //     myReactions: item.myReactions as string[],
+  //     reactionCount: item.reactions as Record<string, number>,
+  //     commentsCount: item.commentsCount,
+  //     editedAt: item.editedAt,
+  //     createdAt: item.createdAt,
+  //     updatedAt: item.updatedAt,
+  //     targetType: item.targetType,
+  //     targetId: item.targetId,
+  //     childrenPosts: item.children,
+  //     user: formattedUserObject
 
 
-  }
+  //   }
+
+  // }
   useEffect(() => {
     if (postCollection) {
-      formattedPostCollection()
       subscribeTopic(getPostTopic(postCollection));
     }
   }, [postCollection]);
@@ -216,7 +192,7 @@ const PostDetail = () => {
     }
   };
   function getCommentsByPostId(postId: string) {
-    const unsubscribe = CommentRepository.getComments(
+    CommentRepository.getComments(
       {
         dataTypes: { matchType: 'any', values: ['text', 'image'] },
         referenceId: postId,
@@ -229,7 +205,7 @@ const PostDetail = () => {
         }
       }
     );
-    setUnSubscribeComment(() => unsubscribe);
+
   }
 
   useEffect(() => {
@@ -344,7 +320,7 @@ const PostDetail = () => {
     const newTextAfterReplacement = inputMessage.slice(0, cursorIndex - currentSearchUserName.length) + user.displayName + inputMessage.slice(cursorIndex, inputMessage.length);
     const newInputMessage = newTextAfterReplacement + textAfterCursor
     const position: IMentionPosition = { type: 'user', length: user.displayName.length + 1, index: cursorIndex - 1 - currentSearchUserName.length, userId: user.targetId, displayName: user.displayName }
-    console.log('position:', position)
+
     setInputMessage(newInputMessage)
     setMentionNames(prev => [...prev, user])
     setMentionsPosition(prev => [...prev, position])
@@ -467,15 +443,6 @@ const PostDetail = () => {
 
           </View>
 
-
-
-          {/* <TextInput
-            onChangeText={(text) => setInputMessage(text)}
-            style={styles.input}
-            placeholder="Say something nice..."
-            value={inputMessage}
-            placeholderTextColor={theme.colors.baseShade3}
-          /> */}
           <TouchableOpacity
             disabled={inputMessage.length > 0 ? false : true}
             onPress={handleSend}

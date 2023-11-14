@@ -77,7 +77,6 @@ export default function CommentList({
     myReactions,
     childrenComment,
     editedAt,
-    mentionees,
     mentionPosition
   } = commentDetail;
   const theme = useTheme() as MyMD3Theme;
@@ -91,39 +90,16 @@ export default function CommentList({
 
   const { client, apiRegion } = useAuth();
   const [commentList, setCommentList] = useState<IComment[]>([]);
+  console.log('commentList:', commentList)
   const [textComment, setTextComment] = useState<string>(data.text)
   const [isVisible, setIsVisible] = useState(false);
   const [isReportByMe, setIsReportByMe] = useState<boolean>(false);
   const [editCommentModal, setEditCommentModal] = useState<boolean>(false)
   const [isEditComment, setIsEditComment] = useState<boolean>(false)
   const slideAnimation = useRef(new Animated.Value(0)).current;
-  const [mentionUsers, setMentionUsers] = useState<UserInterface[]>([])
   const [commentMentionPosition, setCommentMentionPosition] = useState<IMentionPosition[]>([])
   const navigation = useNavigation<any>();
 
-  const queryUserList = async () => {
-    const userList = await Promise.all(mentionees.map(async (item: string) => {
-      const { userObject } = await getAmityUser(item);
-      let formattedUserObject: UserInterface;
-
-      formattedUserObject = {
-        userId: userObject.data.userId,
-        displayName: userObject.data.displayName,
-        avatarFileId: userObject.data.avatarFileId,
-      };
-
-      return formattedUserObject
-    }))
-    if (userList) {
-      setMentionUsers(userList)
-    }
-
-  }
-  useEffect(() => {
-    if (mentionees?.length > 0) {
-      queryUserList()
-    }
-  }, [mentionees])
 
   useEffect(() => {
     if (mentionPosition) {

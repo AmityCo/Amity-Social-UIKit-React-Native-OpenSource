@@ -1,23 +1,17 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Image, ImageStyle, StyleProp, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Image, ImageStyle, StyleProp, Text, TouchableWithoutFeedback, View } from 'react-native';
 
-import { useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { SvgXml } from 'react-native-svg';
 
-import { arrowBack, playBtn } from '../../svg/svg-xml-list';
-import { useTheme } from 'react-native-paper';
-import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
-import { getStyle } from 'react-native-svg/lib/typescript/xml';
 import { getStyles } from './styles';
 import useAuth from '../../hooks/useAuth';
 import { IVideoPost, MediaUri } from '../Social/PostList';
 import { getPostById } from '../../providers/Social/feed-sdk';
-import postDetailSlice from '../../redux/slices/postDetailSlice';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import ImageView from '../../components/react-native-image-viewing/dist';
-import { RootState } from 'src/redux/store';
+import { RootState } from '../../redux/store';
+import { playBtn } from '../../svg/svg-xml-list';
 
 interface IMediaSection {
   childrenPosts: string[],
@@ -31,12 +25,14 @@ export default function MediaSection({ childrenPosts }: IMediaSection) {
   const [videoPostsFullSize, setVideoPostsFullSize] = useState<MediaUri[]>([]);
   const [visibleFullImage, setIsVisibleFullImage] = useState<boolean>(false);
   const [imageIndex, setImageIndex] = useState<number>(0);
-  
+
   const styles = getStyles()
   let imageStyle: StyleProp<ImageStyle> | StyleProp<ImageStyle>[] =
     styles.imageLargePost;
   let colStyle: StyleProp<ImageStyle> = styles.col2;
   const { currentPostdetail } = useSelector((state: RootState) => state.postDetail)
+  const { postList: postListGlobal } = useSelector((state: RootState) => state.globalFeed)
+  const { postList } = useSelector((state: RootState) => state.feed)
 
   useEffect(() => {
     setImagePostsFullSize([])
@@ -61,15 +57,16 @@ export default function MediaSection({ childrenPosts }: IMediaSection) {
 
   }, [imagePosts, videoPosts])
 
-  const getPostInfo =  async () => {
+  const getPostInfo = async () => {
     try {
+
       const response = await Promise.all(
+
         childrenPosts.map(async (id) => {
           const { data: post } = await getPostById(id);
           return { dataType: post.dataType, data: post.data };
         })
       );
-
       response.forEach((item) => {
         if (item.dataType === 'image') {
           const url: string = `https://api.${apiRegion}.amity.co/api/v3/files/${item?.data.fileId}/download?size=medium`
@@ -77,14 +74,11 @@ export default function MediaSection({ childrenPosts }: IMediaSection) {
             return !prev.includes(url) ? [...prev, url] : [...prev]
           }
           );
-          // dispatch(updateLoading(false))
         } else if (item.dataType === 'video') {
           setVideoPosts((prev) => {
             return !prev.includes(item.data) ? [...prev, item.data] : [...prev]
           }
           );
-          // setVideoPosts((prev) => [...prev, item.data]);
-          // dispatch(updateLoading(false))
         }
       });
     } catch (error) {
@@ -98,7 +92,7 @@ export default function MediaSection({ childrenPosts }: IMediaSection) {
 
     getPostInfo();
 
-  }, [childrenPosts, currentPostdetail])
+  }, [childrenPosts, currentPostdetail, postList, postListGlobal])
 
   function onClickImage(index: number): void {
     setIsVisibleFullImage(true);
@@ -109,14 +103,13 @@ export default function MediaSection({ childrenPosts }: IMediaSection) {
 
 
 
-
   const RenderMediaPosts = () => {
     const thumbnailFileIds: string[] =
-    videoPosts.length > 0
-      ? videoPosts.map((item) => {
-        return `https://api.${apiRegion}.amity.co/api/v3/files/${item?.thumbnailFileId}/download?size=medium`;
-      })
-      : [];
+      videoPosts.length > 0
+        ? videoPosts.map((item) => {
+          return `https://api.${apiRegion}.amity.co/api/v3/files/${item?.thumbnailFileId}/download?size=medium`;
+        })
+        : [];
     let mediaPosts: string[] = []
     mediaPosts = [...imagePosts].length > 0 ? [...imagePosts] : [...thumbnailFileIds];
     const imageElement = mediaPosts.map(
@@ -261,7 +254,7 @@ export default function MediaSection({ childrenPosts }: IMediaSection) {
 
   return (
     <View>
-      <RenderMediaPosts/>
+      <RenderMediaPosts />
       <ImageView
         images={
           imagePostsFullSize.length > 0

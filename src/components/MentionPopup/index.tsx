@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-  TouchableOpacity,
   View,
-  Text,
-  type GestureResponderEvent,
-  ScrollView,
   FlatList,
 } from 'react-native';
 import { getStyles } from './styles';

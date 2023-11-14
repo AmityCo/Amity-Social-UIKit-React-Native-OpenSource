@@ -1,8 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {
-  type ReactElement,
-  type ReactNode,
-  useCallback,
   useEffect,
   useRef,
   useState,
@@ -16,8 +13,6 @@ import {
   TouchableOpacity,
   Image,
   TouchableWithoutFeedback,
-  type StyleProp,
-  type ImageStyle,
   Modal,
   Pressable,
   Animated,
@@ -30,8 +25,6 @@ import {
   likedXml,
   likeXml,
   personXml,
-  playBtn,
-  postIcon,
   threeDots,
 } from '../../../svg/svg-xml-list';
 import { getStyles } from './styles';
@@ -39,7 +32,6 @@ import { getStyles } from './styles';
 import type { UserInterface } from '../../../types/user.interface';
 import {
   addPostReaction,
-  getPostById,
   isReportTarget,
   removePostReaction,
   reportTargetById,
@@ -54,10 +46,8 @@ import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../../providers/amity-ui-kit-provider';
 import MediaSection from '../../../components/MediaSection';
 import postDetailSlice from '../../../redux/slices/postDetailSlice';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import globalFeedSlice from '../../../redux/slices/globalfeedSlice';
-import { RootState } from '../../../redux/store';
-import { getAmityUser } from '../../../providers/user-provider';
 import { IMentionPosition } from '../../../screens/CreatePost';
 import feedSlice from '../../../redux/slices/feedSlice';
 
@@ -98,7 +88,6 @@ export default function PostList({
   postDetail,
   postIndex,
   onDelete,
-  onChange,
   isGlobalfeed = true
 
 }: IPostList) {
@@ -122,6 +111,7 @@ export default function PostList({
   const dispatch = useDispatch()
 
   const [mentionPositionArr, setMentionsPositionArr] = useState<IMentionPosition[]>([])
+  const [loading, setLoading] = useState<boolean>(true)
 
   const { updateByPostId: updateByPostIdGlobalFeed } = globalFeedSlice.actions
   const { updateByPostId } = feedSlice.actions
@@ -152,16 +142,13 @@ export default function PostList({
 
 
   useEffect(() => {
-
+    setTimeout(() => {
+      setLoading(false)
+    }, 200);
     setPostData(postDetail)
-    // console.log('postDetail:', postDetail)
 
   }, [postDetail])
 
-  // useEffect(() => {
-  //   onChange && onChange(postData)
-  //   // memoizedDispatch()
-  // }, [postData])
 
   useEffect(() => {
     if (myReactions && myReactions?.length > 0) {
@@ -174,7 +161,7 @@ export default function PostList({
     } else {
       setLikeReaction(0)
     }
-  }, [myReactions, reactionCount, postDetail])
+  }, [myReactions, reactionCount])
 
 
   const openModal = () => {
@@ -287,7 +274,6 @@ export default function PostList({
       if (isGlobalfeed) {
         dispatch(updateByPostIdGlobalFeed({ postId: postId, postDetail: post }))
       } else {
-        console.log('enter this remove like =======')
         dispatch(updateByPostId({ postId: postId, postDetail: post }))
       }
 
@@ -300,7 +286,6 @@ export default function PostList({
       if (isGlobalfeed) {
         dispatch(updateByPostIdGlobalFeed({ postId: postId, postDetail: post }))
       } else {
-        console.log('enter this add like =======')
         dispatch(updateByPostId({ postId: post.postId, postDetail: post }))
       }
 
@@ -441,7 +426,7 @@ export default function PostList({
 
   }
 
-  const handleOnFinishEdit = (postData: { text: string, mediaUrls: string[] | IVideoPost[] }, type: string) => {
+  const handleOnFinishEdit = (postData: { text: string, mediaUrls: string[] | IVideoPost[] }) => {
 
     setTextPost(postData.text)
     setEditPostModalVisible(false)
@@ -549,7 +534,7 @@ export default function PostList({
           {textPost && <RenderTextWithMention />}
           {childrenPosts.length > 0 && (
             <View style={styles.mediaWrap}>
-              {memoizedMediaSection}
+              {!loading && memoizedMediaSection}
             </View>
           )}
         </View>

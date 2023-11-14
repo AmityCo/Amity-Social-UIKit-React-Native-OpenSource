@@ -141,7 +141,6 @@ export async function createPostToFeed(
     };
     postParam = newPostParam;
   }
-  console.log('postParam:', postParam)
   const createPostObject: Promise<Amity.Post<any>> = new Promise(
     
     async (resolve, reject) => {

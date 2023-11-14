@@ -17,11 +17,9 @@ const postDetailSlice = createSlice({
     initialState,
     reducers: {
         updateCurrentIndex: (state, action: PayloadAction<number>) => {
-        	console.log('action:', action)
             state.currentIndex = action.payload
         },
         updatePostDetail: (state, action: PayloadAction<IPost>) => {
-        	console.log('action:', action)
             state.currentPostdetail = action.payload
         },
    

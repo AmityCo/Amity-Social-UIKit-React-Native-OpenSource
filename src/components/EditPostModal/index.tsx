@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   TouchableOpacity,
   View,
@@ -74,7 +74,6 @@ const EditPostModal = ({ visible, onClose, postDetail, onFinishEdit }: IModal) =
     const unsubscribePost = PostRepository.getPost(
       postId,
       async ({ data }) => {
-        // console.log('formattedPostList:', formattedPostList)
         setChildrenPostArr(data.children)
 
       }
