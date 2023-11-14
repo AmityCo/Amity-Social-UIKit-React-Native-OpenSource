@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 import { getStyles } from './styles';
 import { SvgXml } from 'react-native-svg';
-import { communityIcon } from '../../svg/svg-xml-list';
+import { communityIcon, userIcon } from '../../svg/svg-xml-list';
 import { CategoryRepository } from '@amityco/ts-sdk-react-native';
 import { useNavigation } from '@react-navigation/native';
 import useAuth from '../../hooks/useAuth';
@@ -17,11 +17,12 @@ export interface ISearchItem {
 export default function SearchItem({
   target,
   onPress,
+  userProfileNavigateEnabled = true
 }: {
   target: ISearchItem;
   onPress?: (target: ISearchItem) => void;
+  userProfileNavigateEnabled?: boolean
 }) {
-
   const styles = getStyles();
   const { apiRegion } = useAuth();
   const [isChecked, setIsChecked] = useState<boolean>(false);
@@ -33,13 +34,16 @@ export default function SearchItem({
     if (onPress) {
       onPress(target);
     }
-    if (target.targetType === 'community') {
-      navigation.navigate('CommunityHome', { communityId: target.targetId, communityName: target.displayName });
-    } else {
-      navigation.navigate('UserProfile', {
-        userId: target.targetId
-      });
+    if (userProfileNavigateEnabled) {
+      if (target.targetType === 'community') {
+        navigation.navigate('CommunityHome', { communityId: target.targetId, communityName: target.displayName });
+      } else {
+        navigation.navigate('UserProfile', {
+          userId: target.targetId
+        });
+      }
     }
+
   };
   useEffect(() => {
     getCategory();
@@ -82,12 +86,15 @@ export default function SearchItem({
             style={styles.avatar}
             width={40}
             height={40}
-            xml={communityIcon}
+            xml={target.targetType === 'user' ? userIcon() : communityIcon}
           />
         )}
         <View>
           <Text style={styles.itemText}>{displayName()}</Text>
-          <Text style={styles.categoryText}>{categoryName}</Text>
+          {
+            target.targetType === 'community' && <Text style={styles.categoryText}>{categoryName}</Text>
+          }
+
         </View>
       </View>
     </TouchableOpacity>

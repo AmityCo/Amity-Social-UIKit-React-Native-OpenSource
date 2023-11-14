@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
-import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
+import type { MyMD3Theme } from '../../../providers/amity-ui-kit-provider';
 
 export const getStyles=()=>{
 
@@ -126,7 +126,16 @@ export const getStyles=()=>{
       color: theme.colors.baseShade1,
       fontWeight: '900',
       paddingHorizontal:5
-    }
+    },
+    mentionText: {
+      color: theme.colors.primary,
+       fontSize: 15,
+    },
+    inputText: {
+      color: theme.colors.base,
+      fontSize: 15,
+      
+    },
   });
   
   

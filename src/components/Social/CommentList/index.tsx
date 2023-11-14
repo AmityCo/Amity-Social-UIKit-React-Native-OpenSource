@@ -39,6 +39,8 @@ import {
 import EditCommentModal from '../../../components/EditCommentModal';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../../providers/amity-ui-kit-provider';
+import { IMentionPosition } from '../../../screens/CreatePost';
+import { useNavigation } from '@react-navigation/native';
 
 export interface IComment {
   commentId: string;
@@ -52,6 +54,8 @@ export interface IComment {
   createdAt: string;
   childrenComment: string[];
   referenceId: string;
+  mentionees?: string[];
+  mentionPosition?: IMentionPosition[]
 }
 export interface ICommentList {
   commentDetail: IComment;
@@ -72,7 +76,8 @@ export default function CommentList({
     reactions,
     myReactions,
     childrenComment,
-    editedAt
+    editedAt,
+    mentionPosition
   } = commentDetail;
   const theme = useTheme() as MyMD3Theme;
   const styles = getStyles();
@@ -85,13 +90,22 @@ export default function CommentList({
 
   const { client, apiRegion } = useAuth();
   const [commentList, setCommentList] = useState<IComment[]>([]);
-  console.log('replyCommentList: ', commentList);
+  console.log('commentList:', commentList)
   const [textComment, setTextComment] = useState<string>(data.text)
   const [isVisible, setIsVisible] = useState(false);
   const [isReportByMe, setIsReportByMe] = useState<boolean>(false);
   const [editCommentModal, setEditCommentModal] = useState<boolean>(false)
   const [isEditComment, setIsEditComment] = useState<boolean>(false)
   const slideAnimation = useRef(new Animated.Value(0)).current;
+  const [commentMentionPosition, setCommentMentionPosition] = useState<IMentionPosition[]>([])
+  const navigation = useNavigation<any>();
+
+
+  useEffect(() => {
+    if (mentionPosition) {
+      setCommentMentionPosition(mentionPosition)
+    }
+  }, [mentionPosition])
 
   const openModal = () => {
     setIsVisible(true);
@@ -176,6 +190,7 @@ export default function CommentList({
             createdAt: item.createdAt,
             childrenComment: item.children,
             referenceId: item.referenceId,
+            mentionPosition: item.metadata.mentioned
           };
         })
       );
@@ -264,6 +279,43 @@ export default function CommentList({
   const onCloseEditCommentModal = () => {
     setEditCommentModal(false)
   }
+  const RenderTextWithMention = () => {
+    if (commentMentionPosition.length === 0) {
+      return <Text style={styles.inputText}>{textComment}</Text>;
+    }
+    const mentionClick = (userId: string) => {
+      navigation.navigate('UserProfile', {
+        userId: userId
+      });
+    };
+    let currentPosition = 0;
+    const result: (string | JSX.Element)[][] = commentMentionPosition.map(
+      ({ index, length, userId }, i) => {
+        // Add non-highlighted text before the mention
+        const nonHighlightedText = textComment.slice(currentPosition, index);
+
+        // Add highlighted text
+        const highlightedText = (
+          <Text onPress={() => mentionClick(userId)} key={`highlighted-${i}`} style={styles.mentionText}>
+            {textComment.slice(index, index + length)}
+          </Text>
+        );
+
+        // Update currentPosition for the next iteration
+        currentPosition = index + length;
+
+        // Return an array of non-highlighted and highlighted text
+        return [nonHighlightedText, highlightedText];
+      }
+    );
+
+    // Add any remaining non-highlighted text after the mentions
+    const remainingText = textComment.slice(currentPosition);
+    result.push([<Text key="nonHighlighted-last" style={styles.inputText}>{remainingText}</Text>]);
+
+    // Flatten the array and render
+    return <Text style={styles.inputText}>{result.flat()}</Text>;
+  };
   return (
     <View
       key={commentId}
@@ -304,7 +356,8 @@ export default function CommentList({
 
           </View>
           <View style={styles.commentBubble}>
-            <Text style={styles.commentText}>{textComment}</Text>
+            {textComment && <RenderTextWithMention />}
+            {/* <Text style={styles.commentText}>{textComment}</Text> */}
           </View>
           <View style={styles.actionSection}>
             <TouchableOpacity

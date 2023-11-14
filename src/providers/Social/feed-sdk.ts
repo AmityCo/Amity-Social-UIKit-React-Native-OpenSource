@@ -7,6 +7,7 @@ import {
   PostRepository,
   ReactionRepository,
 } from '@amityco/ts-sdk-react-native';
+import { IMentionPosition } from '../../screens/CreatePost';
 
 export interface IGlobalFeedRes {
   data: Amity.Post<any>[];
@@ -95,11 +96,15 @@ export async function createPostToFeed(
   targetType: string,
   targetId: string,
   content: { text: string; fileIds: string[] },
-  postType: string
+  postType: string,
+  mentionees: string[],
+  mentionPosition: IMentionPosition[]
 ): Promise<Amity.Post<any>> {
   let postParam = {
     targetType: targetType,
     targetId: targetId,
+    mentionees: mentionees.length > 0 ? [{ type: 'user', userIds: mentionees }] as Amity.MentionType['user'][] : [],
+    metadata:{ mentioned: mentionPosition}
   };
   if (postType === 'text') {
     const newPostParam = {
@@ -137,6 +142,7 @@ export async function createPostToFeed(
     postParam = newPostParam;
   }
   const createPostObject: Promise<Amity.Post<any>> = new Promise(
+    
     async (resolve, reject) => {
       try {
         const { data: post } = await PostRepository.createPost(postParam);

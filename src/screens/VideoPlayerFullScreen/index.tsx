@@ -50,7 +50,6 @@ const VideoPlayerFull = () => {
       <TouchableOpacity style={styles.closeButton} onPress={onClose}>
         <SvgXml xml={closeIcon(theme.colors.base)} width="16" height="16" />
       </TouchableOpacity>
-
       <Video
         ref={videoRef}
         source={{ uri: source }}

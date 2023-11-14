@@ -1,8 +1,8 @@
 import { StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
-import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
+import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 
-export const getStyles =()=>{
+export const getStyles = () => {
   const theme = useTheme() as MyMD3Theme;
   const styles = StyleSheet.create({
     barContainer: {
@@ -29,7 +29,7 @@ export const getStyles =()=>{
       fontWeight: '600',
       fontSize: 17,
       textAlign: 'center',
-      color:theme.colors.base
+      color: theme.colors.base
     },
     postText: {
       fontWeight: '400',
@@ -43,14 +43,40 @@ export const getStyles =()=>{
       paddingVertical: 10,
       paddingHorizontal: 16,
     },
-  
     textInput: {
       borderWidth: 0,
       borderBottomWidth: 0,
       backgroundColor: 'transparent',
       fontSize: 15,
       marginHorizontal: 3,
+      zIndex: 999,
+      paddingVertical: 5,
+
       // Additional styles if needed
+    },
+    transparentText:{
+      color: 'transparent',
+    },
+    inputContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'flex-start',
+    },
+    mentionText: {
+      color: theme.colors.primary,
+      fontSize: 15,
+    },
+    inputText: {
+      color: theme.colors.base,
+      fontSize: 15,
+      letterSpacing: 0, 
+
+    },
+    overlay: {
+      ...StyleSheet.absoluteFillObject, // Take up the whole screen
+      justifyContent: 'center',
+      alignItems: 'flex-start',
+      paddingHorizontal: 3,
     },
     container: {
       padding: 16,
@@ -90,9 +116,8 @@ export const getStyles =()=>{
     },
     videoContainer: {
       display: 'none',
-    }
+    },
   });
-  
+
   return styles
 }
- 

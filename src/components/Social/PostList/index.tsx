@@ -1,11 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {
-  type ReactElement,
-  type ReactNode,
-  useCallback,
   useEffect,
   useRef,
   useState,
+  useMemo,
 } from 'react';
 // import { useTranslation } from 'react-i18next';
 
@@ -15,8 +13,6 @@ import {
   TouchableOpacity,
   Image,
   TouchableWithoutFeedback,
-  type StyleProp,
-  type ImageStyle,
   Modal,
   Pressable,
   Animated,
@@ -29,7 +25,6 @@ import {
   likedXml,
   likeXml,
   personXml,
-  playBtn,
   threeDots,
 } from '../../../svg/svg-xml-list';
 import { getStyles } from './styles';
@@ -37,20 +32,24 @@ import { getStyles } from './styles';
 import type { UserInterface } from '../../../types/user.interface';
 import {
   addPostReaction,
-  getPostById,
   isReportTarget,
   removePostReaction,
   reportTargetById,
   unReportTargetById,
 } from '../../../providers/Social/feed-sdk';
 import { getCommunityById } from '../../../providers/Social/communities-sdk';
-import ImageView from '../../../components/react-native-image-viewing/dist';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import useAuth from '../../../hooks/useAuth';
 import EditPostModal from '../../../components/EditPostModal';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../../providers/amity-ui-kit-provider';
+import MediaSection from '../../../components/MediaSection';
+import postDetailSlice from '../../../redux/slices/postDetailSlice';
+import { useDispatch } from 'react-redux';
+import globalFeedSlice from '../../../redux/slices/globalfeedSlice';
+import { IMentionPosition } from '../../../screens/CreatePost';
+import feedSlice from '../../../redux/slices/feedSlice';
 
 export interface IPost {
   postId: string;
@@ -66,14 +65,15 @@ export interface IPost {
   targetType: string;
   targetId: string;
   childrenPosts: string[];
+  mentionees: string[];
+  mentionPosition?: IMentionPosition[]
 }
 export interface IPostList {
   onDelete?: (postId: string) => void;
+  onChange?: (postDetail: IPost) => void;
   postDetail: IPost;
-  initVideoPosts?: IVideoPost[];
-  initImagePosts?: string[];
-  initVideoPostsFullSize?: MediaUri[];
-  initImagePostsFullSize?: MediaUri[];
+  postIndex?: number;
+  isGlobalfeed?: boolean
 }
 export interface MediaUri {
   uri: string;
@@ -86,42 +86,83 @@ export interface IVideoPost {
 }
 export default function PostList({
   postDetail,
-  initVideoPostsFullSize = [],
-  initImagePostsFullSize = [],
+  postIndex,
   onDelete,
+  isGlobalfeed = true
+
 }: IPostList) {
-  const {
-    postId,
-    data,
-    myReactions,
-    reactionCount,
-    commentsCount,
-    createdAt,
-    user,
-    targetType,
-    targetId,
-    childrenPosts,
-    editedAt
-  } = postDetail ?? {};
+  const [postData, setPostData] = useState<IPost>(postDetail)
+
+
   const theme = useTheme() as MyMD3Theme;
   const { client, apiRegion } = useAuth();
   const styles = getStyles();
   const [isLike, setIsLike] = useState<boolean>(false);
   const [likeReaction, setLikeReaction] = useState<number>(0);
   const [communityName, setCommunityName] = useState('');
-  const [imagePosts, setImagePosts] = useState<string[]>([]);
-  const [textPost, setTextPost] = useState<string>(data.text)
-  const [imagePostsFullSize, setImagePostsFullSize] = useState<MediaUri[]>([]);
-  const [videoPostsFullSize, setVideoPostsFullSize] = useState<MediaUri[]>([]);
-  const [videoPosts, setVideoPosts] = useState<IVideoPost[]>([]);
-  const [visibleFullImage, setIsVisibleFullImage] = useState<boolean>(false);
-  const [imageIndex, setImageIndex] = useState<number>(0);
+  const [textPost, setTextPost] = useState<string>('')
+
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [isReportByMe, setIsReportByMe] = useState<boolean>(false);
   const [editPostModalVisible, setEditPostModalVisible] = useState<boolean>(false)
   const slideAnimation = useRef(new Animated.Value(0)).current;
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
+  const dispatch = useDispatch()
+
+  const [mentionPositionArr, setMentionsPositionArr] = useState<IMentionPosition[]>([])
+  const [loading, setLoading] = useState<boolean>(true)
+
+  const { updateByPostId: updateByPostIdGlobalFeed } = globalFeedSlice.actions
+  const { updateByPostId } = feedSlice.actions
+  const { updatePostDetail } = postDetailSlice.actions
+  const {
+    postId,
+    data,
+    myReactions = [],
+    reactionCount,
+    commentsCount,
+    createdAt,
+    user,
+    targetType,
+    targetId,
+    childrenPosts = [],
+    editedAt,
+    mentionPosition
+  } = postData ?? {};
+
+
+
+  useEffect(() => {
+    if (mentionPosition) {
+      setMentionsPositionArr(mentionPosition)
+    }
+
+  }, [mentionPosition])
+
+
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false)
+    }, 200);
+    setPostData(postDetail)
+
+  }, [postDetail])
+
+
+  useEffect(() => {
+    if (myReactions && myReactions?.length > 0) {
+      setIsLike(true)
+    } else {
+      setIsLike(false)
+    }
+    if (reactionCount?.like) {
+      setLikeReaction(reactionCount?.like)
+    } else {
+      setLikeReaction(0)
+    }
+  }, [myReactions, reactionCount])
+
 
   const openModal = () => {
     setIsVisible(true);
@@ -135,53 +176,8 @@ export default function PostList({
     }).start(() => setIsVisible(false));
   };
 
-  const getPostInfo = useCallback(async () => {
-    try {
-      const response = await Promise.all(
-        childrenPosts.map(async (id: string) => {
-          const { data: post } = await getPostById(id);
-          return { dataType: post.dataType, data: post.data };
-        })
-      );
-
-      response.forEach((item) => {
-        if (item.dataType === 'image') {
-          setImagePosts((prev) => [
-            ...prev,
-            `https://api.${apiRegion}.amity.co/api/v3/files/${item?.data.fileId}/download?size=medium`,
-          ]);
-
-        } else if (item.dataType === 'video') {
-          setVideoPosts((prev) => [...prev, item.data]);
-
-        }
-      });
-    } catch (error) {
-      console.log('error: ', error);
-    }
-  }, [childrenPosts]);
-
-  useEffect(() => {
-    if (imagePosts.length > 0) {
-      const updatedUrls: MediaUri[] = imagePosts.map((url: string) => {
-        return {
-          uri: url.replace('size=medium', 'size=large')
-        }
-      })
-      setImagePostsFullSize(updatedUrls)
 
 
-    }
-    if (videoPosts.length > 0) {
-      const updatedUrls: MediaUri[] = videoPosts.map((item: IVideoPost) => {
-        return {
-          uri: `https://api.${apiRegion}.amity.co/api/v3/files/${item?.thumbnailFileId}/download?size=large`
-        }
-      })
-      setVideoPostsFullSize(updatedUrls)
-    }
-
-  }, [imagePosts, videoPosts])
 
   const checkIsReport = async () => {
     const isReport = await isReportTarget('post', postId);
@@ -189,37 +185,25 @@ export default function PostList({
       setIsReportByMe(true);
     }
   };
+
   useEffect(() => {
-    if (initImagePostsFullSize) {
-      setImagePostsFullSize(initImagePostsFullSize);
-    } else if (initVideoPostsFullSize) {
-      setVideoPostsFullSize(initVideoPostsFullSize);
-    }
     checkIsReport();
-    return () => {
-      setImagePostsFullSize([]);
-      setImagePosts([]);
-    };
-  }, []);
+
+  }, [postDetail]);
+
   useEffect(() => {
+    setTextPost(data?.text)
     if (myReactions.length > 0 && myReactions.includes('like')) {
       setIsLike(true);
     }
-    if (reactionCount.like) {
-      setLikeReaction(reactionCount.like);
+    if (reactionCount?.like) {
+      setLikeReaction(reactionCount?.like);
     }
     if (targetType === 'community' && targetId) {
       getCommunityInfo(targetId);
     }
-    if (
-      childrenPosts.length > 0 &&
-      (imagePosts.length === 0 || videoPosts.length === 0) &&
-      (initImagePostsFullSize.length === 0 ||
-        initVideoPostsFullSize.length === 0)
-    ) {
-      getPostInfo();
-    }
-  }, []);
+
+  }, [postDetail]);
 
   function renderLikeText(likeNumber: number | undefined): string {
     if (!likeNumber) {
@@ -284,9 +268,27 @@ export default function PostList({
     setIsLike((prev) => !prev);
     if (isLike && likeReaction) {
       setLikeReaction(likeReaction - 1);
+      let post: IPost = { ...postDetail }
+      post.reactionCount = likeReaction - 1 > 0 ? { like: likeReaction - 1 } : {}
+      post.myReactions = []
+      if (isGlobalfeed) {
+        dispatch(updateByPostIdGlobalFeed({ postId: postId, postDetail: post }))
+      } else {
+        dispatch(updateByPostId({ postId: postId, postDetail: post }))
+      }
+
       await removePostReaction(postId, 'like');
     } else {
       setLikeReaction(likeReaction + 1);
+      let post: IPost = { ...postDetail }
+      post.reactionCount = { like: likeReaction + 1 }
+      post.myReactions = ["like"]
+      if (isGlobalfeed) {
+        dispatch(updateByPostIdGlobalFeed({ postId: postId, postDetail: post }))
+      } else {
+        dispatch(updateByPostId({ postId: post.postId, postDetail: post }))
+      }
+
       await addPostReaction(postId, 'like');
     }
   }
@@ -296,170 +298,19 @@ export default function PostList({
     setCommunityName(community.data.displayName);
   }
 
-  function onClickImage(index: number): void {
-    setIsVisibleFullImage(true);
-    setImageIndex(index);
-  }
 
-  function renderMediaPost(): ReactNode {
-    let imageStyle: StyleProp<ImageStyle> | StyleProp<ImageStyle>[] =
-      styles.imageLargePost;
-    let colStyle: StyleProp<ImageStyle> = styles.col2;
-
-    const thumbnailFileIds: string[] =
-      videoPosts.length > 0
-        ? videoPosts.map((item) => {
-          return `https://api.${apiRegion}.amity.co/api/v3/files/${item?.thumbnailFileId}/download?size=medium`;
-        })
-        : [];
-    let mediaPosts: string[] = [];
-    if (initImagePostsFullSize.length > 0) {
-      mediaPosts = initImagePostsFullSize.map((item) => item.uri);
-    } else if (initVideoPostsFullSize.length > 0) {
-      mediaPosts = initVideoPostsFullSize.map((item) => item.uri);
-    } else {
-      mediaPosts = thumbnailFileIds.length > 0 ? thumbnailFileIds : imagePosts;
-    }
-
-    const imageElement: ReactElement[] = mediaPosts.map(
-      (item: string, index: number) => {
-        if (mediaPosts.length === 1) {
-          imageStyle = styles.imageLargePost;
-          colStyle = styles.col6;
-        } else if (mediaPosts.length === 2) {
-          colStyle = styles.col3;
-          if (index === 0) {
-            imageStyle = [styles.imageLargePost, styles.imageMarginRight];
-          } else {
-            imageStyle = [styles.imageLargePost, styles.imageMarginLeft];
-          }
-        } else if (mediaPosts.length === 3) {
-          switch (index) {
-            case 0:
-              colStyle = styles.col6;
-              imageStyle = [styles.imageMediumPost, styles.imageMarginBottom];
-              break;
-            case 1:
-              colStyle = styles.col3;
-              imageStyle = [
-                styles.imageMediumPost,
-                styles.imageMarginTop,
-                styles.imageMarginRight,
-              ];
-              break;
-            case 2:
-              colStyle = styles.col3;
-              imageStyle = [
-                styles.imageMediumPost,
-                styles.imageMarginTop,
-                styles.imageMarginLeft,
-              ];
-              break;
-
-            default:
-              break;
-          }
-        } else {
-          switch (index) {
-            case 0:
-              colStyle = styles.col6;
-              imageStyle = [
-                styles.imageMediumLargePost,
-                styles.imageMarginBottom,
-              ];
-              break;
-            case 1:
-              colStyle = styles.col2;
-              imageStyle = [
-                styles.imageSmallPost,
-                styles.imageMarginTop,
-                styles.imageMarginRight,
-              ];
-              break;
-            case 2:
-              colStyle = styles.col2;
-              imageStyle = [
-                styles.imageSmallPost,
-                styles.imageMarginTop,
-                styles.imageMarginLeft,
-                styles.imageMarginRight,
-              ];
-              break;
-            case 3:
-              colStyle = styles.col2;
-              imageStyle = [
-                styles.imageSmallPost,
-                styles.imageMarginTop,
-                styles.imageMarginLeft,
-              ];
-              break;
-            default:
-              break;
-          }
-        }
-
-        return (
-          <View style={colStyle}>
-            <TouchableWithoutFeedback onPress={() => onClickImage(index)}>
-              <View>
-                {(videoPosts.length > 0 || initVideoPostsFullSize.length > 0) &&
-                  renderPlayButton()}
-                <Image
-                  style={imageStyle}
-                  source={{
-                    uri: item,
-                  }}
-                />
-                {index === 3 && imagePosts.length > 4 && (
-                  <View style={styles.overlay}>
-                    <Text style={styles.overlayText}>{`+ ${imagePosts.length - 3
-                      }`}</Text>
-                  </View>
-                )}
-              </View>
-            </TouchableWithoutFeedback>
-          </View>
-        );
-      }
-    );
-
-    if (imageElement.length < 3) {
-      return (
-        <View style={styles.imagesWrap}>
-          <View style={styles.row}>{imageElement}</View>
-        </View>
-      );
-    } else if (imageElement.length === 3) {
-      return (
-        <View style={[styles.imagesWrap]}>
-          <View style={styles.row}>{imageElement.slice(0, 1)}</View>
-          <View style={styles.row}>{imageElement.slice(1, 3)}</View>
-        </View>
-      );
-    } else {
-      return (
-        <View style={styles.imagesWrap}>
-          <View style={styles.row}>{imageElement.slice(0, 1)}</View>
-          <View style={styles.row}>{imageElement.slice(1, 4)}</View>
-        </View>
-      );
-    }
-  }
-
-  function renderPlayButton() {
-    return (
-      <View style={styles.playButton}>
-        <SvgXml xml={playBtn} width="50" height="50" />
-      </View>
-    );
-  }
   function onClickComment() {
+
+    dispatch(updatePostDetail({
+      ...postDetail,
+      myReactions: isLike ? ["like"] : [],
+      reactionCount: { like: likeReaction },
+      commentsCount: commentsCount,
+    }))
     navigation.navigate('PostDetail', {
-      postDetail: postDetail,
-      init: videoPosts,
-      initVideoPostsFullSize: videoPostsFullSize,
-      initImagePostsFullSize: imagePostsFullSize,
-      imagePosts: imagePosts,
+      postId: postDetail.postId,
+      postIndex: postIndex,
+      isFromGlobalfeed: isGlobalfeed
     });
   }
   const handleDisplayNamePress = () => {
@@ -469,6 +320,7 @@ export default function PostList({
       });
     }
   };
+
   const handleCommunityNamePress = () => {
     if (targetType === 'community' && targetId) {
       navigation.navigate('CommunityHome', {
@@ -512,6 +364,7 @@ export default function PostList({
       setIsReportByMe(true);
     }
   };
+
   const modalStyle = {
     transform: [
       {
@@ -573,20 +426,54 @@ export default function PostList({
 
   }
 
-  const handleOnFinishEdit = (postData: { text: string, mediaUrls: string[] | IVideoPost[] }, type: string) => {
-    if (type === 'image') {
-      setImagePosts(postData.mediaUrls as string[])
+  const handleOnFinishEdit = (postData: { text: string, mediaUrls: string[] | IVideoPost[] }) => {
 
-    }
-    else if (type === 'video') {
-      const videoPostsCallBack: unknown[] = postData.mediaUrls
-      setVideoPosts(videoPostsCallBack as IVideoPost[])
-    }
     setTextPost(postData.text)
     setEditPostModalVisible(false)
     setIsEdit(true)
   }
 
+  const RenderTextWithMention = () => {
+    if (mentionPositionArr.length === 0) {
+      return <Text style={styles.inputText}>{textPost}</Text>;
+    }
+    const mentionClick = (userId: string) => {
+      navigation.navigate('UserProfile', {
+        userId: userId
+      });
+    };
+    let currentPosition = 0;
+    const result: (string | JSX.Element)[][] = mentionPositionArr.map(
+      ({ index, length, userId }, i) => {
+        // Add non-highlighted text before the mention
+        const nonHighlightedText = textPost.slice(currentPosition, index);
+
+        // Add highlighted text
+        const highlightedText = (
+          <Text onPress={() => mentionClick(userId)} key={`highlighted-${i}`} style={styles.mentionText}>
+            {textPost.slice(index, index + length)}
+          </Text>
+        );
+
+        // Update currentPosition for the next iteration
+        currentPosition = index + length;
+
+        // Return an array of non-highlighted and highlighted text
+        return [nonHighlightedText, highlightedText];
+      }
+    );
+
+    // Add any remaining non-highlighted text after the mentions
+    const remainingText = textPost.slice(currentPosition);
+    result.push([<Text key="nonHighlighted-last" style={styles.inputText}>{remainingText}</Text>]);
+
+    // Flatten the array and render
+    return <Text style={styles.inputText}>{result.flat()}</Text>;
+  };
+
+  const memoizedMediaSection = useMemo(() => {
+    return <MediaSection childrenPosts={childrenPosts} />;
+  }, [childrenPosts]);
   return (
     <View key={postId} style={styles.postWrap}>
       <View style={styles.headerSection}>
@@ -631,13 +518,10 @@ export default function PostList({
               </Text>
               {(editedAt !== createdAt || isEdit) && <Text style={styles.dot}>·</Text>}
               {(editedAt !== createdAt || isEdit) &&
-
                 <Text style={styles.headerTextTime}>
                   Edited
                 </Text>}
-
             </View>
-
           </View>
         </View>
         <TouchableOpacity onPress={openModal} style={styles.threeDots}>
@@ -646,10 +530,12 @@ export default function PostList({
       </View>
       <View>
         <View style={styles.bodySection}>
-          {textPost && <Text style={styles.bodyText}>{textPost}</Text>}
-
+          {/* {textPost && <Text style={styles.bodyText}>{textPost}</Text>} */}
+          {textPost && <RenderTextWithMention />}
           {childrenPosts.length > 0 && (
-            <View style={styles.mediaWrap}>{renderMediaPost()}</View>
+            <View style={styles.mediaWrap}>
+              {!loading && memoizedMediaSection}
+            </View>
           )}
         </View>
 
@@ -697,27 +583,15 @@ export default function PostList({
           </TouchableOpacity>
         </View>
       </View>
-      <ImageView
-        images={
-          imagePostsFullSize.length > 0
-            ? imagePostsFullSize
-            : videoPostsFullSize
-        }
-        imageIndex={imageIndex}
-        visible={visibleFullImage}
-        onRequestClose={() => setIsVisibleFullImage(false)}
-        isVideoButton={videoPosts.length > 0 ? true : false}
-        videoPosts={videoPosts}
-      />
       {renderOptionModal()}
-      <EditPostModal
-        visible={editPostModalVisible}
-        onClose={closeEditPostModal}
-        postDetail={postDetail}
-        imagePosts={imagePosts}
-        videoPosts={videoPosts}
-        onFinishEdit={handleOnFinishEdit}
-      />
+      {editPostModalVisible &&
+        <EditPostModal
+          visible={editPostModalVisible}
+          onClose={closeEditPostModal}
+          postDetail={postDetail}
+          onFinishEdit={handleOnFinishEdit}
+        />}
+
     </View>
   );
 }

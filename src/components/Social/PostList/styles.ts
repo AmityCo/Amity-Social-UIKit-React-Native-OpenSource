@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
-import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
+import type { MyMD3Theme } from '../../../providers/amity-ui-kit-provider';
 
 export const getStyles = () => {
   const theme = useTheme() as MyMD3Theme ;
@@ -46,11 +46,11 @@ const styles = StyleSheet.create({
   },
   likeCountText: {
     fontSize: 13,
-    color: '#898E9E',
+    color: theme.colors.baseShade2,
   },
   commentCountText: {
     fontSize: 13,
-    color: '#898E9E',
+    color: theme.colors.baseShade2,
   },
   bodyText: {
     fontSize: 15,
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   btnText: {
-    color: theme.colors.base,
+    color: theme.colors.baseShade2,
     fontSize: 15,
     fontWeight: '600',
     marginHorizontal: 4,
@@ -238,7 +238,15 @@ const styles = StyleSheet.create({
     color: theme.colors.baseShade1,
     fontWeight: '900',
     paddingHorizontal:5
-  }
+  },
+  mentionText: {
+    color: theme.colors.primary,
+     fontSize: 15,
+  },
+  inputText: {
+    color: theme.colors.base,
+    fontSize: 15,
+  },
 });
 
 return styles;

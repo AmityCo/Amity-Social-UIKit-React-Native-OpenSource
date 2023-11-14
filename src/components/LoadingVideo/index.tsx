@@ -18,7 +18,7 @@ import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 
 interface OverlayImageProps {
   source: string;
-  onClose?: (originalPath: string, fileId?:string) => void;
+  onClose?: (originalPath: string, fileId?: string) => void;
   onLoadFinish?: (
     fileId: string,
     fileUrl: string,
@@ -45,6 +45,8 @@ const LoadingVideo = ({
   fileId,
   isEditMode = false
 }: OverlayImageProps) => {
+
+  const theme = useTheme() as MyMD3Theme
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
   const [isProcess, setIsProcess] = useState<boolean>(false);
@@ -55,8 +57,8 @@ const LoadingVideo = ({
   const [isPause, setIsPause] = useState<boolean>(true)
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const videoPlayerRef = useRef(null);
-  const theme = useTheme() as MyMD3Theme;
-  
+
+
   const playVideoFullScreen = (fileUrl: string) => {
     if (Platform.OS === 'ios') {
       setIsPlaying(true)
@@ -160,6 +162,7 @@ const LoadingVideo = ({
           loading ? styles.loadingImage : styles.loadedImage,
         ]}
       /> : <View style={styles.image} />}
+
       {source ?
         <Video
           style={styles.thumbnail}

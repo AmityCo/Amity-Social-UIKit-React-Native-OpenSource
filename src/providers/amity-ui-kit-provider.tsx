@@ -1,7 +1,8 @@
 import * as React from 'react';
-
+import { Provider } from 'react-redux'
 import AuthContextProvider from './auth-provider';
 import { DefaultTheme, PaperProvider, type MD3Theme } from 'react-native-paper';
+import { store } from '../redux/store';
 export type CusTomTheme = typeof DefaultTheme;
 export interface IAmityUIkitProvider {
   userId: string;
@@ -73,7 +74,7 @@ export default function AmityUiKitProvider({
   };
 
   return (
-
+    <Provider store={store}>
     <AuthContextProvider
       userId={userId}
       displayName={displayName || userId}
@@ -85,5 +86,6 @@ export default function AmityUiKitProvider({
         {children}
       </PaperProvider>
     </AuthContextProvider>
+    </Provider>
   );
 }

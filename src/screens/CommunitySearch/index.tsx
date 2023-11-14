@@ -26,10 +26,8 @@ export default function CommunitySearch() {
   const styles = getStyles();
   const [searchTerm, setSearchTerm] = useState('');
   const [searchType, setSearchType] = useState('community');
-  const [communities, setCommunities] =
-    useState<Amity.LiveCollection<Amity.Community>>();
-  const [usersObject, setUsersObject] =
-    useState<Amity.LiveCollection<Amity.User>>();
+  const [communities, setCommunities] = useState<Amity.LiveCollection<Amity.Community>>();
+  const [usersObject, setUsersObject] = useState<Amity.LiveCollection<Amity.User>>();
   const navigation = useNavigation<any>();
   const [searchList, setSearchList] = useState<ISearchItem[]>([]);
   const {
