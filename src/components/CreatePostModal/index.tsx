@@ -8,6 +8,7 @@ import {
   Image,
   ActivityIndicator,
   FlatList,
+  ScrollView,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { getAmityUser } from '../../providers/user-provider';
@@ -30,7 +31,6 @@ const CreatePostModal = ({ visible, onClose, userId, onSelect }: IModal) => {
   const styles = getStyles();
   const { apiRegion } = useAuth();
   const [communities, setCommunities] = useState<Amity.Community[]>([]);
-  const [paginateLoading, setPaginateLoading] = useState(false);
   const [hasNextPageFunc, setHasNextPageFunc] = useState(false);
   const [myUser, setMyUser] = useState<UserInterface>();
 
@@ -60,10 +60,9 @@ const CreatePostModal = ({ visible, onClose, userId, onSelect }: IModal) => {
 
   useEffect(() => {
     const loadCommunities = async () => {
-      setPaginateLoading(true);
       try {
         const unsubscribe = CommunityRepository.getCommunities(
-          { membership: 'member' },
+          { membership: 'member', limit: 10, sortBy: 'displayName' },
           ({ data: communitiesList, onNextPage, hasNextPage, loading }) => {
             if (!loading) {
               setCommunities((prevCommunities: Amity.Community[]) => [
@@ -80,9 +79,7 @@ const CreatePostModal = ({ visible, onClose, userId, onSelect }: IModal) => {
       } catch (error) {
         console.error('Failed to load communities:', error);
         isFetchingRef.current = false;
-      } finally {
-        setPaginateLoading(false);
-      }
+      } 
     };
 
     loadCommunities();
@@ -99,8 +96,8 @@ const CreatePostModal = ({ visible, onClose, userId, onSelect }: IModal) => {
           source={
             myUser
               ? {
-                  uri: `https://api.${apiRegion}.amity.co/api/v3/files/${myUser.avatarFileId}/download`,
-                }
+                uri: `https://api.${apiRegion}.amity.co/api/v3/files/${myUser.avatarFileId}/download`,
+              }
               : require('./../../../assets/icon/Placeholder.png')
           }
         />
@@ -133,8 +130,8 @@ const CreatePostModal = ({ visible, onClose, userId, onSelect }: IModal) => {
           source={
             item.avatarFileId
               ? {
-                  uri: `https://api.${apiRegion}.amity.co/api/v3/files/${item.avatarFileId}/download`,
-                }
+                uri: `https://api.${apiRegion}.amity.co/api/v3/files/${item.avatarFileId}/download`,
+              }
               : require('./../../../assets/icon/Placeholder.png')
           }
         />
@@ -143,16 +140,9 @@ const CreatePostModal = ({ visible, onClose, userId, onSelect }: IModal) => {
     );
   };
 
-  const renderFooter = () => {
-    if (!paginateLoading) return null;
-    return (
-      <View style={styles.LoadingIndicator}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  };
 
-  const handleEndReached = useCallback(() => {
+  const handleEndReached = () => {
+    console.log('handleEndReached:')
     if (
       !isFetchingRef.current &&
       hasNextPageFunc &&
@@ -162,10 +152,10 @@ const CreatePostModal = ({ visible, onClose, userId, onSelect }: IModal) => {
       onEndReachedCalledDuringMomentumRef.current = true;
       onNextPageRef.current && onNextPageRef.current();
     }
-  }, [hasNextPageFunc]);
+  }
 
   return (
-    <Modal visible={visible} animationType="slide">
+    <Modal visible={visible} animationType="slide" onTouchEnd={handleEndReached}>
       <View style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
@@ -177,18 +167,24 @@ const CreatePostModal = ({ visible, onClose, userId, onSelect }: IModal) => {
         </View>
         {renderMyTimeLine()}
         <Text style={styles.myCommunityText}>My Community</Text>
-        <FlatList
-          data={communities}
-          renderItem={renderCommunity}
-          keyExtractor={(item) => item.communityId.toString()}
-          ListFooterComponent={renderFooter}
-          // onEndReached={handleEndReached}
-          onEndReached={handleEndReached}
-          onMomentumScrollBegin={() =>
-            (onEndReachedCalledDuringMomentumRef.current = false)
-          }
-          onEndReachedThreshold={0.8}
-        />
+
+        <ScrollView
+          onScroll={({ nativeEvent }) => {
+            const yOffset = nativeEvent.contentOffset.y;
+            const contentHeight = nativeEvent.contentSize.height;
+            const scrollViewHeight = nativeEvent.layoutMeasurement.height;
+            const isNearBottom = contentHeight - yOffset <= scrollViewHeight * 1.7; // Adjust the multiplier as needed
+
+            if (isNearBottom) {
+              handleEndReached();
+            }
+          }}
+          scrollEventThrottle={16} // Adjust as needed
+        >
+          {communities.map(item=>renderCommunity({item}))}
+
+          {/* You can add any additional components or content here */}
+        </ScrollView>
       </View>
     </Modal>
   );

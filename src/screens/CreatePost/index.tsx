@@ -11,6 +11,7 @@ import {
   KeyboardAvoidingView,
   ScrollView,
   Keyboard,
+  Alert,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -34,6 +35,7 @@ import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import MentionPopup from '../../components/MentionPopup';
 import { ISearchItem } from '../../components/SearchItem';
+import { CommunityRepository } from '@amityco/ts-sdk-react-native';
 
 export interface IDisplayImage {
   url: string;
@@ -66,7 +68,23 @@ const CreatePost = ({ route }: any) => {
   const [cursorIndex, setCursorIndex] = useState(0);
   const [mentionsPosition, setMentionsPosition] = useState<IMentionPosition[]>([])
 
+  const [communityObject, setCommunityObject] = useState<Amity.LiveObject<Amity.Community>>();
+  // const { data: community, loading, error } = data ?? {};
+  const { data: community } = communityObject ?? {};
+  console.log('community:', community)
+  // const { data: community, loading, error } = data ?? {};
   const videoRef = React.useRef(null);
+
+
+
+  const getCommunityDetail = () => {
+    if (targetType === 'community') {
+      CommunityRepository.getCommunity(targetId, setCommunityObject);
+    }
+  }
+  useEffect(() => {
+    getCommunityDetail()
+  }, [targetId])
 
   const checkMention = (inputString: string) => {
     // Check if "@" is at the first letter
@@ -193,7 +211,20 @@ const CreatePost = ({ route }: any) => {
         mentionUserIds.length > 0 ? mentionUserIds : [],
         mentionsPosition
       );
-      if (response) {
+      if (community.postSetting === 'ADMIN_REVIEW_POST_REQUIRED' && response) {
+        Alert.alert(
+          'Post submitted',
+          'Your post has been submitted to the pending list. It will be reviewed by community moderator',
+          [
+            {
+              text: 'OK',
+              onPress: () => navigation.navigate('Home'),
+            },
+          ],
+          { cancelable: false }
+        );
+      }
+      else if (response) {
         navigation.navigate('Home');
       }
     }

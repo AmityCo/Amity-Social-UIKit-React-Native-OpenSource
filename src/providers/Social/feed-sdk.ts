@@ -146,6 +146,7 @@ export async function createPostToFeed(
     async (resolve, reject) => {
       try {
         const { data: post } = await PostRepository.createPost(postParam);
+        console.log('post:', post)
         resolve(post);
       } catch (error) {
         reject(error);

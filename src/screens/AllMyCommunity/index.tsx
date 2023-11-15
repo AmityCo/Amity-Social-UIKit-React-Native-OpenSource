@@ -38,7 +38,7 @@ export default function AllMyCommunity() {
     data: communitiesArr = [],
     onNextPage,
   } = communities ?? {};
-
+  console.log('communitiesArr:', communitiesArr)
   const goBack=()=>{
     navigation.goBack()
   }
