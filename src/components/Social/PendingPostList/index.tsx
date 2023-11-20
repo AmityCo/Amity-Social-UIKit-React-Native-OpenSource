@@ -50,6 +50,7 @@ import { useDispatch } from 'react-redux';
 import globalFeedSlice from '../../../redux/slices/globalfeedSlice';
 import { IMentionPosition } from '../../../screens/CreatePost';
 import feedSlice from '../../../redux/slices/feedSlice';
+import { PostRepository } from '@amityco/ts-sdk-react-native';
 
 export interface IPost {
   postId: string;
@@ -69,11 +70,11 @@ export interface IPost {
   mentionPosition?: IMentionPosition[]
 }
 export interface IPostList {
-  onDelete?: (postId: string) => void;
-  onChange?: (postDetail: IPost) => void;
+  onAcceptDecline?: (postId: string) => void;
   postDetail: IPost;
   postIndex?: number;
-  isGlobalfeed?: boolean
+  isGlobalfeed?: boolean;
+  isModerator?: boolean
 }
 export interface MediaUri {
   uri: string;
@@ -84,11 +85,12 @@ export interface IVideoPost {
     original: string;
   };
 }
-export default function PostList({
+export default function PendingPostList({
   postDetail,
   postIndex,
-  onDelete,
-  isGlobalfeed = true
+  onAcceptDecline,
+  isGlobalfeed = true,
+  isModerator = false
 
 }: IPostList) {
   const [postData, setPostData] = useState<IPost>(postDetail)
@@ -112,6 +114,7 @@ export default function PostList({
 
   const [mentionPositionArr, setMentionsPositionArr] = useState<IMentionPosition[]>([])
   const [loading, setLoading] = useState<boolean>(true)
+
   const { updateByPostId: updateByPostIdGlobalFeed } = globalFeedSlice.actions
   const { updateByPostId } = feedSlice.actions
   const { updatePostDetail } = postDetailSlice.actions
@@ -204,24 +207,6 @@ export default function PostList({
 
   }, [postDetail]);
 
-  function renderLikeText(likeNumber: number | undefined): string {
-    if (!likeNumber) {
-      return '';
-    } else if (likeNumber === 1) {
-      return 'like';
-    } else {
-      return 'likes';
-    }
-  }
-  function renderCommentText(commentNumber: number | undefined): string {
-    if (commentNumber === 0) {
-      return '';
-    } else if (commentNumber === 1) {
-      return 'comment';
-    } else {
-      return 'comments';
-    }
-  }
 
   function getTimeDifference(timestamp: string): string {
     // Convert the timestamp string to a Date object
@@ -263,34 +248,7 @@ export default function PostList({
       );
     }
   }
-  async function addReactionToPost() {
-    setIsLike((prev) => !prev);
-    if (isLike && likeReaction) {
-      setLikeReaction(likeReaction - 1);
-      let post: IPost = { ...postDetail }
-      post.reactionCount = likeReaction - 1 > 0 ? { like: likeReaction - 1 } : {}
-      post.myReactions = []
-      if (isGlobalfeed) {
-        dispatch(updateByPostIdGlobalFeed({ postId: postId, postDetail: post }))
-      } else {
-        dispatch(updateByPostId({ postId: postId, postDetail: post }))
-      }
 
-      await removePostReaction(postId, 'like');
-    } else {
-      setLikeReaction(likeReaction + 1);
-      let post: IPost = { ...postDetail }
-      post.reactionCount = { like: likeReaction + 1 }
-      post.myReactions = ["like"]
-      if (isGlobalfeed) {
-        dispatch(updateByPostIdGlobalFeed({ postId: postId, postDetail: post }))
-      } else {
-        dispatch(updateByPostId({ postId: post.postId, postDetail: post }))
-      }
-
-      await addPostReaction(postId, 'like');
-    }
-  }
 
   async function getCommunityInfo(id: string) {
     const { data: community } = await getCommunityById(id);
@@ -298,20 +256,7 @@ export default function PostList({
   }
 
 
-  function onClickComment() {
 
-    dispatch(updatePostDetail({
-      ...postDetail,
-      myReactions: isLike ? ["like"] : [],
-      reactionCount: { like: likeReaction },
-      commentsCount: commentsCount,
-    }))
-    navigation.navigate('PostDetail', {
-      postId: postDetail.postId,
-      postIndex: postIndex,
-      isFromGlobalfeed: isGlobalfeed
-    });
-  }
   const handleDisplayNamePress = () => {
     if (user?.userId) {
       navigation.navigate('UserProfile', {
@@ -320,117 +265,7 @@ export default function PostList({
     }
   };
 
-  const handleCommunityNamePress = () => {
-    if (targetType === 'community' && targetId) {
-      navigation.navigate('CommunityHome', {
-        communityId: targetId,
-        communityName: communityName,
-      });
-    }
-  };
-  const deletePostObject = () => {
-    Alert.alert(
-      'Delete this post',
-      `This post will be permanently deleted. You'll no longer see and find this post`,
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: () => onDelete && onDelete(postId),
-        },
-      ]
-    );
-    setIsVisible(false);
-  };
-  const reportPostObject = async () => {
-    if (isReportByMe) {
-      const unReportPost = await unReportTargetById('post', postId);
-      if (unReportPost) {
-        Alert.alert('Undo Report sent', '', []);
-      }
-      setIsVisible(false);
-      setIsReportByMe(false);
-    } else {
-      const reportPost = await reportTargetById('post', postId);
-      if (reportPost) {
-        Alert.alert('Report sent', '', []);
-      }
-      setIsVisible(false);
-      setIsReportByMe(true);
-    }
-  };
 
-  const modalStyle = {
-    transform: [
-      {
-        translateY: slideAnimation.interpolate({
-          inputRange: [0, 1],
-          outputRange: [600, 0], // Adjust this value to control the sliding distance
-        }),
-      },
-    ],
-  };
-
-  const renderOptionModal = () => {
-    return (
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={isVisible}
-        onRequestClose={closeModal}
-      >
-        <Pressable onPress={closeModal} style={styles.modalContainer}>
-          <Animated.View style={[styles.modalContent, modalStyle, user?.userId === (client as Amity.Client).userId && styles.twoOptions]}>
-            {user?.userId === (client as Amity.Client).userId ? (
-              <View>
-                <TouchableOpacity
-                  onPress={openEditPostModal}
-                  style={styles.modalRow}
-                >
-                  <Text style={styles.deleteText}> Edit Post</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={deletePostObject}
-                  style={styles.modalRow}
-                >
-                  <Text style={styles.deleteText}> Delete Post</Text>
-                </TouchableOpacity>
-              </View>
-
-            ) : (
-              <TouchableOpacity
-                onPress={reportPostObject}
-                style={styles.modalRow}
-              >
-                <Text style={styles.deleteText}>
-                  {isReportByMe ? 'Undo Report' : 'Report'}
-                </Text>
-              </TouchableOpacity>
-            )}
-          </Animated.View>
-        </Pressable>
-      </Modal>
-    )
-  }
-  const closeEditPostModal = () => {
-    setEditPostModalVisible(false)
-  }
-  const openEditPostModal = () => {
-    setIsVisible(false)
-    setEditPostModalVisible(true)
-
-  }
-
-  const handleOnFinishEdit = (postData: { text: string, mediaUrls: string[] | IVideoPost[] }) => {
-
-    setTextPost(postData.text)
-    setEditPostModalVisible(false)
-    setIsEdit(true)
-  }
 
   const RenderTextWithMention = () => {
     if (mentionPositionArr.length === 0) {
@@ -474,7 +309,20 @@ export default function PostList({
     return <MediaSection childrenPosts={childrenPosts} />;
   }, [childrenPosts]);
 
+  async function approvePost() {
+    const { data: post } = await PostRepository.approvePost(postId);
 
+    if (post) {
+      onAcceptDecline && onAcceptDecline(postId)
+    }
+  }
+  async function declinePost() {
+    const { data: post } = await PostRepository.declinePost(postId);
+
+    if (post) {
+      onAcceptDecline && onAcceptDecline(postId)
+    }
+  }
   return (
     <View key={postId} style={styles.postWrap}>
       <View style={styles.headerSection}>
@@ -497,24 +345,8 @@ export default function PostList({
               <TouchableOpacity onPress={handleDisplayNamePress}>
                 <Text style={styles.headerText}>{user?.displayName}</Text>
               </TouchableOpacity>
-
-              {communityName && (
-                <>
-                  <SvgXml
-                    style={styles.arrow}
-                    xml={arrowXml}
-                    width="8"
-                    height="8"
-                  />
-
-                  <TouchableOpacity onPress={handleCommunityNamePress}>
-                    <Text style={styles.headerText}>{communityName}</Text>
-                  </TouchableOpacity>
-                </>
-              )}
             </View>
             <View style={styles.timeRow}>
-
               <Text style={styles.headerTextTime}>
                 {getTimeDifference(createdAt)}
               </Text>
@@ -526,9 +358,6 @@ export default function PostList({
             </View>
           </View>
         </View>
-        <TouchableOpacity onPress={openModal} style={styles.threeDots}>
-          <SvgXml xml={threeDots(theme.colors.base)} width="20" height="16" />
-        </TouchableOpacity>
       </View>
       <View>
         <View style={styles.bodySection}>
@@ -540,59 +369,24 @@ export default function PostList({
             </View>
           )}
         </View>
-
-        {likeReaction === 0 && commentsCount === 0 ? (
-          ''
-        ) : (
-          <TouchableWithoutFeedback onPress={() => onClickComment()}>
-            <View style={styles.countSection}>
-              {likeReaction ? (
-                <Text style={styles.likeCountText}>
-                  {likeReaction} {renderLikeText(likeReaction)}
-                </Text>
-              ) : (
-                <Text />
-              )}
-              {commentsCount > 0 && (
-                <Text style={styles.commentCountText}>
-                  {commentsCount > 0 && commentsCount}{' '}
-                  {renderCommentText(commentsCount)}
-                </Text>
-              )}
-            </View>
-          </TouchableWithoutFeedback>
-        )}
-
-        <View style={styles.actionSection}>
+        {isModerator && <View style={styles.actionSection}>
           <TouchableOpacity
-            onPress={() => addReactionToPost()}
-            style={styles.likeBtn}
+            onPress={() => approvePost()}
+            style={styles.acceptBtn}
           >
-            {isLike ? (
-              <SvgXml xml={likedXml(theme.colors.primary)} width="20" height="16" />
-            ) : (
-              <SvgXml xml={likeXml} width="20" height="16" />
-            )}
 
-            <Text style={isLike ? styles.likedText : styles.btnText}>Like</Text>
+
+            <Text style={styles.acceptBtnText}>Accept</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => onClickComment()}
-            style={styles.commentBtn}
+            onPress={() => declinePost()}
+            style={styles.declineBtn}
           >
-            <SvgXml xml={commentXml} width="20" height="16" />
-            <Text style={styles.btnText}>Comment</Text>
+            <Text style={styles.declineBtnText}>Decline</Text>
           </TouchableOpacity>
-        </View>
+        </View>}
+
       </View>
-      {renderOptionModal()}
-      {editPostModalVisible &&
-        <EditPostModal
-          visible={editPostModalVisible}
-          onClose={closeEditPostModal}
-          postDetail={postDetail}
-          onFinishEdit={handleOnFinishEdit}
-        />}
 
     </View>
   );

@@ -36,6 +36,8 @@ import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import MentionPopup from '../../components/MentionPopup';
 import { ISearchItem } from '../../components/SearchItem';
 import { CommunityRepository } from '@amityco/ts-sdk-react-native';
+import { checkCommunityPermission } from '../../providers/Social/communities-sdk';
+import useAuth from '../../hooks/useAuth';
 
 export interface IDisplayImage {
   url: string;
@@ -71,10 +73,10 @@ const CreatePost = ({ route }: any) => {
   const [communityObject, setCommunityObject] = useState<Amity.LiveObject<Amity.Community>>();
   // const { data: community, loading, error } = data ?? {};
   const { data: community } = communityObject ?? {};
-  console.log('community:', community)
+
   // const { data: community, loading, error } = data ?? {};
   const videoRef = React.useRef(null);
-
+  const { client } = useAuth();
 
 
   const getCommunityDetail = () => {
@@ -131,7 +133,10 @@ const CreatePost = ({ route }: any) => {
     }
   };
   const goBack = () => {
-    navigation.navigate('Home');
+    setTimeout(() => {
+      navigation.goBack();
+    }, 300);
+
   };
   navigation.setOptions({
     // eslint-disable-next-line react/no-unstable-nested-components
@@ -191,7 +196,7 @@ const CreatePost = ({ route }: any) => {
         mentionsPosition
       );
       if (response) {
-        navigation.navigate('Home');
+        navigation.goBack();
       }
     } else {
       const fileIdArr: (string | undefined)[] = displayVideos.map(
@@ -211,21 +216,27 @@ const CreatePost = ({ route }: any) => {
         mentionUserIds.length > 0 ? mentionUserIds : [],
         mentionsPosition
       );
-      if (community.postSetting === 'ADMIN_REVIEW_POST_REQUIRED' && response) {
-        Alert.alert(
-          'Post submitted',
-          'Your post has been submitted to the pending list. It will be reviewed by community moderator',
-          [
-            {
-              text: 'OK',
-              onPress: () => navigation.navigate('Home'),
-            },
-          ],
-          { cancelable: false }
-        );
+      if (community?.postSetting === 'ADMIN_REVIEW_POST_REQUIRED' && response) {
+        const res = await checkCommunityPermission(community.communityId, client as Amity.Client)
+        if (res.permissions.length > 0 && res.permissions.includes('Post/ManagePosts')) {
+          navigation.goBack();
+        } else {
+          Alert.alert(
+            'Post submitted',
+            'Your post has been submitted to the pending list. It will be reviewed by community moderator',
+            [
+              {
+                text: 'OK',
+                onPress: () => navigation.goBack(),
+              },
+            ],
+            { cancelable: false }
+          );
+        }
+
       }
       else if (response) {
-        navigation.navigate('Home');
+        navigation.goBack();
       }
     }
   };

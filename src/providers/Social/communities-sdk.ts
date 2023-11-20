@@ -1,4 +1,6 @@
 import { CommunityPostSettings, CommunityRepository } from '@amityco/ts-sdk-react-native';
+import useAuth from '../../hooks/useAuth';
+import { UserInterface } from '../../types/user.interface';
 
 export interface ICreateCommunity {
   description: string;
@@ -39,3 +41,24 @@ export function createCommunity(communityParam: ICreateCommunity): Promise<any> 
   });
   return communityObject;
 }
+export async function checkCommunityPermission(communityId: string, client: Amity.Client): Promise<any> {
+  const url: string = `https://api.sg.amity.co/api/v3/communities/${communityId}/permissions/me`
+  const accessToken = client.token.accessToken;
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`,
+      },
+    });
+
+    const data = await response.json()
+    return data
+  } catch (error) {
+    console.log('error:', error)
+  }
+
+}
+
+

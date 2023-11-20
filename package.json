@@ -59,7 +59,7 @@
     "@release-it/conventional-changelog": "^5.0.0",
     "@types/jest": "^28.1.2",
     "@types/lodash.debounce": "^4.0.7",
-    "@types/react": "~17.0.21",
+    "@types/react": "^18.2.37",
     "@types/react-native": "0.70.0",
     "@types/react-native-video": "^5.0.14",
     "commitlint": "^17.0.2",

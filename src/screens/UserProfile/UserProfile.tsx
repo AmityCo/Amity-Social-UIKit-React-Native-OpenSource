@@ -21,11 +21,12 @@ import { SvgXml } from 'react-native-svg';
 import { editIcon } from '../../svg/svg-xml-list';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import { useTheme } from 'react-native-paper';
+import FloatingButton from '../../components/FloatingButton';
 
 export default function UserProfile({ route }: any) {
-  const theme = useTheme() as MyMD3Theme ;
+  const theme = useTheme() as MyMD3Theme;
   const styles = getStyles()
-  const { apiRegion } = useAuth();
+  const { apiRegion, client } = useAuth();
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const { userId } = route.params;
   const [user, setUser] = useState<Amity.User>();
@@ -150,7 +151,7 @@ export default function UserProfile({ route }: any) {
         style={styles.editProfileButton}
         onPress={onEditProfileTap}
       >
-        <SvgXml width={24} height={20} xml={editIcon(theme.colors.base)}/>
+        <SvgXml width={24} height={20} xml={editIcon(theme.colors.base)} />
         <Text style={styles.editProfileText}>Edit Profile</Text>
       </TouchableOpacity>
     );
@@ -185,66 +186,77 @@ export default function UserProfile({ route }: any) {
       feedRef.current.handleLoadMore(); // Call the function inside the child component
     }
   }
+  const handleOnPressPostBtn = () => {
+    console.log('press')
+    navigation.navigate('CreatePost', {
+      targetId: userId,
+      targetName: 'My Timeline',
+      targetType: 'user',
+    });
+  }
   return (
-    <ScrollView
-      ref={scrollViewRef}
-      onScroll={handleScroll}
-      scrollEventThrottle={20}
-    >
-      <View style={styles.profileContainer}>
-        <View style={styles.userDetail}>
-          <Image
-            style={styles.avatar}
-            source={
-              user?.avatarFileId || user?.avatarCustomUrl
-                ? {
-                  uri: user.avatarFileId
-                    ? avatarFileURL(user.avatarFileId)
-                    : user.avatarCustomUrl,
-                }
-                : require('../../../assets/icon/Placeholder.png')
-            }
-          />
-          <View style={styles.userInfo}>
-            <Text style={styles.title}>{user?.displayName}</Text>
-            <View style={styles.horizontalText}>
-              <Text style={styles.textComponent}>
-                {followingCount + ' Following '}
-              </Text>
-              <Text style={styles.textComponent}>
-                {followerCount + ' Follower'}
-              </Text>
+    <View style={styles.container}>
+      <ScrollView
+        ref={scrollViewRef}
+        onScroll={handleScroll}
+        scrollEventThrottle={20}
+      >
+        <View style={styles.profileContainer}>
+          <View style={styles.userDetail}>
+            <Image
+              style={styles.avatar}
+              source={
+                user?.avatarFileId || user?.avatarCustomUrl
+                  ? {
+                    uri: user.avatarFileId
+                      ? avatarFileURL(user.avatarFileId)
+                      : user.avatarCustomUrl,
+                  }
+                  : require('../../../assets/icon/Placeholder.png')
+              }
+            />
+            <View style={styles.userInfo}>
+              <Text style={styles.title}>{user?.displayName}</Text>
+              <View style={styles.horizontalText}>
+                <Text style={styles.textComponent}>
+                  {followingCount + ' Following '}
+                </Text>
+                <Text style={styles.textComponent}>
+                  {followerCount + ' Follower'}
+                </Text>
+              </View>
             </View>
           </View>
-        </View>
-        <View style={styles.descriptionContainer}>
-          {user?.description ? (
-            <Text style={styles.descriptionText}>
-              {' '}
-              {user?.description}
-            </Text>
+          <View style={styles.descriptionContainer}>
+            {user?.description ? (
+              <Text style={styles.descriptionText}>
+                {' '}
+                {user?.description}
+              </Text>
+            ) : (
+              <View />
+            )}
+          </View>
+
+          {followStatus === 'none' ? (
+            followButton()
+          ) : followStatus === undefined ? ( // userID is the current user ID
+            editProfileButton()
           ) : (
             <View />
           )}
         </View>
-
-        {followStatus === 'none' ? (
-          followButton()
-        ) : followStatus === undefined ? ( // userID is the current user ID
-          editProfileButton()
-        ) : (
-          <View />
-        )}
-      </View>
-      <CustomTab tabName={['Timeline', 'Gallery']} onTabChange={handleTab} />
-      <Feed targetType="user" targetId={userId} ref={feedRef} />
-      {/* <View style={styles.loadingIndicator}>
+        <CustomTab tabName={['Timeline', 'Gallery']} onTabChange={handleTab} />
+        <Feed targetType="user" targetId={userId} ref={feedRef} />
+        {/* <View style={styles.loadingIndicator}>
         <LoadingOverlay
           isLoading={showLoadingIndicator}
           loadingText="Loading..."
         />
       </View> */}
-    </ScrollView>
+      </ScrollView>
+      {(client as Amity.Client).userId === userId && <FloatingButton onPress={handleOnPressPostBtn} isGlobalFeed={false} />}
+    </View>
   );
 }
 

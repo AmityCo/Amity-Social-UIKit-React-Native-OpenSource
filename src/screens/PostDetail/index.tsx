@@ -130,7 +130,6 @@ const PostDetail = () => {
   }, [postId])
 
 
-
   // const formattedPostCollection = async () => {
   //   const item = postCollection
   //   const { userObject } = await getAmityUser(item.postedUserId);
@@ -272,6 +271,7 @@ const PostDetail = () => {
   }, [commentCollection, queryComment]);
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    console.log('load more comment')
     const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
 
     const isScrollEndReached =
@@ -417,6 +417,7 @@ const PostDetail = () => {
               )}
               keyExtractor={(item) => item.commentId.toString()}
               onEndReachedThreshold={0.8}
+              onEndReached={onNextPage}
               ref={flatListRef}
             />
           </View>
