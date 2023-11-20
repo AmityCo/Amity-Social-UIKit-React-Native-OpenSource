@@ -182,6 +182,9 @@ export const getStyles = () => {
     avatarRow: {
       flexDirection: 'row',
       alignItems: 'center'
+    },
+    loading:{
+      marginLeft: 6
     }
   });
 

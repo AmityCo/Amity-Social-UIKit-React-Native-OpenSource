@@ -7,7 +7,9 @@ export interface ICreateCommunity {
   displayName: string;
   isPublic: boolean;
   userIds?: string[];
-  category: string
+  category: string;
+  avatarFileId?: string
+
 }
 export function getCommunityById(communityId: string): Promise<any> {
   const communityObject = new Promise((resolve, reject) => {
@@ -34,6 +36,7 @@ export function createCommunity(communityParam: ICreateCommunity): Promise<any> 
       categoryIds: [communityParam.category] as string[],
       userIds: communityParam.userIds as string[],
       postSetting: CommunityPostSettings.ANYONE_CAN_POST,
+      avatarFileId: communityParam.avatarFileId.length>0?communityParam.avatarFileId: undefined
     };
 
     const { data: community } = await CommunityRepository.createCommunity(newCommunity);
