@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {
   useEffect,
-  useRef,
   useState,
   useMemo,
 } from 'react';
@@ -12,44 +11,19 @@ import {
   Text,
   TouchableOpacity,
   Image,
-  TouchableWithoutFeedback,
-  Modal,
-  Pressable,
-  Animated,
-  Alert,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import {
-  arrowXml,
-  commentXml,
-  likedXml,
-  likeXml,
   personXml,
-  threeDots,
 } from '../../../svg/svg-xml-list';
 import { getStyles } from './styles';
 
 import type { UserInterface } from '../../../types/user.interface';
-import {
-  addPostReaction,
-  isReportTarget,
-  removePostReaction,
-  reportTargetById,
-  unReportTargetById,
-} from '../../../providers/Social/feed-sdk';
-import { getCommunityById } from '../../../providers/Social/communities-sdk';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import useAuth from '../../../hooks/useAuth';
-import EditPostModal from '../../../components/EditPostModal';
-import { useTheme } from 'react-native-paper';
-import type { MyMD3Theme } from '../../../providers/amity-ui-kit-provider';
 import MediaSection from '../../../components/MediaSection';
-import postDetailSlice from '../../../redux/slices/postDetailSlice';
-import { useDispatch } from 'react-redux';
-import globalFeedSlice from '../../../redux/slices/globalfeedSlice';
 import { IMentionPosition } from '../../../screens/CreatePost';
-import feedSlice from '../../../redux/slices/feedSlice';
 import { PostRepository } from '@amityco/ts-sdk-react-native';
 
 export interface IPost {
@@ -69,11 +43,9 @@ export interface IPost {
   mentionees: string[];
   mentionPosition?: IMentionPosition[]
 }
-export interface IPostList {
+export interface IPendingPostList {
   onAcceptDecline?: (postId: string) => void;
   postDetail: IPost;
-  postIndex?: number;
-  isGlobalfeed?: boolean;
   isModerator?: boolean
 }
 export interface MediaUri {
@@ -87,49 +59,27 @@ export interface IVideoPost {
 }
 export default function PendingPostList({
   postDetail,
-  postIndex,
   onAcceptDecline,
-  isGlobalfeed = true,
   isModerator = false
 
-}: IPostList) {
+}: IPendingPostList) {
   const [postData, setPostData] = useState<IPost>(postDetail)
 
 
-  const theme = useTheme() as MyMD3Theme;
-  const { client, apiRegion } = useAuth();
+  const { apiRegion } = useAuth();
   const styles = getStyles();
-  const [isLike, setIsLike] = useState<boolean>(false);
-  const [likeReaction, setLikeReaction] = useState<number>(0);
-  const [communityName, setCommunityName] = useState('');
   const [textPost, setTextPost] = useState<string>()
-
-  const [isVisible, setIsVisible] = useState<boolean>(false);
-  const [isEdit, setIsEdit] = useState<boolean>(false);
-  const [isReportByMe, setIsReportByMe] = useState<boolean>(false);
-  const [editPostModalVisible, setEditPostModalVisible] = useState<boolean>(false)
-  const slideAnimation = useRef(new Animated.Value(0)).current;
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
-  const dispatch = useDispatch()
 
   const [mentionPositionArr, setMentionsPositionArr] = useState<IMentionPosition[]>([])
   const [loading, setLoading] = useState<boolean>(true)
 
-  const { updateByPostId: updateByPostIdGlobalFeed } = globalFeedSlice.actions
-  const { updateByPostId } = feedSlice.actions
-  const { updatePostDetail } = postDetailSlice.actions
   const {
-    postId,
     data,
-    myReactions = [],
-    reactionCount,
-    commentsCount,
+    postId,
     createdAt,
     user,
-    targetType,
-    targetId,
     childrenPosts = [],
-    editedAt,
     mentionPosition
   } = postData ?? {};
 
@@ -153,60 +103,9 @@ export default function PendingPostList({
 
 
   useEffect(() => {
-    if (myReactions && myReactions?.length > 0) {
-      setIsLike(true)
-    } else {
-      setIsLike(false)
-    }
-    if (reactionCount?.like) {
-      setLikeReaction(reactionCount?.like)
-    } else {
-      setLikeReaction(0)
-    }
-  }, [myReactions, reactionCount])
-
-
-  const openModal = () => {
-    setIsVisible(true);
-  };
-
-  const closeModal = () => {
-    Animated.timing(slideAnimation, {
-      toValue: 0,
-      duration: 100,
-      useNativeDriver: true,
-    }).start(() => setIsVisible(false));
-  };
-
-
-
-
-  const checkIsReport = async () => {
-    const isReport = await isReportTarget('post', postId);
-    if (isReport) {
-      setIsReportByMe(true);
-    }
-  };
-
-  useEffect(() => {
-    checkIsReport();
-
-  }, [postDetail]);
-
-  useEffect(() => {
     setTextPost(data?.text)
-    if (myReactions.length > 0 && myReactions.includes('like')) {
-      setIsLike(true);
-    }
-    if (reactionCount?.like) {
-      setLikeReaction(reactionCount?.like);
-    }
-    if (targetType === 'community' && targetId) {
-      getCommunityInfo(targetId);
-    }
 
   }, [postDetail]);
-
 
   function getTimeDifference(timestamp: string): string {
     // Convert the timestamp string to a Date object
@@ -250,11 +149,6 @@ export default function PendingPostList({
   }
 
 
-  async function getCommunityInfo(id: string) {
-    const { data: community } = await getCommunityById(id);
-    setCommunityName(community.data.displayName);
-  }
-
 
 
   const handleDisplayNamePress = () => {
@@ -291,7 +185,6 @@ export default function PendingPostList({
 
         // Update currentPosition for the next iteration
         currentPosition = index + length;
-
         // Return an array of non-highlighted and highlighted text
         return [nonHighlightedText, highlightedText];
       }
@@ -350,11 +243,6 @@ export default function PendingPostList({
               <Text style={styles.headerTextTime}>
                 {getTimeDifference(createdAt)}
               </Text>
-              {(editedAt !== createdAt || isEdit) && <Text style={styles.dot}>·</Text>}
-              {(editedAt !== createdAt || isEdit) &&
-                <Text style={styles.headerTextTime}>
-                  Edited
-                </Text>}
             </View>
           </View>
         </View>

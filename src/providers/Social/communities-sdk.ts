@@ -1,6 +1,4 @@
 import { CommunityPostSettings, CommunityRepository } from '@amityco/ts-sdk-react-native';
-import useAuth from '../../hooks/useAuth';
-import { UserInterface } from '../../types/user.interface';
 
 export interface ICreateCommunity {
   description: string;

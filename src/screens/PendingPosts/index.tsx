@@ -19,7 +19,6 @@ export default function PendingPosts() {
 
   const { communityId, isModerator } = route.params
   const [postList, setPostList] = useState<IPost[]>([])
-  console.log('communityId:', communityId)
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const { client } = useAuth();
 
@@ -67,8 +66,8 @@ export default function PendingPosts() {
       <Text style={styles.declineWarningText}>Decline pending post will permanently delete the selected post from community.</Text>
       <FlatList
         data={postList}
-        renderItem={({ item, index }) => (
-          <PendingPostList postDetail={item} isGlobalfeed={false} postIndex={index} onAcceptDecline={removePostfromList} isModerator={isModerator} />
+        renderItem={({ item }) => (
+          <PendingPostList postDetail={item}  onAcceptDecline={removePostfromList} isModerator={isModerator} />
         )}
         keyExtractor={(item) => item.postId.toString()}
         extraData={postList}

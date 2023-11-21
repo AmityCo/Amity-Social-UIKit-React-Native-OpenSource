@@ -42,17 +42,12 @@ export default function CommunityHome({ route }: any) {
   const [isJoin, setIsJoin] = useState(true);
   const [communityData, setCommunityData] = useState<Amity.LiveObject<Amity.Community>>();
 
-  // console.log('communityData:', communityData)
   const feedRef: MutableRefObject<FeedRefType | null> = useRef<FeedRefType | null>(null);
   const scrollViewRef = useRef(null);
 
   const [pendingPosts, setPendingPosts] = useState<IPost[]>([])
-  // console.log('pendingPosts:', pendingPosts)
   const [isShowPendingArea, setIsShowPendingArea] = useState<boolean>(false)
-  // console.log('isShowPendingArea:', isShowPendingArea)
   const [isUserHasPermission, setIsUserHasPermission] = useState<boolean>(false)
-  // console.log('isUserHasPermission:', isUserHasPermission)
-
   const [postSetting, setPostSetting] = useState<string>('')
 
   const disposers: Amity.Unsubscriber[] = [];
@@ -174,14 +169,6 @@ export default function CommunityHome({ route }: any) {
 
   };
 
-  // useEffect(() => {
-
-  //   loadCommunity();
-
-  //   return () => {
-  //     disposers.forEach(fn => fn());
-  //   };
-  // }, [communityId]);
 
 
 
@@ -233,7 +220,6 @@ export default function CommunityHome({ route }: any) {
   }
 
   const handleOnPressPostBtn = () => {
-    console.log('press')
     navigation.navigate('CreatePost', {
       targetId: communityId,
       targetName: communityName,

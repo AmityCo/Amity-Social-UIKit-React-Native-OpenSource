@@ -6,8 +6,6 @@ import {
   Text,
   Modal,
   Image,
-  ActivityIndicator,
-  FlatList,
   ScrollView,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';

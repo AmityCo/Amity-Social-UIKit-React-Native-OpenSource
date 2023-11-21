@@ -86,7 +86,6 @@ export default function CreateCommunity() {
       image,
     );
     if (file) {
-      console.log('file:', file)
       setImageFileId(file[0].fileId)
       setUploadingImage(false)
     }

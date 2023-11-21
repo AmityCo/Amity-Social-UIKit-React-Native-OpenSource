@@ -187,7 +187,6 @@ export default function UserProfile({ route }: any) {
     }
   }
   const handleOnPressPostBtn = () => {
-    console.log('press')
     navigation.navigate('CreatePost', {
       targetId: userId,
       targetName: 'My Timeline',

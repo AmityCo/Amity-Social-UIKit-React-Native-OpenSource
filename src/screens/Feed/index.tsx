@@ -8,7 +8,6 @@ import React, {
 // import { useTranslation } from 'react-i18next';
 
 import { FlatList, View } from 'react-native';
-import useAuth from '../../hooks/useAuth';
 import PostList from '../../components/Social/PostList';
 import { getStyles } from './styles';
 import { CommunityRepository, PostRepository, SubscriptionLevels, UserRepository, getCommunityTopic, getUserTopic, subscribeTopic } from '@amityco/ts-sdk-react-native';
@@ -18,7 +17,6 @@ import { amityPostsFormatter } from '../../util/postDataFormatter';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import feedSlice from '../../redux/slices/feedSlice';
-import FloatingButton from '../../components/FloatingButton';
 
 interface IFeed {
   targetId: string;
@@ -27,12 +25,9 @@ interface IFeed {
 function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
 
   const styles = getStyles();
-  const { client } = useAuth();
   const [postData, setPostData] = useState<Amity.LiveCollection<Amity.Post<any>>>();
   const { postList } = useSelector((state: RootState) => state.feed)
-  	console.log('postList:', postList)
   const { clearFeed, updateFeed, deleteByPostId } = feedSlice.actions
-  // const [postList, setPostList] = useState<IPost[]>([]);
   const { data: posts, onNextPage, hasNextPage } = postData ?? {};
   const [unSubFunc, setUnSubPageFunc] = useState<() => void>();
   const dispatch = useDispatch()
@@ -59,7 +54,6 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
 
     if (targetType === 'community') {
       CommunityRepository.getCommunity(targetId, (data) => {
-        console.log('data community: ', data.data);
         if (data.data) {
           subscribeTopic(
             getCommunityTopic(data.data, SubscriptionLevels.POST),
@@ -89,6 +83,7 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
     getFeed();
     return () => {
       unSubFunc && unSubFunc()
+      dispatch(clearFeed())
     };
   }, []);
 
