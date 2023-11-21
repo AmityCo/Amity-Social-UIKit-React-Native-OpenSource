@@ -216,8 +216,10 @@ const CreatePost = ({ route }: any) => {
         mentionUserIds.length > 0 ? mentionUserIds : [],
         mentionsPosition
       );
-      if (community?.postSetting === 'ADMIN_REVIEW_POST_REQUIRED' && response) {
+      if ((community?.postSetting === 'ADMIN_REVIEW_POST_REQUIRED' || (community as Record<string,any>).needApprovalOnPostCreation) && response) {
+
         const res = await checkCommunityPermission(community.communityId, client as Amity.Client)
+
         if (res.permissions.length > 0 && res.permissions.includes('Post/ManagePosts')) {
           navigation.goBack();
         } else {

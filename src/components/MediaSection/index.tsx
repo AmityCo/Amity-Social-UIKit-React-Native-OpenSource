@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Image, ImageStyle, StyleProp, Text, TouchableWithoutFeedback, View } from 'react-native';
 
 
@@ -103,7 +103,7 @@ export default function MediaSection({ childrenPosts }: IMediaSection) {
 
 
 
-  const RenderMediaPosts = () => {
+  function renderMediaPosts()  {
     const thumbnailFileIds: string[] =
       videoPosts.length > 0
         ? videoPosts.map((item) => {
@@ -254,7 +254,7 @@ export default function MediaSection({ childrenPosts }: IMediaSection) {
 
   return (
     <View>
-      <RenderMediaPosts />
+  { renderMediaPosts()}
       <ImageView
         images={
           imagePostsFullSize.length > 0

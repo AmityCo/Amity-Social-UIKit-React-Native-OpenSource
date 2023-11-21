@@ -203,18 +203,14 @@ export default function PendingPostList({
   }, [childrenPosts]);
 
   async function approvePost() {
-    const { data: post } = await PostRepository.approvePost(postId);
+    onAcceptDecline && onAcceptDecline(postId)
+    await PostRepository.approvePost(postId);
 
-    if (post) {
-      onAcceptDecline && onAcceptDecline(postId)
-    }
   }
   async function declinePost() {
-    const { data: post } = await PostRepository.declinePost(postId);
+    onAcceptDecline && onAcceptDecline(postId)
+    await PostRepository.declinePost(postId);
 
-    if (post) {
-      onAcceptDecline && onAcceptDecline(postId)
-    }
   }
   return (
     <View key={postId} style={styles.postWrap}>
