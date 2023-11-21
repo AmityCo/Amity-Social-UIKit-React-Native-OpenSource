@@ -536,7 +536,7 @@ export default function PostList({
           {textPost && <RenderTextWithMention />}
           {childrenPosts.length > 0 && (
             <View style={styles.mediaWrap}>
-              {memoizedMediaSection}
+              {!loading && memoizedMediaSection}
             </View>
           )}
         </View>

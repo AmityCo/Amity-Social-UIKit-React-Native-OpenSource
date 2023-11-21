@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Image, ImageStyle, StyleProp, Text, TouchableWithoutFeedback, View } from 'react-native';
 
 
@@ -235,13 +235,6 @@ export default function MediaSection({ childrenPosts }: IMediaSection) {
       );
     }
   }
-  // if (initImagePostsFullSize.length > 0) {
-  //   mediaPosts = initImagePostsFullSize.map((item) => item.uri);
-  // } else if (initVideoPostsFullSize.length > 0) {
-  //   mediaPosts = initVideoPostsFullSize.map((item) => item.uri);
-  // } else {
-  //   mediaPosts = thumbnailFileIds.length > 0 ? thumbnailFileIds : imagePosts;
-  // }
 
 
   function renderPlayButton() {

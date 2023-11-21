@@ -90,6 +90,7 @@ export default function CommentList({
 
   const { client, apiRegion } = useAuth();
   const [commentList, setCommentList] = useState<IComment[]>([]);
+  console.log('commentList:', commentList)
   const [textComment, setTextComment] = useState<string>(data.text)
   const [isVisible, setIsVisible] = useState(false);
   const [isReportByMe, setIsReportByMe] = useState<boolean>(false);
