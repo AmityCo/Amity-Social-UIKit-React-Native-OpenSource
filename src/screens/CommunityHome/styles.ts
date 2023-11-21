@@ -34,7 +34,7 @@ export const getStyles = () => {
       marginLeft: 8,
       fontSize: 16,
       fontWeight: '600',
-      color: theme.colors.base,
+      color: '#FFF',
     },
     dotIcon: {
       width: 16,
@@ -114,6 +114,36 @@ export const getStyles = () => {
       paddingTop: 15,
       paddingHorizontal: 20,
       color: theme.colors.base,
+    },
+    pendingPostWrap: {
+      paddingVertical: 16,
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginHorizontal: 16
+    },
+    pendingPostArea: {
+      width: '100%',
+      height: 62,
+      backgroundColor: theme.colors.secondary,
+      paddingVertical: 12,
+      alignItems: 'center',
+      borderRadius: 4
+    },
+    pendingText:{
+      fontSize: 15,
+      fontWeight: '600',
+      color: theme.colors.base,
+      marginLeft: 6
+    },
+    pendingDescriptionText:{
+      fontSize: 13,
+      fontWeight: '400',
+      color: theme.colors.baseShade1
+    },
+    pendingRow:{
+      flexDirection: 'row',
+      alignItems: 'center'
     },
   });
 

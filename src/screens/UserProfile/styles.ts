@@ -10,7 +10,6 @@ export const getStyles = () => {
       // alignItems: 'center',
       width: '100%',
       justifyContent: 'flex-start',
-      padding: 16,
     },
     loadingIndicator: {
       flex: 1,

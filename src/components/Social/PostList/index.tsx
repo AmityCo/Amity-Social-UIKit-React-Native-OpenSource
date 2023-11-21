@@ -112,7 +112,6 @@ export default function PostList({
 
   const [mentionPositionArr, setMentionsPositionArr] = useState<IMentionPosition[]>([])
   const [loading, setLoading] = useState<boolean>(true)
-
   const { updateByPostId: updateByPostIdGlobalFeed } = globalFeedSlice.actions
   const { updateByPostId } = feedSlice.actions
   const { updatePostDetail } = postDetailSlice.actions
@@ -474,6 +473,8 @@ export default function PostList({
   const memoizedMediaSection = useMemo(() => {
     return <MediaSection childrenPosts={childrenPosts} />;
   }, [childrenPosts]);
+
+
   return (
     <View key={postId} style={styles.postWrap}>
       <View style={styles.headerSection}>
@@ -513,6 +514,7 @@ export default function PostList({
               )}
             </View>
             <View style={styles.timeRow}>
+
               <Text style={styles.headerTextTime}>
                 {getTimeDifference(createdAt)}
               </Text>

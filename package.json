@@ -63,6 +63,8 @@
     "@types/react": "^18.2.37",
     "@types/react-native": "^0.72.6",
     "babel-plugin-module-resolver": "^5.0.0",
+    "@types/lodash.debounce": "^4.0.7",
+    "@types/react-native-video": "^5.0.14",
     "commitlint": "^17.0.2",
     "del-cli": "^5.0.0",
     "eslint": "^8.53.0",
@@ -164,10 +166,10 @@
     ]
   },
   "dependencies": {
-    "@amityco/ts-sdk-react-native": "^6.12.1",
     "@react-native-async-storage/async-storage": "^1.19.3",
     "@react-native-community/netinfo": "^9.4.1",
     "@react-native-community/slider": "^4.4.3",
+    "@amityco/ts-sdk-react-native": "^6.13.0",
     "@react-navigation/native": "6.1.6",
     "@react-navigation/native-stack": "6.9.10",
     "@react-navigation/stack": "6.3.16",

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 // import { useTranslation } from 'react-i18next';
 
 import {
@@ -21,18 +21,20 @@ import { getStyles } from './styles';
 import ChooseCategoryModal from '../../components/ChooseCategoryModal';
 import { RadioButton } from 'react-native-radio-buttons-group';
 import AddMembersModal from '../../components/AddMembersModal';
-import type { UserInterface } from 'src/types/user.interface';
+import type { UserInterface } from '../../types/user.interface';
 import { createCommunity, type ICreateCommunity } from '../../providers/Social/communities-sdk';
 import useAuth from '../../hooks/useAuth';
-import { useTheme } from 'react-native-paper';
+import { ActivityIndicator, useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
+import ImagePicker, { launchImageLibrary } from 'react-native-image-picker';
+import { uploadImageFile } from '../../providers/file-provider';
 
 export default function CreateCommunity() {
 
   const styles = getStyles();
-  const theme = useTheme() as MyMD3Theme ;
+  const theme = useTheme() as MyMD3Theme;
   const { apiRegion } = useAuth();
-  const [image] = useState<string>();
+  const [image, setImage] = useState<string>();
   const [communityName, setCommunityName] = useState<string>('');
   const [categoryName, setCategoryName] = useState<string>('');
   const [categoryId, setCategoryId] = useState<string>('');
@@ -41,6 +43,9 @@ export default function CreateCommunity() {
   const [addMembersModal, setAddMembersModal] = useState<boolean>(false)
   const [selectedId, setSelectedId] = useState<string>();
   const [selectedUserList, setSelectedUserList] = useState<UserInterface[]>([]);
+  const [uploadingImage, setUploadingImage] = useState<boolean>(false)
+  const [isCreating, setIsCreating] = useState<boolean>(false)
+  const [imageFileId, setImageFileId] = useState<string>('')
 
   const MAX_COMMUNITY_NAME_LENGTH = 30;
   const MAX_ABOUT_TEXT_LENGTH = 180;
@@ -76,6 +81,37 @@ export default function CreateCommunity() {
   //     setImage(result.assets[0]?.uri);
   //   }
   // };
+  const uploadFile = async () => {
+    const file: Amity.File<any>[] = await uploadImageFile(
+      image,
+    );
+    if (file) {
+      setImageFileId(file[0].fileId)
+      setUploadingImage(false)
+    }
+  }
+  useEffect(() => {
+    if (image) {
+      setUploadingImage(true)
+      uploadFile()
+    }
+  }, [image])
+
+  const pickImage = async () => {
+
+    const result: ImagePicker.ImagePickerResponse = await launchImageLibrary({
+
+      mediaType: 'photo',
+      quality: 1,
+      selectionLimit: 10
+
+    });
+    if (!result.didCancel && result.assets && result.assets.length > 0) {
+      setImage(result.assets[0]?.uri);
+    }
+  };
+
+
 
   const handleSelectCategory = (categoryId: string, categoryName: string) => {
     setCategoryId(categoryId);
@@ -106,15 +142,27 @@ export default function CreateCommunity() {
     setSelectedUserList(removedUser)
   }
 
+  useEffect(() => {
+if(isCreating && !uploadingImage){
+  onCreateCommunity()
+}
+  }, [uploadingImage])
+  
   const onCreateCommunity = async () => {
-    const userIds: string[] = selectedUserList.map(item => item.userId)
-    const isPublic: boolean = selectedId === 'private' ? false : true
-    const communityParam: ICreateCommunity = { displayName: communityName, description: aboutText, isPublic: isPublic, userIds: userIds, category: categoryId }
-    const isCreated = await createCommunity(communityParam)
-    if (isCreated) {
-      navigation.navigate('CommunityHome', { communityId: isCreated.communityId, communityName: isCreated.displayName });
+    setIsCreating(true)
+    if(!uploadingImage){
+      const userIds: string[] = selectedUserList.map(item => item.userId)
+      const isPublic: boolean = selectedId === 'private' ? false : true
+      const communityParam: ICreateCommunity = { displayName: communityName, description: aboutText, isPublic: isPublic, userIds: userIds, category: categoryId, avatarFileId: imageFileId }
+      const isCreated = await createCommunity(communityParam)
+      if (isCreated) {
+        navigation.navigate('CommunityHome', { communityId: isCreated.communityId, communityName: isCreated.displayName });
+      }
     }
+  
   }
+
+
   return (
     <ScrollView contentContainerStyle={styles.container} style={styles.container}>
       <View >
@@ -129,7 +177,7 @@ export default function CreateCommunity() {
           )}
 
           <TouchableOpacity style={styles.button}
-          //  onPress={pickImage}
+            onPress={pickImage}
           >
             {/* You can use any icon library here or just text */}
             {/* For example, you can use an icon like: <YourIconName size={24} color="white" /> */}
@@ -287,7 +335,9 @@ export default function CreateCommunity() {
             </View>
           </View>}
 
-          <TouchableOpacity onPress={onCreateCommunity} style={styles.createButton}><Text style={styles.createText}>Create community</Text></TouchableOpacity>
+          <TouchableOpacity disabled={(isCreating && uploadingImage)?true: false} onPress={onCreateCommunity} style={styles.createButton}>
+            <Text style={styles.createText}>Create community </Text>
+            { (isCreating && uploadingImage)&&<ActivityIndicator style={styles.loading} animating={true} color={'#FFF'} />}</TouchableOpacity>
         </View>
 
       </View>

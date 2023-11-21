@@ -3,8 +3,13 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    bottom: 150,
-    right: 20,
+    bottom: 135,
+    right: 10,
+  },
+  otherFeedContainer:{
+    position: 'absolute',
+    bottom: 35,
+    right: 10
   },
   button: {
     width: 64,
