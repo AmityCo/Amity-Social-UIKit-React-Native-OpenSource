@@ -57,10 +57,6 @@ const PostDetail = () => {
   const [commentList, setCommentList] = useState<IComment[]>([]);
   const [commentCollection, setCommentCollection] = useState<Amity.LiveCollection<Amity.Comment>>();
   const { data: comments, hasNextPage, onNextPage } = commentCollection ?? {};
-  // const [unSubscribeComment, setUnSubscribeComment] = useState<() => void>();
-  // console.log('unSubscribeComment:', unSubscribeComment)
-  // const [unSubscribePost, setUnSubscribePost] = useState<() => void>();
-  // console.log('unSubscribePost:', unSubscribePost)
   const [inputMessage, setInputMessage] = useState('');
   const [communityObject, setCommunityObject] = useState<Amity.Community>()
   const [userObject, setUserObject] = useState<Amity.User>()
@@ -118,7 +114,6 @@ const PostDetail = () => {
       }
     );
     console.log('unSubscribePost:', unsubscribePost)
-    // setUnSubscribePost(() => unsubscribePost);
   };
 
   useEffect(() => {
@@ -131,35 +126,6 @@ const PostDetail = () => {
 
 
 
-  // const formattedPostCollection = async () => {
-  //   const item = postCollection
-  //   const { userObject } = await getAmityUser(item.postedUserId);
-  //   let formattedUserObject: UserInterface;
-
-  //   formattedUserObject = {
-  //     userId: userObject.data.userId,
-  //     displayName: userObject.data.displayName,
-  //     avatarFileId: userObject.data.avatarFileId,
-  //   };
-  //   const post = {
-  //     postId: item.postId,
-  //     data: item.data as Record<string, any>,
-  //     dataType: item.dataType,
-  //     myReactions: item.myReactions as string[],
-  //     reactionCount: item.reactions as Record<string, number>,
-  //     commentsCount: item.commentsCount,
-  //     editedAt: item.editedAt,
-  //     createdAt: item.createdAt,
-  //     updatedAt: item.updatedAt,
-  //     targetType: item.targetType,
-  //     targetId: item.targetId,
-  //     childrenPosts: item.children,
-  //     user: formattedUserObject
-
-
-  //   }
-
-  // }
   useEffect(() => {
     if (postCollection) {
       subscribeTopic(getPostTopic(postCollection));
@@ -272,6 +238,7 @@ const PostDetail = () => {
   }, [commentCollection, queryComment]);
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    console.log('load more comment')
     const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
 
     const isScrollEndReached =
@@ -307,7 +274,6 @@ const PostDetail = () => {
 
   const onPostChange = (post: IPost) => {
     console.log('post:', post)
-    // dispatch(updateByPostId({ postId: post.postId, postDetail: post }))
 
   }
 
@@ -417,6 +383,7 @@ const PostDetail = () => {
               )}
               keyExtractor={(item) => item.commentId.toString()}
               onEndReachedThreshold={0.8}
+              onEndReached={onNextPage}
               ref={flatListRef}
             />
           </View>

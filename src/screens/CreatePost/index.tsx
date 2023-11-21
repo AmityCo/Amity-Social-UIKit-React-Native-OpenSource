@@ -11,6 +11,7 @@ import {
   KeyboardAvoidingView,
   ScrollView,
   Keyboard,
+  Alert,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -34,6 +35,9 @@ import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import MentionPopup from '../../components/MentionPopup';
 import { ISearchItem } from '../../components/SearchItem';
+import { CommunityRepository } from '@amityco/ts-sdk-react-native';
+import { checkCommunityPermission } from '../../providers/Social/communities-sdk';
+import useAuth from '../../hooks/useAuth';
 
 export interface IDisplayImage {
   url: string;
@@ -66,7 +70,23 @@ const CreatePost = ({ route }: any) => {
   const [cursorIndex, setCursorIndex] = useState(0);
   const [mentionsPosition, setMentionsPosition] = useState<IMentionPosition[]>([])
 
+  const [communityObject, setCommunityObject] = useState<Amity.LiveObject<Amity.Community>>();
+  // const { data: community, loading, error } = data ?? {};
+  const { data: community } = communityObject ?? {};
+
+  // const { data: community, loading, error } = data ?? {};
   const videoRef = React.useRef(null);
+  const { client } = useAuth();
+
+
+  const getCommunityDetail = () => {
+    if (targetType === 'community') {
+      CommunityRepository.getCommunity(targetId, setCommunityObject);
+    }
+  }
+  useEffect(() => {
+    getCommunityDetail()
+  }, [targetId])
 
   const checkMention = (inputString: string) => {
     // Check if "@" is at the first letter
@@ -113,7 +133,10 @@ const CreatePost = ({ route }: any) => {
     }
   };
   const goBack = () => {
-    navigation.navigate('Home');
+    setTimeout(() => {
+      navigation.goBack();
+    }, 300);
+
   };
   navigation.setOptions({
     // eslint-disable-next-line react/no-unstable-nested-components
@@ -173,7 +196,7 @@ const CreatePost = ({ route }: any) => {
         mentionsPosition
       );
       if (response) {
-        navigation.navigate('Home');
+        navigation.goBack();
       }
     } else {
       const fileIdArr: (string | undefined)[] = displayVideos.map(
@@ -193,8 +216,29 @@ const CreatePost = ({ route }: any) => {
         mentionUserIds.length > 0 ? mentionUserIds : [],
         mentionsPosition
       );
-      if (response) {
-        navigation.navigate('Home');
+      if ((community?.postSetting === 'ADMIN_REVIEW_POST_REQUIRED' || (community as Record<string,any>).needApprovalOnPostCreation) && response) {
+
+        const res = await checkCommunityPermission(community.communityId, client as Amity.Client)
+
+        if (res.permissions.length > 0 && res.permissions.includes('Post/ManagePosts')) {
+          navigation.goBack();
+        } else {
+          Alert.alert(
+            'Post submitted',
+            'Your post has been submitted to the pending list. It will be reviewed by community moderator',
+            [
+              {
+                text: 'OK',
+                onPress: () => navigation.goBack(),
+              },
+            ],
+            { cancelable: false }
+          );
+        }
+
+      }
+      else if (response) {
+        navigation.goBack();
       }
     }
   };

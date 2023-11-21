@@ -6,10 +6,11 @@ import { styles } from './styles';
 
 interface IBackBtn {
   onPress: () => any;
+  isGlobalFeed?: boolean
 }
-export default function FloatingButton({ onPress }: IBackBtn) {
+export default function FloatingButton({ onPress, isGlobalFeed = true }: IBackBtn) {
   return (
-    <View style={styles.container}>
+    <View style={!isGlobalFeed ? styles.otherFeedContainer : styles.container}>
       <Pressable
         onPress={() => {
           onPress && onPress();

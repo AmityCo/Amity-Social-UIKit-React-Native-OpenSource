@@ -103,7 +103,7 @@ export default function MediaSection({ childrenPosts }: IMediaSection) {
 
 
 
-  const RenderMediaPosts = () => {
+  function renderMediaPosts()  {
     const thumbnailFileIds: string[] =
       videoPosts.length > 0
         ? videoPosts.map((item) => {
@@ -235,13 +235,6 @@ export default function MediaSection({ childrenPosts }: IMediaSection) {
       );
     }
   }
-  // if (initImagePostsFullSize.length > 0) {
-  //   mediaPosts = initImagePostsFullSize.map((item) => item.uri);
-  // } else if (initVideoPostsFullSize.length > 0) {
-  //   mediaPosts = initVideoPostsFullSize.map((item) => item.uri);
-  // } else {
-  //   mediaPosts = thumbnailFileIds.length > 0 ? thumbnailFileIds : imagePosts;
-  // }
 
 
   function renderPlayButton() {
@@ -254,7 +247,7 @@ export default function MediaSection({ childrenPosts }: IMediaSection) {
 
   return (
     <View>
-      <RenderMediaPosts />
+  { renderMediaPosts()}
       <ImageView
         images={
           imagePostsFullSize.length > 0

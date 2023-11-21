@@ -1,11 +1,8 @@
 import * as React from 'react';
-
-import {
-  AmityUiKitSocial,
-  AmityUiKitProvider,
-} from '@amityco/asc-react-native-ui-kit';
+import { AmityUiKitProvider, AmityUiKitSocial } from '@amityco/asc-react-native-ui-kit';
 
 export default function App() {
+
   return (
     <AmityUiKitProvider
       apiKey="YOUR_API_KEY" // Put your apiKey

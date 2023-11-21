@@ -5,7 +5,9 @@ export interface ICreateCommunity {
   displayName: string;
   isPublic: boolean;
   userIds?: string[];
-  category: string
+  category: string;
+  avatarFileId?: string
+
 }
 export function getCommunityById(communityId: string): Promise<any> {
   const communityObject = new Promise((resolve, reject) => {
@@ -32,6 +34,7 @@ export function createCommunity(communityParam: ICreateCommunity): Promise<any> 
       categoryIds: [communityParam.category] as string[],
       userIds: communityParam.userIds as string[],
       postSetting: CommunityPostSettings.ANYONE_CAN_POST,
+      avatarFileId: communityParam.avatarFileId.length>0?communityParam.avatarFileId: undefined
     };
 
     const { data: community } = await CommunityRepository.createCommunity(newCommunity);
@@ -39,3 +42,24 @@ export function createCommunity(communityParam: ICreateCommunity): Promise<any> 
   });
   return communityObject;
 }
+export async function checkCommunityPermission(communityId: string, client: Amity.Client): Promise<any> {
+  const url: string = `https://api.sg.amity.co/api/v3/communities/${communityId}/permissions/me`
+  const accessToken = client.token.accessToken;
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`,
+      },
+    });
+
+    const data = await response.json()
+    return data
+  } catch (error) {
+    console.log('error:', error)
+  }
+
+}
+
+
