@@ -9,7 +9,7 @@ import {
   type IGlobalFeedRes,
 } from '../../providers/Social/feed-sdk';
 import useAuth from '../../hooks/useAuth';
-import PostList, { type IPost } from '../../components/Social/PostList';
+import PostList from '../../components/Social/PostList';
 import { getStyles } from './styles';
 
 import { amityPostsFormatter } from '../../util/postDataFormatter';
