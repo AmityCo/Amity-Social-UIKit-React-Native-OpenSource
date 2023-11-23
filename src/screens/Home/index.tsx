@@ -26,13 +26,13 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
+import AllMyCommunity from '../AllMyCommunity';
 LogBox.ignoreAllLogs(true);
 export default function Home() {
-  // const { t, i18n } = useTranslation();
   const styles = getStyles();
   const { client } = useAuth();
-  const theme = useTheme() as MyMD3Theme ;
-  
+  const theme = useTheme() as MyMD3Theme;
+
   const [activeTab, setActiveTab] = useState(1);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -43,7 +43,6 @@ export default function Home() {
     navigation.navigate('CommunitySearch');
   };
   navigation.setOptions({
-    // eslint-disable-next-line react/no-unstable-nested-components
     headerRight: () => (
       <TouchableOpacity onPress={onClickSearch} style={styles.btnWrap}>
         <SvgXml xml={searchIcon(theme.colors.base)} width="25" height="25" />
@@ -84,15 +83,16 @@ export default function Home() {
   }, [isVisible, slideAnimation]);
 
   const renderTabComponent = () => {
-    let globalFeedStyle: StyleProp<ImageStyle> | StyleProp<ImageStyle>[] =
-      styles.visible;
-    styles.visible;
-    let exploreStyle: StyleProp<ImageStyle> | StyleProp<ImageStyle>[] =
-      styles.invisible;
-    styles.visible;
+    let globalFeedStyle: StyleProp<ImageStyle> | StyleProp<ImageStyle>[] = styles.visible;
+    let exploreStyle: StyleProp<ImageStyle> | StyleProp<ImageStyle>[] = styles.invisible;
+
     if (activeTab === 2) {
       globalFeedStyle = styles.invisible;
       exploreStyle = styles.visible;
+    }
+    if (activeTab === 3) {
+      globalFeedStyle = styles.invisible;
+      exploreStyle = styles.invisible;
     }
     return (
       <View>
@@ -102,6 +102,9 @@ export default function Home() {
         </View>
         <View style={exploreStyle}>
           <Explore />
+        </View>
+        <View >
+          <AllMyCommunity />
         </View>
       </View>
     );
@@ -121,9 +124,8 @@ export default function Home() {
   };
   return (
     <View>
-      {/* {renderTabView()} */}
       <CustomTab
-        tabName={['Newsfeed', 'Explore']}
+        tabName={['Newsfeed', 'Explore', 'Community']}
         onTabChange={handleTabChange}
       />
       {renderTabComponent()}
