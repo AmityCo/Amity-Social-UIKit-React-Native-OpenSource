@@ -29,7 +29,6 @@ import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import AllMyCommunity from '../AllMyCommunity';
 LogBox.ignoreAllLogs(true);
 export default function Home() {
-  // const { t, i18n } = useTranslation();
   const styles = getStyles();
   const { client } = useAuth();
   const theme = useTheme() as MyMD3Theme;
@@ -44,7 +43,6 @@ export default function Home() {
     navigation.navigate('CommunitySearch');
   };
   navigation.setOptions({
-    // eslint-disable-next-line react/no-unstable-nested-components
     headerRight: () => (
       <TouchableOpacity onPress={onClickSearch} style={styles.btnWrap}>
         <SvgXml xml={searchIcon(theme.colors.base)} width="25" height="25" />
@@ -126,7 +124,6 @@ export default function Home() {
   };
   return (
     <View>
-      {/* {renderTabView()} */}
       <CustomTab
         tabName={['Newsfeed', 'Explore', 'Community']}
         onTabChange={handleTabChange}

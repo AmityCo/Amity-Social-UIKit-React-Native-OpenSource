@@ -17,7 +17,6 @@ const CustomTab = ({ tabName, onTabChange }: ICustomTab): ReactElement => {
 
   const styles = getStyles();
   const [activeTab, setActiveTab] = useState(1);
-  console.log('activeTab:', activeTab)
   const [indicatorAnim] = useState(new Animated.Value(0));
   const [tabOneWidth, setTabOneWidth] = useState<number>(0);
   const [tabTwoWidth, setTabTwoWidth] = useState<number>(0);
