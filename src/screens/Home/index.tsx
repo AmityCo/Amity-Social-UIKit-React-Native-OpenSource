@@ -85,14 +85,22 @@ export default function Home() {
   const renderTabComponent = () => {
     let globalFeedStyle: StyleProp<ImageStyle> | StyleProp<ImageStyle>[] = styles.visible;
     let exploreStyle: StyleProp<ImageStyle> | StyleProp<ImageStyle>[] = styles.invisible;
+    let myCommunityStyle: StyleProp<ImageStyle> | StyleProp<ImageStyle>[] = styles.invisible;
 
+    if(activeTab=== 1){
+      globalFeedStyle = styles.visible;
+      exploreStyle = styles.invisible;
+      myCommunityStyle = styles.invisible;
+    }
     if (activeTab === 2) {
       globalFeedStyle = styles.invisible;
       exploreStyle = styles.visible;
+      myCommunityStyle = styles.invisible;
     }
     if (activeTab === 3) {
       globalFeedStyle = styles.invisible;
       exploreStyle = styles.invisible;
+      myCommunityStyle = styles.visible;
     }
     return (
       <View>
@@ -103,7 +111,7 @@ export default function Home() {
         <View style={exploreStyle}>
           <Explore />
         </View>
-        <View >
+        <View style={myCommunityStyle} >
           <AllMyCommunity />
         </View>
       </View>
