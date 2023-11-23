@@ -87,7 +87,7 @@ export default function GlobalFeed() {
           onEndReachedThreshold={0.5}
           onEndReached={handleLoadMore}
           ref={flatListRef}
-          ListHeaderComponent={<MyCommunity />}
+          // ListHeaderComponent={<MyCommunity />}
           extraData={postList}
         />
 
