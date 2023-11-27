@@ -13,7 +13,7 @@ import {
 import debounce from 'lodash.debounce';
 import { getStyles } from './styles';
 import { SvgXml } from 'react-native-svg';
-import { circleCloseIcon, closeIcon, plusIcon, searchIcon } from '../../svg/svg-xml-list';
+import { circleCloseIcon, searchIcon } from '../../svg/svg-xml-list';
 import { useNavigation } from '@react-navigation/native';
 import { CommunityRepository } from '@amityco/ts-sdk-react-native';
 import type { ISearchItem } from '../../components/SearchItem';
@@ -24,7 +24,7 @@ import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 export default function AllMyCommunity() {
 
 
-   const theme = useTheme() as MyMD3Theme;
+  const theme = useTheme() as MyMD3Theme;
   const styles = getStyles();
   LogBox.ignoreAllLogs(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -39,24 +39,7 @@ export default function AllMyCommunity() {
     onNextPage,
   } = communities ?? {};
 
-  const goBack=()=>{
-    navigation.goBack()
-  }
-  const onClickCreateCommunity = ()=>{
-    navigation.navigate("CreateCommunity")
-  }
-  navigation.setOptions({
-    // eslint-disable-next-line react/no-unstable-nested-components
-    headerLeft:()=>(  <TouchableOpacity onPress={goBack} style={styles.btnWrap}>
-      <SvgXml xml={closeIcon(theme.colors.base)} width="15" height="15" />
-    </TouchableOpacity>),
-    headerRight: () => (
-      <TouchableOpacity onPress={onClickCreateCommunity}>
-        <SvgXml xml={plusIcon(theme.colors.base)} width="25" height="25" />
-      </TouchableOpacity>
-    ),
-    headerTitle: 'My Community',
-  });
+
 
   const handleChange = (text: string) => {
     setSearchTerm(text);

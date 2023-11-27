@@ -1,4 +1,4 @@
-import React, {  useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 // import { useTranslation } from 'react-i18next';
 
@@ -9,13 +9,14 @@ import {
   type IGlobalFeedRes,
 } from '../../providers/Social/feed-sdk';
 import useAuth from '../../hooks/useAuth';
-import PostList, { type IPost } from '../../components/Social/PostList';
+import PostList from '../../components/Social/PostList';
 import { getStyles } from './styles';
 
 import { amityPostsFormatter } from '../../util/postDataFormatter';
 import { useDispatch, useSelector } from 'react-redux'
 import globalFeedSlice from '../../redux/slices/globalfeedSlice';
 import { RootState } from 'src/redux/store';
+import MyStories from '../../components/MyStories'
 
 export default function GlobalFeed() {
 
@@ -84,6 +85,7 @@ export default function GlobalFeed() {
           onEndReached={handleLoadMore}
           ref={flatListRef}
           extraData={postList}
+          ListHeaderComponent={<MyStories />}
         />
 
       </View>

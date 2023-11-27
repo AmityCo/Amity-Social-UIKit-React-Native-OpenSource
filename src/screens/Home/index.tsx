@@ -133,7 +133,7 @@ export default function Home() {
   return (
     <View>
       <CustomTab
-        tabName={['Newsfeed', 'Explore', 'Community']}
+        tabName={['Newsfeed', 'Explore', 'My Communities']}
         onTabChange={handleTabChange}
       />
       {renderTabComponent()}
