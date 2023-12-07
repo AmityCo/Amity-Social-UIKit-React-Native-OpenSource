@@ -3,6 +3,7 @@ import { Provider } from 'react-redux'
 import AuthContextProvider from './auth-provider';
 import { DefaultTheme, PaperProvider, type MD3Theme } from 'react-native-paper';
 import { store } from '../redux/store';
+import { ConfigProvider } from './config-provider';
 export type CusTomTheme = typeof DefaultTheme;
 export interface IAmityUIkitProvider {
   userId: string;
@@ -85,9 +86,11 @@ export default function AmityUiKitProvider({
       apiRegion={apiRegion}
       apiEndpoint={apiEndpoint}
     >
+      <ConfigProvider>
       <PaperProvider theme={darkMode ? defaultDarkTheme : customizedTheme}>
         {children}
       </PaperProvider>
+      </ConfigProvider>
     </AuthContextProvider>
     </Provider>
   );

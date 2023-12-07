@@ -1,5 +1,5 @@
 
-import React, {  useEffect, useState, type FC } from 'react';
+import React, {  useEffect, useState, type FC, } from 'react';
 import { Client } from '@amityco/ts-sdk-react-native';
 import type { AuthContextInterface } from '../types/auth.interface';
 import { Alert } from 'react-native';
@@ -24,6 +24,7 @@ export const AuthContextProvider: FC<IAmityUIkitProvider> = ({
   apiRegion,
   apiEndpoint,
   children,
+  auth
 }: IAmityUIkitProvider) => {
   const [error, setError] = useState('');
   const [isConnecting, setLoading] = useState(false);
@@ -37,6 +38,12 @@ export const AuthContextProvider: FC<IAmityUIkitProvider> = ({
   const sessionHandler: Amity.SessionHandler = {
     sessionWillRenewAccessToken(renewal) {
       renewal.renew();
+    },
+  };
+
+  const sessionHandlerSUpportAuth: Amity.SessionHandler = {
+    sessionWillRenewAccessToken(renewal) {
+      renewal.renewWithAuthToken(authToken)
     },
   };
 

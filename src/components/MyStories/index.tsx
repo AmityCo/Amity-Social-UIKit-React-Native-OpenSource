@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { View, Text, ScrollView, Image, TouchableOpacity } from 'react-native';
 import { getStyles } from './styles';
 import { CommunityRepository } from '@amityco/ts-sdk-react-native';
@@ -9,6 +9,8 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import useAuth from '../../hooks/useAuth';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import { useTheme } from 'react-native-paper';
+import useConfig from '../../hooks/useConfig';
+import { ElementID } from '../../util/enumUIKitID';
 
 export interface IStoryItems {
   communityId: string;
@@ -21,12 +23,23 @@ export interface IStoryItems {
 }
 export default function MyStories() {
   const theme = useTheme() as MyMD3Theme;
+
+  const { excludes, getConfig } = useConfig()
+
+
   console.log(theme.colors.storiesRing.colorOne)
   const styles = getStyles();
   const { apiRegion } = useAuth();
   const maxLength = 6;
   const [communityItems, setCommunityItems] = useState<IStoryItems[]>([])
+  const [storyRingColor, setStoryRingColor] = useState<string[]>()
+  console.log('storyRingColor: ', storyRingColor);
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
+
+  useLayoutEffect(() => {
+    const colorRings: string[] = getConfig(ElementID.StoryRingOnStoryTab).progress_color
+    setStoryRingColor(colorRings)
+  }, [])
   const avatarFileURL = (fileId: string) => {
     return `https://api.${apiRegion}.amity.co/api/v3/files/${fileId}/download?size=medium`;
   };
@@ -90,7 +103,7 @@ export default function MyStories() {
                 style={styles.storyRing}
                 width={64}
                 height={64}
-                xml={storyRing(item.hasStories ? theme.colors.storiesRing.colorOne : '#EBECEF', item.hasStories ? theme.colors.storiesRing.colorTwo : '#EBECEF')}
+                xml={storyRing(item.hasStories ? storyRingColor[0] : '#EBECEF', item.hasStories ? (storyRingColor.length > 1 ? storyRingColor[1] : storyRingColor[0]) : '#EBECEF')}
               />
               {item.isOfficial &&
                 <SvgXml
