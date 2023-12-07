@@ -24,7 +24,6 @@ export const AuthContextProvider: FC<IAmityUIkitProvider> = ({
   apiRegion,
   apiEndpoint,
   children,
-  auth
 }: IAmityUIkitProvider) => {
   const [error, setError] = useState('');
   const [isConnecting, setLoading] = useState(false);
@@ -41,11 +40,7 @@ export const AuthContextProvider: FC<IAmityUIkitProvider> = ({
     },
   };
 
-  const sessionHandlerSUpportAuth: Amity.SessionHandler = {
-    sessionWillRenewAccessToken(renewal) {
-      renewal.renewWithAuthToken(authToken)
-    },
-  };
+
 
 
   useEffect(() => {
