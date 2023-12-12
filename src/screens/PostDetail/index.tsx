@@ -51,7 +51,7 @@ const PostDetail = () => {
     postIndex,
     isFromGlobalfeed
   } = route.params;
-
+  console.log('postId: ', postId);
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
   const [commentList, setCommentList] = useState<IComment[]>([]);
@@ -163,11 +163,13 @@ const PostDetail = () => {
         dataTypes: { matchType: 'any', values: ['text', 'image'] },
         referenceId: postId,
         referenceType: 'post',
+        limit: 20
       },
       (data: Amity.LiveCollection<Amity.Comment>) => {
         if (data.error) throw data.error;
         if (!data.loading) {
           setCommentCollection(data);
+          console.log('data: ', data.data.length);
         }
       }
     );
@@ -197,7 +199,7 @@ const PostDetail = () => {
     getCommentsByPostId(postList[postIndex]?.postId);
   }, []);
 
-  const queryComment = useCallback(async () => {
+  const queryComment = async () => {
     if (comments && comments.length > 0) {
       const formattedCommentList = await Promise.all(
         comments.map(async (item: Amity.Comment) => {
@@ -222,20 +224,20 @@ const PostDetail = () => {
             createdAt: item.createdAt,
             childrenComment: item.children,
             referenceId: item.referenceId,
-            mentionPosition: item?.metadata?.mentioned
+            mentionPosition: item?.metadata?.mentioned ?? []
 
           };
         })
       );
       setCommentList([...formattedCommentList]);
     }
-  }, [comments]);
+  }
 
   useEffect(() => {
     if (commentCollection) {
       queryComment();
     }
-  }, [commentCollection, queryComment]);
+  }, [commentCollection]);
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     console.log('load more comment')

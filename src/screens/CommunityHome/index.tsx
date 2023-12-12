@@ -79,7 +79,7 @@ export default function CommunityHome({ route }: any) {
       },
     );
     disposers.push(unsubscribe);
-    const res = await checkCommunityPermission(communityId, client as Amity.Client)
+    const res = await checkCommunityPermission(communityId, client as Amity.Client, apiRegion)
     if (res.permissions.length > 0 && res.permissions.includes('Post/ManagePosts')) {
       setIsUserHasPermission(true)
     }

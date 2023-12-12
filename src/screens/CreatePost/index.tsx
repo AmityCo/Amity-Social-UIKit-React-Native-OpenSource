@@ -69,7 +69,7 @@ const CreatePost = ({ route }: any) => {
   const [communityObject, setCommunityObject] = useState<Amity.LiveObject<Amity.Community>>();
   const { data: community } = communityObject ?? {};
 
-  const { client } = useAuth();
+  const { client, apiRegion } = useAuth();
 
 
   const getCommunityDetail = () => {
@@ -201,7 +201,7 @@ const CreatePost = ({ route }: any) => {
       );
       if ((community?.postSetting === 'ADMIN_REVIEW_POST_REQUIRED' || (community as Record<string,any>).needApprovalOnPostCreation) && response) {
 
-        const res = await checkCommunityPermission(community.communityId, client as Amity.Client)
+        const res = await checkCommunityPermission(community.communityId, client as Amity.Client, apiRegion)
 
         if (res.permissions.length > 0 && res.permissions.includes('Post/ManagePosts')) {
           navigation.goBack();
