@@ -32,7 +32,7 @@ import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import { useTheme } from 'react-native-paper';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import BackButton from '../../components/BackButton';
-import {  useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { ISearchItem } from '../../components/SearchItem';
 import MentionPopup from '../../components/MentionPopup';
@@ -56,7 +56,7 @@ const PostDetail = () => {
 
   const [commentList, setCommentList] = useState<IComment[]>([]);
   const [commentCollection, setCommentCollection] = useState<Amity.LiveCollection<Amity.Comment>>();
-  const { data: comments, hasNextPage, onNextPage } = commentCollection ?? {};
+  const { data: comments, onNextPage: onNextComment } = commentCollection ?? {};
   const [inputMessage, setInputMessage] = useState('');
   const [communityObject, setCommunityObject] = useState<Amity.Community>()
   const [userObject, setUserObject] = useState<Amity.User>()
@@ -163,12 +163,11 @@ const PostDetail = () => {
         dataTypes: { matchType: 'any', values: ['text', 'image'] },
         referenceId: postId,
         referenceType: 'post',
+        limit: 10
       },
       (data: Amity.LiveCollection<Amity.Comment>) => {
-        if (data.error) throw data.error;
-        if (!data.loading) {
-          setCommentCollection(data);
-        }
+        setCommentCollection(data);
+
       }
     );
 
@@ -245,9 +244,7 @@ const PostDetail = () => {
       layoutMeasurement.height + contentOffset.y + 250 >= contentSize.height;
 
     if (isScrollEndReached) {
-      if (onNextPage && hasNextPage) {
-        onNextPage();
-      }
+      onNextComment && onNextComment()
     }
   };
   const handleSend: () => Promise<void> = async () => {
@@ -383,7 +380,6 @@ const PostDetail = () => {
               )}
               keyExtractor={(item) => item.commentId.toString()}
               onEndReachedThreshold={0.8}
-              onEndReached={onNextPage}
               ref={flatListRef}
             />
           </View>

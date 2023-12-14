@@ -190,7 +190,7 @@ export default function CommentList({
             createdAt: item.createdAt,
             childrenComment: item.children,
             referenceId: item.referenceId,
-            mentionPosition: item.metadata.mentioned
+            mentionPosition: item?.metadata?.mentioned
           };
         })
       );
