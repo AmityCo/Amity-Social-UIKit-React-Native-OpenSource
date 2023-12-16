@@ -42,4 +42,5 @@ export type RootStackParamList = {
   CreateCommunity: undefined;
   VideoPlayer: {source: string}
   PendingPosts: {  communityId: string; isModerator: boolean}
+  ViewStories: undefined;
 };

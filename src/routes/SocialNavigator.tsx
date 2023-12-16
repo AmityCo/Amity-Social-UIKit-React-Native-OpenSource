@@ -25,6 +25,7 @@ import PendingPosts from '../screens/PendingPosts';
 import type { MyMD3Theme } from '../providers/amity-ui-kit-provider';
 import { useTheme } from 'react-native-paper';
 import VideoPlayerFull from '../screens/VideoPlayerFullScreen';
+import ViewStories from '../screens/ViewStories';
 
 export default function SocialNavigator() {
   const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -52,6 +53,10 @@ export default function SocialNavigator() {
           }}
         >
           <Stack.Screen name="Home" component={Home} />
+          <Stack.Screen name="ViewStories" component={ViewStories}  
+          options={{
+              headerShown: false, // Remove the back button
+            }}/>
           {/* <Stack.Screen name="Community" component={Home} /> */}
           <Stack.Screen name="Explore" component={Explore} />
           <Stack.Screen name="PostDetail" component={PostDetail} />

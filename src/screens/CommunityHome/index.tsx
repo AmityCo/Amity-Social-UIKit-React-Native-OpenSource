@@ -27,6 +27,7 @@ import { checkCommunityPermission } from '../../providers/Social/communities-sdk
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import FloatingButton from '../../components/FloatingButton';
+import CommunityStories from '../../components/CommunityStories';
 
 export type FeedRefType = {
   handleLoadMore: () => void;
@@ -275,6 +276,7 @@ export default function CommunityHome({ route }: any) {
           {communityData?.data.description}
         </Text>
         {isJoin === false ? joinCommunityButton() : <View />}
+        <CommunityStories communityId={communityId}/>
         {(isJoin && isShowPendingArea) ? pendingPostArea() : <View />}
         <CustomTab tabName={['Timeline', 'Gallery']} onTabChange={handleTab} />
         <Feed targetType="community" targetId={communityId} ref={feedRef} />

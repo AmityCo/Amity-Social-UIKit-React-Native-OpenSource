@@ -1,5 +1,5 @@
 
-import React, {  useEffect, useState, type FC } from 'react';
+import React, {  useEffect, useState, type FC, } from 'react';
 import { Client } from '@amityco/ts-sdk-react-native';
 import type { AuthContextInterface } from '../types/auth.interface';
 import { Alert } from 'react-native';
@@ -39,6 +39,8 @@ export const AuthContextProvider: FC<IAmityUIkitProvider> = ({
       renewal.renew();
     },
   };
+
+
 
 
   useEffect(() => {
