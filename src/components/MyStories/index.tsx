@@ -24,7 +24,7 @@ export interface IStoryItems {
 export default function MyStories() {
   const theme = useTheme() as MyMD3Theme;
 
-  const { excludes, getConfig } = useConfig()
+  const { getConfig } = useConfig()
 
 
   console.log(theme.colors.storiesRing.colorOne)
@@ -80,7 +80,7 @@ export default function MyStories() {
   }, [])
 
   const onClickItem = (communityId: string, displayName: string) => {
-    navigation.navigate('CommunityHome', { communityId: communityId, communityName: displayName });
+    navigation.navigate('ViewStories');
   }
 
   return (

@@ -40,5 +40,6 @@ export type RootStackParamList = {
   };
   AllMyCommunity: undefined;
   CreateCommunity: undefined;
-  PendingPosts: {  communityId: string; isModerator: boolean}
+  PendingPosts: {  communityId: string; isModerator: boolean};
+  ViewStories: undefined;
 };

@@ -43,6 +43,7 @@
     "create_story_page/*/hyper_link": {
       "hyper_link_icon": "hyper_link.png",
       "background_color": "#1234DB"
+    
     },
     "create_story_page/*/share_story_button": {
       "share_icon": "share_story_button.png",

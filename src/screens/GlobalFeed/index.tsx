@@ -17,8 +17,13 @@ import { useDispatch, useSelector } from 'react-redux'
 import globalFeedSlice from '../../redux/slices/globalfeedSlice';
 import { RootState } from 'src/redux/store';
 import MyStories from '../../components/MyStories'
+import useConfig from '../../hooks/useConfig';
+import { ComponentID } from '../../util/enumUIKitID';
 
 export default function GlobalFeed() {
+
+  const { excludes } = useConfig()
+  console.log('excludes: ', excludes);
 
   const { postList } = useSelector((state: RootState) => state.globalFeed)
 
@@ -85,7 +90,7 @@ export default function GlobalFeed() {
           onEndReached={handleLoadMore}
           ref={flatListRef}
           extraData={postList}
-          ListHeaderComponent={<MyStories />}
+          ListHeaderComponent={!excludes.includes(ComponentID.StoryTab)&&<MyStories />}
         />
 
       </View>
