@@ -15,6 +15,8 @@ export interface IUserStory<T = Record<string, any>> {
   stories: IUserStoryItem<T>[];
   /** INTERNAL USE ONLY */
   seen?: boolean;
+  isOfficial?: boolean;
+  isPublic?: boolean;
 }
 
 export interface IUserStoryItem<T = Record<string, any>> {
@@ -94,10 +96,12 @@ export interface StoryCircleListViewProps extends SharedCircleListProps {
    * - `keyExtractor`
    */
   avatarFlatListProps?: CircleListViewFlatListProps;
+  isCommunityStory?: boolean
 }
 
 export interface StoryCircleListItemProps extends SharedCircleListProps {
   item: IUserStory;
+  isCommunityStory?: boolean;
 }
 
 // TODO: add JSDoc comments where necessary
@@ -154,6 +158,7 @@ export interface StoryListItemProps {
   storyAvatarImageStyle?: ImageStyle;
   /** Custom styles for the main story item container */
   storyContainerStyle?: ViewStyle;
+  isCommunityStory?: boolean;
 }
 
 export interface StoryProps {
@@ -231,4 +236,6 @@ export interface StoryProps {
   storyAvatarImageStyle?: ImageStyle;
   /** Custom styles for the main story item container */
   storyContainerStyle?: ViewStyle;
+
+  isCommunityStory?: boolean;
 }

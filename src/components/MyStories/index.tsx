@@ -11,6 +11,7 @@ import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import { useTheme } from 'react-native-paper';
 import useConfig from '../../hooks/useConfig';
 import { ElementID } from '../../util/enumUIKitID';
+import InstaStory from '../StoryKit';
 
 export interface IStoryItems {
   communityId: string;
@@ -45,7 +46,7 @@ export default function MyStories() {
   };
   const queryCommunities = () => {
     const unsubscribe = CommunityRepository.getCommunities(
-      { membership: 'member', limit: 10 },
+      { membership: 'member', limit: 10, sortBy:'firstCreated' },
       ({ data }) => {
         const formattedData: IStoryItems[] = data.map((item: Amity.Community, index: number) => {
           return {
@@ -79,56 +80,143 @@ export default function MyStories() {
     queryCommunities()
   }, [])
 
+  const data = [
+    {
+      user_id: 1,
+      user_image:
+        `https://api.${apiRegion}.amity.co/api/v3/files/${communityItems[0]?.avatarFileId}/download?size=full`,
+      user_name: communityItems[0]?.displayName,
+      stories: [
+        {
+          story_id: 1,
+          story_image:
+            `https://api.${apiRegion}.amity.co/api/v3/files/${communityItems[0]?.avatarFileId}/download?size=full`,
+          swipeText: 'Custom swipe text for this story',
+          onPress: () => console.log('story 1 swiped'),
+        },
+        {
+          story_id: 2,
+          story_image:
+            'https://image.freepik.com/free-vector/mobile-wallpaper-with-fluid-shapes_79603-601.jpg',
+        },
+      ],
+      isOfficial: true,
+      isPublic: true
+    },
+    {
+      user_id: 2,
+      user_image:
+        `https://api.${apiRegion}.amity.co/api/v3/files/${communityItems[1]?.avatarFileId}/download?size=full`,
+      user_name: communityItems[1]?.displayName,
+      stories: [
+        {
+          story_id: 1,
+          story_image:
+            `https://api.${apiRegion}.amity.co/api/v3/files/${communityItems[1]?.avatarFileId}/download?size=full`,
+          swipeText: 'Custom swipe text for this story',
+          onPress: () => console.log('story 1 swiped'),
+        },
+        {
+          story_id: 2,
+          story_image:
+            'https://files.oyebesmartest.com/uploads/preview/vivo-u20-mobile-wallpaper-full-hd-(1)qm6qyz9v60.jpg',
+          swipeText: 'Custom swipe text for this story',
+          onPress: () => console.log('story 2 swiped'),
+        },
+      ],
+      isOfficial: false,
+      isPublic: true
+    },
+    {
+      user_id: 3,
+      user_image:
+        `https://api.${apiRegion}.amity.co/api/v3/files/${communityItems[2]?.avatarFileId}/download?size=full`,
+      user_name: communityItems[2]?.displayName,
+      stories: [
+        {
+          story_id: 1,
+          story_image:
+            `https://api.${apiRegion}.amity.co/api/v3/files/${communityItems[2]?.avatarFileId}/download?size=full`,
+          swipeText: 'Custom swipe text for this story',
+          onPress: () => console.log('story 1 swiped'),
+        },
+        {
+          story_id: 2,
+          story_image:
+          `https://api.${apiRegion}.amity.co/api/v3/files/b57cdc07629d44238684c6d377969cdf/download?size=full`,
+          swipeText: 'Custom swipe text for this story',
+          onPress: () => console.log('story 2 swiped'),
+        },
+        {
+          story_id: 'b57cdc07629d44238684c6d377969cdf',
+          story_image:
+            'https://files.oyebesmartest.com/uploads/preview/vivo-u20-mobile-wallpaper-full-hd-(1)qm6qyz9v60.jpg',
+          swipeText: 'Custom swipe text for this story',
+          onPress: () => console.log('story 2 swiped'),
+        },
+      ],
+      isOfficial: false,
+      isPublic: false
+    },
+    {
+      user_id: 4,
+      user_image:
+        `https://api.${apiRegion}.amity.co/api/v3/files/${communityItems[6]?.avatarFileId}/download?size=full`,
+      user_name: communityItems[6]?.displayName,
+      stories: [
+        {
+          story_id: 1,
+          story_image:
+            `https://api.${apiRegion}.amity.co/api/v3/files/${communityItems[6]?.avatarFileId}/download?size=full`,
+          swipeText: 'Custom swipe text for this story',
+          onPress: () => console.log('story 1 swiped'),
+        },
+        {
+          story_id: 2,
+          story_image:
+            'https://image.freepik.com/free-vector/mobile-wallpaper-with-fluid-shapes_79603-601.jpg',
+        },
+      ],
+      isOfficial: true,
+      isPublic: true
+    },
+    {
+      user_id: 5,
+      user_image:
+        `https://api.${apiRegion}.amity.co/api/v3/files/${communityItems[5]?.avatarFileId}/download?size=full`,
+      user_name: communityItems[5]?.displayName,
+      stories: [
+        {
+          story_id: 1,
+          story_image:
+            `https://api.${apiRegion}.amity.co/api/v3/files/${communityItems[5]?.avatarFileId}/download?size=full`,
+          swipeText: 'Custom swipe text for this story',
+          onPress: () => console.log('story 1 swiped'),
+        },
+        {
+          story_id: 2,
+          story_image:
+            'https://image.freepik.com/free-vector/mobile-wallpaper-with-fluid-shapes_79603-601.jpg',
+        },
+      ],
+      isOfficial: false,
+      isPublic: true
+    },
+  ];
+
+
   const onClickItem = (communityId: string, displayName: string) => {
     navigation.navigate('ViewStories');
   }
 
   return (
     <View style={styles.container}>
-      <View style={styles.titleContainer}>
-      </View>
+      {communityItems?.length > 0 && <InstaStory
+        data={data}
+        duration={7}
+      />}
 
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scrollView}>
-        {communityItems.map((item) => (
-          <TouchableOpacity onPress={() => onClickItem(item.communityId, item.displayName)} key={item.communityId} style={styles.itemContainer}>
-            <View>
-              {item.avatarFileId ? <Image source={{ uri: avatarFileURL(item.avatarFileId) }} style={styles.avatar} /> :
-                <SvgXml
-                  style={styles.avatar}
-                  width={56}
-                  height={56}
-                  xml={communityIcon}
-                />}
-              <SvgXml
-                style={styles.storyRing}
-                width={64}
-                height={64}
-                xml={storyRing(item.hasStories ? storyRingColor[0] : '#EBECEF', item.hasStories ? (storyRingColor.length > 1 ? storyRingColor[1] : storyRingColor[0]) : '#EBECEF')}
-              />
-              {item.isOfficial &&
-                <SvgXml
-                  style={styles.officialIcon}
-                  xml={officialIcon(theme.colors.primary)}
-                />}
-            </View>
 
-            <View style={styles.textRow}>
-              {!item.isPublic &&
-                <SvgXml
-                  width={17}
-                  height={17}
-                  xml={privateIcon(theme.colors.base)}
-                />}
-              <Text style={styles.itemText}>{displayName(item.displayName, !item.isPublic ? 'private' : 'public')}</Text>
-
-            </View>
-
-          </TouchableOpacity>
-
-        ))
-        }
-
-      </ScrollView>
     </View>
   );
 }
