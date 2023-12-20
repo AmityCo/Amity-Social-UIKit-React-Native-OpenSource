@@ -42,7 +42,7 @@ export const getStyles = () => {
     },
     imageContainer: {
       width: '100%',
-      height: 260,
+      height: 160,
     },
     image: {
       width: '100%',
