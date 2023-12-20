@@ -7,10 +7,10 @@
   resolved "https://registry.yarnpkg.com/@aashutoshrathi/word-wrap/-/word-wrap-1.2.6.tgz#bd9154aec9983f77b3a034ecaa015c2e4201f6cf"
   integrity sha512-1Yjs2SvM8TflER/OD3cOjhWWOZb58A2t7wpE2S9XfBYTiIl+XFhQG2bjy4Pu1I+EAlCNUzRDYDdFwFYUKvXcIA==
 
-"@amityco/ts-sdk-react-native@^6.13.0":
-  version "6.13.0"
-  resolved "https://registry.yarnpkg.com/@amityco/ts-sdk-react-native/-/ts-sdk-react-native-6.13.0.tgz#b07ac31c28dfea4d5d72dbb23ff5132d0cf607b9"
-  integrity sha512-xssM9AvSz7HcxYG76fKJd7JXFew37ZM5Atww8mnLJ5D3iBsuKmjjyA/DEZs5Ynsb0t46qFh2bbzzd1fHk4DgdQ==
+"@amityco/ts-sdk-react-native@^6.14.0":
+  version "6.14.1"
+  resolved "https://registry.yarnpkg.com/@amityco/ts-sdk-react-native/-/ts-sdk-react-native-6.14.1.tgz#d7d2cac99e2071aaf57330d3d8591a89a46896c8"
+  integrity sha512-gRCKjyhyiXns0LgT+/n6tmu/5ST3asdbEuHwXhN3+ZrIbXmnfLghakl9+qYrvU41Mtq2ttdS4ceKzX2w3Jaq2A==
   dependencies:
     "@react-native-async-storage/async-storage" "^1.17.7"
     "@react-native-community/netinfo" "^9.4.1"
@@ -21,6 +21,7 @@
     js-base64 "^3.7.2"
     mitt "^3.0.0"
     mqtt "^4.3.7"
+    object-hash "^3.0.0"
     react-native-uuid "^2.0.1"
     socket.io-client "2.2.0"
     ts-jest "^28.0.3"
@@ -7890,6 +7891,11 @@ object-component@0.0.3:
   version "0.0.3"
   resolved "https://registry.yarnpkg.com/object-component/-/object-component-0.0.3.tgz#f0c69aa50efc95b866c186f400a33769cb2f1291"
   integrity sha512-S0sN3agnVh2SZNEIGc0N1X4Z5K0JeFbGBrnuZpsxuUh5XLF0BnvWkMjRXo/zGKLd/eghvNIKcx1pQkmUjXIyrA==
+
+object-hash@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/object-hash/-/object-hash-3.0.0.tgz#73f97f753e7baffc0e2cc9d6e079079744ac82e9"
+  integrity sha512-RSn9F68PjH9HqtltsSnqYC1XXoWe9Bju5+213R98cNGttag9q9yAOTzdbsqvIa7aNm5WffBZFpWYr2aWrklWAw==
 
 object-inspect@^1.13.1, object-inspect@^1.9.0:
   version "1.13.1"
