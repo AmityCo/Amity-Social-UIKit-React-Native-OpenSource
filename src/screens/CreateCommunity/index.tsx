@@ -103,7 +103,7 @@ export default function CreateCommunity() {
 
       mediaType: 'photo',
       quality: 1,
-      selectionLimit: 10
+      selectionLimit: 1
 
     });
     if (!result.didCancel && result.assets && result.assets.length > 0) {
