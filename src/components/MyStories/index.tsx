@@ -46,7 +46,7 @@ export default function MyStories() {
   };
   const queryCommunities = () => {
     const unsubscribe = CommunityRepository.getCommunities(
-      { membership: 'member', limit: 10, sortBy:'firstCreated' },
+      { membership: 'member', limit: 10, sortBy: 'firstCreated' },
       ({ data }) => {
         const formattedData: IStoryItems[] = data.map((item: Amity.Community, index: number) => {
           return {
@@ -89,15 +89,21 @@ export default function MyStories() {
       stories: [
         {
           story_id: 1,
-          story_image:
-            `https://api.${apiRegion}.amity.co/api/v3/files/${communityItems[0]?.avatarFileId}/download?size=full`,
+          story_type: 'video',
+          story_video: 'https://api.sg.amity.co/api/v3/files/6591822f10eab291c20d5ae5/download',
+
           swipeText: 'Custom swipe text for this story',
           onPress: () => console.log('story 1 swiped'),
+          story_page: 0
         },
         {
           story_id: 2,
-          story_image:
-            'https://image.freepik.com/free-vector/mobile-wallpaper-with-fluid-shapes_79603-601.jpg',
+          story_type: 'video',
+          story_video: 'https://api.sg.amity.co/api/v3/files/659591b3dbd49a6b1ed22d49/download',
+
+          swipeText: 'Custom swipe text for this story',
+          onPress: () => console.log('story 1 swiped'),
+          story_page: 0
         },
       ],
       isOfficial: true,
@@ -115,6 +121,7 @@ export default function MyStories() {
             `https://api.${apiRegion}.amity.co/api/v3/files/${communityItems[1]?.avatarFileId}/download?size=full`,
           swipeText: 'Custom swipe text for this story',
           onPress: () => console.log('story 1 swiped'),
+          story_page: 1
         },
         {
           story_id: 2,
@@ -122,6 +129,7 @@ export default function MyStories() {
             'https://files.oyebesmartest.com/uploads/preview/vivo-u20-mobile-wallpaper-full-hd-(1)qm6qyz9v60.jpg',
           swipeText: 'Custom swipe text for this story',
           onPress: () => console.log('story 2 swiped'),
+          story_page: 1
         },
       ],
       isOfficial: false,
@@ -139,11 +147,12 @@ export default function MyStories() {
             `https://api.${apiRegion}.amity.co/api/v3/files/${communityItems[2]?.avatarFileId}/download?size=full`,
           swipeText: 'Custom swipe text for this story',
           onPress: () => console.log('story 1 swiped'),
+          story_page: 2
         },
         {
           story_id: 2,
           story_image:
-          `https://api.${apiRegion}.amity.co/api/v3/files/b57cdc07629d44238684c6d377969cdf/download?size=full`,
+            `https://api.${apiRegion}.amity.co/api/v3/files/b57cdc07629d44238684c6d377969cdf/download?size=full`,
           swipeText: 'Custom swipe text for this story',
           onPress: () => console.log('story 2 swiped'),
         },
@@ -153,6 +162,7 @@ export default function MyStories() {
             'https://files.oyebesmartest.com/uploads/preview/vivo-u20-mobile-wallpaper-full-hd-(1)qm6qyz9v60.jpg',
           swipeText: 'Custom swipe text for this story',
           onPress: () => console.log('story 2 swiped'),
+          story_page: 2
         },
       ],
       isOfficial: false,
@@ -170,11 +180,13 @@ export default function MyStories() {
             `https://api.${apiRegion}.amity.co/api/v3/files/${communityItems[6]?.avatarFileId}/download?size=full`,
           swipeText: 'Custom swipe text for this story',
           onPress: () => console.log('story 1 swiped'),
+          story_page: 3
         },
         {
           story_id: 2,
           story_image:
             'https://image.freepik.com/free-vector/mobile-wallpaper-with-fluid-shapes_79603-601.jpg',
+          story_page: 3
         },
       ],
       isOfficial: true,
@@ -192,11 +204,13 @@ export default function MyStories() {
             `https://api.${apiRegion}.amity.co/api/v3/files/${communityItems[5]?.avatarFileId}/download?size=full`,
           swipeText: 'Custom swipe text for this story',
           onPress: () => console.log('story 1 swiped'),
+          story_page: 4
         },
         {
           story_id: 2,
           story_image:
             'https://image.freepik.com/free-vector/mobile-wallpaper-with-fluid-shapes_79603-601.jpg',
+          story_page: 4
         },
       ],
       isOfficial: false,

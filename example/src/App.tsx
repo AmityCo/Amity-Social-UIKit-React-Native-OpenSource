@@ -10,7 +10,6 @@ export default function App() {
       userId="John"
       displayName="John"
       apiEndpoint="https://api.sg.amity.co"
-      
     >
       <AmityUiKitSocial />
     </AmityUiKitProvider>

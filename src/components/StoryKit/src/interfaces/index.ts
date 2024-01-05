@@ -21,7 +21,10 @@ export interface IUserStory<T = Record<string, any>> {
 
 export interface IUserStoryItem<T = Record<string, any>> {
   story_id: number;
-  story_image: string | undefined;
+  story_image?: string | undefined;
+  story_video?: string | undefined;
+  story_type: string;
+  story_page: number;
   /** Function that gets called when the swipe up button is pressed */
   onPress?: (props?: any) => any;
   swipeText?: string;

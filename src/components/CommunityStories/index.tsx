@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, Image, TouchableOpacity } from 'react-native';
 import { getStyles } from './styles';
-import { CommunityRepository } from '@amityco/ts-sdk-react-native';
+import { CommunityRepository, StoryRepository } from '@amityco/ts-sdk-react-native';
 import { communityIcon, officialIcon, privateIcon, storyRing } from '../../svg/svg-xml-list';
 import { SvgXml } from 'react-native-svg';
 import { useNavigation } from '@react-navigation/native';
@@ -52,33 +52,48 @@ export default function CommunityStories({ communityId }: ICommunityStories) {
   useEffect(() => {
     queryCommunities()
   }, [])
+
+  const getStory = () => {
+
+    const params: Amity.GetStoriesByTargetParam = { targetType: 'community', targetId: communityId }
+    StoryRepository.getActiveStoriesByTarget(params, ({ data }) => {
+      console.log('story data: ', data);
+      const storyData = data.map((item: Amity.Story) => {
+
+        return {
+          story_id: item.storyId,
+          story_image:
+            `https://api.${apiRegion}.amity.co/api/v3/files/${item?.data?.fileId}/download?size=full`,
+          swipeText: '',
+          onPress: () => console.log('story 1 swiped'),
+          type: item.dataType
+        }
+
+      })
+      if(storyData.length>0){
+        const stories = [
+          {
+            user_id: communityItem?.communityId,
+            user_image:
+              `https://api.${apiRegion}.amity.co/api/v3/files/${communityItem?.avatarFileId}/download?size=full`,
+            user_name: communityItem.displayName,
+            stories: storyData ?? [],
+            isOfficial: true,
+            isPublic: true
+          },
+        ];
+        setCommunityStories(stories)
+      }
+
+
+
+    })
+
+  }
+
   useEffect(() => {
     if (communityItem) {
-      const data = [
-        {
-          user_id: communityItem?.communityId,
-          user_image:
-            `https://api.${apiRegion}.amity.co/api/v3/files/${communityItem?.avatarFileId}/download?size=full`,
-          user_name: communityItem.displayName,
-          stories: [
-            {
-              story_id: 1,
-              story_image:
-                `https://api.${apiRegion}.amity.co/api/v3/files/${communityItem?.avatarFileId}/download?size=full`,
-              swipeText: '',
-              onPress: () => console.log('story 1 swiped'),
-            },
-            {
-              story_id: 2,
-              story_image:
-                'https://image.freepik.com/free-vector/mobile-wallpaper-with-fluid-shapes_79603-601.jpg',
-            },
-          ],
-          isOfficial: true,
-          isPublic: true
-        },
-      ];
-      setCommunityStories(data)
+      getStory()
     }
 
 

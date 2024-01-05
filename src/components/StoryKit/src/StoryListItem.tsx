@@ -20,6 +20,8 @@ import {
   NextOrPrevious,
   StoryListItemProps,
 } from './interfaces';
+import Video, { OnLoadData } from 'react-native-video';
+import { useFocusEffect } from '@react-navigation/native';
 
 const { width, height } = Dimensions.get('window');
 
@@ -47,6 +49,7 @@ export const StoryListItem = ({
   storyContainerStyle,
   ...props
 }: StoryListItemProps) => {
+  console.log('currentPage: ', currentPage);
   const [load, setLoad] = useState<boolean>(true);
   const [pressed, setPressed] = useState<boolean>(false);
   const [content, setContent] = useState<IUserStoryItem[]>(
@@ -57,10 +60,25 @@ export const StoryListItem = ({
   );
 
   const [current, setCurrent] = useState(0);
+  const [storyDuration, setStoryDuration] = useState(duration)
 
   const progress = useRef(new Animated.Value(0)).current;
 
   const prevCurrentPage = usePrevious(currentPage);
+
+  console.log('story_page', content[current].story_page);
+  useFocusEffect(
+    React.useCallback(() => {
+      // This will be called when the screen is focused
+      // console.log('Screen focused currentPage', currentPage);
+
+      // Return a cleanup function that will be called when the screen loses focus
+      return () => {
+        console.log('not focus')
+        setPressed(true)
+      };
+    }, [])
+  );
 
   useEffect(() => {
     let isPrevious = !!prevCurrentPage && prevCurrentPage > currentPage;
@@ -116,7 +134,7 @@ export const StoryListItem = ({
   function startAnimation() {
     Animated.timing(progress, {
       toValue: 1,
-      duration: duration,
+      duration: storyDuration,
       useNativeDriver: false,
     }).start(({ finished }) => {
       if (finished) {
@@ -199,6 +217,12 @@ export const StoryListItem = ({
     }
   }, [currentPage, index, onStorySeen, current]);
 
+
+  const handleLoadVideo = (data: OnLoadData) => {
+    console.log('data: ', data);
+    setStoryDuration(data.duration * 1000)
+
+  }
   return (
     <GestureRecognizer
       key={key}
@@ -209,11 +233,24 @@ export const StoryListItem = ({
     >
       <SafeAreaView>
         <View style={styles.backgroundContainer}>
-          <Image
-            onLoadEnd={() => start()}
-            source={{ uri: content[current].story_image }}
-            style={[styles.image, storyImageStyle]}
-          />
+          {(content[current].story_type === 'video') ?
+            <Video
+              source={{ uri: content[current].story_video }}
+              style={styles.video}
+              resizeMode='contain'
+              controls={false}
+              onReadyForDisplay={() => start()}
+              paused={content[current].story_page !== currentPage ? true : pressed}
+              onLoad={handleLoadVideo}
+
+            /> :
+            <Image
+              onLoadEnd={() => start()}
+              source={{ uri: content[current].story_image }}
+              style={[styles.image, storyImageStyle]}
+            />
+          }
+
           {load && (
             <View style={styles.spinnerContainer}>
               <ActivityIndicator size="large" color={'white'} />
@@ -283,6 +320,7 @@ export const StoryListItem = ({
           <TouchableWithoutFeedback
             onPressIn={() => progress.stopAnimation()}
             onLongPress={() => setPressed(true)}
+            delayLongPress={300}
             onPressOut={() => {
               setPressed(false);
               startAnimation();
@@ -298,6 +336,7 @@ export const StoryListItem = ({
           <TouchableWithoutFeedback
             onPressIn={() => progress.stopAnimation()}
             onLongPress={() => setPressed(true)}
+            delayLongPress={300}
             onPressOut={() => {
               setPressed(false);
               startAnimation();
@@ -336,8 +375,12 @@ export default StoryListItem;
 StoryListItem.defaultProps = {
   duration: 10000,
 };
-
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 const styles = StyleSheet.create({
+  video: {
+    width: screenWidth,
+    height: screenHeight,
+  },
   container: {
     flex: 1,
     backgroundColor: '#000',

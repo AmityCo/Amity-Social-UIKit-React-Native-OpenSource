@@ -12,8 +12,8 @@ const ViewStories = () => {
       stories: [
         {
           story_id: 1,
-          story_image:
-            'https://image.freepik.com/free-vector/universe-mobile-wallpaper-with-planets_79603-600.jpg',
+          story_type: 'video',
+          story_video: 'https://api.sg.amity.co/api/v3/files/6591822f10eab291c20d5ae5/download',
           swipeText: 'Custom swipe text for this story',
           onPress: () => console.log('story 1 swiped'),
         },
