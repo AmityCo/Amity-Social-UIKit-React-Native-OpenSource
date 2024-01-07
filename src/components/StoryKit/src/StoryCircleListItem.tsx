@@ -5,44 +5,29 @@ import {
   TouchableOpacity,
   Text,
   StyleSheet,
-  Platform,
 } from 'react-native';
 
 import { usePrevious } from './helpers/StateHelpers';
 import { IUserStory, StoryCircleListItemProps } from './interfaces';
 
-import DEFAULT_AVATAR from './assets/images/no_avatar.png';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTheme } from 'react-native-paper';
 import { MyMD3Theme } from '../../../providers/amity-ui-kit-provider';
 import { SvgXml } from 'react-native-svg';
 import { communityIcon, officialIcon, privateIcon, storyRing } from '../../../svg/svg-xml-list';
-import useAuth from '../../../hooks/useAuth';
 import useConfig from '../../../hooks/useConfig';
 import { ElementID } from '../../../util/enumUIKitID';
 
 const StoryCircleListItem = ({
   item,
-  unPressedBorderColor,
-  pressedBorderColor,
-  unPressedAvatarTextColor,
-  pressedAvatarTextColor,
-  avatarSize = 60,
-  showText,
-  avatarTextStyle,
   handleStoryItemPress,
-  avatarImageStyle,
-  avatarWrapperStyle,
   isCommunityStory = false
 }: StoryCircleListItemProps) => {
 
   const theme = useTheme() as MyMD3Theme;
   const styles = getStyles()
-  const [isPressed, setIsPressed] = useState(item?.seen);
-  const { apiRegion } = useAuth();
+  const [, setIsPressed] = useState(item?.seen);
+
   const prevSeen = usePrevious(item?.seen);
-  const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const { getConfig } = useConfig()
   const [storyRingColor, setStoryRingColor] = useState<string[]>([])
   console.log('storyRingColor: ', storyRingColor);
@@ -65,14 +50,6 @@ const StoryCircleListItem = ({
     setIsPressed(true);
   };
 
-  const avatarWrapperSize = avatarSize + 4;
-
-  // const onClickItem = () => {
-  //   navigation.navigate('ViewStories');
-  // }
-  const avatarFileURL = (fileId: string) => {
-    return `https://api.${apiRegion}.amity.co/api/v3/files/${fileId}/download?size=medium`;
-  };
 
 
   return (

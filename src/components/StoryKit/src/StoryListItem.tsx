@@ -66,7 +66,6 @@ export const StoryListItem = ({
 
   const prevCurrentPage = usePrevious(currentPage);
 
-  console.log('story_page', content[current].story_page);
   useFocusEffect(
     React.useCallback(() => {
       // This will be called when the screen is focused
@@ -262,7 +261,7 @@ export const StoryListItem = ({
         <View
           style={[styles.animationBarContainer, animationBarContainerStyle]}
         >
-          {content.map((index, key) => {
+          {content.map((_index,key) => {
             return (
               <View
                 key={key}

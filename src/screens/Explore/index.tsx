@@ -8,6 +8,8 @@ import { getStyles } from './styles';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import useAuth from '../../hooks/useAuth';
+import { SvgXml } from 'react-native-svg';
+import { communityIcon } from '../../svg/svg-xml-list';
 
 export default function Explore() {
 
@@ -81,8 +83,8 @@ export default function Explore() {
               source={
                 categoryList[index]?.avatarFileId
                   ? {
-                      uri: `https://api.${apiRegion}.amity.co/api/v3/files/${categoryList[index]?.avatarFileId}/download`,
-                    }
+                    uri: `https://api.${apiRegion}.amity.co/api/v3/files/${categoryList[index]?.avatarFileId}/download`,
+                  }
                   : require('../../../assets/icon/Placeholder.png')
               }
             />
@@ -103,10 +105,9 @@ export default function Explore() {
                 source={
                   categoryList[index + 1]?.avatarFileId
                     ? {
-                        uri: `https://api.${apiRegion}.amity.co/api/v3/files/${
-                          categoryList[index + 1]?.avatarFileId
+                      uri: `https://api.${apiRegion}.amity.co/api/v3/files/${categoryList[index + 1]?.avatarFileId
                         }/download`,
-                      }
+                    }
                     : require('../../../assets/icon/Placeholder.png')
                 }
               />
@@ -136,12 +137,13 @@ export default function Explore() {
                 )
               }
             >
-              <Image
+              {community.avatarFileId ? <Image
                 style={styles.avatar}
                 source={{
                   uri: `https://api.${apiRegion}.amity.co/api/v3/files/${community.avatarFileId}/download`,
                 }}
-              />
+              /> : <SvgXml xml={communityIcon} style={styles.avatar} width={40} height={40} />}
+
               <Text style={styles.name}>{community.displayName}</Text>
               <Text style={styles.recommendSubDetail}>
                 {community.membersCount} members
@@ -164,16 +166,18 @@ export default function Explore() {
                 )
               }
             >
-              <Image
+              {community.avatarFileId ? <Image
                 style={styles.avatar}
                 source={
                   community.avatarFileId
                     ? {
-                        uri: `https://api.${apiRegion}.amity.co/api/v3/files/${community.avatarFileId}/download`,
-                      }
+                      uri: `https://api.${apiRegion}.amity.co/api/v3/files/${community.avatarFileId}/download`,
+                    }
                     : require('../../../assets/icon/Placeholder.png')
                 }
               />
+                : <SvgXml xml={communityIcon} style={styles.avatar} width={40} height={40} />}
+
               <View style={styles.trendingTextContainer}>
                 <Text style={styles.number}>{index + 1}</Text>
                 <View style={styles.memberContainer}>
