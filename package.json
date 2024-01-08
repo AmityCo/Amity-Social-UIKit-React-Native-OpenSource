@@ -28,7 +28,7 @@
     "!**/.*"
   ],
   "scripts": {
-    "test": "jest",
+    "test": "jest --forceExit --coverage --runInBand ",
     "typecheck": "tsc --noEmit",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "prepack": "bob build",
