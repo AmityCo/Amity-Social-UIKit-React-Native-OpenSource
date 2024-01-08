@@ -3,7 +3,7 @@
 <img src="https://github.com/AmityCo/Amity-Social-UIKit-React-Native-OpenSource/assets/112688936/e6b2d2a2-5158-429e-b1af-ea679b14fc11" width="150">
 <h1>Amity Ui-Kit for React native open-source (Expo)</h1>
   ** This is the beta version. The repo will be updated frequently.
-Please go to <strong>native branch</strong> if you want only native librairies inside the UIKit (https://github.com/AmityCo/Amity-Social-UIKit-React-Native-OpenSource/tree/native) **
+Please go to <strong>this repo</strong> if you want only native librairies inside the UIKit (https://github.com/AmityCo/Amity-Social-UIKit-React-Native-CLI-OpenSource) **
 </div>
 <div align="center">
  <img width="250" alt="Screenshot_2566-07-24_at_19 16 20-removebg-preview" src="https://github.com/AmityCo/Amity-Social-UIKit-React-Native-OpenSource/assets/112688936/ce60425f-b478-408b-88c3-341d00263760">
