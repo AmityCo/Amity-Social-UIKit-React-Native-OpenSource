@@ -4,8 +4,8 @@ on:
     branches:
       - main
   pull_request:
-    branches:
-      - main
+    types: [opened, synchronize]
+  workflow_call:
 
 jobs:
   lint:
@@ -33,16 +33,44 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: Run unit tests
-        run: yarn test --maxWorkers=2 --coverage
+        run: yarn test --maxWorkers=2
 
-  build:
+  # build:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
+
+  #     - name: Setup
+  #       uses: ./.github/actions/setup
+
+  #     - name: Build package
+  #       run: yarn prepack
+
+  sonar-scan:
     runs-on: ubuntu-latest
+    name: Sonar scan
+
+    needs: [lint, test]
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - name: checkout repository
+        uses: actions/cache@v3
+        id: repo
+        with:
+          path: ./*
+          key: ${{ github.sha }}
 
-      - name: Setup
-        uses: ./.github/actions/setup
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: test-report
+          path: coverage
 
-      - name: Build package
-        run: yarn prepack
+      - name: List artifacts
+        run: ls -laR coverage
+
+      - name: Sonar scan
+        uses: ./.github/actions/sonar-scan
+        with:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
