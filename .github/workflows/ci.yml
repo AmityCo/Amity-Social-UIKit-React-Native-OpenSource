@@ -35,6 +35,12 @@ jobs:
       - name: Run unit tests
         run: yarn test
 
+      - name: cache test results
+        uses: actions/cache@v3
+        with:
+          path: ./*
+          key: ${{ github.sha }}
+
   # build:
   #   runs-on: ubuntu-latest
   #   steps:
@@ -60,15 +66,6 @@ jobs:
         with:
           path: ./*
           key: ${{ github.sha }}
-
-      - name: Download artifacts
-        uses: actions/download-artifact@v3
-        with:
-          name: test-report
-          path: coverage
-
-      - name: List artifacts
-        run: ls -laR coverage
 
       - name: Sonar scan
         uses: ./.github/actions/sonar-scan
