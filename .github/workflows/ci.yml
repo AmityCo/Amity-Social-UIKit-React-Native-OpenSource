@@ -33,7 +33,7 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: Run unit tests
-        run: yarn test --maxWorkers=2
+        run: yarn test
 
   # build:
   #   runs-on: ubuntu-latest
@@ -51,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Sonar scan
 
-    needs: [lint, test]
+    needs: [test]
 
     steps:
       - name: checkout repository
