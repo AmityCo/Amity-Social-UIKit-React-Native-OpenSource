@@ -83,7 +83,7 @@ export default function GlobalFeed() {
               postIndex={index}
             />
           )}
-          keyExtractor={(_, index) => index.toString()}
+          keyExtractor={(item) => item.postId.toString()}
           onEndReachedThreshold={0.5}
           onEndReached={handleLoadMore}
           ref={flatListRef}
