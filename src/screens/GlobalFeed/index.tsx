@@ -9,9 +9,8 @@ import {
   type IGlobalFeedRes,
 } from '../../providers/Social/feed-sdk';
 import useAuth from '../../hooks/useAuth';
-import PostList, { type IPost } from '../../components/Social/PostList';
+import PostList from '../../components/Social/PostList';
 import { getStyles } from './styles';
-import MyCommunity from '../../components/MyCommunity';
 
 import { amityPostsFormatter } from '../../util/postDataFormatter';
 import { useDispatch, useSelector } from 'react-redux'
@@ -23,7 +22,7 @@ export default function GlobalFeed() {
   const { postList } = useSelector((state: RootState) => state.globalFeed)
 
   const { updateGlobalFeed, deleteByPostId } = globalFeedSlice.actions
-  const dispatch = useDispatch() // ()=> dispatch(updateGlobalFeed())
+  const dispatch = useDispatch()
 
   const styles = getStyles();
   const { client, isConnected } = useAuth();
@@ -69,10 +68,7 @@ export default function GlobalFeed() {
       dispatch(deleteByPostId({ postId }))
     }
   };
-  const onPostChange = (post: IPost) => {
-    console.log('post:', post)
 
-  }
 
   return (
     <View style={styles.feedWrap}>
@@ -81,13 +77,12 @@ export default function GlobalFeed() {
         <FlatList
           data={postList}
           renderItem={({ item, index }) => (
-            <PostList onDelete={onDeletePost} postDetail={item} onChange={onPostChange} postIndex={index} />
+            <PostList onDelete={onDeletePost} postDetail={item} postIndex={index} />
           )}
           keyExtractor={(item) => item.postId.toString()}
           onEndReachedThreshold={0.5}
           onEndReached={handleLoadMore}
           ref={flatListRef}
-          ListHeaderComponent={<MyCommunity />}
           extraData={postList}
         />
 
