@@ -225,7 +225,6 @@ export default function CommunityHome({ route }: any) {
       </Pressable>
     );
   };
-  console.log(isUserHasPermission);
   const handleOnPressPostBtn = () => {
     navigation.navigate('CreatePost', {
       targetId: communityId,

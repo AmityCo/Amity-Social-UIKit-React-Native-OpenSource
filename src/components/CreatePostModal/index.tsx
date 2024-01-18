@@ -116,14 +116,13 @@ const CreatePostModal = ({ visible, onClose, userId, onSelect }: IModal) => {
   };
   const renderCommunity = ({
     item,
-    index,
   }: {
     item: Amity.Community;
     index: number;
   }) => {
     return (
       <TouchableOpacity
-        key={index}
+        key={item.communityId}
         onPress={() =>
           onSelectFeed(item.communityId, item.displayName, 'community')
         }

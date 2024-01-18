@@ -97,10 +97,10 @@ export default function MyCommunity() {
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.scrollView}
       >
-        {communityItems.map((item, index) => (
+        {communityItems.map((item) => (
           <TouchableOpacity
             onPress={() => onClickItem(item.communityId, item.displayName)}
-            key={index}
+            key={item.communityId}
             style={styles.itemContainer}
           >
             {item.avatarFileId ? (

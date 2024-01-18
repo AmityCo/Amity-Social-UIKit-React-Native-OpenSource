@@ -185,7 +185,7 @@ export default function MediaSection({ childrenPosts }: IMediaSection) {
       }
 
       return (
-        <View style={colStyle} key={index}>
+        <View style={colStyle} key={item}>
           <TouchableWithoutFeedback onPress={() => onClickImage(index)}>
             <View>
               {videoPosts.length > 0 && renderPlayButton()}
