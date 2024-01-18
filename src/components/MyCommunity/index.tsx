@@ -54,10 +54,7 @@ export default function MyCommunity() {
   };
   const displayName = (text: string, type: string) => {
     if (text) {
-      let reduceLetter = 0;
-      if (type === 'private') {
-        reduceLetter = 3;
-      }
+      const reduceLetter = type === 'private' ? 3 : 0;
       if (text!.length > maxLength - reduceLetter) {
         return text!.substring(0, maxLength) + '...';
       }

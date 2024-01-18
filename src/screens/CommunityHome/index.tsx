@@ -157,7 +157,7 @@ export default function CommunityHome({ route }: any) {
           setCommunityData(community);
           setPostSetting(community?.data?.postSetting);
           if (
-            (community.data as Record<string, any>).needApprovalOnPostCreation
+            (community.data as Amity.RawCommunity).needApprovalOnPostCreation
           ) {
             setPostSetting('ADMIN_REVIEW_POST_REQUIRED');
           }
