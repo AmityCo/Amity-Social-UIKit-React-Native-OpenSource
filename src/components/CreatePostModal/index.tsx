@@ -144,7 +144,6 @@ const CreatePostModal = ({ visible, onClose, userId, onSelect }: IModal) => {
   };
 
   const handleEndReached = () => {
-    console.log('handleEndReached:');
     if (
       !isFetchingRef.current &&
       hasNextPageFunc &&
