@@ -114,12 +114,7 @@ const CreatePostModal = ({ visible, onClose, userId, onSelect }: IModal) => {
       targetType: targetType,
     });
   };
-  const renderCommunity = ({
-    item,
-  }: {
-    item: Amity.Community;
-    index: number;
-  }) => {
+  const renderCommunity = ({ item }: { item: Amity.Community }) => {
     return (
       <TouchableOpacity
         key={item.communityId}
@@ -187,7 +182,7 @@ const CreatePostModal = ({ visible, onClose, userId, onSelect }: IModal) => {
           }}
           scrollEventThrottle={16} // Adjust as needed
         >
-          {communities.map((item, index) => renderCommunity({ item, index }))}
+          {communities.map((item) => renderCommunity({ item }))}
 
           {/* You can add any additional components or content here */}
         </ScrollView>
