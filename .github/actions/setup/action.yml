@@ -9,6 +9,10 @@ runs:
       with:
         node-version-file: .nvmrc
 
+    - name: upgrade yarn
+      run: npm install yarn@1.22.15 -g
+      shell: bash
+
     - name: Cache dependencies
       id: yarn-cache
       uses: actions/cache@v3
