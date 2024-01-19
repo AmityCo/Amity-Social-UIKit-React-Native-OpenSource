@@ -14,7 +14,10 @@ import { SvgXml } from 'react-native-svg';
 import { circleCloseIcon, searchIcon } from '../../svg/svg-xml-list';
 import { useNavigation } from '@react-navigation/native';
 import CustomTab from '../../components/CustomTab';
-import { CommunityRepository, UserRepository } from '@amityco/ts-sdk-react-native';
+import {
+  CommunityRepository,
+  UserRepository,
+} from '@amityco/ts-sdk-react-native';
 import type { ISearchItem } from '../../components/SearchItem';
 import SearchItem from '../../components/SearchItem';
 import { useTheme } from 'react-native-paper';
@@ -26,8 +29,10 @@ export default function CommunitySearch() {
   const styles = getStyles();
   const [searchTerm, setSearchTerm] = useState('');
   const [searchType, setSearchType] = useState('community');
-  const [communities, setCommunities] = useState<Amity.LiveCollection<Amity.Community>>();
-  const [usersObject, setUsersObject] = useState<Amity.LiveCollection<Amity.User>>();
+  const [communities, setCommunities] =
+    useState<Amity.LiveCollection<Amity.Community>>();
+  const [usersObject, setUsersObject] =
+    useState<Amity.LiveCollection<Amity.User>>();
   const navigation = useNavigation<any>();
   const [searchList, setSearchList] = useState<ISearchItem[]>([]);
   const {
@@ -57,7 +62,12 @@ export default function CommunitySearch() {
 
   const searchCommunities = (text: string) => {
     const unsubscribe = CommunityRepository.getCommunities(
-      { displayName: text, membership: 'notMember', limit: 20, sortBy: 'displayName' },
+      {
+        displayName: text,
+        membership: 'notMember',
+        limit: 20,
+        sortBy: 'displayName',
+      },
       (data) => {
         setCommunities(data);
         if (data.data.length === 0) {
@@ -73,14 +83,10 @@ export default function CommunitySearch() {
         { displayName: text, limit: 20, sortBy: 'displayName' },
         (data) => {
           setUsersObject(data);
-
         }
-
       );
-      unsubscribe()
-
+      unsubscribe();
     }
-
   };
 
   useEffect(() => {
@@ -112,8 +118,6 @@ export default function CommunitySearch() {
     }
   }, [userArr, searchType]);
 
-
-
   const clearButton = () => {
     setSearchTerm('');
   };
@@ -127,7 +131,6 @@ export default function CommunitySearch() {
       if (searchTerm.length > 0) {
         searchCommunities(searchTerm);
       }
-
     } else if (index === 2) {
       setSearchType('user');
       if (searchTerm.length > 0) {
@@ -140,7 +143,11 @@ export default function CommunitySearch() {
       <View style={styles.headerWrap}>
         <View style={styles.inputWrap}>
           <TouchableOpacity onPress={() => searchAccounts(searchTerm)}>
-            <SvgXml xml={searchIcon(theme.colors.base)} width="20" height="20" />
+            <SvgXml
+              xml={searchIcon(theme.colors.base)}
+              width="20"
+              height="20"
+            />
           </TouchableOpacity>
           <TextInput
             style={styles.input}

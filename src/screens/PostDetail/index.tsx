@@ -1,4 +1,8 @@
-import { type RouteProp, useRoute, useNavigation } from '@react-navigation/native';
+import {
+  type RouteProp,
+  useRoute,
+  useNavigation,
+} from '@react-navigation/native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   View,
@@ -22,7 +26,17 @@ import type { IComment } from '../../components/Social/CommentList';
 import type { UserInterface } from '../../types/user.interface';
 import { getAmityUser } from '../../providers/user-provider';
 import CommentList from '../../components/Social/CommentList';
-import { CommentRepository, CommunityRepository, PostRepository, SubscriptionLevels, UserRepository, getCommunityTopic, getPostTopic, getUserTopic, subscribeTopic } from '@amityco/ts-sdk-react-native';
+import {
+  CommentRepository,
+  CommunityRepository,
+  PostRepository,
+  SubscriptionLevels,
+  UserRepository,
+  getCommunityTopic,
+  getPostTopic,
+  getUserTopic,
+  subscribeTopic,
+} from '@amityco/ts-sdk-react-native';
 import {
   createComment,
   deleteCommentById,
@@ -39,27 +53,22 @@ import MentionPopup from '../../components/MentionPopup';
 import { IMentionPosition } from '../CreatePost';
 import _ from 'lodash';
 
-
 const PostDetail = () => {
-
   const theme = useTheme() as MyMD3Theme;
   const styles = getStyles();
   const route = useRoute<RouteProp<RootStackParamList, 'PostDetail'>>();
 
-  const {
-    postId,
-    postIndex,
-    isFromGlobalfeed
-  } = route.params;
+  const { postId, postIndex, isFromGlobalfeed } = route.params;
 
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
   const [commentList, setCommentList] = useState<IComment[]>([]);
-  const [commentCollection, setCommentCollection] = useState<Amity.LiveCollection<Amity.Comment>>();
+  const [commentCollection, setCommentCollection] =
+    useState<Amity.LiveCollection<Amity.Comment>>();
   const { data: comments, onNextPage: onNextComment } = commentCollection ?? {};
   const [inputMessage, setInputMessage] = useState('');
-  const [communityObject, setCommunityObject] = useState<Amity.Community>()
-  const [userObject, setUserObject] = useState<Amity.User>()
+  const [communityObject, setCommunityObject] = useState<Amity.Community>();
+  const [userObject, setUserObject] = useState<Amity.User>();
 
   const flatListRef = useRef(null);
   let isSubscribed = false;
@@ -67,71 +76,67 @@ const PostDetail = () => {
 
   const [postCollection, setPostCollection] = useState<Amity.Post<any>>();
 
-  const [loading, setLoading] = useState<boolean>(true)
-  const { currentPostdetail } = useSelector((state: RootState) => state.postDetail)
+  const [loading, setLoading] = useState<boolean>(true);
+  const { currentPostdetail } = useSelector(
+    (state: RootState) => state.postDetail
+  );
 
-  const { postList: postListGlobal } = useSelector((state: RootState) => state.globalFeed)
-  const { postList: postListFeed } = useSelector((state: RootState) => state.feed)
+  const { postList: postListGlobal } = useSelector(
+    (state: RootState) => state.globalFeed
+  );
+  const { postList: postListFeed } = useSelector(
+    (state: RootState) => state.feed
+  );
 
-  const [isShowMention, setIsShowMention] = useState<boolean>(false)
-  const [mentionNames, setMentionNames] = useState<ISearchItem[]>([])
-  const [currentSearchUserName, setCurrentSearchUserName] = useState<string>()
-  const [cursorIndex, setCursorIndex] = useState<number>(0)
-  const [mentionsPosition, setMentionsPosition] = useState<IMentionPosition[]>([])
+  const [isShowMention, setIsShowMention] = useState<boolean>(false);
+  const [mentionNames, setMentionNames] = useState<ISearchItem[]>([]);
+  const [currentSearchUserName, setCurrentSearchUserName] = useState<string>();
+  const [cursorIndex, setCursorIndex] = useState<number>(0);
+  const [mentionsPosition, setMentionsPosition] = useState<IMentionPosition[]>(
+    []
+  );
 
   useEffect(() => {
     const checkMentionNames = mentionNames.filter((item) => {
-
-      return inputMessage.includes(item.displayName)
-    })
+      return inputMessage.includes(item.displayName);
+    });
     const checkMentionPosition = mentionsPosition.filter((item) => {
-
-      return inputMessage.includes(item.displayName)
-    })
-    setMentionNames(checkMentionNames)
-    setMentionsPosition(checkMentionPosition)
-  }, [inputMessage])
+      return inputMessage.includes(item.displayName);
+    });
+    setMentionNames(checkMentionNames);
+    setMentionsPosition(checkMentionPosition);
+  }, [inputMessage]);
 
   const onBackPress = () => {
     // navigation.navigate('Home', { postIdCallBack: postData.postId })
     // navigation.goBack()
 
-
-    navigation.goBack()
-
-  }
+    navigation.goBack();
+  };
   navigation.setOptions({
     headerLeft: () => <BackButton onPress={onBackPress} goBack={false} />,
-    title: ''
-
+    title: '',
   });
 
   const getPost = (postId: string) => {
-    const unsubscribePost = PostRepository.getPost(
-      postId,
-      async ({ data }) => {
-        setPostCollection(data);
-      }
-    );
-    console.log('unSubscribePost:', unsubscribePost)
+    const unsubscribePost = PostRepository.getPost(postId, async ({ data }) => {
+      setPostCollection(data);
+    });
+    console.log('unSubscribePost:', unsubscribePost);
   };
 
   useEffect(() => {
     setTimeout(() => {
-      setLoading(false)
+      setLoading(false);
     }, 100);
-    getPost(postId)
-
-  }, [postId])
-
-
+    getPost(postId);
+  }, [postId]);
 
   useEffect(() => {
     if (postCollection) {
       subscribeTopic(getPostTopic(postCollection));
     }
   }, [postCollection]);
-
 
   const subscribeCommentTopic = (targetType: string) => {
     if (isSubscribed) return;
@@ -141,7 +146,7 @@ const PostDetail = () => {
       disposers.push(
         subscribeTopic(getUserTopic(user, SubscriptionLevels.COMMENT), () => {
           // use callback to handle errors with event subscription
-        }),
+        })
       );
       isSubscribed = true;
       return;
@@ -150,9 +155,12 @@ const PostDetail = () => {
     if (targetType === 'community') {
       const community = communityObject as Amity.Community; // use getCommunity to get community by targetId
       disposers.push(
-        subscribeTopic(getCommunityTopic(community, SubscriptionLevels.COMMENT), () => {
-          // use callback to handle errors with event subscription
-        }),
+        subscribeTopic(
+          getCommunityTopic(community, SubscriptionLevels.COMMENT),
+          () => {
+            // use callback to handle errors with event subscription
+          }
+        )
       );
       isSubscribed = true;
     }
@@ -163,34 +171,36 @@ const PostDetail = () => {
         dataTypes: { matchType: 'any', values: ['text', 'image'] },
         referenceId: postId,
         referenceType: 'post',
-        limit: 10
+        limit: 10,
       },
       (data: Amity.LiveCollection<Amity.Comment>) => {
         setCommentCollection(data);
-
       }
     );
-
   }
 
   useEffect(() => {
-    const postList = isFromGlobalfeed ? postListGlobal : postListFeed
+    const postList = isFromGlobalfeed ? postListGlobal : postListFeed;
     if (communityObject || userObject) {
       subscribeCommentTopic(postList[postIndex]?.targetType as string);
     }
-
-  }, [communityObject, userObject])
+  }, [communityObject, userObject]);
 
   useEffect(() => {
-
-    const postList = isFromGlobalfeed ? postListGlobal : postListFeed
+    const postList = isFromGlobalfeed ? postListGlobal : postListFeed;
     if (postList[postIndex] && postList[postIndex].targetType === 'community') {
-      CommunityRepository.getCommunity(postList[postIndex].targetId, ({ data: community }) => {
-        setCommunityObject(community)
-      });
-    } else if (postList[postIndex] && postList[postIndex].targetType === 'user') {
+      CommunityRepository.getCommunity(
+        postList[postIndex].targetId,
+        ({ data: community }) => {
+          setCommunityObject(community);
+        }
+      );
+    } else if (
+      postList[postIndex] &&
+      postList[postIndex].targetType === 'user'
+    ) {
       UserRepository.getUser(postList[postIndex].targetId, ({ data: user }) => {
-        setUserObject(user)
+        setUserObject(user);
       });
     }
     getCommentsByPostId(postList[postIndex]?.postId);
@@ -221,8 +231,7 @@ const PostDetail = () => {
             createdAt: item.createdAt,
             childrenComment: item.children,
             referenceId: item.referenceId,
-            mentionPosition: item?.metadata?.mentioned
-
+            mentionPosition: item?.metadata?.mentioned,
           };
         })
       );
@@ -237,14 +246,14 @@ const PostDetail = () => {
   }, [commentCollection, queryComment]);
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    console.log('load more comment')
+    console.log('load more comment');
     const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
 
     const isScrollEndReached =
       layoutMeasurement.height + contentOffset.y + 250 >= contentSize.height;
 
     if (isScrollEndReached) {
-      onNextComment && onNextComment()
+      onNextComment && onNextComment();
     }
   };
   const handleSend: () => Promise<void> = async () => {
@@ -253,10 +262,15 @@ const PostDetail = () => {
     }
     Keyboard.dismiss();
     setInputMessage('');
-    await createComment(inputMessage, postId, mentionNames?.map(item => item.targetId), mentionsPosition);
+    await createComment(
+      inputMessage,
+      postId,
+      mentionNames?.map((item) => item.targetId),
+      mentionsPosition
+    );
     setInputMessage('');
-    setMentionNames([])
-    setMentionsPosition([])
+    setMentionNames([]);
+    setMentionsPosition([]);
   };
   const onDeleteComment = async (commentId: string) => {
     const isDeleted = await deleteCommentById(commentId);
@@ -270,28 +284,39 @@ const PostDetail = () => {
   };
 
   const onPostChange = (post: IPost) => {
-    console.log('post:', post)
-
-  }
+    console.log('post:', post);
+  };
 
   const handleSelectionChange = (event) => {
     setCursorIndex(event.nativeEvent.selection.start);
   };
 
   const onSelectUserMention = (user: ISearchItem) => {
-    const textAfterCursor: string = inputMessage.substring(cursorIndex, inputMessage.length + 1)
-    const newTextAfterReplacement = inputMessage.slice(0, cursorIndex - currentSearchUserName.length) + user.displayName + inputMessage.slice(cursorIndex, inputMessage.length);
-    const newInputMessage = newTextAfterReplacement + textAfterCursor
-    const position: IMentionPosition = { type: 'user', length: user.displayName.length + 1, index: cursorIndex - 1 - currentSearchUserName.length, userId: user.targetId, displayName: user.displayName }
+    const textAfterCursor: string = inputMessage.substring(
+      cursorIndex,
+      inputMessage.length + 1
+    );
+    const newTextAfterReplacement =
+      inputMessage.slice(0, cursorIndex - currentSearchUserName.length) +
+      user.displayName +
+      inputMessage.slice(cursorIndex, inputMessage.length);
+    const newInputMessage = newTextAfterReplacement + textAfterCursor;
+    const position: IMentionPosition = {
+      type: 'user',
+      length: user.displayName.length + 1,
+      index: cursorIndex - 1 - currentSearchUserName.length,
+      userId: user.targetId,
+      displayName: user.displayName,
+    };
 
-    setInputMessage(newInputMessage)
-    setMentionNames(prev => [...prev, user])
-    setMentionsPosition(prev => [...prev, position])
-    setCurrentSearchUserName('')
-  }
+    setInputMessage(newInputMessage);
+    setMentionNames((prev) => [...prev, user]);
+    setMentionsPosition((prev) => [...prev, position]);
+    setCurrentSearchUserName('');
+  };
   useEffect(() => {
-    checkMention(inputMessage)
-  }, [inputMessage])
+    checkMention(inputMessage);
+  }, [inputMessage]);
 
   const checkMention = (inputString: string) => {
     // Check if "@" is at the first letter
@@ -302,26 +327,28 @@ const PostDetail = () => {
 
     const atSigns = inputString.match(/@/g);
     const atSignsNumber = atSigns ? atSigns.length : 0;
-    if ((startsWithAt || insideWithoutLetterBefore) && atSignsNumber > mentionNames.length) {
-      setIsShowMention(true)
+    if (
+      (startsWithAt || insideWithoutLetterBefore) &&
+      atSignsNumber > mentionNames.length
+    ) {
+      setIsShowMention(true);
     } else {
-      setIsShowMention(false)
+      setIsShowMention(false);
     }
-
-
   };
   useEffect(() => {
     if (isShowMention) {
-      const substringBeforeCursor = inputMessage.substring(0, cursorIndex)
+      const substringBeforeCursor = inputMessage.substring(0, cursorIndex);
       const lastAtsIndex = substringBeforeCursor.lastIndexOf('@');
       if (lastAtsIndex !== -1) {
-        const searchText: string = inputMessage.substring(lastAtsIndex + 1, cursorIndex + 1)
-        setCurrentSearchUserName(searchText)
+        const searchText: string = inputMessage.substring(
+          lastAtsIndex + 1,
+          cursorIndex + 1
+        );
+        setCurrentSearchUserName(searchText);
       }
-
     }
-  }, [cursorIndex])
-
+  }, [cursorIndex]);
 
   const RenderTextWithMention = () => {
     if (mentionsPosition.length === 0) {
@@ -351,78 +378,89 @@ const PostDetail = () => {
 
     // Add any remaining non-highlighted text after the mentions
     const remainingText = inputMessage.slice(currentPosition);
-    result.push([<Text key="nonHighlighted-last" style={styles.inputText}>{remainingText}</Text>]);
+    result.push([
+      <Text key="nonHighlighted-last" style={styles.inputText}>
+        {remainingText}
+      </Text>,
+    ]);
 
     // Flatten the array and render
     return <Text style={styles.inputText}>{result.flat()}</Text>;
   };
-  return (
-    loading ? <View>
+  return loading ? (
+    <View />
+  ) : (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.select({ ios: 80, android: 80 })}
+      style={styles.AllInputWrap}
+    >
+      <ScrollView onScroll={handleScroll} style={styles.container}>
+        <PostList
+          onChange={onPostChange}
+          postDetail={currentPostdetail as IPost}
+          isGlobalfeed={isFromGlobalfeed}
+        />
 
-    </View> :
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.select({ ios: 80, android: 80 })}
-        style={styles.AllInputWrap}
-      >
-        <ScrollView onScroll={handleScroll} style={styles.container}>
-          <PostList
-            onChange={onPostChange}
-            postDetail={currentPostdetail as IPost}
-            isGlobalfeed={isFromGlobalfeed}
+        <View style={styles.commentListWrap}>
+          <FlatList
+            data={commentList}
+            renderItem={({ item }) => (
+              <CommentList onDelete={onDeleteComment} commentDetail={item} />
+            )}
+            keyExtractor={(item) => item.commentId.toString()}
+            onEndReachedThreshold={0.8}
+            ref={flatListRef}
           />
-
-          <View style={styles.commentListWrap}>
-            <FlatList
-              data={commentList}
-              renderItem={({ item }) => (
-                <CommentList onDelete={onDeleteComment} commentDetail={item} />
-              )}
-              keyExtractor={(item) => item.commentId.toString()}
-              onEndReachedThreshold={0.8}
-              ref={flatListRef}
-            />
-          </View>
-
-        </ScrollView>
-        {isShowMention && <MentionPopup userName={currentSearchUserName} onSelectMention={onSelectUserMention} />}
-
-        <View style={styles.InputWrap}>
-          <View style={styles.inputContainer}>
-            <TextInput
-              multiline
-              placeholder="Say something nice..."
-              style={mentionNames.length > 0 ? [styles.textInput, styles.transparentText] : styles.textInput}
-              value={inputMessage}
-              onChangeText={(text) => setInputMessage(text)}
-              placeholderTextColor={theme.colors.baseShade3}
-              onSelectionChange={handleSelectionChange}
-            />
-            {mentionNames.length > 0 &&
-              <View style={styles.overlay}>
-                {/* {renderTextWithMention()} */}
-                <RenderTextWithMention />
-              </View>}
-
-          </View>
-
-          <TouchableOpacity
-            disabled={inputMessage.length > 0 ? false : true}
-            onPress={handleSend}
-            style={styles.postBtn}
-          >
-            <Text
-              style={
-                inputMessage.length > 0 ? styles.postBtnText : styles.postDisabledBtn
-              }
-            >
-              Post
-            </Text>
-          </TouchableOpacity>
         </View>
-      </KeyboardAvoidingView>
+      </ScrollView>
+      {isShowMention && (
+        <MentionPopup
+          userName={currentSearchUserName}
+          onSelectMention={onSelectUserMention}
+        />
+      )}
+
+      <View style={styles.InputWrap}>
+        <View style={styles.inputContainer}>
+          <TextInput
+            multiline
+            placeholder="Say something nice..."
+            style={
+              mentionNames.length > 0
+                ? [styles.textInput, styles.transparentText]
+                : styles.textInput
+            }
+            value={inputMessage}
+            onChangeText={(text) => setInputMessage(text)}
+            placeholderTextColor={theme.colors.baseShade3}
+            onSelectionChange={handleSelectionChange}
+          />
+          {mentionNames.length > 0 && (
+            <View style={styles.overlay}>
+              {/* {renderTextWithMention()} */}
+              <RenderTextWithMention />
+            </View>
+          )}
+        </View>
+
+        <TouchableOpacity
+          disabled={inputMessage.length > 0 ? false : true}
+          onPress={handleSend}
+          style={styles.postBtn}
+        >
+          <Text
+            style={
+              inputMessage.length > 0
+                ? styles.postBtnText
+                : styles.postDisabledBtn
+            }
+          >
+            Post
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </KeyboardAvoidingView>
   );
 };
 export default PostDetail;
-
-

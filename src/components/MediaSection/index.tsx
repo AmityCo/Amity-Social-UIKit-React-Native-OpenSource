@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Image, ImageStyle, StyleProp, Text, TouchableWithoutFeedback, View } from 'react-native';
-
+import {
+  Image,
+  ImageStyle,
+  StyleProp,
+  Text,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
 
 import { SvgXml } from 'react-native-svg';
 
@@ -14,10 +20,9 @@ import { RootState } from '../../redux/store';
 import { playBtn } from '../../svg/svg-xml-list';
 
 interface IMediaSection {
-  childrenPosts: string[],
+  childrenPosts: string[];
 }
 export default function MediaSection({ childrenPosts }: IMediaSection) {
-
   const { apiRegion } = useAuth();
   const [imagePosts, setImagePosts] = useState<string[]>([]);
   const [videoPosts, setVideoPosts] = useState<IVideoPost[]>([]);
@@ -26,42 +31,42 @@ export default function MediaSection({ childrenPosts }: IMediaSection) {
   const [visibleFullImage, setIsVisibleFullImage] = useState<boolean>(false);
   const [imageIndex, setImageIndex] = useState<number>(0);
 
-  const styles = getStyles()
+  const styles = getStyles();
   let imageStyle: StyleProp<ImageStyle> | StyleProp<ImageStyle>[] =
     styles.imageLargePost;
   let colStyle: StyleProp<ImageStyle> = styles.col2;
-  const { currentPostdetail } = useSelector((state: RootState) => state.postDetail)
-  const { postList: postListGlobal } = useSelector((state: RootState) => state.globalFeed)
-  const { postList } = useSelector((state: RootState) => state.feed)
+  const { currentPostdetail } = useSelector(
+    (state: RootState) => state.postDetail
+  );
+  const { postList: postListGlobal } = useSelector(
+    (state: RootState) => state.globalFeed
+  );
+  const { postList } = useSelector((state: RootState) => state.feed);
 
   useEffect(() => {
-    setImagePostsFullSize([])
-    setVideoPostsFullSize([])
+    setImagePostsFullSize([]);
+    setVideoPostsFullSize([]);
     if (imagePosts.length > 0) {
       const updatedUrls: MediaUri[] = imagePosts.map((url: string) => {
         return {
-          uri: url.replace('size=medium', 'size=large')
-        }
-      })
-      setImagePostsFullSize(updatedUrls)
-
+          uri: url.replace('size=medium', 'size=large'),
+        };
+      });
+      setImagePostsFullSize(updatedUrls);
     }
     if (videoPosts.length > 0) {
       const updatedUrls: MediaUri[] = videoPosts.map((item: IVideoPost) => {
         return {
-          uri: `https://api.${apiRegion}.amity.co/api/v3/files/${item?.thumbnailFileId}/download?size=large`
-        }
-      })
-      setVideoPostsFullSize(updatedUrls)
+          uri: `https://api.${apiRegion}.amity.co/api/v3/files/${item?.thumbnailFileId}/download?size=large`,
+        };
+      });
+      setVideoPostsFullSize(updatedUrls);
     }
-
-  }, [imagePosts, videoPosts])
+  }, [imagePosts, videoPosts]);
 
   const getPostInfo = async () => {
     try {
-
       const response = await Promise.all(
-
         childrenPosts.map(async (id) => {
           const { data: post } = await getPostById(id);
           return { dataType: post.dataType, data: post.data };
@@ -69,150 +74,139 @@ export default function MediaSection({ childrenPosts }: IMediaSection) {
       );
       response.forEach((item) => {
         if (item.dataType === 'image') {
-          const url: string = `https://api.${apiRegion}.amity.co/api/v3/files/${item?.data.fileId}/download?size=medium`
+          const url: string = `https://api.${apiRegion}.amity.co/api/v3/files/${item?.data.fileId}/download?size=medium`;
           setImagePosts((prev) => {
-            return !prev.includes(url) ? [...prev, url] : [...prev]
-          }
-          );
+            return !prev.includes(url) ? [...prev, url] : [...prev];
+          });
         } else if (item.dataType === 'video') {
           setVideoPosts((prev) => {
-            return !prev.includes(item.data) ? [...prev, item.data] : [...prev]
-          }
-          );
+            return !prev.includes(item.data) ? [...prev, item.data] : [...prev];
+          });
         }
       });
     } catch (error) {
       console.log('error: ', error);
     }
-  }
-
-
+  };
 
   useEffect(() => {
-
     getPostInfo();
-
-  }, [childrenPosts, currentPostdetail, postList, postListGlobal])
+  }, [childrenPosts, currentPostdetail, postList, postListGlobal]);
 
   function onClickImage(index: number): void {
     setIsVisibleFullImage(true);
     setImageIndex(index);
   }
 
-
-
-
-
-  function renderMediaPosts()  {
+  function renderMediaPosts() {
     const thumbnailFileIds: string[] =
       videoPosts.length > 0
         ? videoPosts.map((item) => {
-          return `https://api.${apiRegion}.amity.co/api/v3/files/${item?.thumbnailFileId}/download?size=medium`;
-        })
+            return `https://api.${apiRegion}.amity.co/api/v3/files/${item?.thumbnailFileId}/download?size=medium`;
+          })
         : [];
-    let mediaPosts: string[] = []
-    mediaPosts = [...imagePosts].length > 0 ? [...imagePosts] : [...thumbnailFileIds];
-    const imageElement = mediaPosts.map(
-      (item: string, index: number) => {
-        if (mediaPosts.length === 1) {
-          imageStyle = styles.imageLargePost;
-          colStyle = styles.col6;
-        } else if (mediaPosts.length === 2) {
-          colStyle = styles.col3;
-          if (index === 0) {
-            imageStyle = [styles.imageLargePost, styles.imageMarginRight];
-          } else {
-            imageStyle = [styles.imageLargePost, styles.imageMarginLeft];
-          }
-        } else if (mediaPosts.length === 3) {
-          switch (index) {
-            case 0:
-              colStyle = styles.col6;
-              imageStyle = [styles.imageMediumPost, styles.imageMarginBottom];
-              break;
-            case 1:
-              colStyle = styles.col3;
-              imageStyle = [
-                styles.imageMediumPost,
-                styles.imageMarginTop,
-                styles.imageMarginRight,
-              ];
-              break;
-            case 2:
-              colStyle = styles.col3;
-              imageStyle = [
-                styles.imageMediumPost,
-                styles.imageMarginTop,
-                styles.imageMarginLeft,
-              ];
-              break;
-
-            default:
-              break;
-          }
+    let mediaPosts: string[] = [];
+    mediaPosts =
+      [...imagePosts].length > 0 ? [...imagePosts] : [...thumbnailFileIds];
+    const imageElement = mediaPosts.map((item: string, index: number) => {
+      if (mediaPosts.length === 1) {
+        imageStyle = styles.imageLargePost;
+        colStyle = styles.col6;
+      } else if (mediaPosts.length === 2) {
+        colStyle = styles.col3;
+        if (index === 0) {
+          imageStyle = [styles.imageLargePost, styles.imageMarginRight];
         } else {
-          switch (index) {
-            case 0:
-              colStyle = styles.col6;
-              imageStyle = [
-                styles.imageMediumLargePost,
-                styles.imageMarginBottom,
-              ];
-              break;
-            case 1:
-              colStyle = styles.col2;
-              imageStyle = [
-                styles.imageSmallPost,
-                styles.imageMarginTop,
-                styles.imageMarginRight,
-              ];
-              break;
-            case 2:
-              colStyle = styles.col2;
-              imageStyle = [
-                styles.imageSmallPost,
-                styles.imageMarginTop,
-                styles.imageMarginLeft,
-                styles.imageMarginRight,
-              ];
-              break;
-            case 3:
-              colStyle = styles.col2;
-              imageStyle = [
-                styles.imageSmallPost,
-                styles.imageMarginTop,
-                styles.imageMarginLeft,
-              ];
-              break;
-            default:
-              break;
-          }
+          imageStyle = [styles.imageLargePost, styles.imageMarginLeft];
         }
+      } else if (mediaPosts.length === 3) {
+        switch (index) {
+          case 0:
+            colStyle = styles.col6;
+            imageStyle = [styles.imageMediumPost, styles.imageMarginBottom];
+            break;
+          case 1:
+            colStyle = styles.col3;
+            imageStyle = [
+              styles.imageMediumPost,
+              styles.imageMarginTop,
+              styles.imageMarginRight,
+            ];
+            break;
+          case 2:
+            colStyle = styles.col3;
+            imageStyle = [
+              styles.imageMediumPost,
+              styles.imageMarginTop,
+              styles.imageMarginLeft,
+            ];
+            break;
 
-        return (
-          <View style={colStyle}>
-            <TouchableWithoutFeedback onPress={() => onClickImage(index)}>
-              <View>
-                {(videoPosts.length > 0) &&
-                  renderPlayButton()}
-                <Image
-                  style={imageStyle}
-                  source={{
-                    uri: item,
-                  }}
-                />
-                {index === 3 && imagePosts.length > 4 && (
-                  <View style={styles.overlay}>
-                    <Text style={styles.overlayText}>{`+ ${imagePosts.length - 3
-                      }`}</Text>
-                  </View>
-                )}
-              </View>
-            </TouchableWithoutFeedback>
-          </View>
-        );
+          default:
+            break;
+        }
+      } else {
+        switch (index) {
+          case 0:
+            colStyle = styles.col6;
+            imageStyle = [
+              styles.imageMediumLargePost,
+              styles.imageMarginBottom,
+            ];
+            break;
+          case 1:
+            colStyle = styles.col2;
+            imageStyle = [
+              styles.imageSmallPost,
+              styles.imageMarginTop,
+              styles.imageMarginRight,
+            ];
+            break;
+          case 2:
+            colStyle = styles.col2;
+            imageStyle = [
+              styles.imageSmallPost,
+              styles.imageMarginTop,
+              styles.imageMarginLeft,
+              styles.imageMarginRight,
+            ];
+            break;
+          case 3:
+            colStyle = styles.col2;
+            imageStyle = [
+              styles.imageSmallPost,
+              styles.imageMarginTop,
+              styles.imageMarginLeft,
+            ];
+            break;
+          default:
+            break;
+        }
       }
-    );
+
+      return (
+        <View style={colStyle}>
+          <TouchableWithoutFeedback onPress={() => onClickImage(index)}>
+            <View>
+              {videoPosts.length > 0 && renderPlayButton()}
+              <Image
+                style={imageStyle}
+                source={{
+                  uri: item,
+                }}
+              />
+              {index === 3 && imagePosts.length > 4 && (
+                <View style={styles.overlay}>
+                  <Text style={styles.overlayText}>{`+ ${
+                    imagePosts.length - 3
+                  }`}</Text>
+                </View>
+              )}
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
+      );
+    });
     if (imageElement.length < 3) {
       return (
         <View style={styles.imagesWrap}>
@@ -236,7 +230,6 @@ export default function MediaSection({ childrenPosts }: IMediaSection) {
     }
   }
 
-
   function renderPlayButton() {
     return (
       <View style={styles.playButton}>
@@ -247,7 +240,7 @@ export default function MediaSection({ childrenPosts }: IMediaSection) {
 
   return (
     <View>
-  { renderMediaPosts()}
+      {renderMediaPosts()}
       <ImageView
         images={
           imagePostsFullSize.length > 0
@@ -261,8 +254,5 @@ export default function MediaSection({ childrenPosts }: IMediaSection) {
         videoPosts={videoPosts}
       />
     </View>
-
-  )
-
-
+  );
 }

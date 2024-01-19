@@ -18,7 +18,6 @@ export default function UserItem({
   onPress?: (user: UserInterface) => void;
   onThreeDotTap?: (user: UserInterface) => void;
 }) {
-
   const styles = getStyles();
   const { apiRegion } = useAuth();
   const [isChecked, setIsChecked] = useState(false);

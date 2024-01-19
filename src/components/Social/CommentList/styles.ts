@@ -2,13 +2,12 @@ import { StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
 
-export const getStyles=()=>{
+export const getStyles = () => {
+  const theme = useTheme() as MyMD3Theme;
 
-  const theme = useTheme() as MyMD3Theme ;
-  
   const styles = StyleSheet.create({
     commentWrap: {
-      backgroundColor:  theme.colors.background,
+      backgroundColor: theme.colors.background,
       paddingHorizontal: 12,
       width: '100%',
       borderBottomColor: '#EBECEF',
@@ -32,13 +31,13 @@ export const getStyles=()=>{
       fontWeight: '600',
       fontSize: 15,
       marginTop: 3,
-      color: theme.colors.base
+      color: theme.colors.base,
     },
     headerTextTime: {
       fontSize: 13,
       fontWeight: '400',
       marginVertical: 4,
-      color: theme.colors.baseShade1
+      color: theme.colors.baseShade1,
     },
     avatar: {
       width: 30,
@@ -66,7 +65,7 @@ export const getStyles=()=>{
     },
     commentText: {
       fontSize: 15,
-      color: theme.colors.base
+      color: theme.colors.base,
     },
     likeBtn: {
       flexDirection: 'row',
@@ -115,30 +114,27 @@ export const getStyles=()=>{
       fontWeight: '600',
       color: theme.colors.base,
     },
-    twoOptions:{
+    twoOptions: {
       minHeight: 720,
     },
-    timeRow:{
-      flexDirection:'row',
-      alignItems: 'center'
+    timeRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
     },
-    dot:{
+    dot: {
       color: theme.colors.baseShade1,
       fontWeight: '900',
-      paddingHorizontal:5
+      paddingHorizontal: 5,
     },
     mentionText: {
       color: theme.colors.primary,
-       fontSize: 15,
+      fontSize: 15,
     },
     inputText: {
       color: theme.colors.base,
       fontSize: 15,
-      
     },
   });
-  
-  
-  
+
   return styles;
-}
+};

@@ -1,4 +1,9 @@
-import React, { useState, useEffect, useRef, type MutableRefObject } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  type MutableRefObject,
+} from 'react';
 import {
   View,
   Text,
@@ -25,7 +30,7 @@ import FloatingButton from '../../components/FloatingButton';
 
 export default function UserProfile({ route }: any) {
   const theme = useTheme() as MyMD3Theme;
-  const styles = getStyles()
+  const styles = getStyles();
   const { apiRegion, client } = useAuth();
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const { userId } = route.params;
@@ -34,7 +39,7 @@ export default function UserProfile({ route }: any) {
   const [followingCount, setFollowingCount] = useState<number>(0);
   const [followStatus, setFollowStatus] = useState<string>('loading');
   const [showLoadingIndicator, setShowLoadingIndicator] = useState(false);
-  console.log('showLoadingIndicator:', showLoadingIndicator)
+  console.log('showLoadingIndicator:', showLoadingIndicator);
 
   const feedRef: MutableRefObject<FeedRefType | null> =
     useRef<FeedRefType | null>(null);
@@ -192,7 +197,7 @@ export default function UserProfile({ route }: any) {
       targetName: 'My Timeline',
       targetType: 'user',
     });
-  }
+  };
   return (
     <View style={styles.container}>
       <ScrollView
@@ -207,10 +212,10 @@ export default function UserProfile({ route }: any) {
               source={
                 user?.avatarFileId || user?.avatarCustomUrl
                   ? {
-                    uri: user.avatarFileId
-                      ? avatarFileURL(user.avatarFileId)
-                      : user.avatarCustomUrl,
-                  }
+                      uri: user.avatarFileId
+                        ? avatarFileURL(user.avatarFileId)
+                        : user.avatarCustomUrl,
+                    }
                   : require('../../../assets/icon/Placeholder.png')
               }
             />
@@ -228,10 +233,7 @@ export default function UserProfile({ route }: any) {
           </View>
           <View style={styles.descriptionContainer}>
             {user?.description ? (
-              <Text style={styles.descriptionText}>
-                {' '}
-                {user?.description}
-              </Text>
+              <Text style={styles.descriptionText}> {user?.description}</Text>
             ) : (
               <View />
             )}
@@ -254,8 +256,9 @@ export default function UserProfile({ route }: any) {
         />
       </View> */}
       </ScrollView>
-      {(client as Amity.Client).userId === userId && <FloatingButton onPress={handleOnPressPostBtn} isGlobalFeed={false} />}
+      {(client as Amity.Client).userId === userId && (
+        <FloatingButton onPress={handleOnPressPostBtn} isGlobalFeed={false} />
+      )}
     </View>
   );
 }
-

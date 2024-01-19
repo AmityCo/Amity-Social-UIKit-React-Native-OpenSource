@@ -31,8 +31,8 @@ export default function Home() {
   // const { t, i18n } = useTranslation();
   const styles = getStyles();
   const { client } = useAuth();
-  const theme = useTheme() as MyMD3Theme ;
-  
+  const theme = useTheme() as MyMD3Theme;
+
   const [activeTab, setActiveTab] = useState(1);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -140,7 +140,11 @@ export default function Home() {
               onPress={openCreatePostModal}
               style={styles.modalRow}
             >
-              <SvgXml xml={postIconOutlined(theme.colors.base)} width="28" height="28" />
+              <SvgXml
+                xml={postIconOutlined(theme.colors.base)}
+                width="28"
+                height="28"
+              />
               <Text style={styles.postText}>Post</Text>
             </TouchableOpacity>
             <CreatePostModal

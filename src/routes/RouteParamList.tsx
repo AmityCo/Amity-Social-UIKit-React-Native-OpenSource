@@ -1,5 +1,3 @@
-
-
 export type RootStackParamList = {
   Home: { postIdCallBack?: string };
   CommunitySearch: undefined;
@@ -40,5 +38,5 @@ export type RootStackParamList = {
   };
   AllMyCommunity: undefined;
   CreateCommunity: undefined;
-  PendingPosts: {  communityId: string; isModerator: boolean}
+  PendingPosts: { communityId: string; isModerator: boolean };
 };

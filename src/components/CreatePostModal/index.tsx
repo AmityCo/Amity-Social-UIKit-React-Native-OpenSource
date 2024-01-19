@@ -77,11 +77,10 @@ const CreatePostModal = ({ visible, onClose, userId, onSelect }: IModal) => {
       } catch (error) {
         console.error('Failed to load communities:', error);
         isFetchingRef.current = false;
-      } 
+      }
     };
 
     loadCommunities();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const renderMyTimeLine = () => {
     return (
@@ -94,8 +93,8 @@ const CreatePostModal = ({ visible, onClose, userId, onSelect }: IModal) => {
           source={
             myUser
               ? {
-                uri: `https://api.${apiRegion}.amity.co/api/v3/files/${myUser.avatarFileId}/download`,
-              }
+                  uri: `https://api.${apiRegion}.amity.co/api/v3/files/${myUser.avatarFileId}/download`,
+                }
               : require('./../../../assets/icon/Placeholder.png')
           }
         />
@@ -128,8 +127,8 @@ const CreatePostModal = ({ visible, onClose, userId, onSelect }: IModal) => {
           source={
             item.avatarFileId
               ? {
-                uri: `https://api.${apiRegion}.amity.co/api/v3/files/${item.avatarFileId}/download`,
-              }
+                  uri: `https://api.${apiRegion}.amity.co/api/v3/files/${item.avatarFileId}/download`,
+                }
               : require('./../../../assets/icon/Placeholder.png')
           }
         />
@@ -138,9 +137,8 @@ const CreatePostModal = ({ visible, onClose, userId, onSelect }: IModal) => {
     );
   };
 
-
   const handleEndReached = () => {
-    console.log('handleEndReached:')
+    console.log('handleEndReached:');
     if (
       !isFetchingRef.current &&
       hasNextPageFunc &&
@@ -150,10 +148,14 @@ const CreatePostModal = ({ visible, onClose, userId, onSelect }: IModal) => {
       onEndReachedCalledDuringMomentumRef.current = true;
       onNextPageRef.current && onNextPageRef.current();
     }
-  }
+  };
 
   return (
-    <Modal visible={visible} animationType="slide" onTouchEnd={handleEndReached}>
+    <Modal
+      visible={visible}
+      animationType="slide"
+      onTouchEnd={handleEndReached}
+    >
       <View style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
@@ -171,7 +173,8 @@ const CreatePostModal = ({ visible, onClose, userId, onSelect }: IModal) => {
             const yOffset = nativeEvent.contentOffset.y;
             const contentHeight = nativeEvent.contentSize.height;
             const scrollViewHeight = nativeEvent.layoutMeasurement.height;
-            const isNearBottom = contentHeight - yOffset <= scrollViewHeight * 1.7; // Adjust the multiplier as needed
+            const isNearBottom =
+              contentHeight - yOffset <= scrollViewHeight * 1.7; // Adjust the multiplier as needed
 
             if (isNearBottom) {
               handleEndReached();
@@ -179,7 +182,7 @@ const CreatePostModal = ({ visible, onClose, userId, onSelect }: IModal) => {
           }}
           scrollEventThrottle={16} // Adjust as needed
         >
-          {communities.map(item=>renderCommunity({item}))}
+          {communities.map((item) => renderCommunity({ item }))}
 
           {/* You can add any additional components or content here */}
         </ScrollView>
@@ -189,4 +192,3 @@ const CreatePostModal = ({ visible, onClose, userId, onSelect }: IModal) => {
 };
 
 export default CreatePostModal;
-

@@ -5,5 +5,5 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import { Modal } from "react-native";
+import { Modal } from 'react-native';
 export default Modal;

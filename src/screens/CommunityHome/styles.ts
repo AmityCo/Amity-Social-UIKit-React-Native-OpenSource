@@ -7,7 +7,7 @@ export const getStyles = () => {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: theme.colors.background
+      backgroundColor: theme.colors.background,
       // alignItems: 'center',
       // justifyContent: 'center',
     },
@@ -15,7 +15,7 @@ export const getStyles = () => {
       flex: 0.2,
       justifyContent: 'center',
       alignItems: 'center',
-      marginVertical: 16
+      marginVertical: 16,
     },
     joinCommunityButton: {
       // flex: 1,
@@ -120,7 +120,7 @@ export const getStyles = () => {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      marginHorizontal: 16
+      marginHorizontal: 16,
     },
     pendingPostArea: {
       width: '100%',
@@ -128,24 +128,24 @@ export const getStyles = () => {
       backgroundColor: theme.colors.secondary,
       paddingVertical: 12,
       alignItems: 'center',
-      borderRadius: 4
+      borderRadius: 4,
     },
-    pendingText:{
+    pendingText: {
       fontSize: 15,
       fontWeight: '600',
       color: theme.colors.base,
-      marginLeft: 6
+      marginLeft: 6,
     },
-    pendingDescriptionText:{
+    pendingDescriptionText: {
       fontSize: 13,
       fontWeight: '400',
-      color: theme.colors.baseShade1
+      color: theme.colors.baseShade1,
     },
-    pendingRow:{
+    pendingRow: {
       flexDirection: 'row',
-      alignItems: 'center'
+      alignItems: 'center',
     },
   });
 
-  return styles
-}
+  return styles;
+};

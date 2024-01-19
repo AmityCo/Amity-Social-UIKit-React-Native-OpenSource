@@ -3,9 +3,8 @@ import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
 
 export const getStyles = () => {
+  const theme = useTheme() as MyMD3Theme;
 
-  const theme = useTheme() as MyMD3Theme ;
-  
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -19,7 +18,7 @@ export const getStyles = () => {
       padding: 12,
       flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'space-between'
+      justifyContent: 'space-between',
     },
     closeButton: {
       zIndex: 1,
@@ -33,16 +32,16 @@ export const getStyles = () => {
       fontWeight: '600',
       fontSize: 17,
       textAlign: 'center',
-      color: theme.colors.base
+      color: theme.colors.base,
     },
-  
+
     textInput: {
       borderWidth: 0,
       borderBottomWidth: 0,
       backgroundColor: 'transparent',
       fontSize: 15,
       marginHorizontal: 3,
-      color: theme.colors.base
+      color: theme.colors.base,
     },
 
     AllInputWrap: {
@@ -61,7 +60,6 @@ export const getStyles = () => {
       borderTopWidth: 1,
       borderTopColor: theme.colors.border,
     },
-  
   });
-  return styles
-}
+  return styles;
+};

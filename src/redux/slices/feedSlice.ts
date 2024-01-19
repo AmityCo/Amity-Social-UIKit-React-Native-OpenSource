@@ -1,44 +1,44 @@
-import { PayloadAction, createSlice } from '@reduxjs/toolkit'
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { IPost } from '../../components/Social/PostList';
 
 interface FeedState {
-    postList: IPost[];
+  postList: IPost[];
 }
 const initialState: FeedState = {
-    postList: [],
+  postList: [],
 };
 
-
 const feedSlice = createSlice({
-    name: 'feed',
-    initialState,
-    reducers: {
-        updateFeed: (state, action: PayloadAction<IPost[]>) => {
-            state.postList = [...action.payload]
-        },
+  name: 'feed',
+  initialState,
+  reducers: {
+    updateFeed: (state, action: PayloadAction<IPost[]>) => {
+      state.postList = [...action.payload];
+    },
 
-        updateByPostId:(state, action: PayloadAction<{postId: string; postDetail: IPost}>)=>{
-            const { postId, postDetail } = action.payload;
+    updateByPostId: (
+      state,
+      action: PayloadAction<{ postId: string; postDetail: IPost }>
+    ) => {
+      const { postId, postDetail } = action.payload;
 
-            const index = state.postList.findIndex(item => item.postId === postId)
-              state.postList[index] = postDetail
+      const index = state.postList.findIndex((item) => item.postId === postId);
+      state.postList[index] = postDetail;
+    },
+    deleteByPostId: (state, action: PayloadAction<{ postId: string }>) => {
+      const { postId } = action.payload;
+      const prevPostList: IPost[] = [...state.postList];
+      const updatedPostList: IPost[] = prevPostList.filter(
+        (item) => item.postId !== postId
+      );
 
-        },
-        deleteByPostId:(state, action: PayloadAction<{postId: string}>)=>{
-            const { postId } = action.payload;
-            const prevPostList: IPost[] = [...state.postList];
-            const updatedPostList: IPost[] = prevPostList.filter(
-              (item) => item.postId !== postId
-            );
-
-              state.postList = updatedPostList
-
-        },
-        clearFeed: (state) => {
-            state.postList = []
-        }
-    }
-})
+      state.postList = updatedPostList;
+    },
+    clearFeed: (state) => {
+      state.postList = [];
+    },
+  },
+});
 
 // const {actions: globalFeedActions, reducer: globalFeedReducer } = globalFeedSlice
-export default feedSlice
+export default feedSlice;

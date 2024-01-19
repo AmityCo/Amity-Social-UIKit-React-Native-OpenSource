@@ -41,7 +41,6 @@ export const CommunitySetting: React.FC<ChatDetailProps> = ({
 
   const renderItem = ({ item }: any) => {
     switch (item.id) {
-  
       case 1:
         return (
           <TouchableOpacity
@@ -55,7 +54,7 @@ export const CommunitySetting: React.FC<ChatDetailProps> = ({
               />
             </View>
             <Text style={styles.rowText}>Members</Text>
-           <SvgXml xml={arrowOutlined(theme.colors.base)} width={24}/>
+            <SvgXml xml={arrowOutlined(theme.colors.base)} width={24} />
           </TouchableOpacity>
         );
       case 2:

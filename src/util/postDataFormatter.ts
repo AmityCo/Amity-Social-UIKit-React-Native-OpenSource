@@ -1,9 +1,10 @@
-import { getAmityUser } from "../providers/user-provider";
-import { IPost } from "../components/Social/PostList";
-import { UserInterface } from "../types/user.interface";
+import { getAmityUser } from '../providers/user-provider';
+import { IPost } from '../components/Social/PostList';
+import { UserInterface } from '../types/user.interface';
 
-
-export const amityPostsFormatter = async (posts: Amity.Post<any>[]): Promise<IPost[]> => {
+export const amityPostsFormatter = async (
+  posts: Amity.Post<any>[]
+): Promise<IPost[]> => {
   const formattedPostList = await Promise.all(
     posts.map(async (item: Amity.Post<any>) => {
       const { userObject } = await getAmityUser(item.postedUserId);
@@ -29,9 +30,8 @@ export const amityPostsFormatter = async (posts: Amity.Post<any>[]): Promise<IPo
         targetType: item.targetType,
         targetId: item.targetId,
         childrenPosts: item.children,
-        mentionees:  item.mentionees[0]?.userIds,
-        mentionPosition: item?.metadata?.mentioned || undefined
-     
+        mentionees: item.mentionees[0]?.userIds,
+        mentionPosition: item?.metadata?.mentioned || undefined,
       } as IPost;
     })
   );

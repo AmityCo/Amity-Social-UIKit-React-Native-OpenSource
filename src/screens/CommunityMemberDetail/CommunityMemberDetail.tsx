@@ -1,4 +1,7 @@
-import { CommunityRepository, createReport } from '@amityco/ts-sdk-react-native';
+import {
+  CommunityRepository,
+  createReport,
+} from '@amityco/ts-sdk-react-native';
 import React, { useEffect, useState, useRef } from 'react';
 import {
   FlatList,
@@ -14,7 +17,7 @@ import UserItem from '../../components/UserItem';
 import type { UserInterface } from '../../types/user.interface';
 
 export default function CommunityMemberDetail({ navigation, route }: any) {
-  const styles = getStyles()
+  const styles = getStyles();
   const [memberList, setMemberList] = useState<Amity.Member<'community'>[]>([]);
   const [loading, setLoading] = useState(false);
   const [hasNextPage, setHasNextPage] = useState(false);

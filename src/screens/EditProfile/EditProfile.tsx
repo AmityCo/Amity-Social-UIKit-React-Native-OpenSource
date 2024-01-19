@@ -16,7 +16,7 @@ import {
   launchImageLibrary,
   type CameraOptions,
   type ImageLibraryOptions,
-  type   ImagePickerResponse,
+  type ImagePickerResponse,
 } from 'react-native-image-picker';
 import { getStyles } from './styles';
 import CloseButton from '../../components/BackButton/index';
@@ -76,7 +76,6 @@ export const EditProfile: React.FC<EditProfileProps> = ({
   const { user } = route.params;
 
   React.useLayoutEffect(() => {
-
     navigation.setOptions({
       headerLeft: () => <CloseButton />,
       title: 'Edit Profile',

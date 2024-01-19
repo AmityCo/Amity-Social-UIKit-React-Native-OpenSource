@@ -41,13 +41,12 @@ export default function SocialNavigator() {
             contentStyle: {
               backgroundColor: 'white',
             },
-            headerStyle:{
+            headerStyle: {
               backgroundColor: theme.colors.background,
             },
-            headerTitleStyle:{
-              color: theme.colors.base
-            }
-
+            headerTitleStyle: {
+              color: theme.colors.base,
+            },
           }}
         >
           <Stack.Screen name="Home" component={Home} />
@@ -57,7 +56,7 @@ export default function SocialNavigator() {
           <Stack.Screen
             name="CategoryList"
             component={CategoryList}
-            options={({ }) => ({
+            options={({}) => ({
               title: 'Category',
             })}
           />

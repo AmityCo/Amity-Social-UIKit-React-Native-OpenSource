@@ -1,7 +1,19 @@
 /* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { CommunityRepository, PostRepository, SubscriptionLevels, getCommunityTopic, subscribeTopic } from '@amityco/ts-sdk-react-native';
-import React, { type MutableRefObject, useEffect, useRef, useState, useLayoutEffect } from 'react';
+import {
+  CommunityRepository,
+  PostRepository,
+  SubscriptionLevels,
+  getCommunityTopic,
+  subscribeTopic,
+} from '@amityco/ts-sdk-react-native';
+import React, {
+  type MutableRefObject,
+  useEffect,
+  useRef,
+  useState,
+  useLayoutEffect,
+} from 'react';
 import {
   View,
   Image,
@@ -33,22 +45,24 @@ export type FeedRefType = {
 };
 
 export default function CommunityHome({ route }: any) {
-
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const theme = useTheme() as MyMD3Theme;
   const styles = getStyles();
   const { apiRegion, client } = useAuth();
   const { communityId, communityName } = route.params;
   const [isJoin, setIsJoin] = useState(true);
-  const [communityData, setCommunityData] = useState<Amity.LiveObject<Amity.Community>>();
+  const [communityData, setCommunityData] =
+    useState<Amity.LiveObject<Amity.Community>>();
 
-  const feedRef: MutableRefObject<FeedRefType | null> = useRef<FeedRefType | null>(null);
+  const feedRef: MutableRefObject<FeedRefType | null> =
+    useRef<FeedRefType | null>(null);
   const scrollViewRef = useRef(null);
 
-  const [pendingPosts, setPendingPosts] = useState<IPost[]>([])
-  const [isShowPendingArea, setIsShowPendingArea] = useState<boolean>(false)
-  const [isUserHasPermission, setIsUserHasPermission] = useState<boolean>(false)
-  const [postSetting, setPostSetting] = useState<string>('')
+  const [pendingPosts, setPendingPosts] = useState<IPost[]>([]);
+  const [isShowPendingArea, setIsShowPendingArea] = useState<boolean>(false);
+  const [isUserHasPermission, setIsUserHasPermission] =
+    useState<boolean>(false);
+  const [postSetting, setPostSetting] = useState<string>('');
 
   const disposers: Amity.Unsubscriber[] = [];
   let isSubscribed = false;
@@ -57,11 +71,13 @@ export default function CommunityHome({ route }: any) {
     if (isSubscribed) return;
 
     if (targetType === 'community') {
-
       disposers.push(
-        subscribeTopic(getCommunityTopic(communityData?.data, SubscriptionLevels.POST), () => {
-          // use callback to handle errors with event subscription
-        }),
+        subscribeTopic(
+          getCommunityTopic(communityData?.data, SubscriptionLevels.POST),
+          () => {
+            // use callback to handle errors with event subscription
+          }
+        )
       );
       isSubscribed = true;
     }
@@ -69,37 +85,46 @@ export default function CommunityHome({ route }: any) {
 
   const getPendingPosts = async () => {
     const unsubscribe = PostRepository.getPosts(
-      { targetId: communityId, targetType: 'community', feedType: 'reviewing', limit: 30 },
-      async ({ data: posts }) => {
-        const pendingPost = await amityPostsFormatter(posts)
-
-        setPendingPosts(pendingPost)
-        subscribePostTopic('community');
-        setIsShowPendingArea(true)
+      {
+        targetId: communityId,
+        targetType: 'community',
+        feedType: 'reviewing',
+        limit: 30,
       },
+      async ({ data: posts }) => {
+        const pendingPost = await amityPostsFormatter(posts);
+
+        setPendingPosts(pendingPost);
+        subscribePostTopic('community');
+        setIsShowPendingArea(true);
+      }
     );
     disposers.push(unsubscribe);
-    const res = await checkCommunityPermission(communityId, client as Amity.Client)
-    if (res.permissions.length > 0 && res.permissions.includes('Post/ManagePosts')) {
-      setIsUserHasPermission(true)
+    const res = await checkCommunityPermission(
+      communityId,
+      client as Amity.Client
+    );
+    if (
+      res.permissions.length > 0 &&
+      res.permissions.includes('Post/ManagePosts')
+    ) {
+      setIsUserHasPermission(true);
     }
-  }
-
+  };
 
   useEffect(() => {
     if (postSetting === 'ADMIN_REVIEW_POST_REQUIRED') {
-      setIsShowPendingArea(true)
+      setIsShowPendingArea(true);
     }
-  }, [postSetting])
-
+  }, [postSetting]);
 
   useLayoutEffect(() => {
-    getPendingPosts()
+    getPendingPosts();
     loadCommunity();
     return () => {
-      disposers.forEach(fn => fn());
+      disposers.forEach((fn) => fn());
     };
-  }, [])
+  }, []);
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
 
@@ -111,8 +136,8 @@ export default function CommunityHome({ route }: any) {
     }
   };
   const onBackPress = () => {
-    navigation.navigate('Home')
-  }
+    navigation.navigate('Home');
+  };
   React.useLayoutEffect(() => {
     // Set the headerRight component to a TouchableOpacity
     navigation.setOptions({
@@ -155,9 +180,11 @@ export default function CommunityHome({ route }: any) {
         // setCommunityData
         (community) => {
           setCommunityData(community);
-          setPostSetting(community?.data?.postSetting)
-          if ((community.data as Record<string, any>).needApprovalOnPostCreation) {
-            setPostSetting('ADMIN_REVIEW_POST_REQUIRED')
+          setPostSetting(community?.data?.postSetting);
+          if (
+            (community.data as Record<string, any>).needApprovalOnPostCreation
+          ) {
+            setPostSetting('ADMIN_REVIEW_POST_REQUIRED');
           }
           setIsJoin(community?.data.isJoined || false); // Set isJoin to communityData?.data.isJoined value
         }
@@ -166,11 +193,7 @@ export default function CommunityHome({ route }: any) {
     } catch (error) {
       console.error('Failed to load communities:', error);
     }
-
   };
-
-
-
 
   const onJoinCommunityTap = async () => {
     const isJoined = await CommunityRepository.joinCommunity(communityId);
@@ -200,8 +223,11 @@ export default function CommunityHome({ route }: any) {
   };
 
   const handleClickPendingArea = () => {
-    navigation.navigate('PendingPosts', { communityId: communityId, isModerator: isUserHasPermission ? true : false });
-  }
+    navigation.navigate('PendingPosts', {
+      communityId: communityId,
+      isModerator: isUserHasPermission ? true : false,
+    });
+  };
   const pendingPostArea = () => {
     return (
       <Pressable onPress={handleClickPendingArea}>
@@ -209,15 +235,21 @@ export default function CommunityHome({ route }: any) {
           <View style={styles.pendingPostArea}>
             <View style={styles.pendingRow}>
               <SvgXml xml={primaryDot(theme.colors.primary)} />
-              <Text style={styles.pendingText} >Pending posts</Text>
+              <Text style={styles.pendingText}>Pending posts</Text>
             </View>
 
-            <Text style={styles.pendingDescriptionText}>{isUserHasPermission ? (pendingPosts.length > 30 && 'More than ') + pendingPosts.length + ' posts need approval' : 'Your posts are pending for review'}</Text>
+            <Text style={styles.pendingDescriptionText}>
+              {isUserHasPermission
+                ? (pendingPosts.length > 30 && 'More than ') +
+                  pendingPosts.length +
+                  ' posts need approval'
+                : 'Your posts are pending for review'}
+            </Text>
           </View>
         </View>
       </Pressable>
-    )
-  }
+    );
+  };
 
   const handleOnPressPostBtn = () => {
     navigation.navigate('CreatePost', {
@@ -225,7 +257,7 @@ export default function CommunityHome({ route }: any) {
       targetName: communityName,
       targetType: 'community',
     });
-  }
+  };
   return (
     <View style={styles.container}>
       <ScrollView
@@ -239,8 +271,8 @@ export default function CommunityHome({ route }: any) {
             source={
               communityData?.data.avatarFileId
                 ? {
-                  uri: `https://api.${apiRegion}.amity.co/api/v3/files/${communityData?.data.avatarFileId}/download?size=medium`,
-                }
+                    uri: `https://api.${apiRegion}.amity.co/api/v3/files/${communityData?.data.avatarFileId}/download?size=medium`,
+                  }
                 : require('../../../assets/icon/Placeholder.png')
             }
           />
@@ -254,7 +286,9 @@ export default function CommunityHome({ route }: any) {
         </View>
         <View style={styles.row}>
           <View style={styles.rowItem}>
-            <Text style={styles.rowNumber}>{communityData?.data.postsCount}</Text>
+            <Text style={styles.rowNumber}>
+              {communityData?.data.postsCount}
+            </Text>
             <Text style={styles.rowLabel}>post</Text>
           </View>
 
@@ -275,13 +309,12 @@ export default function CommunityHome({ route }: any) {
           {communityData?.data.description}
         </Text>
         {isJoin === false ? joinCommunityButton() : <View />}
-        {(isJoin && isShowPendingArea) ? pendingPostArea() : <View />}
+        {isJoin && isShowPendingArea ? pendingPostArea() : <View />}
         <CustomTab tabName={['Timeline', 'Gallery']} onTabChange={handleTab} />
         <Feed targetType="community" targetId={communityId} ref={feedRef} />
-
       </ScrollView>
 
-      <FloatingButton onPress={handleOnPressPostBtn} isGlobalFeed={false}/>
+      <FloatingButton onPress={handleOnPressPostBtn} isGlobalFeed={false} />
     </View>
   );
 }
