@@ -130,6 +130,7 @@ export default function Explore() {
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           {recommendCommunityList.map((community) => (
             <TouchableOpacity
+              key={community.communityId}
               style={styles.card}
               onPress={() =>
                 handleCommunityClick(
@@ -158,6 +159,7 @@ export default function Explore() {
         <View>
           {trendingCommunityList.map((community, index) => (
             <TouchableOpacity
+              key={community.communityId}
               style={styles.itemContainer}
               onPress={() =>
                 handleCommunityClick(

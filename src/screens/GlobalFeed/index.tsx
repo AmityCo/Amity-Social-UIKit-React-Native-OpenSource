@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 // import { useTranslation } from 'react-i18next';
 
@@ -48,17 +48,16 @@ export default function GlobalFeed() {
     if (isConnected) {
       getGlobalFeedList();
     }
-  }, [client]);
-  const getPostList = async () => {
+  }, [client, isConnected]);
+  const getPostList = useCallback(async () => {
     if (posts.length > 0) {
       const formattedPostList = await amityPostsFormatter(posts);
       dispatch(updateGlobalFeed(formattedPostList));
     }
-  };
-
+  }, [dispatch, posts, updateGlobalFeed]);
   useEffect(() => {
-    getPostList();
-  }, [posts]);
+    posts && getPostList();
+  }, [posts, getPostList]);
 
   const onDeletePost = async (postId: string) => {
     const isDeleted = await deletePostById(postId);

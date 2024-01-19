@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, TouchableOpacity, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { postIcon } from '../../svg/svg-xml-list';
 import { styles } from './styles';
@@ -20,13 +20,7 @@ export default function FloatingButton({
         }}
         style={styles.button}
       >
-        <TouchableOpacity
-          onPress={() => {
-            onPress && onPress();
-          }}
-        >
-          <SvgXml xml={postIcon('#FFFFFF')} width="30" height="30" />
-        </TouchableOpacity>
+        <SvgXml xml={postIcon('#FFFFFF')} width="30" height="30" />
       </Pressable>
     </View>
   );

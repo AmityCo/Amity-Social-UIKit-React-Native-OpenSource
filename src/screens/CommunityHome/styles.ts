@@ -3,6 +3,7 @@ import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
 
 export const getStyles = () => {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const theme = useTheme() as MyMD3Theme;
   const styles = StyleSheet.create({
     container: {
@@ -144,6 +145,24 @@ export const getStyles = () => {
     pendingRow: {
       flexDirection: 'row',
       alignItems: 'center',
+    },
+    editProfileButton: {
+      width: '98%',
+      borderWidth: 1,
+      borderColor: '#A5A9B5',
+      padding: 8,
+      borderRadius: 4,
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      alignSelf: 'center',
+      marginTop: 16,
+    },
+    editProfileText: {
+      marginLeft: 8,
+      fontSize: 16,
+      fontWeight: '600',
+      color: theme.colors.base,
     },
   });
 

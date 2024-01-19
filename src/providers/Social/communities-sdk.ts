@@ -53,9 +53,10 @@ export function createCommunity(
 }
 export async function checkCommunityPermission(
   communityId: string,
-  client: Amity.Client
+  client: Amity.Client,
+  apiRegion: string
 ): Promise<any> {
-  const url: string = `https://api.sg.amity.co/api/v3/communities/${communityId}/permissions/me`;
+  const url: string = `https://api.${apiRegion}.amity.co/api/v3/communities/${communityId}/permissions/me`;
   const accessToken = client.token.accessToken;
   try {
     const response = await fetch(url, {
