@@ -36,6 +36,9 @@ export type RootStackParamList = {
   EditProfile: {
     userId: string;
   };
+  EditCommunity: {
+    communityId: string;
+  };
   AllMyCommunity: undefined;
   CreateCommunity: undefined;
   PendingPosts: { communityId: string; isModerator: boolean };

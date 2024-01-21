@@ -7,11 +7,10 @@ import {
 } from '@amityco/ts-sdk-react-native';
 import React, {
   type MutableRefObject,
-  useEffect,
   useRef,
   useState,
-  useLayoutEffect,
   useCallback,
+  useMemo,
 } from 'react';
 import {
   View,
@@ -34,9 +33,10 @@ import { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import { IPost } from '../../components/Social/PostList';
 import { amityPostsFormatter } from '../../util/postDataFormatter';
 import { checkCommunityPermission } from '../../providers/Social/communities-sdk';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import FloatingButton from '../../components/FloatingButton';
+import { getAvatarURL } from '../../util/apiUtil';
 
 export type FeedRefType = {
   handleLoadMore: () => void;
@@ -65,26 +65,27 @@ export default function CommunityHome({ route }: any) {
     useState<boolean>(false);
   const [postSetting, setPostSetting] = useState<string>('');
 
-  const disposers: Amity.Unsubscriber[] = [];
-  let isSubscribed = false;
+  const disposers: Amity.Unsubscriber[] = useMemo(() => [], []);
+  const isSubscribed = useRef(false);
+  const subscribePostTopic = useCallback(
+    (targetType: string) => {
+      if (isSubscribed.current) return;
 
-  const subscribePostTopic = (targetType: string) => {
-    if (isSubscribed) return;
-
-    if (targetType === 'community') {
-      disposers.push(
-        subscribeTopic(
-          getCommunityTopic(communityData?.data, SubscriptionLevels.POST),
-          () => {
-            // use callback to handle errors with event subscription
-          }
-        )
-      );
-      isSubscribed = true;
-    }
-  };
-
-  const getPendingPosts = async () => {
+      if (targetType === 'community') {
+        disposers.push(
+          subscribeTopic(
+            getCommunityTopic(communityData?.data, SubscriptionLevels.POST),
+            () => {
+              // use callback to handle errors with event subscription
+            }
+          )
+        );
+        isSubscribed.current = true;
+      }
+    },
+    [communityData?.data, disposers]
+  );
+  const getPendingPosts = useCallback(async () => {
     const unsubscribe = PostRepository.getPosts(
       {
         targetId: communityId,
@@ -112,13 +113,15 @@ export default function CommunityHome({ route }: any) {
     ) {
       setIsUserHasPermission(true);
     }
-  };
+  }, [apiRegion, client, communityId, disposers, subscribePostTopic]);
 
-  useEffect(() => {
-    if (postSetting === 'ADMIN_REVIEW_POST_REQUIRED') {
-      setIsShowPendingArea(true);
-    }
-  }, [postSetting]);
+  useFocusEffect(
+    useCallback(() => {
+      if (postSetting === 'ADMIN_REVIEW_POST_REQUIRED') {
+        setIsShowPendingArea(true);
+      }
+    }, [postSetting])
+  );
 
   const loadCommunity = useCallback(async () => {
     try {
@@ -141,14 +144,16 @@ export default function CommunityHome({ route }: any) {
       console.error('Failed to load communities:', error);
     }
   }, [communityId]);
-  useLayoutEffect(() => {
-    getPendingPosts();
-    loadCommunity();
-    return () => {
-      disposers.forEach((fn) => fn());
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [getPendingPosts, loadCommunity]);
+
+  useFocusEffect(
+    useCallback(() => {
+      getPendingPosts();
+      loadCommunity();
+      return () => {
+        disposers.forEach((fn) => fn());
+      };
+    }, [disposers, getPendingPosts, loadCommunity])
+  );
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
@@ -238,7 +243,7 @@ export default function CommunityHome({ route }: any) {
 
   const onEditProfileTap = () => {
     navigation.navigate('EditCommunity', {
-      communityId: communityId,
+      communityData,
     });
   };
 
@@ -256,7 +261,10 @@ export default function CommunityHome({ route }: any) {
             source={
               communityData?.data.avatarFileId
                 ? {
-                    uri: `https://api.${apiRegion}.amity.co/api/v3/files/${communityData?.data.avatarFileId}/download?size=medium`,
+                    uri: getAvatarURL(
+                      apiRegion,
+                      communityData?.data.avatarFileId
+                    ),
                   }
                 : require('../../../assets/icon/Placeholder.png')
             }

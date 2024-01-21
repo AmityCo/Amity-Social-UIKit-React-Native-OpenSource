@@ -9,8 +9,6 @@ import {
   Animated,
   Modal,
   Pressable,
-  type StyleProp,
-  type ImageStyle,
   LogBox,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
@@ -30,7 +28,6 @@ export default function Home() {
   const styles = getStyles();
   const { client } = useAuth();
   const theme = useTheme() as MyMD3Theme;
-
   const [activeTab, setActiveTab] = useState(1);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -39,7 +36,6 @@ export default function Home() {
   const openCreatePostModal = () => {
     setCreatePostModalVisible(true);
   };
-
   const closeCreatePostModal = () => {
     setCreatePostModalVisible(false);
     closeModal();
@@ -67,29 +63,6 @@ export default function Home() {
     }
   }, [isVisible, slideAnimation]);
 
-  const renderTabComponent = () => {
-    let globalFeedStyle: StyleProp<ImageStyle> | StyleProp<ImageStyle>[] =
-      styles.visible;
-    styles.visible;
-    let exploreStyle: StyleProp<ImageStyle> | StyleProp<ImageStyle>[] =
-      styles.invisible;
-    styles.visible;
-    if (activeTab === 2) {
-      globalFeedStyle = styles.invisible;
-      exploreStyle = styles.visible;
-    }
-    return (
-      <View>
-        <View style={globalFeedStyle}>
-          <GlobalFeed />
-          <FloatingButton onPress={openModal} />
-        </View>
-        <View style={exploreStyle}>
-          <Explore />
-        </View>
-      </View>
-    );
-  };
   const modalStyle = {
     transform: [
       {
@@ -100,18 +73,19 @@ export default function Home() {
       },
     ],
   };
-  const handleTabChange = (index: number) => {
-    setActiveTab(index);
-  };
   return (
     <View>
-      {/* {renderTabView()} */}
-      <CustomTab
-        tabName={['Newsfeed', 'Explore']}
-        onTabChange={handleTabChange}
-      />
-      {renderTabComponent()}
-
+      <CustomTab tabName={['Newsfeed', 'Explore']} onTabChange={setActiveTab} />
+      {activeTab === 1 ? (
+        <View>
+          <GlobalFeed />
+          <FloatingButton onPress={openModal} />
+        </View>
+      ) : (
+        <View>
+          <Explore />
+        </View>
+      )}
       <Modal
         animationType="fade"
         transparent={true}

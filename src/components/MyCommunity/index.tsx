@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { View, Text, ScrollView, Image, TouchableOpacity } from 'react-native';
 import { getStyles } from './styles';
 import { CommunityRepository } from '@amityco/ts-sdk-react-native';
@@ -9,11 +9,12 @@ import {
   privateIcon,
 } from '../../svg/svg-xml-list';
 import { SvgXml } from 'react-native-svg';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import useAuth from '../../hooks/useAuth';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import { useTheme } from 'react-native-paper';
+import { getAvatarURL } from '../../util/apiUtil';
 
 interface ICommunityItems {
   communityId: string;
@@ -29,9 +30,6 @@ export default function MyCommunity() {
   const maxLength = 6;
   const [communityItems, setCommunityItems] = useState<ICommunityItems[]>([]);
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
-  const avatarFileURL = (fileId: string) => {
-    return `https://api.${apiRegion}.amity.co/api/v3/files/${fileId}/download?size=medium`;
-  };
   const queryCommunities = () => {
     const unsubscribe = CommunityRepository.getCommunities(
       { membership: 'member', limit: 8 },
@@ -62,9 +60,12 @@ export default function MyCommunity() {
     }
     return 'Display name';
   };
-  useEffect(() => {
-    queryCommunities();
-  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      queryCommunities();
+    }, [])
+  );
 
   const onClickItem = (communityId: string, displayName: string) => {
     navigation.navigate('CommunityHome', {
@@ -102,7 +103,7 @@ export default function MyCommunity() {
           >
             {item.avatarFileId ? (
               <Image
-                source={{ uri: avatarFileURL(item.avatarFileId) }}
+                source={{ uri: getAvatarURL(apiRegion, item.avatarFileId) }}
                 style={styles.avatar}
               />
             ) : (

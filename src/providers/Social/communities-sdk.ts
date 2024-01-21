@@ -51,6 +51,32 @@ export function createCommunity(
   });
   return communityObject;
 }
+
+export const updateCommunity = (
+  communityId: string,
+  communityParam: ICreateCommunity
+): Promise<Amity.Community | unknown> => {
+  const communityObject = new Promise(async (resolve, reject) => {
+    try {
+      const newCommunity = {
+        description: communityParam.description,
+        displayName: communityParam.displayName,
+        isPublic: communityParam.isPublic,
+        categoryIds: [communityParam.category],
+        avatarFileId: communityParam?.avatarFileId ?? undefined,
+      };
+      const { data: community } = await CommunityRepository.updateCommunity(
+        communityId,
+        newCommunity
+      );
+      resolve(community);
+    } catch (error) {
+      reject(error);
+    }
+  });
+  return communityObject;
+};
+
 export async function checkCommunityPermission(
   communityId: string,
   client: Amity.Client,

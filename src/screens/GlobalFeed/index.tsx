@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 
 // import { useTranslation } from 'react-i18next';
 
@@ -17,6 +17,7 @@ import { amityPostsFormatter } from '../../util/postDataFormatter';
 import { useDispatch, useSelector } from 'react-redux';
 import globalFeedSlice from '../../redux/slices/globalfeedSlice';
 import { RootState } from 'src/redux/store';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function GlobalFeed() {
   const { postList } = useSelector((state: RootState) => state.globalFeed);
@@ -25,7 +26,7 @@ export default function GlobalFeed() {
   const dispatch = useDispatch(); // ()=> dispatch(updateGlobalFeed())
 
   const styles = getStyles();
-  const { client, isConnected } = useAuth();
+  const { isConnected } = useAuth();
   const [postData, setPostData] = useState<IGlobalFeedRes>();
 
   const { data: posts = [], nextPage } = postData ?? {};
@@ -44,20 +45,24 @@ export default function GlobalFeed() {
       getGlobalFeedList(nextPage);
     }
   };
-  useEffect(() => {
-    if (isConnected) {
-      getGlobalFeedList();
-    }
-  }, [client, isConnected]);
+  useFocusEffect(
+    useCallback(() => {
+      if (isConnected) {
+        getGlobalFeedList();
+      }
+    }, [isConnected])
+  );
   const getPostList = useCallback(async () => {
     if (posts.length > 0) {
       const formattedPostList = await amityPostsFormatter(posts);
       dispatch(updateGlobalFeed(formattedPostList));
     }
   }, [dispatch, posts, updateGlobalFeed]);
-  useEffect(() => {
-    posts && getPostList();
-  }, [posts, getPostList]);
+  useFocusEffect(
+    useCallback(() => {
+      posts && getPostList();
+    }, [getPostList, posts])
+  );
 
   const onDeletePost = async (postId: string) => {
     const isDeleted = await deletePostById(postId);

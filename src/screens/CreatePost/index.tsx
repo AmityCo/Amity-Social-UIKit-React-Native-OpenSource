@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   TouchableOpacity,
   View,
@@ -80,35 +80,38 @@ const CreatePost = ({ route }: any) => {
 
   // const { data: community, loading, error } = data ?? {};
   const videoRef = React.useRef(null);
-  const { client } = useAuth();
+  const { client, apiRegion } = useAuth();
 
-  const getCommunityDetail = () => {
+  const getCommunityDetail = useCallback(() => {
     if (targetType === 'community') {
       CommunityRepository.getCommunity(targetId, setCommunityObject);
     }
-  };
+  }, [targetId, targetType]);
   useEffect(() => {
     getCommunityDetail();
-  }, [targetId]);
+  }, [getCommunityDetail]);
 
-  const checkMention = (inputString: string) => {
-    // Check if "@" is at the first letter
-    const startsWithAt = /^@/.test(inputString);
+  const checkMention = useCallback(
+    (inputString: string) => {
+      // Check if "@" is at the first letter
+      const startsWithAt = /^@/.test(inputString);
 
-    // Check if "@" is inside the sentence without any letter before "@"
-    const insideWithoutLetterBefore = /[^a-zA-Z]@/.test(inputString);
+      // Check if "@" is inside the sentence without any letter before "@"
+      const insideWithoutLetterBefore = /[^a-zA-Z]@/.test(inputString);
 
-    const atSigns = inputString.match(/@/g);
-    const atSignsNumber = atSigns ? atSigns.length : 0;
-    if (
-      (startsWithAt || insideWithoutLetterBefore) &&
-      atSignsNumber > mentionNames.length
-    ) {
-      setIsShowMention(true);
-    } else {
-      setIsShowMention(false);
-    }
-  };
+      const atSigns = inputString.match(/@/g);
+      const atSignsNumber = atSigns ? atSigns.length : 0;
+      if (
+        (startsWithAt || insideWithoutLetterBefore) &&
+        atSignsNumber > mentionNames.length
+      ) {
+        setIsShowMention(true);
+      } else {
+        setIsShowMention(false);
+      }
+    },
+    [mentionNames.length]
+  );
   useEffect(() => {
     if (isShowMention) {
       const substringBeforeCursor = inputMessage.substring(0, cursorIndex);
@@ -121,11 +124,11 @@ const CreatePost = ({ route }: any) => {
         setCurrentSearchUserName(searchText);
       }
     }
-  }, [cursorIndex]);
+  }, [cursorIndex, inputMessage, isShowMention]);
 
   useEffect(() => {
     checkMention(inputMessage);
-  }, [inputMessage]);
+  }, [checkMention, inputMessage]);
 
   const playVideoFullScreen = async (fileUrl: string) => {
     if (videoRef) {
@@ -139,48 +142,8 @@ const CreatePost = ({ route }: any) => {
     }
   };
   const goBack = () => {
-    setTimeout(() => {
-      navigation.goBack();
-    }, 300);
+    navigation.goBack();
   };
-  navigation.setOptions({
-    // eslint-disable-next-line react/no-unstable-nested-components
-    header: () => (
-      <SafeAreaView style={styles.barContainer} edges={['top']}>
-        <View style={styles.header}>
-          <TouchableOpacity style={styles.closeButton} onPress={goBack}>
-            <SvgXml xml={closeIcon(theme.colors.base)} width="17" height="17" />
-          </TouchableOpacity>
-          <View style={styles.headerTextContainer}>
-            <Text style={styles.headerText}>{targetName}</Text>
-          </View>
-          <TouchableOpacity
-            disabled={
-              inputMessage.length > 0 ||
-              displayImages.length > 0 ||
-              displayVideos.length > 0
-                ? false
-                : true
-            }
-            onPress={handleCreatePost}
-          >
-            <Text
-              style={
-                inputMessage.length > 0 ||
-                displayImages.length > 0 ||
-                displayVideos.length > 0
-                  ? styles.postText
-                  : [styles.postText, styles.disabled]
-              }
-            >
-              Post
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </SafeAreaView>
-    ),
-    headerTitle: '',
-  });
   const handleCreatePost = async () => {
     const mentionUserIds: string[] = mentionNames.map((item) => item.targetId);
     if (displayImages.length > 0) {
@@ -228,7 +191,8 @@ const CreatePost = ({ route }: any) => {
       ) {
         const res = await checkCommunityPermission(
           community.communityId,
-          client as Amity.Client
+          client as Amity.Client,
+          apiRegion
         );
 
         if (
@@ -483,7 +447,7 @@ const CreatePost = ({ route }: any) => {
     setCursorIndex(event.nativeEvent.selection.start);
   };
 
-  const RenderTextWithMention = () => {
+  const renderTextWithMention = () => {
     if (mentionsPosition.length === 0) {
       return <Text style={styles.inputText}>{inputMessage}</Text>;
     }
@@ -530,10 +494,43 @@ const CreatePost = ({ route }: any) => {
     });
     setMentionNames(checkMentionNames);
     setMentionsPosition(checkMentionPosition);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputMessage]);
 
   return (
     <View style={styles.AllInputWrap}>
+      <SafeAreaView style={styles.barContainer} edges={['top']}>
+        <View style={styles.header}>
+          <TouchableOpacity style={styles.closeButton} onPress={goBack}>
+            <SvgXml xml={closeIcon(theme.colors.base)} width="17" height="17" />
+          </TouchableOpacity>
+          <View style={styles.headerTextContainer}>
+            <Text style={styles.headerText}>{targetName}</Text>
+          </View>
+          <TouchableOpacity
+            disabled={
+              inputMessage.length > 0 ||
+              displayImages.length > 0 ||
+              displayVideos.length > 0
+                ? false
+                : true
+            }
+            onPress={handleCreatePost}
+          >
+            <Text
+              style={
+                inputMessage.length > 0 ||
+                displayImages.length > 0 ||
+                displayVideos.length > 0
+                  ? styles.postText
+                  : [styles.postText, styles.disabled]
+              }
+            >
+              Post
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.select({ ios: 100, android: 80 })}
@@ -555,10 +552,7 @@ const CreatePost = ({ route }: any) => {
               onSelectionChange={handleSelectionChange}
             />
             {mentionNames.length > 0 && (
-              <View style={styles.overlay}>
-                {/* {renderTextWithMention()} */}
-                <RenderTextWithMention />
-              </View>
+              <View style={styles.overlay}>{renderTextWithMention()}</View>
             )}
           </View>
           {/* <InputWithMention /> */}

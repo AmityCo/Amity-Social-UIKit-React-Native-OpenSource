@@ -16,14 +16,21 @@ import useAuth from '../../hooks/useAuth';
 import { getStyles } from './styles';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
+import { getAvatarURL } from '../../util/apiUtil';
 
 interface IModal {
   visible: boolean;
   userId?: string;
   onClose: () => void;
   onSelect: (categoryId: string, categoryName: string) => void;
+  categoryId?: string;
 }
-const ChooseCategoryModal = ({ visible, onClose, onSelect }: IModal) => {
+const ChooseCategoryModal = ({
+  visible,
+  onClose,
+  onSelect,
+  categoryId,
+}: IModal) => {
   const theme = useTheme() as MyMD3Theme;
   const styles = getStyles();
   const { apiRegion } = useAuth();
@@ -40,6 +47,12 @@ const ChooseCategoryModal = ({ visible, onClose, onSelect }: IModal) => {
           (data: Amity.LiveCollection<Amity.Category>) => {
             if (data) {
               setCategories(data);
+              if (categoryId) {
+                const currentCategoryName =
+                  data.data.filter((item) => item.categoryId === categoryId)[0]
+                    .name ?? '';
+                return onSelect(categoryId, currentCategoryName);
+              }
             }
           }
         );
@@ -50,7 +63,7 @@ const ChooseCategoryModal = ({ visible, onClose, onSelect }: IModal) => {
     };
 
     loadCategories();
-  }, []);
+  }, [categoryId, onSelect]);
 
   const onSelectCategory = (categoryId: string, categoryName: string) => {
     onSelect && onSelect(categoryId, categoryName);
@@ -67,7 +80,7 @@ const ChooseCategoryModal = ({ visible, onClose, onSelect }: IModal) => {
           <Image
             style={styles.avatar}
             source={{
-              uri: `https://api.${apiRegion}.amity.co/api/v3/files/${item.avatarFileId}/download`,
+              uri: getAvatarURL(apiRegion, item.avatarFileId),
             }}
           />
         ) : (
