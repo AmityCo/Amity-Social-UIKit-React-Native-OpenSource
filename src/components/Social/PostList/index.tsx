@@ -1,10 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {
-  useEffect,
-  useRef,
-  useState,
-  useMemo,
-} from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 // import { useTranslation } from 'react-i18next';
 
 import {
@@ -66,14 +61,14 @@ export interface IPost {
   targetId: string;
   childrenPosts: string[];
   mentionees: string[];
-  mentionPosition?: IMentionPosition[]
+  mentionPosition?: IMentionPosition[];
 }
 export interface IPostList {
   onDelete?: (postId: string) => void;
   onChange?: (postDetail: IPost) => void;
   postDetail: IPost;
   postIndex?: number;
-  isGlobalfeed?: boolean
+  isGlobalfeed?: boolean;
 }
 export interface MediaUri {
   uri: string;
@@ -88,11 +83,9 @@ export default function PostList({
   postDetail,
   postIndex,
   onDelete,
-  isGlobalfeed = true
-
+  isGlobalfeed = true,
 }: IPostList) {
-  const [postData, setPostData] = useState<IPost>(postDetail)
-
+  const [postData, setPostData] = useState<IPost>(postDetail);
 
   const theme = useTheme() as MyMD3Theme;
   const { client, apiRegion } = useAuth();
@@ -100,21 +93,24 @@ export default function PostList({
   const [isLike, setIsLike] = useState<boolean>(false);
   const [likeReaction, setLikeReaction] = useState<number>(0);
   const [communityName, setCommunityName] = useState('');
-  const [textPost, setTextPost] = useState<string>()
+  const [textPost, setTextPost] = useState<string>();
 
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [isReportByMe, setIsReportByMe] = useState<boolean>(false);
-  const [editPostModalVisible, setEditPostModalVisible] = useState<boolean>(false)
+  const [editPostModalVisible, setEditPostModalVisible] =
+    useState<boolean>(false);
   const slideAnimation = useRef(new Animated.Value(0)).current;
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
-  const [mentionPositionArr, setMentionsPositionArr] = useState<IMentionPosition[]>([])
-  const [loading, setLoading] = useState<boolean>(true)
-  const { updateByPostId: updateByPostIdGlobalFeed } = globalFeedSlice.actions
-  const { updateByPostId } = feedSlice.actions
-  const { updatePostDetail } = postDetailSlice.actions
+  const [mentionPositionArr, setMentionsPositionArr] = useState<
+    IMentionPosition[]
+  >([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const { updateByPostId: updateByPostIdGlobalFeed } = globalFeedSlice.actions;
+  const { updateByPostId } = feedSlice.actions;
+  const { updatePostDetail } = postDetailSlice.actions;
   const {
     postId,
     data,
@@ -127,41 +123,34 @@ export default function PostList({
     targetId,
     childrenPosts = [],
     editedAt,
-    mentionPosition
+    mentionPosition,
   } = postData ?? {};
-
-
 
   useEffect(() => {
     if (mentionPosition) {
-      setMentionsPositionArr(mentionPosition)
+      setMentionsPositionArr(mentionPosition);
     }
-
-  }, [mentionPosition])
-
+  }, [mentionPosition]);
 
   useEffect(() => {
     setTimeout(() => {
-      setLoading(false)
+      setLoading(false);
     }, 200);
-    setPostData(postDetail)
-
-  }, [postDetail])
-
+    setPostData(postDetail);
+  }, [postDetail]);
 
   useEffect(() => {
     if (myReactions && myReactions?.length > 0) {
-      setIsLike(true)
+      setIsLike(true);
     } else {
-      setIsLike(false)
+      setIsLike(false);
     }
     if (reactionCount?.like) {
-      setLikeReaction(reactionCount?.like)
+      setLikeReaction(reactionCount?.like);
     } else {
-      setLikeReaction(0)
+      setLikeReaction(0);
     }
-  }, [myReactions, reactionCount])
-
+  }, [myReactions, reactionCount]);
 
   const openModal = () => {
     setIsVisible(true);
@@ -175,9 +164,6 @@ export default function PostList({
     }).start(() => setIsVisible(false));
   };
 
-
-
-
   const checkIsReport = async () => {
     const isReport = await isReportTarget('post', postId);
     if (isReport) {
@@ -187,11 +173,10 @@ export default function PostList({
 
   useEffect(() => {
     checkIsReport();
-
   }, [postDetail]);
 
   useEffect(() => {
-    setTextPost(data?.text)
+    setTextPost(data?.text);
     if (myReactions.length > 0 && myReactions.includes('like')) {
       setIsLike(true);
     }
@@ -201,7 +186,6 @@ export default function PostList({
     if (targetType === 'community' && targetId) {
       getCommunityInfo(targetId);
     }
-
   }, [postDetail]);
 
   function renderLikeText(likeNumber: number | undefined): string {
@@ -267,25 +251,30 @@ export default function PostList({
     setIsLike((prev) => !prev);
     if (isLike && likeReaction) {
       setLikeReaction(likeReaction - 1);
-      let post: IPost = { ...postDetail }
-      post.reactionCount = likeReaction - 1 > 0 ? { like: likeReaction - 1 } : {}
-      post.myReactions = []
+      let post: IPost = { ...postDetail };
+      post.reactionCount =
+        likeReaction - 1 > 0 ? { like: likeReaction - 1 } : {};
+      post.myReactions = [];
       if (isGlobalfeed) {
-        dispatch(updateByPostIdGlobalFeed({ postId: postId, postDetail: post }))
+        dispatch(
+          updateByPostIdGlobalFeed({ postId: postId, postDetail: post })
+        );
       } else {
-        dispatch(updateByPostId({ postId: postId, postDetail: post }))
+        dispatch(updateByPostId({ postId: postId, postDetail: post }));
       }
 
       await removePostReaction(postId, 'like');
     } else {
       setLikeReaction(likeReaction + 1);
-      let post: IPost = { ...postDetail }
-      post.reactionCount = { like: likeReaction + 1 }
-      post.myReactions = ["like"]
+      let post: IPost = { ...postDetail };
+      post.reactionCount = { like: likeReaction + 1 };
+      post.myReactions = ['like'];
       if (isGlobalfeed) {
-        dispatch(updateByPostIdGlobalFeed({ postId: postId, postDetail: post }))
+        dispatch(
+          updateByPostIdGlobalFeed({ postId: postId, postDetail: post })
+        );
       } else {
-        dispatch(updateByPostId({ postId: post.postId, postDetail: post }))
+        dispatch(updateByPostId({ postId: post.postId, postDetail: post }));
       }
 
       await addPostReaction(postId, 'like');
@@ -297,19 +286,19 @@ export default function PostList({
     setCommunityName(community.data.displayName);
   }
 
-
   function onClickComment() {
-
-    dispatch(updatePostDetail({
-      ...postDetail,
-      myReactions: isLike ? ["like"] : [],
-      reactionCount: { like: likeReaction },
-      commentsCount: commentsCount,
-    }))
+    dispatch(
+      updatePostDetail({
+        ...postDetail,
+        myReactions: isLike ? ['like'] : [],
+        reactionCount: { like: likeReaction },
+        commentsCount: commentsCount,
+      })
+    );
     navigation.navigate('PostDetail', {
       postId: postDetail.postId,
       postIndex: postIndex,
-      isFromGlobalfeed: isGlobalfeed
+      isFromGlobalfeed: isGlobalfeed,
     });
   }
   const handleDisplayNamePress = () => {
@@ -384,7 +373,14 @@ export default function PostList({
         onRequestClose={closeModal}
       >
         <Pressable onPress={closeModal} style={styles.modalContainer}>
-          <Animated.View style={[styles.modalContent, modalStyle, user?.userId === (client as Amity.Client).userId && styles.twoOptions]}>
+          <Animated.View
+            style={[
+              styles.modalContent,
+              modalStyle,
+              user?.userId === (client as Amity.Client).userId &&
+                styles.twoOptions,
+            ]}
+          >
             {user?.userId === (client as Amity.Client).userId ? (
               <View>
                 <TouchableOpacity
@@ -400,7 +396,6 @@ export default function PostList({
                   <Text style={styles.deleteText}> Delete Post</Text>
                 </TouchableOpacity>
               </View>
-
             ) : (
               <TouchableOpacity
                 onPress={reportPostObject}
@@ -414,23 +409,24 @@ export default function PostList({
           </Animated.View>
         </Pressable>
       </Modal>
-    )
-  }
+    );
+  };
   const closeEditPostModal = () => {
-    setEditPostModalVisible(false)
-  }
+    setEditPostModalVisible(false);
+  };
   const openEditPostModal = () => {
-    setIsVisible(false)
-    setEditPostModalVisible(true)
+    setIsVisible(false);
+    setEditPostModalVisible(true);
+  };
 
-  }
-
-  const handleOnFinishEdit = (postData: { text: string, mediaUrls: string[] | IVideoPost[] }) => {
-
-    setTextPost(postData.text)
-    setEditPostModalVisible(false)
-    setIsEdit(true)
-  }
+  const handleOnFinishEdit = (postData: {
+    text: string;
+    mediaUrls: string[] | IVideoPost[];
+  }) => {
+    setTextPost(postData.text);
+    setEditPostModalVisible(false);
+    setIsEdit(true);
+  };
 
   const RenderTextWithMention = () => {
     if (mentionPositionArr.length === 0) {
@@ -438,7 +434,7 @@ export default function PostList({
     }
     const mentionClick = (userId: string) => {
       navigation.navigate('UserProfile', {
-        userId: userId
+        userId: userId,
       });
     };
     let currentPosition = 0;
@@ -449,7 +445,11 @@ export default function PostList({
 
         // Add highlighted text
         const highlightedText = (
-          <Text onPress={() => mentionClick(userId)} key={`highlighted-${i}`} style={styles.mentionText}>
+          <Text
+            onPress={() => mentionClick(userId)}
+            key={`highlighted-${i}`}
+            style={styles.mentionText}
+          >
             {textPost.slice(index, index + length)}
           </Text>
         );
@@ -464,7 +464,11 @@ export default function PostList({
 
     // Add any remaining non-highlighted text after the mentions
     const remainingText = textPost.slice(currentPosition);
-    result.push([<Text key="nonHighlighted-last" style={styles.inputText}>{remainingText}</Text>]);
+    result.push([
+      <Text key="nonHighlighted-last" style={styles.inputText}>
+        {remainingText}
+      </Text>,
+    ]);
 
     // Flatten the array and render
     return <Text style={styles.inputText}>{result.flat()}</Text>;
@@ -473,7 +477,6 @@ export default function PostList({
   const memoizedMediaSection = useMemo(() => {
     return <MediaSection childrenPosts={childrenPosts} />;
   }, [childrenPosts]);
-
 
   return (
     <View key={postId} style={styles.postWrap}>
@@ -514,15 +517,15 @@ export default function PostList({
               )}
             </View>
             <View style={styles.timeRow}>
-
               <Text style={styles.headerTextTime}>
                 {getTimeDifference(createdAt)}
               </Text>
-              {(editedAt !== createdAt || isEdit) && <Text style={styles.dot}>·</Text>}
-              {(editedAt !== createdAt || isEdit) &&
-                <Text style={styles.headerTextTime}>
-                  Edited
-                </Text>}
+              {(editedAt !== createdAt || isEdit) && (
+                <Text style={styles.dot}>·</Text>
+              )}
+              {(editedAt !== createdAt || isEdit) && (
+                <Text style={styles.headerTextTime}>Edited</Text>
+              )}
             </View>
           </View>
         </View>
@@ -569,7 +572,11 @@ export default function PostList({
             style={styles.likeBtn}
           >
             {isLike ? (
-              <SvgXml xml={likedXml(theme.colors.primary)} width="20" height="16" />
+              <SvgXml
+                xml={likedXml(theme.colors.primary)}
+                width="20"
+                height="16"
+              />
             ) : (
               <SvgXml xml={likeXml} width="20" height="16" />
             )}
@@ -586,14 +593,14 @@ export default function PostList({
         </View>
       </View>
       {renderOptionModal()}
-      {editPostModalVisible &&
+      {editPostModalVisible && (
         <EditPostModal
           visible={editPostModalVisible}
           onClose={closeEditPostModal}
           postDetail={postDetail}
           onFinishEdit={handleOnFinishEdit}
-        />}
-
+        />
+      )}
     </View>
   );
 }

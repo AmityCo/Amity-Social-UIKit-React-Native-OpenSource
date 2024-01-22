@@ -11,6 +11,7 @@ import React, {
   useRef,
   useState,
   useLayoutEffect,
+  useCallback,
 } from 'react';
 import {
   View,
@@ -119,13 +120,36 @@ export default function CommunityHome({ route }: any) {
     }
   }, [postSetting]);
 
+  const loadCommunity = useCallback(async () => {
+    try {
+      const unsubscribe = CommunityRepository.getCommunity(
+        communityId,
+        // setCommunityData
+        (community) => {
+          setCommunityData(community);
+          setPostSetting(community?.data?.postSetting);
+          if (
+            (community.data as Amity.RawCommunity).needApprovalOnPostCreation
+          ) {
+            setPostSetting('ADMIN_REVIEW_POST_REQUIRED');
+          }
+          setIsJoin(community?.data.isJoined || false); // Set isJoin to communityData?.data.isJoined value
+        }
+      );
+      unsubscribe();
+    } catch (error) {
+      console.error('Failed to load communities:', error);
+    }
+  }, [communityId]);
   useLayoutEffect(() => {
     getPendingPosts();
     loadCommunity();
     return () => {
       disposers.forEach((fn) => fn());
     };
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [getPendingPosts, loadCommunity]);
+
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
 
@@ -148,27 +172,6 @@ export default function CommunityHome({ route }: any) {
       feedRef.current.handleLoadMore(); // Call the function inside the child component
     }
   }
-  const loadCommunity = async () => {
-    try {
-      const unsubscribe = CommunityRepository.getCommunity(
-        communityId,
-        // setCommunityData
-        (community) => {
-          setCommunityData(community);
-          setPostSetting(community?.data?.postSetting);
-          if (
-            (community.data as Amity.RawCommunity).needApprovalOnPostCreation
-          ) {
-            setPostSetting('ADMIN_REVIEW_POST_REQUIRED');
-          }
-          setIsJoin(community?.data.isJoined || false); // Set isJoin to communityData?.data.isJoined value
-        }
-      );
-      unsubscribe();
-    } catch (error) {
-      console.error('Failed to load communities:', error);
-    }
-  };
 
   const onJoinCommunityTap = async () => {
     const isJoined = await CommunityRepository.joinCommunity(communityId);

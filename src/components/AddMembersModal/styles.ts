@@ -1,10 +1,10 @@
-import { Platform, StyleSheet } from "react-native";
-import { useTheme } from "react-native-paper";
-import type { MyMD3Theme } from "../../providers/amity-ui-kit-provider";
+import { Platform, StyleSheet } from 'react-native';
+import { useTheme } from 'react-native-paper';
+import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 
-export const getStyles=()=>{
-  const theme = useTheme() as MyMD3Theme ;
-  
+export const getStyles = () => {
+  const theme = useTheme() as MyMD3Theme;
+
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -17,14 +17,14 @@ export const getStyles=()=>{
       padding: 12,
       flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'space-between'
+      justifyContent: 'space-between',
     },
     closeButton: {
       padding: 3,
     },
     headerTextContainer: {
       flex: 1,
-      flexDirection:'row',
+      flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
     },
@@ -68,7 +68,7 @@ export const getStyles=()=>{
       backgroundColor: '#D9E5FC',
     },
     categoryIcon: {
-      alignItems: 'center'
+      alignItems: 'center',
     },
     LoadingIndicator: {
       paddingVertical: 20,
@@ -95,12 +95,12 @@ export const getStyles=()=>{
       paddingBottom: 110,
       marginTop: 10,
     },
-    doneText:{
-      color: '#1054DE'
+    doneText: {
+      color: '#1054DE',
     },
-    disabledDone:{
-      opacity: 0.5
-    }
+    disabledDone: {
+      opacity: 0.5,
+    },
   });
   return styles;
-}
+};

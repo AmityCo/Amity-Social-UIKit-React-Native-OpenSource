@@ -6,7 +6,6 @@ import CloseButton from '../../components/BackButton';
 import useAuth from '../../hooks/useAuth';
 
 export default function CommunityList({ navigation, route }: any) {
-
   const { apiRegion } = useAuth();
   const [communities, setCommunities] = useState<Amity.Community[]>([]);
   const [paginateLoading, setPaginateLoading] = useState(false);
@@ -22,7 +21,6 @@ export default function CommunityList({ navigation, route }: any) {
     navigation.setOptions({
       headerLeft: () => <CloseButton />,
       title: categoryName,
-      // eslint-disable-next-line react/no-unstable-nested-components
     });
   }, [navigation]);
   useEffect(() => {
@@ -63,8 +61,8 @@ export default function CommunityList({ navigation, route }: any) {
           source={
             item.avatarFileId
               ? {
-                uri: `https://api.${apiRegion}.amity.co/api/v3/files/${item.avatarFileId}/download`,
-              }
+                  uri: `https://api.${apiRegion}.amity.co/api/v3/files/${item.avatarFileId}/download`,
+                }
               : require('../../../assets/icon/Placeholder.png')
           }
         />

@@ -2,13 +2,11 @@ import { StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
 
-export const getStyles = ()=>{
+export const getStyles = () => {
+  const theme = useTheme() as MyMD3Theme;
 
-  const theme = useTheme() as MyMD3Theme ;
-  
   const styles = StyleSheet.create({
-
-    container:{
+    container: {
       backgroundColor: theme.colors.screenBackground,
     },
     recommendContainer: {
@@ -19,14 +17,14 @@ export const getStyles = ()=>{
     trendingContainer: {
       paddingLeft: 15,
       paddingVertical: 10,
-      backgroundColor: theme.colors.background
+      backgroundColor: theme.colors.background,
     },
     title: {
       fontWeight: 'bold',
       fontSize: 20,
       marginTop: 10,
       marginBottom: 20,
-      color: theme.colors.base
+      color: theme.colors.base,
     },
     listContainer: {
       flex: 1,
@@ -99,7 +97,7 @@ export const getStyles = ()=>{
       paddingTop: 20,
       paddingHorizontal: 10,
       paddingBottom: 120,
-      backgroundColor: theme.colors.background
+      backgroundColor: theme.colors.background,
     },
     titleContainer: {
       flexDirection: 'row',
@@ -138,5 +136,4 @@ export const getStyles = ()=>{
     },
   });
   return styles;
-}
-
+};

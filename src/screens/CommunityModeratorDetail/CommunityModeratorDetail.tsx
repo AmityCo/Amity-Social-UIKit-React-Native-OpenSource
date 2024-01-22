@@ -1,4 +1,7 @@
-import { CommunityRepository, createReport } from '@amityco/ts-sdk-react-native';
+import {
+  CommunityRepository,
+  createReport,
+} from '@amityco/ts-sdk-react-native';
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import {
   FlatList,
@@ -35,7 +38,6 @@ export default function CommunityModeratorDetail({ navigation, route }: any) {
         const unsubscribe = CommunityRepository.Membership.getMembers(
           { communityId, roles: ['community-moderator'] },
           ({ data: members, onNextPage, hasNextPage, loading }) => {
-
             if (!loading) {
               setMemberList((prevMembers) => [
                 ...prevMembers,
@@ -90,7 +92,7 @@ export default function CommunityModeratorDetail({ navigation, route }: any) {
       ]);
     }
   };
-  const renderMember = ({ item }: { item: Amity.Member<'community'>}) => {
+  const renderMember = ({ item }: { item: Amity.Member<'community'> }) => {
     if ((item as Record<string, any>).user) {
       const userObject: UserInterface = {
         userId: item.userId,

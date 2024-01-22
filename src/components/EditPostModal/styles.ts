@@ -2,11 +2,10 @@ import { Platform, StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
 
-export const getStyles = ()=>{
-  
-  const theme = useTheme() as MyMD3Theme ;
+export const getStyles = () => {
+  const theme = useTheme() as MyMD3Theme;
 
-   const styles = StyleSheet.create({
+  const styles = StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: theme.colors.background,
@@ -34,20 +33,20 @@ export const getStyles = ()=>{
       fontWeight: '600',
       fontSize: 17,
       textAlign: 'center',
-      color: theme.colors.base
+      color: theme.colors.base,
     },
     communityText: {
       marginLeft: 12,
       marginBottom: 10,
       fontSize: 15,
       fontWeight: '600',
-      color: theme.colors.base
+      color: theme.colors.base,
     },
     myCommunityText: {
       padding: 16,
       opacity: 0.4,
       fontSize: 17,
-      color: theme.colors.base
+      color: theme.colors.base,
     },
     rowContainer: {
       flexDirection: 'row',
@@ -77,25 +76,24 @@ export const getStyles = ()=>{
     barContainer: {
       backgroundColor: theme.colors.background,
     },
-  
+
     postText: {
       fontWeight: '400',
       fontSize: 15,
       textAlign: 'center',
       color: theme.colors.primary,
     },
-  
-  
+
     textInput: {
       borderWidth: 0,
       borderBottomWidth: 0,
       backgroundColor: 'transparent',
       fontSize: 15,
       marginHorizontal: 3,
-      color: theme.colors.base
+      color: theme.colors.base,
       // Additional styles if needed
     },
-  
+
     AllInputWrap: {
       backgroundColor: theme.colors.background,
       flex: 1,
@@ -131,8 +129,8 @@ export const getStyles = ()=>{
     },
     videoContainer: {
       display: 'none',
-    }
+    },
   });
-  
+
   return styles;
-}
+};

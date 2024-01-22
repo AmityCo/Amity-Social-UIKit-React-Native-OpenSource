@@ -6,13 +6,13 @@ export const getStyles = () => {
   const theme = useTheme() as MyMD3Theme;
   const styles = StyleSheet.create({
     container: {
-      backgroundColor: theme.colors.background
+      backgroundColor: theme.colors.background,
     },
     headerWrap: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      backgroundColor: theme.colors.background
+      backgroundColor: theme.colors.background,
     },
     inputWrap: {
       marginHorizontal: 16,
@@ -27,10 +27,15 @@ export const getStyles = () => {
       marginVertical: 10,
       flex: 2,
     },
-    input: { flex: 1, marginHorizontal: 6, backgroundColor: theme.colors.secondary, color: theme.colors.base},
+    input: {
+      flex: 1,
+      marginHorizontal: 6,
+      backgroundColor: theme.colors.secondary,
+      color: theme.colors.base,
+    },
     cancelBtn: {
       marginRight: 16,
-      color: theme.colors.base
+      color: theme.colors.base,
     },
     searchScrollList: {
       paddingBottom: 110,
@@ -42,4 +47,4 @@ export const getStyles = () => {
   });
 
   return styles;
-}
+};

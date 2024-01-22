@@ -10,5 +10,5 @@ export const getStyles = () => {
       height: '100%',
     },
   });
-  return styles
-}
+  return styles;
+};

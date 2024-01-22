@@ -17,11 +17,11 @@ export interface ISearchItem {
 export default function SearchItem({
   target,
   onPress,
-  userProfileNavigateEnabled = true
+  userProfileNavigateEnabled = true,
 }: {
   target: ISearchItem;
   onPress?: (target: ISearchItem) => void;
-  userProfileNavigateEnabled?: boolean
+  userProfileNavigateEnabled?: boolean;
 }) {
   const styles = getStyles();
   const { apiRegion } = useAuth();
@@ -36,14 +36,16 @@ export default function SearchItem({
     }
     if (userProfileNavigateEnabled) {
       if (target.targetType === 'community') {
-        navigation.navigate('CommunityHome', { communityId: target.targetId, communityName: target.displayName });
+        navigation.navigate('CommunityHome', {
+          communityId: target.targetId,
+          communityName: target.displayName,
+        });
       } else {
         navigation.navigate('UserProfile', {
-          userId: target.targetId
+          userId: target.targetId,
         });
       }
     }
-
   };
   useEffect(() => {
     getCategory();
@@ -91,10 +93,9 @@ export default function SearchItem({
         )}
         <View>
           <Text style={styles.itemText}>{displayName()}</Text>
-          {
-            target.targetType === 'community' && <Text style={styles.categoryText}>{categoryName}</Text>
-          }
-
+          {target.targetType === 'community' && (
+            <Text style={styles.categoryText}>{categoryName}</Text>
+          )}
         </View>
       </View>
     </TouchableOpacity>

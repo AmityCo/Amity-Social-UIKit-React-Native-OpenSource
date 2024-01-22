@@ -1,5 +1,6 @@
 import React, {
   forwardRef,
+  useCallback,
   useEffect,
   useImperativeHandle,
   useState,
@@ -43,12 +44,12 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
   const disposers: Amity.Unsubscriber[] = [];
   let isSubscribed = false;
 
-  const subscribePostTopic = (targetType: string, targetId: string) => {
+  const subscribePostTopic = useCallback((type: string, id: string) => {
     if (isSubscribed) return;
 
-    if (targetType === 'user') {
+    if (type === 'user') {
       let user = {} as Amity.User; // use getUser to get user by targetId
-      UserRepository.getUser(targetId, ({ data }) => {
+      UserRepository.getUser(id, ({ data }) => {
         user = data;
       });
       disposers.push(
@@ -56,19 +57,20 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
           // use callback to handle errors with event subscription
         })
       );
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       isSubscribed = true;
       return;
     }
 
-    if (targetType === 'community') {
-      CommunityRepository.getCommunity(targetId, (data) => {
+    if (type === 'community') {
+      CommunityRepository.getCommunity(id, (data) => {
         if (data.data) {
           subscribeTopic(getCommunityTopic(data.data, SubscriptionLevels.POST));
         }
       });
     }
-  };
-  async function getFeed(): Promise<void> {
+  }, []);
+  const getFeed = useCallback(() => {
     const unsubscribe = PostRepository.getPosts(
       {
         targetId,
@@ -83,7 +85,7 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
       }
     );
     setUnSubPageFunc(() => unsubscribe);
-  }
+  }, [subscribePostTopic, targetId, targetType]);
   const handleLoadMore = () => {
     if (hasNextPage) {
       onNextPage && onNextPage();
@@ -95,18 +97,18 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
       unSubFunc && unSubFunc();
       dispatch(clearFeed());
     };
-  }, []);
+  }, [clearFeed, dispatch, getFeed, unSubFunc]);
 
-  const getPostList = async () => {
+  const getPostList = useCallback(async () => {
     if (posts.length > 0) {
       const formattedPostList = await amityPostsFormatter(posts);
       dispatch(updateFeed(formattedPostList));
     }
-  };
+  }, [dispatch, posts, updateFeed]);
 
   useEffect(() => {
     posts && getPostList();
-  }, [posts]);
+  }, [posts, getPostList]);
 
   useImperativeHandle(ref, () => ({
     handleLoadMore,

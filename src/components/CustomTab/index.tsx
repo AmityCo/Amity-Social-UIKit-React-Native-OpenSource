@@ -14,7 +14,6 @@ interface ICustomTab {
   tabName: string[];
 }
 const CustomTab = ({ tabName, onTabChange }: ICustomTab): ReactElement => {
-
   const styles = getStyles();
   const [activeTab, setActiveTab] = useState(1);
   const [indicatorAnim] = useState(new Animated.Value(0));

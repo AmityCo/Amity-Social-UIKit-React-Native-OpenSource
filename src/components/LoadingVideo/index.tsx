@@ -28,7 +28,7 @@ interface OverlayImageProps {
   fileId?: string;
   thumbNail: string;
   onPlay?: (fileUrl: string) => void;
-  isEditMode?: boolean
+  isEditMode?: boolean;
 }
 const LoadingVideo = ({
   source,
@@ -39,10 +39,9 @@ const LoadingVideo = ({
   thumbNail,
   onPlay,
   fileId,
-  isEditMode
+  isEditMode,
 }: OverlayImageProps) => {
-
-  const theme = useTheme() as MyMD3Theme
+  const theme = useTheme() as MyMD3Theme;
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
   const [isProcess, setIsProcess] = useState<boolean>(false);
@@ -76,7 +75,6 @@ const LoadingVideo = ({
           thumbNail
         );
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [source]);
 
   const handleDelete = async () => {

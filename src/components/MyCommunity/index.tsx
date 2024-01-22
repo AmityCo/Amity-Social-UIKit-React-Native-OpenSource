@@ -52,7 +52,7 @@ export default function MyCommunity() {
     );
     unsubscribe();
   };
-  const displayName = (text: string, type: string) => {
+  const getDisplayName = (text: string, type: string) => {
     if (text) {
       const reduceLetter = type === 'private' ? 3 : 0;
       if (text!.length > maxLength - reduceLetter) {
@@ -122,7 +122,7 @@ export default function MyCommunity() {
                 />
               )}
               <Text style={styles.itemText}>
-                {displayName(
+                {getDisplayName(
                   item.displayName,
                   !item.isPublic ? 'private' : 'public'
                 )}

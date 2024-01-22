@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Image,
   ImageStyle,
@@ -62,9 +62,9 @@ export default function MediaSection({ childrenPosts }: IMediaSection) {
       });
       setVideoPostsFullSize(updatedUrls);
     }
-  }, [imagePosts, videoPosts]);
+  }, [imagePosts, videoPosts, apiRegion]);
 
-  const getPostInfo = async () => {
+  const getPostInfo = useCallback(async () => {
     try {
       const response = await Promise.all(
         childrenPosts.map(async (id) => {
@@ -87,11 +87,11 @@ export default function MediaSection({ childrenPosts }: IMediaSection) {
     } catch (error) {
       console.log('error: ', error);
     }
-  };
+  }, [apiRegion, childrenPosts]);
 
   useEffect(() => {
     getPostInfo();
-  }, [childrenPosts, currentPostdetail, postList, postListGlobal]);
+  }, [childrenPosts, currentPostdetail, postList, postListGlobal, getPostInfo]);
 
   function onClickImage(index: number): void {
     setIsVisibleFullImage(true);

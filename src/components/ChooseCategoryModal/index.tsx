@@ -27,10 +27,10 @@ const ChooseCategoryModal = ({ visible, onClose, onSelect }: IModal) => {
   const theme = useTheme() as MyMD3Theme;
   const styles = getStyles();
   const { apiRegion } = useAuth();
-  const [categories, setCategories] = useState<Amity.LiveCollection<Amity.Category>>();
-  const { data: categoriesList, onNextPage } = categories ?? {}
+  const [categories, setCategories] =
+    useState<Amity.LiveCollection<Amity.Category>>();
+  const { data: categoriesList, onNextPage } = categories ?? {};
   const [unSubFunc, setUnSubPageFunc] = useState<() => void>();
-
 
   useEffect(() => {
     const loadCategories = async () => {
@@ -43,44 +43,41 @@ const ChooseCategoryModal = ({ visible, onClose, onSelect }: IModal) => {
             }
           }
         );
-        setUnSubPageFunc(() => unsubscribe)
+        setUnSubPageFunc(() => unsubscribe);
       } catch (error) {
         console.error('Failed to load categories:', error);
       }
     };
 
     loadCategories();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onSelectCategory = (categoryId: string, categoryName: string) => {
     onSelect && onSelect(categoryId, categoryName);
     unSubFunc && unSubFunc();
     onClose && onClose();
-
   };
   const renderCategories = ({ item }: { item: Amity.Category }) => {
     return (
       <TouchableOpacity
-        onPress={() =>
-          onSelectCategory(item.categoryId, item.name)
-        }
+        onPress={() => onSelectCategory(item.categoryId, item.name)}
         style={styles.rowContainer}
       >
-        {item.avatarFileId ? <Image
-          style={styles.avatar}
-          source={
-            {
+        {item.avatarFileId ? (
+          <Image
+            style={styles.avatar}
+            source={{
               uri: `https://api.${apiRegion}.amity.co/api/v3/files/${item.avatarFileId}/download`,
-            }
-          }
-        /> : <SvgXml xml={categoryIcon} width={40} height={40} />}
+            }}
+          />
+        ) : (
+          <SvgXml xml={categoryIcon} width={40} height={40} />
+        )}
 
         <Text style={styles.communityText}>{item.name}</Text>
       </TouchableOpacity>
     );
   };
-
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const scrollPosition = event.nativeEvent.contentOffset.y;
@@ -89,17 +86,19 @@ const ChooseCategoryModal = ({ visible, onClose, onSelect }: IModal) => {
     const contentHeight = event.nativeEvent.contentSize.height;
     const scrollViewHeight = event.nativeEvent.layoutMeasurement.height;
 
-    if (scrollPosition + scrollViewHeight >= contentHeight - endReachedThreshold) {
+    if (
+      scrollPosition + scrollViewHeight >=
+      contentHeight - endReachedThreshold
+    ) {
       // Trigger your action here when scrolling reaches the end
-      onNextPage && onNextPage()
+      onNextPage && onNextPage();
     }
   };
 
   const handleOnClose = () => {
     unSubFunc && unSubFunc();
-    onClose && onClose()
-
-  }
+    onClose && onClose();
+  };
   return (
     <Modal visible={visible} animationType="slide">
       <View style={styles.container}>
@@ -123,4 +122,3 @@ const ChooseCategoryModal = ({ visible, onClose, onSelect }: IModal) => {
 };
 
 export default ChooseCategoryModal;
-

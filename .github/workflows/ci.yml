@@ -7,6 +7,10 @@ on:
     branches:
       - main
 
+env:
+  SKIP_YARN_COREPACK_CHECK: true
+  COREPACK_ROOT: true
+
 jobs:
   lint:
     runs-on: ubuntu-latest
