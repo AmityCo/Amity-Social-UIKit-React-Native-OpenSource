@@ -1,6 +1,10 @@
 name: Setup
 description: Setup Node.js and install dependencies
 
+env:
+  SKIP_YARN_COREPACK_CHECK: true
+  COREPACK_ROOT: true
+
 runs:
   using: composite
   steps:

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -277,7 +278,6 @@ const CreatePost = ({ route }: any) => {
       );
       setDisplayImages((prev) => [...prev, ...imagesObject]);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imageMultipleUri]);
 
   const processVideo = async () => {
@@ -319,8 +319,6 @@ const CreatePost = ({ route }: any) => {
   };
   useEffect(() => {
     processVideo();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [videoMultipleUri]);
 
   const pickImage = async () => {
