@@ -18,10 +18,10 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: Lint files
-        run: yarn lint
+        run: SKIP_YARN_COREPACK_CHECK=0 COREPACK_ROOT=0 yarn lint
 
       - name: Typecheck files
-        run: yarn typecheck
+        run: SKIP_YARN_COREPACK_CHECK=0 COREPACK_ROOT=0 yarn typecheck
 
   test:
     runs-on: ubuntu-latest
@@ -33,7 +33,7 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: Run unit tests
-        run: yarn test --maxWorkers=2 --coverage
+        run: SKIP_YARN_COREPACK_CHECK=0 COREPACK_ROOT=0 yarn test --maxWorkers=2 --coverage
 
   build:
     runs-on: ubuntu-latest
@@ -45,4 +45,4 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: Build package
-        run: yarn prepack
+        run: SKIP_YARN_COREPACK_CHECK=0 COREPACK_ROOT=0 yarn prepack

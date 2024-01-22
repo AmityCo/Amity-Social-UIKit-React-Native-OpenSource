@@ -1,10 +1,6 @@
 name: Setup
 description: Setup Node.js and install dependencies
 
-env:
-  SKIP_YARN_COREPACK_CHECK: 0
-  COREPACK_ROOT: 0
-
 runs:
   using: composite
   steps:
@@ -26,6 +22,6 @@ runs:
     - name: Install dependencies
       if: steps.yarn-cache.outputs.cache-hit != 'true'
       run: |
-        yarn install --cwd example --frozen-lockfile
-        yarn install --frozen-lockfile
+        SKIP_YARN_COREPACK_CHECK=0 COREPACK_ROOT=0 yarn install --cwd example --frozen-lockfile
+        SKIP_YARN_COREPACK_CHECK=0 COREPACK_ROOT=0 yarn install --frozen-lockfile
       shell: bash
