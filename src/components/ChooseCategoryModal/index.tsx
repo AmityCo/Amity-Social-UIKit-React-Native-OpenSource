@@ -50,8 +50,8 @@ const ChooseCategoryModal = ({
               if (categoryId) {
                 const currentCategoryName =
                   data.data.filter((item) => item.categoryId === categoryId)[0]
-                    .name ?? '';
-                return onSelect(categoryId, currentCategoryName);
+                    ?.name ?? '';
+                onSelect(categoryId, currentCategoryName);
               }
             }
           }
