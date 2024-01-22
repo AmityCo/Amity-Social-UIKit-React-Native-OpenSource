@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useEffect, useState } from 'react';
@@ -80,7 +81,7 @@ const CreatePost = ({ route }: any) => {
 
   // const { data: community, loading, error } = data ?? {};
   const videoRef = React.useRef(null);
-  const { client } = useAuth();
+  const { client, apiRegion } = useAuth();
 
   const getCommunityDetail = () => {
     if (targetType === 'community') {
@@ -228,7 +229,8 @@ const CreatePost = ({ route }: any) => {
       ) {
         const res = await checkCommunityPermission(
           community.communityId,
-          client as Amity.Client
+          client as Amity.Client,
+          apiRegion
         );
 
         if (
@@ -313,7 +315,6 @@ const CreatePost = ({ route }: any) => {
       );
       setDisplayImages((prev) => [...prev, ...imagesObject]);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imageMultipleUri]);
 
   const processVideo = async () => {
@@ -355,8 +356,6 @@ const CreatePost = ({ route }: any) => {
   };
   useEffect(() => {
     processVideo();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [videoMultipleUri]);
 
   const pickImage = async () => {
