@@ -11,6 +11,7 @@ runs:
 
     - name: Set Yarn Version in Project
       run: yarn policies set-version 1.22.19
+      shell: bash
 
     - name: Cache dependencies
       id: yarn-cache
