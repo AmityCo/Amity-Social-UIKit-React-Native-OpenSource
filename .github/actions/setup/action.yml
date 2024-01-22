@@ -9,12 +9,8 @@ runs:
       with:
         node-version-file: .nvmrc
 
-    - name: Set up Yarn
-      run: |
-        yarn_version="1.22.19"
-        curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version $yarn_version
-        export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
-      shell: bash
+    - name: Set Yarn Version in Project
+      run: yarn policies set-version 1.22.19
 
     - name: Cache dependencies
       id: yarn-cache
