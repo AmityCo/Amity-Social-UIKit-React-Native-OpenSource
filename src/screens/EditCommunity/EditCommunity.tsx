@@ -9,6 +9,7 @@ import {
   ScrollView,
   Pressable,
   FlatList,
+  Alert,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import {
@@ -53,7 +54,33 @@ const EditCommunity = ({ navigation, route }) => {
   const MAX_COMMUNITY_NAME_LENGTH = 30;
   const MAX_ABOUT_TEXT_LENGTH = 180;
 
+  const isFormValid = (
+    name: string,
+    id: string,
+    about: string,
+    fileId: string
+  ): boolean => {
+    if (!name || name.length === 0 || name.length > MAX_COMMUNITY_NAME_LENGTH) {
+      Alert.alert('Community Name is Invalid');
+      return false;
+    }
+    if (!id) {
+      Alert.alert('Community ID is Invalid');
+      return false;
+    }
+    if (!about || about.length === 0 || about.length > MAX_ABOUT_TEXT_LENGTH) {
+      Alert.alert('Community Description is Invalid');
+      return false;
+    }
+    if (!fileId) {
+      Alert.alert('Avatar is Invalid');
+      return false;
+    }
+    return true;
+  };
+
   const onPressUpdateCommunity = useCallback(async () => {
+    if (!isFormValid(communityName, categoryId, aboutText, imageFileId)) return;
     const communityDetail = {
       isPublic: isPublic,
       description: aboutText,
@@ -169,10 +196,7 @@ const EditCommunity = ({ navigation, route }) => {
           ) : (
             <View style={styles.defaultImage} />
           )}
-
           <TouchableOpacity style={styles.button} onPress={pickImage}>
-            {/* You can use any icon library here or just text */}
-            {/* For example, you can use an icon like: <YourIconName size={24} color="white" /> */}
             <Text style={styles.buttonText}>Upload Image</Text>
           </TouchableOpacity>
         </View>
