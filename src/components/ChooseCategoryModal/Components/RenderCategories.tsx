@@ -1,9 +1,9 @@
 import { Image, Text, TouchableOpacity } from 'react-native';
 import React from 'react';
-import useImage from '../../hooks/useImage';
+import useImage from '../../../hooks/useImage';
 import { SvgXml } from 'react-native-svg';
-import { categoryIcon } from '../../svg/svg-xml-list';
-import { useStyle } from '../../components/ChooseCategoryModal/styles';
+import { categoryIcon } from '../../../svg/svg-xml-list';
+import { useStyle } from '../styles';
 
 const RenderCategories = ({
   item,

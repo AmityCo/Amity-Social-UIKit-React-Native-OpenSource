@@ -14,7 +14,7 @@ import { closeIcon } from '../../svg/svg-xml-list';
 import { useStyle } from './styles';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
-import RenderCategories from './RenderCategories';
+import RenderCategories from './Components/RenderCategories';
 
 interface IModal {
   visible: boolean;
