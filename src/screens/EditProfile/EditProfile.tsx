@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/no-unstable-nested-components */
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -16,7 +16,7 @@ import {
   launchImageLibrary,
   type CameraOptions,
   type ImageLibraryOptions,
-  type   ImagePickerResponse,
+  type ImagePickerResponse,
 } from 'react-native-image-picker';
 import { getStyles } from './styles';
 import CloseButton from '../../components/BackButton/index';
@@ -24,6 +24,8 @@ import DoneButton from '../../components/DoneButton/index';
 import { LoadingOverlay } from '../../components/LoadingOverlay/index';
 import { UserRepository } from '@amityco/ts-sdk-react-native';
 import useAuth from '../../hooks/useAuth';
+import { uploadImageFile } from '../../providers/file-provider';
+import { useFocusEffect } from '@react-navigation/native';
 
 interface EditProfileProps {
   navigation: any;
@@ -64,8 +66,8 @@ export const EditProfile: React.FC<EditProfileProps> = ({
   const styles = getStyles();
   const MAX_CHARACTER_COUNT = 100;
   const { apiRegion } = useAuth();
+  const imageUriRef = useRef<string | undefined>(undefined);
   const [imageUri, setImageUri] = useState<string | undefined>();
-  const imageUriRef = useRef(imageUri);
   const [displayName, setDisplayName] = useState<string | undefined>();
   const [about, setAbout] = useState<string | undefined>();
   const displayNameRef = useRef(displayName);
@@ -76,7 +78,6 @@ export const EditProfile: React.FC<EditProfileProps> = ({
   const { user } = route.params;
 
   React.useLayoutEffect(() => {
-
     navigation.setOptions({
       headerLeft: () => <CloseButton />,
       title: 'Edit Profile',
@@ -89,29 +90,63 @@ export const EditProfile: React.FC<EditProfileProps> = ({
       ),
     });
   }, [navigation]);
-  const avatarFileURL = (fileId: string) => {
-    return `https://api.${apiRegion}.amity.co/api/v3/files/${fileId}/download?size=medium`;
-  };
-  useEffect(() => {
-    setDisplayName(user.displayName);
-    if (user.avatarFileId) {
-      setImageUri(avatarFileURL(user.avatarFileId));
-    } else if (user.avatarCustomUrl) {
-      setImageUri(user.avatarCustomUrl);
-    }
+  console.log('old avatarId', user.avatarFileId);
 
-    setAbout(user.description);
-  }, []);
+  const avatarFileURL = useCallback(
+    (fileId: string) => {
+      return `https://api.${apiRegion}.amity.co/api/v3/files/${fileId}/download?size=medium`;
+    },
+    [apiRegion]
+  );
+
+  useFocusEffect(
+    useCallback(() => {
+      setDisplayName(user.displayName);
+      if (user.avatarFileId) {
+        setImageUri(avatarFileURL(user.avatarFileId));
+        imageUriRef.current = avatarFileURL(user.avatarFileId);
+      } else if (user.avatarCustomUrl) {
+        setImageUri(avatarFileURL(user.avatarFileId));
+        imageUriRef.current = user.avatarCustomUrl;
+      }
+
+      setAbout(user.description);
+    }, [
+      avatarFileURL,
+      user.avatarCustomUrl,
+      user.avatarFileId,
+      user.description,
+      user.displayName,
+    ])
+  );
 
   const onDonePressed = async () => {
     try {
       setShowLoadingIndicator(true);
+      const userDetail: Partial<
+        Pick<
+          Amity.User,
+          | 'displayName'
+          | 'avatarFileId'
+          | 'avatarCustomUrl'
+          | 'description'
+          | 'metadata'
+        >
+      > = {
+        displayName: displayNameRef.current,
+        description: aboutRef.current ?? '',
+      };
+      const file: Amity.File<any>[] =
+        imageUriRef.current && (await uploadImageFile(imageUriRef.current));
+      if (file) {
+        userDetail.avatarFileId = file[0].fileId;
+        userDetail.avatarCustomUrl = file[0].fileUrl;
+      }
+      console.log('new avatarId', userDetail.avatarFileId);
+
       const { data: updatedUser } = await UserRepository.updateUser(
         user.userId,
-        {
-          displayName: displayNameRef.current,
-          description: aboutRef.current,
-        }
+        userDetail
       );
       console.log('Update user success ' + JSON.stringify(updatedUser));
     } catch (error) {
@@ -127,10 +162,8 @@ export const EditProfile: React.FC<EditProfileProps> = ({
       (response: ImagePickerResponse) => {
         if (!response.didCancel && !response.errorCode) {
           if (response.assets) {
-            imageUriRef.current = (
-              response.assets[0] as Record<string, any>
-            ).uri;
-            setImageUri((response.assets[0] as Record<string, any>).uri);
+            imageUriRef.current = response.assets[0].uri;
+            setImageUri(response.assets[0].uri);
           }
         }
       }
@@ -150,10 +183,8 @@ export const EditProfile: React.FC<EditProfileProps> = ({
           );
         } else {
           if (response.assets) {
-            imageUriRef.current = (
-              response.assets[0] as Record<string, any>
-            ).uri;
-            setImageUri((response.assets[0] as Record<string, any>).uri);
+            imageUriRef.current = response.assets[0].uri;
+            setImageUri(response.assets[0].uri);
           }
         }
       }
@@ -223,14 +254,6 @@ export const EditProfile: React.FC<EditProfileProps> = ({
           </TouchableOpacity>
         </View>
       </View>
-      {/* <View style={styles.displayNameContainer}>
-        <Text style={styles.displayNameText}>Group name</Text>
-        <View style={styles.characterCountContainer}>
-          <Text
-            style={styles.characterCountText}
-          >{`${displayNameCharacterCount}/${MAX_CHARACTER_COUNT}`}</Text>
-        </View>
-      </View> */}
       <View style={styles.displayNameContainer}>
         <Text style={styles.displayNameText}>Display name*</Text>
         <View style={styles.characterCountContainer}>
