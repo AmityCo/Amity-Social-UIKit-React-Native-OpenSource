@@ -90,7 +90,6 @@ export const EditProfile: React.FC<EditProfileProps> = ({
       ),
     });
   }, [navigation]);
-  console.log('old avatarId', user.avatarFileId);
 
   const avatarFileURL = useCallback(
     (fileId: string) => {
@@ -142,13 +141,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
         userDetail.avatarFileId = file[0].fileId;
         userDetail.avatarCustomUrl = file[0].fileUrl;
       }
-      console.log('new avatarId', userDetail.avatarFileId);
-
-      const { data: updatedUser } = await UserRepository.updateUser(
-        user.userId,
-        userDetail
-      );
-      console.log('Update user success ' + JSON.stringify(updatedUser));
+      await UserRepository.updateUser(user.userId, userDetail);
     } catch (error) {
       console.error(error);
     } finally {
