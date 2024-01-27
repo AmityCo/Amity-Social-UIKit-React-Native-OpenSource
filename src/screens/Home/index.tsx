@@ -22,13 +22,14 @@ import CreatePostModal from '../../components/CreatePostModal';
 import CustomTab from '../../components/CustomTab';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
+import { TabName, TabNameSubset } from '../../enum/tabNameState';
 LogBox.ignoreAllLogs(true);
 export default function Home() {
   // const { t, i18n } = useTranslation();
   const styles = getStyles();
   const { client } = useAuth();
   const theme = useTheme() as MyMD3Theme;
-  const [activeTab, setActiveTab] = useState(1);
+  const [activeTab, setActiveTab] = useState<TabNameSubset>(TabName.NewsFeed);
   const [isVisible, setIsVisible] = useState(false);
 
   const [createPostModalVisible, setCreatePostModalVisible] = useState(false);
@@ -75,8 +76,11 @@ export default function Home() {
   };
   return (
     <View>
-      <CustomTab tabName={['Newsfeed', 'Explore']} onTabChange={setActiveTab} />
-      {activeTab === 1 ? (
+      <CustomTab
+        tabName={[TabName.NewsFeed, TabName.Explorer]}
+        onTabChange={setActiveTab}
+      />
+      {activeTab === TabName.NewsFeed ? (
         <View>
           <GlobalFeed />
           <FloatingButton onPress={openModal} />

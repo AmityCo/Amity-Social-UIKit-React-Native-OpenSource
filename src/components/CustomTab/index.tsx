@@ -8,10 +8,11 @@ import {
   View,
 } from 'react-native';
 import { getStyles } from './styles';
+import { TabNameSubset } from '../../enum/tabNameState';
 
 interface ICustomTab {
-  onTabChange: (tabIndex: number) => any;
-  tabName: string[];
+  onTabChange: (tabName: TabNameSubset) => void;
+  tabName: TabNameSubset[];
 }
 const CustomTab = ({ tabName, onTabChange }: ICustomTab): ReactElement => {
   const styles = getStyles();
@@ -19,9 +20,15 @@ const CustomTab = ({ tabName, onTabChange }: ICustomTab): ReactElement => {
   const [indicatorAnim] = useState(new Animated.Value(0));
   const [tabOneWidth, setTabOneWidth] = useState<number>(0);
   const [tabTwoWidth, setTabTwoWidth] = useState<number>(0);
-  const handleTabPress = (tabIndex: number) => {
+  const handleTabPress = ({
+    name,
+    tabIndex,
+  }: {
+    name: TabNameSubset;
+    tabIndex: number;
+  }) => {
     setActiveTab(tabIndex);
-    onTabChange && onTabChange(tabIndex);
+    onTabChange && onTabChange(name);
     Animated.timing(indicatorAnim, {
       toValue: tabIndex,
       duration: 100,
@@ -53,7 +60,7 @@ const CustomTab = ({ tabName, onTabChange }: ICustomTab): ReactElement => {
     <View style={styles.container}>
       <TouchableOpacity
         onLayout={getLayoutTabOneWidth}
-        onPress={() => handleTabPress(1)}
+        onPress={() => handleTabPress({ name: tabName[0], tabIndex: 1 })}
       >
         <Text style={[styles.tabText, activeTab === 1 && styles.activeTabText]}>
           {tabName[0]}
@@ -61,7 +68,7 @@ const CustomTab = ({ tabName, onTabChange }: ICustomTab): ReactElement => {
       </TouchableOpacity>
       <TouchableOpacity
         onLayout={getLayoutTabTwoWidth}
-        onPress={() => handleTabPress(2)}
+        onPress={() => handleTabPress({ name: tabName[1], tabIndex: 2 })}
       >
         <Text style={[styles.tabText, activeTab === 2 && styles.activeTabText]}>
           {tabName[1]}

@@ -36,7 +36,8 @@ import { checkCommunityPermission } from '../../providers/Social/communities-sdk
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import FloatingButton from '../../components/FloatingButton';
-import { getAvatarURL } from '../../util/apiUtil';
+import useImage from '../../hooks/useImage';
+import { TabName, TabNameSubset } from '../../enum/tabNameState';
 
 export type FeedRefType = {
   handleLoadMore: () => void;
@@ -54,17 +55,15 @@ export default function CommunityHome({ route }: any) {
   const [isJoin, setIsJoin] = useState(true);
   const [communityData, setCommunityData] =
     useState<Amity.LiveObject<Amity.Community>>();
-
+  const avatarUrl = useImage({ fileId: communityData?.data.avatarFileId });
   const feedRef: MutableRefObject<FeedRefType | null> =
     useRef<FeedRefType | null>(null);
   const scrollViewRef = useRef(null);
-
   const [pendingPosts, setPendingPosts] = useState<IPost[]>([]);
   const [isShowPendingArea, setIsShowPendingArea] = useState<boolean>(false);
   const [isUserHasPermission, setIsUserHasPermission] =
     useState<boolean>(false);
   const [postSetting, setPostSetting] = useState<string>('');
-
   const disposers: Amity.Unsubscriber[] = useMemo(() => [], []);
   const isSubscribed = useRef(false);
   const subscribePostTopic = useCallback(
@@ -201,8 +200,8 @@ export default function CommunityHome({ route }: any) {
     );
   };
 
-  const handleTab = (index: number) => {
-    console.log('index: ', index);
+  const handleTab = (tabName: TabNameSubset) => {
+    console.log('index: ', tabName); //this func not implmented yet
   };
 
   const handleClickPendingArea = () => {
@@ -259,12 +258,9 @@ export default function CommunityHome({ route }: any) {
           <Image
             style={styles.image}
             source={
-              communityData?.data.avatarFileId
+              avatarUrl
                 ? {
-                    uri: getAvatarURL(
-                      apiRegion,
-                      communityData?.data.avatarFileId
-                    ),
+                    uri: avatarUrl,
                   }
                 : require('../../../assets/icon/Placeholder.png')
             }
@@ -312,7 +308,10 @@ export default function CommunityHome({ route }: any) {
         )}
         {isJoin === false ? joinCommunityButton() : <View />}
         {isJoin && isShowPendingArea ? pendingPostArea() : <View />}
-        <CustomTab tabName={['Timeline', 'Gallery']} onTabChange={handleTab} />
+        <CustomTab
+          tabName={[TabName.Timeline, TabName.Gallery]}
+          onTabChange={handleTab}
+        />
         <Feed targetType="community" targetId={communityId} ref={feedRef} />
       </ScrollView>
 

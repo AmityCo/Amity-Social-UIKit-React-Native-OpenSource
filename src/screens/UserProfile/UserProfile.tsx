@@ -15,7 +15,6 @@ import {
 } from 'react-native';
 import { getStyles } from './styles';
 import { UserRepository } from '@amityco/ts-sdk-react-native';
-import CloseButton from '../../components/BackButton';
 import Feed from '../Feed';
 import CustomTab from '../../components/CustomTab';
 import type { FeedRefType } from '../CommunityHome';
@@ -27,6 +26,7 @@ import { editIcon } from '../../svg/svg-xml-list';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import { useTheme } from 'react-native-paper';
 import FloatingButton from '../../components/FloatingButton';
+import { TabName, TabNameSubset } from '../../enum/tabNameState';
 
 export default function UserProfile({ route }: any) {
   const theme = useTheme() as MyMD3Theme;
@@ -66,7 +66,6 @@ export default function UserProfile({ route }: any) {
   React.useLayoutEffect(() => {
     // Set the headerRight component to a TouchableOpacity
     navigation.setOptions({
-      headerLeft: () => <CloseButton />,
       headerRight: () => (
         <TouchableOpacity
           onPress={() => {
@@ -83,29 +82,8 @@ export default function UserProfile({ route }: any) {
           />
         </TouchableOpacity>
       ),
-      title: '',
     });
-  }, [navigation]);
-  useEffect(() => {
-    navigation.setOptions({
-      // Header options...
-      headerRight: () => (
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate('UserProfileSetting', {
-              userId: userId,
-              follow: followStatus,
-            });
-          }}
-        >
-          <Image
-            source={require('../../../assets/icon/threeDot.png')}
-            style={styles.dotIcon}
-          />
-        </TouchableOpacity>
-      ),
-    });
-  }, [followStatus]);
+  }, [followStatus, navigation, styles.dotIcon, userId]);
   useEffect(() => {
     const unsubscribeFollow = UserRepository.Relationship.getFollowInfo(
       userId,
@@ -123,7 +101,7 @@ export default function UserProfile({ route }: any) {
       if (value && !value.loading) {
         setUser(value.data);
       } else {
-        console.log('user profile query error ' + JSON.stringify(user));
+        console.log('user profile query error ' + JSON.stringify(value));
       }
     });
     unsubscribeFollow();
@@ -149,7 +127,7 @@ export default function UserProfile({ route }: any) {
 
     // Return the function to unsubscribe from the event so it gets removed on unmount
     return unsubscribe;
-  }, [navigation]);
+  }, [navigation, userId]);
   const editProfileButton = () => {
     return (
       <TouchableOpacity
@@ -173,8 +151,8 @@ export default function UserProfile({ route }: any) {
     );
   };
 
-  const handleTab = (index: number) => {
-    console.log('index: ', index);
+  const handleTab = (tabName: TabNameSubset) => {
+    console.log('index: ', tabName); //this func not implmented yet
   };
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
@@ -247,7 +225,10 @@ export default function UserProfile({ route }: any) {
             <View />
           )}
         </View>
-        <CustomTab tabName={['Timeline', 'Gallery']} onTabChange={handleTab} />
+        <CustomTab
+          tabName={[TabName.Timeline, TabName.Gallery]}
+          onTabChange={handleTab}
+        />
         <Feed targetType="user" targetId={userId} ref={feedRef} />
         {/* <View style={styles.loadingIndicator}>
         <LoadingOverlay
