@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 // import { useTranslation } from 'react-i18next';
 
 import {
@@ -37,6 +37,7 @@ import { ActivityIndicator, useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import * as ImagePicker from 'expo-image-picker';
 import { uploadImageFile } from '../../providers/file-provider';
+import { PrivacyState } from '../../enum/privacyState';
 
 export default function CreateCommunity() {
   const styles = getStyles();
@@ -88,19 +89,19 @@ export default function CreateCommunity() {
   //     setImage(result.assets[0]?.uri);
   //   }
   // };
-  const uploadFile = async () => {
+  const uploadFile = useCallback(async () => {
     const file: Amity.File<any>[] = await uploadImageFile(image);
     if (file) {
       setImageFileId(file[0].fileId);
       setUploadingImage(false);
     }
-  };
+  }, [image]);
   useEffect(() => {
     if (image) {
       setUploadingImage(true);
       uploadFile();
     }
-  }, [image]);
+  }, [image, uploadFile]);
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -142,17 +143,12 @@ export default function CreateCommunity() {
     setSelectedUserList(removedUser);
   };
 
-  useEffect(() => {
-    if (isCreating && !uploadingImage) {
-      onCreateCommunity();
-    }
-  }, [uploadingImage]);
-
-  const onCreateCommunity = async () => {
+  const onCreateCommunity = useCallback(async () => {
     setIsCreating(true);
     if (!uploadingImage) {
       const userIds: string[] = selectedUserList.map((item) => item.userId);
-      const isPublic: boolean = selectedId === 'private' ? false : true;
+      const isPublic: boolean =
+        selectedId === PrivacyState.private ? false : true;
       const communityParam: ICreateCommunity = {
         displayName: communityName,
         description: aboutText,
@@ -169,7 +165,16 @@ export default function CreateCommunity() {
         });
       }
     }
-  };
+  }, [
+    aboutText,
+    categoryId,
+    communityName,
+    imageFileId,
+    navigation,
+    selectedId,
+    selectedUserList,
+    uploadingImage,
+  ]);
 
   return (
     <ScrollView
@@ -256,7 +261,7 @@ export default function CreateCommunity() {
           </View>
           <View style={styles.radioGroup}>
             <Pressable
-              onPress={() => setSelectedId('public')}
+              onPress={() => setSelectedId(PrivacyState.public)}
               style={styles.listItem}
             >
               <View style={styles.avatar}>
@@ -270,17 +275,21 @@ export default function CreateCommunity() {
                 </Text>
               </View>
               <RadioButton
-                id="public"
+                id={PrivacyState.public}
                 onPress={(value) => setSelectedId(value)}
-                value={'public'}
-                selected={selectedId === 'public'}
-                color={selectedId === 'public' ? theme.colors.primary : '#444'}
+                value={PrivacyState.public}
+                selected={selectedId === PrivacyState.public}
+                color={
+                  selectedId === PrivacyState.public
+                    ? theme.colors.primary
+                    : '#444'
+                }
                 size={17}
               />
             </Pressable>
 
             <Pressable
-              onPress={() => setSelectedId('private')}
+              onPress={() => setSelectedId(PrivacyState.private)}
               style={styles.listItem}
             >
               <View style={styles.avatar}>
@@ -295,16 +304,16 @@ export default function CreateCommunity() {
                 </Text>
               </View>
               <RadioButton
-                id="private"
+                id={PrivacyState.private}
                 onPress={(value) => setSelectedId(value)}
-                value={'private'}
-                selected={selectedId === 'private'}
-                color={selectedId === 'private' ? '#1054DE' : '#444'}
+                value={PrivacyState.private}
+                selected={selectedId === PrivacyState.private}
+                color={selectedId === PrivacyState.private ? '#1054DE' : '#444'}
                 size={17}
               />
             </Pressable>
           </View>
-          {selectedId === 'private' && (
+          {selectedId === PrivacyState.private && (
             <View style={styles.inputContainer}>
               <View style={styles.titleRow}>
                 <Text style={styles.inputTitle}>

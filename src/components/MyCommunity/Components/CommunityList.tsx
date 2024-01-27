@@ -10,6 +10,7 @@ import { useStyle } from '../styles';
 import useImage from '../../../hooks/useImage';
 import type { MyMD3Theme } from '../../../providers/amity-ui-kit-provider';
 import { useTheme } from 'react-native-paper';
+import { PrivacyState } from '../../../enum/privacyState';
 
 interface ICommunityItems {
   communityId: string;
@@ -30,9 +31,9 @@ const CommunityList = ({
   const theme = useTheme() as MyMD3Theme;
   const styles = useStyle();
   const avatarUrl = useImage({ fileId: item.avatarFileId });
-  const getDisplayName = (text: string, type: string) => {
+  const getDisplayName = ({ text, type }: { text?: string; type: string }) => {
     if (text) {
-      const reduceLetter = type === 'private' ? 3 : 0;
+      const reduceLetter = type === PrivacyState.private ? 3 : 0;
       if (text!.length > MAX_LENGTH - reduceLetter) {
         return text!.substring(0, MAX_LENGTH) + '...';
       }
@@ -61,10 +62,10 @@ const CommunityList = ({
           <SvgXml width={17} height={17} xml={privateIcon(theme.colors.base)} />
         )}
         <Text style={styles.itemText}>
-          {getDisplayName(
-            item.displayName,
-            !item.isPublic ? 'private' : 'public'
-          )}
+          {getDisplayName({
+            text: item.displayName,
+            type: !item.isPublic ? PrivacyState.private : PrivacyState.public,
+          })}
         </Text>
         {item.isOfficial && (
           <SvgXml
