@@ -1,12 +1,16 @@
 import { useEffect, useState } from 'react';
 import { FileRepository } from '@amityco/ts-sdk-react-native';
+import { ImageSizeState, ImageSizeSubset } from '../enum/imageSizeState';
 
 interface UseImageProps {
   fileId: string;
-  imageSize?: 'small' | 'medium' | 'large' | 'full';
+  imageSize?: ImageSizeSubset;
 }
 
-const useImage = ({ fileId, imageSize = 'medium' }: UseImageProps) => {
+const useImage = ({
+  fileId,
+  imageSize = ImageSizeState.medium,
+}: UseImageProps) => {
   const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
 
   useEffect(() => {
