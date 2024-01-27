@@ -188,6 +188,9 @@ export const useStyles = () => {
     saveText: {
       color: theme.colors.primary,
     },
+    errorText: {
+      color: theme.colors.error,
+    },
   });
 
   return styles;

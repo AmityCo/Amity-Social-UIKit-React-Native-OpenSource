@@ -9,7 +9,6 @@ import {
   ScrollView,
   Pressable,
   FlatList,
-  Alert,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import {
@@ -31,6 +30,8 @@ import * as ImagePicker from 'expo-image-picker';
 import { uploadImageFile } from '../../providers/file-provider';
 import { getAvatarURL } from '../../util/apiUtil';
 import { updateCommunity } from '../../providers/Social/communities-sdk';
+import { PrivacyState } from '../../enum/privacyState';
+import { useForm, Controller } from 'react-hook-form';
 
 const EditCommunity = ({ navigation, route }) => {
   const styles = useStyles();
@@ -39,11 +40,20 @@ const EditCommunity = ({ navigation, route }) => {
     communityData: { data },
   }: { communityData: { data: Amity.RawCommunity } } = route.params;
   const { apiRegion } = useAuth();
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, defaultValues },
+    watch,
+  } = useForm({
+    defaultValues: {
+      community_name: data.displayName,
+      community_description: data.description,
+    },
+  });
   const [image, setImage] = useState<string>('');
-  const [communityName, setCommunityName] = useState<string>(data.displayName);
   const [categoryName, setCategoryName] = useState<string>('');
   const [categoryId, setCategoryId] = useState<string>(data.categoryIds[0]);
-  const [aboutText, setAboutText] = useState(data.description);
   const [categoryModal, setCategoryModal] = useState<boolean>(false);
   const [addMembersModal, setAddMembersModal] = useState<boolean>(false);
   const [isPublic, setisPublic] = useState(data.isPublic);
@@ -54,74 +64,59 @@ const EditCommunity = ({ navigation, route }) => {
   const MAX_COMMUNITY_NAME_LENGTH = 30;
   const MAX_ABOUT_TEXT_LENGTH = 180;
 
-  const isFormValid = (
-    name: string,
-    id: string,
-    about: string,
-    fileId: string
-  ): boolean => {
-    if (!name || name.length === 0 || name.length > MAX_COMMUNITY_NAME_LENGTH) {
-      Alert.alert('Community Name is Invalid');
-      return false;
-    }
-    if (!id) {
-      Alert.alert('Community ID is Invalid');
-      return false;
-    }
-    if (!about || about.length === 0 || about.length > MAX_ABOUT_TEXT_LENGTH) {
-      Alert.alert('Community Description is Invalid');
-      return false;
-    }
-    if (!fileId) {
-      Alert.alert('Avatar is Invalid');
-      return false;
-    }
-    return true;
-  };
+  const onPressUpdateCommunity = useCallback(
+    async ({
+      community_name,
+      community_description,
+    }: {
+      community_name: string;
+      community_description: string;
+    }) => {
+      const communityDetail = {
+        isPublic: isPublic,
+        description: community_description,
+        displayName: community_name,
+        category: categoryId,
+        avatarFileId: imageFileId,
+      };
+      try {
+        setLoading(true);
+        await updateCommunity(data.communityId, communityDetail);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+        navigation.navigate({
+          name: 'CommunityHome',
+          params: {
+            communityId: data.communityId,
+            communityName: communityDetail.displayName,
+          },
+          merge: true,
+        });
+      }
+    },
+    [categoryId, data, imageFileId, isPublic, navigation]
+  );
 
-  const onPressUpdateCommunity = useCallback(async () => {
-    if (!isFormValid(communityName, categoryId, aboutText, imageFileId)) return;
-    const communityDetail = {
-      isPublic: isPublic,
-      description: aboutText,
-      displayName: communityName,
-      category: categoryId,
-      avatarFileId: imageFileId,
-    };
-    try {
-      setLoading(true);
-      await updateCommunity(data.communityId, communityDetail);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-      navigation.navigate({
-        name: 'CommunityHome',
-        params: {
-          communityId: data.communityId,
-          communityName: communityDetail.displayName,
-        },
-        merge: true,
-      });
-    }
-  }, [
-    aboutText,
-    categoryId,
-    communityName,
-    data.communityId,
-    imageFileId,
-    isPublic,
-    navigation,
-  ]);
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <TouchableOpacity disabled={loading} onPress={onPressUpdateCommunity}>
+        <TouchableOpacity
+          disabled={loading}
+          onPress={handleSubmit(onPressUpdateCommunity)}
+        >
           <Text style={styles.saveText}>Save</Text>
         </TouchableOpacity>
       ),
     });
-  }, [loading, navigation, onPressUpdateCommunity, styles.saveText]);
+  }, [
+    handleSubmit,
+    loading,
+    navigation,
+    onPressUpdateCommunity,
+    styles.saveText,
+  ]);
 
   useEffect(() => {
     data.avatarFileId && setImage(getAvatarURL(apiRegion, data.avatarFileId));
@@ -207,36 +202,61 @@ const EditCommunity = ({ navigation, route }) => {
                 Community name<Text style={styles.requiredField}> *</Text>
               </Text>
               <Text style={styles.inputLengthMeasure}>
-                {communityName.length}/{MAX_COMMUNITY_NAME_LENGTH}
+                {watch('community_name')
+                  ? `${
+                      watch('community_name').length
+                    } / ${MAX_COMMUNITY_NAME_LENGTH}`
+                  : `0/ ${MAX_COMMUNITY_NAME_LENGTH}`}
               </Text>
             </View>
-
-            <TextInput
-              style={styles.inputField}
-              placeholder="Name your community"
-              placeholderTextColor={theme.colors.baseShade3}
-              value={communityName}
-              onChangeText={setCommunityName}
-              maxLength={MAX_COMMUNITY_NAME_LENGTH}
+            <Controller
+              name="community_name"
+              control={control}
+              render={({ field: { onChange } }) => (
+                <TextInput
+                  defaultValue={defaultValues.community_name}
+                  style={styles.inputField}
+                  placeholder="Name your community"
+                  placeholderTextColor={theme.colors.baseShade3}
+                  onChangeText={onChange}
+                  maxLength={MAX_COMMUNITY_NAME_LENGTH}
+                />
+              )}
+              rules={{ required: 'Community name is required!' }}
             />
+            {errors.community_name && (
+              <Text style={styles.errorText}>
+                {errors.community_name.message?.toString()}
+              </Text>
+            )}
           </View>
 
           <View style={styles.inputContainer}>
             <View style={styles.titleRow}>
               <Text style={styles.inputTitle}>About</Text>
               <Text style={styles.inputLengthMeasure}>
-                {aboutText.length}/{MAX_ABOUT_TEXT_LENGTH}
+                {watch('community_description')
+                  ? `${
+                      watch('community_description').length
+                    } / ${MAX_ABOUT_TEXT_LENGTH}`
+                  : `0/ ${MAX_ABOUT_TEXT_LENGTH}`}
               </Text>
             </View>
 
-            <TextInput
-              style={styles.inputField}
-              placeholder="Enter description"
-              placeholderTextColor={theme.colors.baseShade3}
-              value={aboutText}
-              onChangeText={(text) => setAboutText(text)}
-              maxLength={MAX_ABOUT_TEXT_LENGTH}
-              multiline={true}
+            <Controller
+              name="community_description"
+              control={control}
+              render={({ field: { onChange } }) => (
+                <TextInput
+                  defaultValue={defaultValues.community_description}
+                  style={styles.inputField}
+                  placeholder="Enter description"
+                  placeholderTextColor={theme.colors.baseShade3}
+                  onChangeText={onChange}
+                  maxLength={MAX_ABOUT_TEXT_LENGTH}
+                  multiline={true}
+                />
+              )}
             />
           </View>
           <View style={styles.inputContainer}>
@@ -280,9 +300,9 @@ const EditCommunity = ({ navigation, route }) => {
                 </Text>
               </View>
               <RadioButton
-                id="public"
+                id={PrivacyState.public}
                 onPress={() => setisPublic(true)}
-                value={'public'}
+                value={PrivacyState.public}
                 selected={isPublic}
                 color={isPublic ? theme.colors.primary : '#444'}
                 size={17}
@@ -305,9 +325,9 @@ const EditCommunity = ({ navigation, route }) => {
                 </Text>
               </View>
               <RadioButton
-                id="private"
+                id={PrivacyState.private}
                 onPress={() => setisPublic(false)}
-                value={'private'}
+                value={PrivacyState.private}
                 selected={!isPublic}
                 color={!isPublic ? '#1054DE' : '#444'}
                 size={17}

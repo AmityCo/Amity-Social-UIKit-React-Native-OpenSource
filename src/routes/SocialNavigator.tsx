@@ -163,7 +163,14 @@ export default function SocialNavigator() {
             component={CreatePost}
             options={{ headerShown: false }}
           />
-          <Stack.Screen name="UserProfile" component={UserProfile} />
+          <Stack.Screen
+            name="UserProfile"
+            component={UserProfile}
+            options={{
+              title: '',
+              headerLeft: () => <BackButton />,
+            }}
+          />
           <Stack.Screen name="EditProfile" component={EditProfile} />
           <Stack.Screen
             name="EditCommunity"
