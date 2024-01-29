@@ -22,11 +22,11 @@ import { useStyles } from './styles';
 import ChooseCategoryModal from '../../components/ChooseCategoryModal';
 import { RadioButton } from 'react-native-radio-buttons-group';
 import AddMembersModal from '../../components/AddMembersModal';
-import type { UserInterface } from 'src/types/user.interface';
+import type { UserInterface } from '../../types/user.interface';
 import useAuth from '../../hooks/useAuth';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
-import * as ImagePicker from 'expo-image-picker';
+import ImagePicker, { launchImageLibrary } from 'react-native-image-picker';
 import { uploadImageFile } from '../../providers/file-provider';
 import { getAvatarURL } from '../../util/apiUtil';
 import { updateCommunity } from '../../providers/Social/communities-sdk';
@@ -143,13 +143,17 @@ const EditCommunity = ({ navigation, route }) => {
   }, [image, uploadFile]);
 
   const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: false,
+    const result: ImagePicker.ImagePickerResponse = await launchImageLibrary({
+      mediaType: 'photo',
       quality: 1,
+      selectionLimit: 1,
     });
-
-    if (!result.canceled && result.assets && result.assets.length > 0) {
+    if (
+      !result.didCancel &&
+      result.assets &&
+      result.assets.length > 0 &&
+      result.assets[0]?.uri
+    ) {
       setImage(result.assets[0]?.uri);
     }
   };
