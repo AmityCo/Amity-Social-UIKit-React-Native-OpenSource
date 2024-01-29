@@ -1,5 +1,5 @@
 import { UserRepository } from '@amityco/ts-sdk-react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   TouchableOpacity,
   View,
@@ -18,7 +18,7 @@ import UserItem from '../UserItem';
 import SectionHeader from '../ListSectionHeader';
 import SelectedUserHorizontal from '../SelectedUserHorizontal';
 import { useTheme } from 'react-native-paper';
-import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
+import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 interface IModal {
   visible: boolean;
   userId?: string;
@@ -83,7 +83,7 @@ const AddMembersModal = ({
     setSectionedGroupUserList([]);
   };
 
-  const createSectionGroup = () => {
+  const createSectionGroup = useCallback(() => {
     userArr.forEach((item) => {
       const firstChar = (item.displayName as string).charAt(0).toUpperCase();
       const isAlphabet = /^[A-Z]$/i.test(firstChar);
@@ -104,10 +104,10 @@ const AddMembersModal = ({
         },
       ]);
     });
-  };
+  }, [userArr]);
   useEffect(() => {
     createSectionGroup();
-  }, [userArr]);
+  }, [createSectionGroup, userArr]);
 
   useEffect(() => {
     queryAccounts();
@@ -134,7 +134,7 @@ const AddMembersModal = ({
       }
     });
     setSectionedGroupUserList(groupedData);
-  }, [sectionedUserList]);
+  }, [sectionedGroupUserList, sectionedUserList]);
 
   const renderSectionHeader = ({ section }: { section: SelectUserList }) => (
     <SectionHeader title={section.title} />
