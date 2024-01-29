@@ -38,8 +38,6 @@ export default function UserProfile({ route }: any) {
   const [followerCount, setFollowerCount] = useState<number>(0);
   const [followingCount, setFollowingCount] = useState<number>(0);
   const [followStatus, setFollowStatus] = useState<string>('loading');
-  const [showLoadingIndicator, setShowLoadingIndicator] = useState(false);
-  console.log('showLoadingIndicator:', showLoadingIndicator);
 
   const feedRef: MutableRefObject<FeedRefType | null> =
     useRef<FeedRefType | null>(null);
@@ -54,22 +52,19 @@ export default function UserProfile({ route }: any) {
     });
   };
   const onFollowTap = async () => {
-    setShowLoadingIndicator(true);
     const { data: followStatus } = await UserRepository.Relationship.follow(
       userId
     );
     if (followStatus) {
       setFollowStatus(followStatus.status);
-      setShowLoadingIndicator(false);
     }
   };
   React.useLayoutEffect(() => {
-    // Set the headerRight component to a TouchableOpacity
     navigation.setOptions({
+      // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () => (
         <TouchableOpacity
           onPress={() => {
-            // Handle button press here
             navigation.navigate('UserProfileSetting', {
               userId: userId,
               follow: followStatus !== 'loading' ? followStatus : 'loading',

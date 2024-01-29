@@ -37,6 +37,7 @@ export default function SocialNavigator() {
   const Stack = createNativeStackNavigator<RootStackParamList>();
   const { isConnected } = useAuth();
   const theme = useTheme() as MyMD3Theme;
+
   // const renderPostDeatil = () => {
   //   return <PostDetail />;
   // };
@@ -130,8 +131,24 @@ export default function SocialNavigator() {
           <Stack.Screen
             name="CommunityMemberDetail"
             component={CommunityMemberDetail}
+            options={{
+              headerLeft: () => <BackButton />,
+              headerTitleAlign: 'center',
+              title: 'Member',
+            }}
           />
-          <Stack.Screen name="CommunitySetting" component={CommunitySetting} />
+          <Stack.Screen
+            name="CommunitySetting"
+            component={CommunitySetting}
+            options={({
+              route: {
+                params: { communityName },
+              },
+            }: any) => ({
+              title: communityName,
+              headerLeft: () => <BackButton />,
+            })}
+          />
           <Stack.Screen name="CreateCommunity" component={CreateCommunity} />
           <Stack.Screen name="CommunityList" component={CommunityList} />
           <Stack.Screen

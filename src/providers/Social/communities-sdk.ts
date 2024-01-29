@@ -100,3 +100,32 @@ export async function checkCommunityPermission(
     console.log('error:', error);
   }
 }
+
+export const updateCommunityMember = ({
+  operation,
+  communityId,
+  memberIds,
+}: {
+  operation: 'ADD' | 'REMOVE';
+  communityId: string;
+  memberIds: string[];
+}) => {
+  const communityMembers = new Promise<boolean>(async (resolve, reject) => {
+    try {
+      const updateMembers =
+        operation === 'ADD'
+          ? await CommunityRepository.Membership.addMembers(
+              communityId,
+              memberIds
+            )
+          : await CommunityRepository.Membership.removeMembers(
+              communityId,
+              memberIds
+            );
+      resolve(updateMembers);
+    } catch (error) {
+      reject(error);
+    }
+  });
+  return communityMembers;
+};

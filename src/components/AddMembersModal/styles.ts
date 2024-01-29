@@ -2,7 +2,7 @@ import { Platform, StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 
-export const getStyles = () => {
+export const useStyle = () => {
   const theme = useTheme() as MyMD3Theme;
 
   const styles = StyleSheet.create({
@@ -81,13 +81,17 @@ export const getStyles = () => {
     inputWrap: {
       marginHorizontal: 16,
       backgroundColor: '#EBECEF',
-      padding: 10,
+      paddingHorizontal: 10,
       borderRadius: 4,
       flexDirection: 'row',
       justifyContent: 'space-between',
       marginVertical: 10,
+      alignItems: 'center',
     },
-    input: { flex: 1, marginHorizontal: 6 },
+    input: {
+      flex: 1,
+      marginHorizontal: 6,
+    },
     cancelBtn: {
       marginRight: 16,
     },

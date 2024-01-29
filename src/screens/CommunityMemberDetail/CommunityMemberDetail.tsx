@@ -2,7 +2,7 @@ import {
   CommunityRepository,
   createReport,
 } from '@amityco/ts-sdk-react-native';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useState, useRef, useLayoutEffect, useCallback } from 'react';
 import {
   FlatList,
   View,
@@ -10,53 +10,90 @@ import {
   Platform,
   ActionSheetIOS,
   Alert,
+  TouchableOpacity,
+  Image,
 } from 'react-native';
-import { getStyles } from './styles';
-import CloseButton from '../../components/BackButton';
+import { useStyles } from './styles';
 import UserItem from '../../components/UserItem';
 import type { UserInterface } from '../../types/user.interface';
+import AddMembersModal from '../../components/AddMembersModal';
+import { updateCommunityMember } from '../../providers/Social/communities-sdk';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function CommunityMemberDetail({ navigation, route }: any) {
-  const styles = getStyles();
+  const styles = useStyles();
   const [memberList, setMemberList] = useState<Amity.Member<'community'>[]>([]);
+  const [selectedUser, setSelectedUser] = useState<UserInterface[]>([]);
   const [loading, setLoading] = useState(false);
   const [hasNextPage, setHasNextPage] = useState(false);
   const { communityId } = route.params;
   const onNextPageRef = useRef<(() => void) | null>(null);
   const isFetchingRef = useRef(false);
   const flatListRef = useRef(null);
+  const [addMembersModal, setAddMembersModal] = React.useState(false);
 
-  React.useLayoutEffect(() => {
+  useLayoutEffect(() => {
     navigation.setOptions({
-      headerLeft: () => <CloseButton />,
-      title: 'Member',
+      // eslint-disable-next-line react/no-unstable-nested-components
+      headerRight: () => (
+        <TouchableOpacity
+          onPress={() => {
+            setAddMembersModal(true);
+          }}
+        >
+          <Image
+            source={require('../../../assets/icon/plus.png')}
+            style={styles.dotIcon}
+          />
+        </TouchableOpacity>
+      ),
     });
-  }, [navigation]);
-  useEffect(() => {
-    const loadMembers = async () => {
-      setLoading(true);
-      try {
-        const unsubscribe = CommunityRepository.Membership.getMembers(
-          { communityId, limit: 10 },
-          ({ data: members, onNextPage, hasNextPage, loading }) => {
-            if (!loading) {
-              setMemberList(members);
-              setHasNextPage(hasNextPage);
-              onNextPageRef.current = onNextPage;
-              isFetchingRef.current = false;
-              unsubscribe();
-            }
+  }, [navigation, styles.dotIcon]);
+
+  const onSelectMember = async (users: UserInterface[]) => {
+    const memberIds = users.map((user) => user.userId);
+    try {
+      await updateCommunityMember({ operation: 'ADD', communityId, memberIds });
+      const members = CommunityRepository.Membership.getMembers(
+        {
+          communityId,
+        },
+        ({ data, loading: fetching }) => {
+          !fetching && setMemberList([...data]);
+        }
+      );
+      members();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      const unsubscribe = CommunityRepository.Membership.getMembers(
+        { communityId, limit: 10 },
+        ({ data: members, onNextPage, hasNextPage, loading: fetching }) => {
+          setLoading(fetching);
+          if (!fetching) {
+            setMemberList([...members]);
+            const userArray: UserInterface[] = members.map((member) => {
+              return {
+                userId: member.user.userId,
+                displayName: member.user.displayName,
+                avatarFileId: member.user.avatarFileId,
+              };
+            });
+            setSelectedUser(userArray);
+            setHasNextPage(hasNextPage);
+            onNextPageRef.current = onNextPage;
+            isFetchingRef.current = false;
           }
-        );
-      } catch (error) {
-        console.error('Failed to load categories:', error);
-        isFetchingRef.current = false;
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadMembers();
-  }, []);
+        }
+      );
+      unsubscribe();
+    }, [communityId])
+  );
+
   // const handleMemberClick = (categoryId: string, categoryName: string) => {
   //   setTimeout(() => {
   //     navigation.navigate('CommunityList', { categoryId, categoryName });
@@ -133,6 +170,12 @@ export default function CommunityMemberDetail({ navigation, route }: any) {
         onEndReachedThreshold={0.8}
         onEndReached={handleLoadMore}
         ref={flatListRef}
+      />
+      <AddMembersModal
+        onSelect={onSelectMember}
+        onClose={() => setAddMembersModal(false)}
+        visible={addMembersModal}
+        initUserList={selectedUser}
       />
     </View>
   );
