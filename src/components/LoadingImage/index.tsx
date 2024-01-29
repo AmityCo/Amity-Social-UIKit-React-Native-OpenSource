@@ -24,7 +24,7 @@ interface OverlayImageProps {
   index?: number;
   isUploaded: boolean;
   fileId?: string;
-  isEditMode?: boolean
+  isEditMode?: boolean;
 }
 const LoadingImage = ({
   source,
@@ -33,7 +33,7 @@ const LoadingImage = ({
   onLoadFinish,
   isUploaded = false,
   fileId = '',
-  isEditMode = false
+  isEditMode = false,
 }: OverlayImageProps) => {
   const theme = useTheme() as MyMD3Theme;
   const [loading, setLoading] = useState(true);
@@ -77,7 +77,6 @@ const LoadingImage = ({
       if (!isEditMode) {
         await deleteAmityFile(fileId);
       }
-
     }
   };
   useEffect(() => {

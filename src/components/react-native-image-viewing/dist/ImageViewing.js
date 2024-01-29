@@ -39,7 +39,7 @@ function ImageViewing({
   imageIndex,
   visible,
   onRequestClose,
-  onLongPress = () => { },
+  onLongPress = () => {},
   onImageIndexChange,
   animationType = DEFAULT_ANIMATION_TYPE,
   backgroundColor = DEFAULT_BG_COLOR,
@@ -50,7 +50,7 @@ function ImageViewing({
   HeaderComponent,
   FooterComponent,
   isVideoButton,
-  onClickPlayButton = () => { },
+  onClickPlayButton = () => {},
   videoPosts,
 }) {
   const { apiRegion } = useAuth();
@@ -58,10 +58,11 @@ function ImageViewing({
   const imageList = useRef(null);
   const [opacity, onRequestCloseEnhanced] = useRequestClose(onRequestClose);
   const [currentImageIndex, onScroll] = useImageIndexChange(imageIndex, SCREEN);
-  const [headerTransform, footerTransform, toggleBarsVisible] = useAnimatedComponents();
+  const [headerTransform, footerTransform, toggleBarsVisible] =
+    useAnimatedComponents();
 
   const [isPlaying, setIsPlaying] = useState(false);
-  const [playingUri, setPlayingUri] = useState('')
+  const [playingUri, setPlayingUri] = useState('');
   const videoPlayerRef = useRef(null);
 
   useEffect(() => {
@@ -86,16 +87,18 @@ function ImageViewing({
   const playVideoFullScreen = async () => {
     if (Platform.OS === 'ios') {
       onClickPlayButton(currentImageIndex);
-      setIsPlaying(true)
-      setPlayingUri(`https://api.${apiRegion}.amity.co/api/v3/files/${videoPosts[currentImageIndex]?.videoFileId?.original}/download`)
+      setIsPlaying(true);
+      setPlayingUri(
+        `https://api.${apiRegion}.amity.co/api/v3/files/${videoPosts[currentImageIndex]?.videoFileId?.original}/download`
+      );
       setTimeout(() => {
         videoPlayerRef.current.presentFullscreenPlayer();
       }, 100);
-
     } else {
-      navigation.navigate('VideoPlayer', { source: `https://api.${apiRegion}.amity.co/api/v3/files/${videoPosts[currentImageIndex]?.videoFileId?.original}/download` })
+      navigation.navigate('VideoPlayer', {
+        source: `https://api.${apiRegion}.amity.co/api/v3/files/${videoPosts[currentImageIndex]?.videoFileId?.original}/download`,
+      });
     }
-
   };
 
   // useEffect(() => {
@@ -110,8 +113,8 @@ function ImageViewing({
 
   const onClosePlayer = () => {
     setIsPlaying(false);
-    setPlayingUri('')
-  }
+    setPlayingUri('');
+  };
 
   return (
     <Modal
@@ -181,8 +184,8 @@ function ImageViewing({
             keyExtractor
               ? keyExtractor(imageSrc, index)
               : typeof imageSrc === 'number'
-                ? `${imageSrc}`
-                : imageSrc.uri
+              ? `${imageSrc}`
+              : imageSrc.uri
           }
         />
         {typeof FooterComponent !== 'undefined' && (
@@ -196,16 +199,12 @@ function ImageViewing({
         )}
       </View>
 
-
       <Video
         source={{ uri: playingUri }}
         onVideoFullscreenPlayerWillDismiss={onClosePlayer}
         ref={videoPlayerRef}
         fullscreen={true}
-
       />
-
-
     </Modal>
   );
 }

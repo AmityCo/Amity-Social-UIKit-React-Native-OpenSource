@@ -1,4 +1,7 @@
-import { CommentRepository, ReactionRepository } from '@amityco/ts-sdk-react-native';
+import {
+  CommentRepository,
+  ReactionRepository,
+} from '@amityco/ts-sdk-react-native';
 import { IMentionPosition } from '../../screens/CreatePost';
 
 export interface ICommentRes {
@@ -54,7 +57,6 @@ export async function createComment(
   postId: string,
   mentionUserIds: string[],
   mentionPosition: IMentionPosition[]
-  
 ): Promise<Amity.InternalComment> {
   const createCommentObject: Promise<Amity.InternalComment> = new Promise(
     async (resolve, reject) => {
@@ -65,8 +67,10 @@ export async function createComment(
           },
           referenceId: postId,
           referenceType: 'post' as Amity.CommentReferenceType,
-          mentionees: [{ type: 'user', userIds: mentionUserIds }] as Amity.UserMention[],
-          metadata:{ mentioned: mentionPosition}
+          mentionees: [
+            { type: 'user', userIds: mentionUserIds },
+          ] as Amity.UserMention[],
+          metadata: { mentioned: mentionPosition },
         };
 
         const { data: comment } = await CommentRepository.createComment(
@@ -93,7 +97,10 @@ export async function editComment(
           },
           referenceType: 'post' as Amity.CommentReferenceType,
         };
-        const { data: comment } = await CommentRepository.updateComment(commentId, updatedComment);
+        const { data: comment } = await CommentRepository.updateComment(
+          commentId,
+          updatedComment
+        );
         resolve(comment);
       } catch (error) {
         reject(error);

@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-export const getStyles =()=>{
+export const getStyles = () => {
   const styles = StyleSheet.create({
     imageLargePost: {
       height: 350,
@@ -74,6 +74,6 @@ export const getStyles =()=>{
       transform: [{ translateX: -25 }, { translateY: -25 }],
       zIndex: 1,
     },
-  })
-  return styles
-}
+  });
+  return styles;
+};

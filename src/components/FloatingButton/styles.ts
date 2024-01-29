@@ -6,10 +6,10 @@ export const styles = StyleSheet.create({
     bottom: 135,
     right: 10,
   },
-  otherFeedContainer:{
+  otherFeedContainer: {
     position: 'absolute',
     bottom: 35,
-    right: 10
+    right: 10,
   },
   button: {
     width: 64,

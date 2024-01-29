@@ -20,7 +20,7 @@ export const getStyles = () => {
     headerText: {
       fontWeight: '600',
       fontSize: 15,
-      color: theme.colors.base
+      color: theme.colors.base,
     },
     user: {
       paddingVertical: 8,
@@ -57,7 +57,7 @@ export const getStyles = () => {
       fontStyle: 'normal',
       fontWeight: '400',
       marginBottom: 8,
-      color: theme.colors.base
+      color: theme.colors.base,
     },
     actionSection: {
       borderTopColor: theme.colors.border,
@@ -74,7 +74,7 @@ export const getStyles = () => {
       justifyContent: 'center',
       marginRight: 6,
       borderRadius: 4,
-      flex: 1
+      flex: 1,
     },
 
     declineBtn: {
@@ -86,7 +86,7 @@ export const getStyles = () => {
       borderWidth: 1,
       borderColor: theme.colors.baseShade3,
       borderRadius: 4,
-      flex: 1
+      flex: 1,
     },
     acceptBtnText: {
       color: '#FFF',
@@ -245,16 +245,16 @@ export const getStyles = () => {
     deleteText: {
       paddingLeft: 12,
       fontWeight: '600',
-      color: theme.colors.base
+      color: theme.colors.base,
     },
     timeRow: {
       flexDirection: 'row',
-      alignItems: 'center'
+      alignItems: 'center',
     },
     dot: {
       color: theme.colors.baseShade1,
       fontWeight: '900',
-      paddingHorizontal: 5
+      paddingHorizontal: 5,
     },
     mentionText: {
       color: theme.colors.primary,
@@ -267,5 +267,4 @@ export const getStyles = () => {
   });
 
   return styles;
-}
-
+};

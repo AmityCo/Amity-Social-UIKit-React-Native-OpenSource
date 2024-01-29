@@ -3,12 +3,11 @@ import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
 
 export const getStyles = () => {
-
-  const theme = useTheme() as MyMD3Theme ;
+  const theme = useTheme() as MyMD3Theme;
   const styles = StyleSheet.create({
     container: {
       paddingBottom: 320,
-      backgroundColor: theme.colors.screenBackground
+      backgroundColor: theme.colors.screenBackground,
     },
     uploadContainer: {
       width: '100%',
@@ -20,7 +19,7 @@ export const getStyles = () => {
     defaultImage: {
       width: '100%',
       height: '100%',
-      backgroundColor: '#898e9e'
+      backgroundColor: '#898e9e',
     },
     image: {
       width: '100%',
@@ -46,7 +45,7 @@ export const getStyles = () => {
     },
     allInputContainer: {
       paddingVertical: 24,
-      backgroundColor: theme.colors.background
+      backgroundColor: theme.colors.background,
     },
     inputContainer: {
       paddingHorizontal: 16,
@@ -68,7 +67,7 @@ export const getStyles = () => {
       borderRadius: 5,
       marginTop: 5,
       paddingVertical: 16,
-      color: theme.colors.base
+      color: theme.colors.base,
     },
     inputLengthMeasure: {
       alignSelf: 'flex-end',
@@ -92,10 +91,10 @@ export const getStyles = () => {
       borderBottomColor: theme.colors.border,
     },
     addIcon: {
-      marginHorizontal: 6
+      marginHorizontal: 6,
     },
     arrowIcon: {
-      opacity: 0.75
+      opacity: 0.75,
     },
     listItem: {
       flexDirection: 'row',
@@ -111,7 +110,7 @@ export const getStyles = () => {
       marginRight: 12,
       backgroundColor: '#EBECEF',
       alignItems: 'center',
-      justifyContent: 'center'
+      justifyContent: 'center',
     },
     itemText: {
       fontSize: 15,
@@ -128,7 +127,7 @@ export const getStyles = () => {
       marginTop: 4,
     },
     optionDescription: {
-      width: '70%'
+      width: '70%',
     },
     radioGroup: {
       borderBottomWidth: 1,
@@ -148,7 +147,7 @@ export const getStyles = () => {
     createText: {
       fontWeight: '600',
       fontSize: 15,
-      color: '#FFFFFF'
+      color: '#FFFFFF',
     },
     addUsersContainer: {
       marginVertical: 6,
@@ -166,7 +165,7 @@ export const getStyles = () => {
       alignItems: 'center',
       justifyContent: 'space-between',
       margin: 6,
-      maxWidth: '45%'
+      maxWidth: '45%',
     },
     avatarImageContainer: {
       overflow: 'hidden',
@@ -181,13 +180,12 @@ export const getStyles = () => {
     },
     avatarRow: {
       flexDirection: 'row',
-      alignItems: 'center'
+      alignItems: 'center',
     },
-    loading:{
-      marginLeft: 6
-    }
+    loading: {
+      marginLeft: 6,
+    },
   });
 
   return styles;
-
-}
+};

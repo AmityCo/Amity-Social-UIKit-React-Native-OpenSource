@@ -7,7 +7,7 @@ export const getStyles = () => {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: theme.colors.background
+      backgroundColor: theme.colors.background,
     },
     input: {
       backgroundColor: theme.colors.secondary,
@@ -41,10 +41,9 @@ export const getStyles = () => {
     postBtnText: {
       color: theme.colors.primary,
       fontSize: 16,
-
     },
     postBtn: {
-      marginHorizontal: 12
+      marginHorizontal: 12,
     },
     commentItem: {
       padding: 16,
@@ -101,9 +100,8 @@ export const getStyles = () => {
     inputTextOverlayWrap: {
       flexDirection: 'row',
       backgroundColor: theme.colors.secondary,
-
-    }
+    },
   });
 
   return styles;
-}
+};

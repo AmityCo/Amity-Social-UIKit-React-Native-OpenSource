@@ -103,8 +103,13 @@ export async function createPostToFeed(
   let postParam = {
     targetType: targetType,
     targetId: targetId,
-    mentionees: mentionees.length > 0 ? [{ type: 'user', userIds: mentionees }] as Amity.MentionType['user'][] : [],
-    metadata:{ mentioned: mentionPosition}
+    mentionees:
+      mentionees.length > 0
+        ? ([
+            { type: 'user', userIds: mentionees },
+          ] as Amity.MentionType['user'][])
+        : [],
+    metadata: { mentioned: mentionPosition },
   };
   if (postType === 'text') {
     const newPostParam = {
@@ -142,7 +147,6 @@ export async function createPostToFeed(
     postParam = newPostParam;
   }
   const createPostObject: Promise<Amity.Post<any>> = new Promise(
-    
     async (resolve, reject) => {
       try {
         const { data: post } = await PostRepository.createPost(postParam);

@@ -32,7 +32,7 @@ interface OverlayImageProps {
   fileId?: string;
   thumbNail: string;
   onPlay?: (fileUrl: string) => void;
-  isEditMode?: boolean
+  isEditMode?: boolean;
 }
 const LoadingVideo = ({
   source,
@@ -43,37 +43,32 @@ const LoadingVideo = ({
   thumbNail,
   onPlay,
   fileId,
-  isEditMode = false
+  isEditMode = false,
 }: OverlayImageProps) => {
-
-  const theme = useTheme() as MyMD3Theme
+  const theme = useTheme() as MyMD3Theme;
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
   const [isProcess, setIsProcess] = useState<boolean>(false);
-  const [thumbNailImage, setThumbNailImage] = useState(thumbNail ?? '')
+  const [thumbNailImage, setThumbNailImage] = useState(thumbNail ?? '');
   const styles = createStyles();
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [playingUri, setPlayingUri] = useState<string>('')
-  const [isPause, setIsPause] = useState<boolean>(true)
+  const [playingUri, setPlayingUri] = useState<string>('');
+  const [isPause, setIsPause] = useState<boolean>(true);
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const videoPlayerRef = useRef(null);
 
-
   const playVideoFullScreen = (fileUrl: string) => {
     if (Platform.OS === 'ios') {
-      setIsPlaying(true)
-      setPlayingUri(fileUrl)
+      setIsPlaying(true);
+      setPlayingUri(fileUrl);
     } else {
-      navigation.navigate('VideoPlayer', { source: source })
+      navigation.navigate('VideoPlayer', { source: source });
     }
-
-
   };
   const onClosePlayer = () => {
-
     setIsPlaying(false);
-    setPlayingUri('')
-  }
+    setPlayingUri('');
+  };
 
   useEffect(() => {
     if (videoPlayerRef && isPlaying) {
@@ -81,7 +76,7 @@ const LoadingVideo = ({
         videoPlayerRef as React.MutableRefObject<any>
       ).current.presentFullscreenPlayer();
     }
-  }, [isPlaying, playingUri])
+  }, [isPlaying, playingUri]);
 
   const handleLoadEnd = () => {
     setLoading(false);
@@ -90,12 +85,12 @@ const LoadingVideo = ({
   const processThumbNail = async () => {
     const thumbNail: Thumbnail = await createThumbnail({
       url: source,
-    })
-    setThumbNailImage(thumbNail.path)
-  }
+    });
+    setThumbNailImage(thumbNail.path);
+  };
   useEffect(() => {
-    processThumbNail()
-  }, [thumbNail])
+    processThumbNail();
+  }, [thumbNail]);
 
   useEffect(() => {
     if (progress === 100) {
@@ -123,7 +118,6 @@ const LoadingVideo = ({
           thumbNail
         );
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [source]);
 
   const handleDelete = async () => {
@@ -143,9 +137,9 @@ const LoadingVideo = ({
     }
   }, [fileId, isUploaded, source]);
   const handleOnPlay = () => {
-    setIsPause(false)
-    console.log('play')
-    playVideoFullScreen(source)
+    setIsPause(false);
+    console.log('play');
+    playVideoFullScreen(source);
     onPlay && onPlay(source);
   };
   return (
@@ -155,22 +149,29 @@ const LoadingVideo = ({
           <SvgXml xml={playBtn} width="50" height="50" />
         </TouchableOpacity>
       )}
-      {thumbNailImage ? <Image
-        source={{ uri: thumbNailImage }}
-        style={[
-          styles.image,
-          loading ? styles.loadingImage : styles.loadedImage,
-        ]}
-      /> : <View style={styles.image} />}
+      {thumbNailImage ? (
+        <Image
+          source={{ uri: thumbNailImage }}
+          style={[
+            styles.image,
+            loading ? styles.loadingImage : styles.loadedImage,
+          ]}
+        />
+      ) : (
+        <View style={styles.image} />
+      )}
 
-      {source ?
+      {source ? (
         <Video
           style={styles.thumbnail}
           source={{ uri: playingUri }}
           onFullscreenPlayerWillDismiss={onClosePlayer}
           ref={videoPlayerRef}
           paused={isPause}
-        /> : <View style={styles.image} />}
+        />
+      ) : (
+        <View style={styles.image} />
+      )}
 
       {loading && (
         <View style={styles.overlay}>
@@ -197,7 +198,6 @@ const LoadingVideo = ({
         ref={videoPlayerRef}
         fullscreen={true}
       /> */}
-
     </View>
   );
 };

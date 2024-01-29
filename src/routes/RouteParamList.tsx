@@ -1,5 +1,3 @@
-
-
 export type RootStackParamList = {
   Home: { postIdCallBack?: string };
   CommunitySearch: undefined;
@@ -38,8 +36,11 @@ export type RootStackParamList = {
   EditProfile: {
     userId: string;
   };
+  EditCommunity: {
+    communityId: string;
+  };
   AllMyCommunity: undefined;
   CreateCommunity: undefined;
-  VideoPlayer: {source: string}
-  PendingPosts: {  communityId: string; isModerator: boolean}
+  VideoPlayer: { source: string };
+  PendingPosts: { communityId: string; isModerator: boolean };
 };
