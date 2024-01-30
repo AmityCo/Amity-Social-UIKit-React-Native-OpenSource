@@ -61,7 +61,7 @@ const AddMembersModal = ({
           setSectionedGroupUserList([]);
           const groupedUser = data.reduce((acc, item) => {
             const initial = item.displayName.charAt(0).toUpperCase();
-            //exclude already members
+            //exclude existing members
             if (
               !excludeUserList.some(
                 (excludedUser) => excludedUser.userId === item.userId
