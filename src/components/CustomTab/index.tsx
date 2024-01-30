@@ -8,11 +8,11 @@ import {
   View,
 } from 'react-native';
 import { getStyles } from './styles';
-import { TabNameSubset } from '../../enum/tabNameState';
+import { TabName } from '../../enum/tabNameState';
 
 interface ICustomTab {
-  onTabChange: (tabName: TabNameSubset) => void;
-  tabName: TabNameSubset[];
+  onTabChange: (tabName: TabName) => void;
+  tabName: TabName[];
 }
 const CustomTab = ({ tabName, onTabChange }: ICustomTab): ReactElement => {
   const styles = getStyles();
@@ -24,7 +24,7 @@ const CustomTab = ({ tabName, onTabChange }: ICustomTab): ReactElement => {
     name,
     tabIndex,
   }: {
-    name: TabNameSubset;
+    name: TabName;
     tabIndex: number;
   }) => {
     setActiveTab(tabIndex);
