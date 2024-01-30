@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unstable-nested-components */
 import { NavigationContainer } from '@react-navigation/native';
 import * as React from 'react';
 import {
@@ -26,9 +27,11 @@ import type { MyMD3Theme } from '../providers/amity-ui-kit-provider';
 import { useTheme } from 'react-native-paper';
 import { Image, TouchableOpacity } from 'react-native';
 import { SvgXml } from 'react-native-svg';
-import { searchIcon } from '../svg/svg-xml-list';
-import { getStyles } from '../routes/style';
+import { closeIcon, searchIcon } from '../svg/svg-xml-list';
+import { useStyles } from '../routes/style';
 import BackButton from '../components/BackButton';
+import CloseButton from '../components/CloseButton';
+import EditCommunity from '../screens/EditCommunity/EditCommunity';
 
 export default function SocialNavigator() {
   const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -40,7 +43,7 @@ export default function SocialNavigator() {
   const onClickSearch = (navigation: NativeStackNavigationProp<any>) => {
     navigation.navigate('CommunitySearch');
   };
-  const styles = getStyles();
+  const styles = useStyles();
   return (
     <NavigationContainer independent={true}>
       {isConnected && (
@@ -131,10 +134,57 @@ export default function SocialNavigator() {
           <Stack.Screen name="CommunitySetting" component={CommunitySetting} />
           <Stack.Screen name="CreateCommunity" component={CreateCommunity} />
           <Stack.Screen name="CommunityList" component={CommunityList} />
-          <Stack.Screen name="AllMyCommunity" component={AllMyCommunity} />
-          <Stack.Screen name="CreatePost" component={CreatePost} />
-          <Stack.Screen name="UserProfile" component={UserProfile} />
+          <Stack.Screen
+            name="AllMyCommunity"
+            component={AllMyCommunity}
+            options={({
+              navigation,
+            }: {
+              navigation: NativeStackNavigationProp<any>;
+            }) => ({
+              headerLeft: () => (
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.goBack();
+                  }}
+                  style={styles.btnWrap}
+                >
+                  <SvgXml
+                    xml={closeIcon(theme.colors.base)}
+                    width="15"
+                    height="15"
+                  />
+                </TouchableOpacity>
+              ),
+            })}
+          />
+          <Stack.Screen
+            name="CreatePost"
+            component={CreatePost}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="UserProfile"
+            component={UserProfile}
+            options={{
+              title: '',
+              headerLeft: () => <BackButton />,
+            }}
+          />
           <Stack.Screen name="EditProfile" component={EditProfile} />
+          <Stack.Screen
+            name="EditCommunity"
+            component={EditCommunity}
+            options={({
+              navigation,
+            }: {
+              navigation: NativeStackNavigationProp<any>;
+            }) => ({
+              headerLeft: () => <CloseButton navigation={navigation} />,
+              title: 'Edit Profile',
+              headerTitleAlign: 'center',
+            })}
+          />
           <Stack.Screen
             name="UserProfileSetting"
             component={UserProfileSetting}

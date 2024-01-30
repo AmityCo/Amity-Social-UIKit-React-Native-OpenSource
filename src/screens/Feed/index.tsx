@@ -1,7 +1,6 @@
 import React, {
   forwardRef,
   useCallback,
-  useEffect,
   useImperativeHandle,
   useState,
 } from 'react';
@@ -26,6 +25,7 @@ import { amityPostsFormatter } from '../../util/postDataFormatter';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import feedSlice from '../../redux/slices/feedSlice';
+import { useFocusEffect } from '@react-navigation/native';
 
 interface IFeed {
   targetId: string;
@@ -84,20 +84,22 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
         subscribePostTopic(targetType, targetId);
       }
     );
-    setUnSubPageFunc(() => unsubscribe);
+    setUnSubPageFunc(() => unsubscribe());
   }, [subscribePostTopic, targetId, targetType]);
   const handleLoadMore = () => {
     if (hasNextPage) {
       onNextPage && onNextPage();
     }
   };
-  useEffect(() => {
-    getFeed();
-    return () => {
-      unSubFunc && unSubFunc();
-      dispatch(clearFeed());
-    };
-  }, [clearFeed, dispatch, getFeed, unSubFunc]);
+  useFocusEffect(
+    useCallback(() => {
+      getFeed();
+      return () => {
+        unSubFunc && unSubFunc();
+        dispatch(clearFeed());
+      };
+    }, [clearFeed, dispatch, getFeed, unSubFunc])
+  );
 
   const getPostList = useCallback(async () => {
     if (posts.length > 0) {
@@ -106,9 +108,11 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
     }
   }, [dispatch, posts, updateFeed]);
 
-  useEffect(() => {
-    posts && getPostList();
-  }, [posts, getPostList]);
+  useFocusEffect(
+    useCallback(() => {
+      posts && getPostList();
+    }, [posts, getPostList])
+  );
 
   useImperativeHandle(ref, () => ({
     handleLoadMore,

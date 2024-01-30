@@ -5,28 +5,32 @@ import {
   View,
   Text,
   Modal,
-  Image,
   FlatList,
   type NativeSyntheticEvent,
   type NativeScrollEvent,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
-import { categoryIcon, closeIcon } from '../../svg/svg-xml-list';
-import useAuth from '../../hooks/useAuth';
-import { getStyles } from './styles';
+import { closeIcon } from '../../svg/svg-xml-list';
+import { useStyle } from './styles';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
+import RenderCategories from './Components/RenderCategories';
 
 interface IModal {
   visible: boolean;
   userId?: string;
   onClose: () => void;
   onSelect: (categoryId: string, categoryName: string) => void;
+  categoryId?: string;
 }
-const ChooseCategoryModal = ({ visible, onClose, onSelect }: IModal) => {
+const ChooseCategoryModal = ({
+  visible,
+  onClose,
+  onSelect,
+  categoryId,
+}: IModal) => {
   const theme = useTheme() as MyMD3Theme;
-  const styles = getStyles();
-  const { apiRegion } = useAuth();
+  const styles = useStyle();
   const [categories, setCategories] =
     useState<Amity.LiveCollection<Amity.Category>>();
   const { data: categoriesList, onNextPage } = categories ?? {};
@@ -40,6 +44,12 @@ const ChooseCategoryModal = ({ visible, onClose, onSelect }: IModal) => {
           (data: Amity.LiveCollection<Amity.Category>) => {
             if (data) {
               setCategories(data);
+              if (categoryId) {
+                const currentCategoryName =
+                  data.data.find((item) => item.categoryId === categoryId)
+                    ?.name ?? '';
+                onSelect(categoryId, currentCategoryName);
+              }
             }
           }
         );
@@ -50,33 +60,12 @@ const ChooseCategoryModal = ({ visible, onClose, onSelect }: IModal) => {
     };
 
     loadCategories();
-  }, []);
+  }, [categoryId, onSelect]);
 
   const onSelectCategory = (categoryId: string, categoryName: string) => {
     onSelect && onSelect(categoryId, categoryName);
     unSubFunc && unSubFunc();
     onClose && onClose();
-  };
-  const renderCategories = ({ item }: { item: Amity.Category }) => {
-    return (
-      <TouchableOpacity
-        onPress={() => onSelectCategory(item.categoryId, item.name)}
-        style={styles.rowContainer}
-      >
-        {item.avatarFileId ? (
-          <Image
-            style={styles.avatar}
-            source={{
-              uri: `https://api.${apiRegion}.amity.co/api/v3/files/${item.avatarFileId}/download`,
-            }}
-          />
-        ) : (
-          <SvgXml xml={categoryIcon} width={40} height={40} />
-        )}
-
-        <Text style={styles.communityText}>{item.name}</Text>
-      </TouchableOpacity>
-    );
   };
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -112,7 +101,9 @@ const ChooseCategoryModal = ({ visible, onClose, onSelect }: IModal) => {
         </View>
         <FlatList
           data={categoriesList}
-          renderItem={renderCategories}
+          renderItem={({ item }) => (
+            <RenderCategories item={item} onSelectCategory={onSelectCategory} />
+          )}
           keyExtractor={(item) => item.categoryId}
           onScroll={handleScroll}
         />

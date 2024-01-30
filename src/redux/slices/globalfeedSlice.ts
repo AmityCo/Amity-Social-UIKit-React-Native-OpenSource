@@ -13,7 +13,14 @@ const globalFeedSlice = createSlice({
   initialState,
   reducers: {
     updateGlobalFeed: (state, action: PayloadAction<IPost[]>) => {
-      state.postList = [...state.postList, ...action.payload];
+      const getUniqueArrayById = (arr: IPost[]) => {
+        const uniqueIds = new Set(state.postList.map((post) => post.postId));
+        return arr.filter((post) => !uniqueIds.has(post.postId));
+      };
+      state.postList = [
+        ...state.postList,
+        ...getUniqueArrayById(action.payload),
+      ];
     },
 
     updateByPostId: (
