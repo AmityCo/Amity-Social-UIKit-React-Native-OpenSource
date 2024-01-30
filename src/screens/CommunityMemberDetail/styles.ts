@@ -29,6 +29,27 @@ export const useStyles = () => {
       width: 16,
       height: 12,
     },
+    modalContainer: {
+      flex: 1,
+      justifyContent: 'flex-end',
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalContent: {
+      backgroundColor: theme.colors.background,
+      borderTopLeftRadius: 10,
+      borderTopRightRadius: 10,
+      padding: 20,
+      minHeight: 120,
+    },
+    modalRow: {
+      marginVertical: 10,
+    },
+    postText: {
+      paddingLeft: 12,
+      fontWeight: '600',
+      color: theme.colors.base,
+      fontSize: 16,
+    },
   });
 
   return styles;

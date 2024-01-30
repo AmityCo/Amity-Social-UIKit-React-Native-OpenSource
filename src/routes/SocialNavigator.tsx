@@ -97,7 +97,7 @@ export default function SocialNavigator() {
             options={({
               navigation,
               route: {
-                params: { communityName, communityId },
+                params: { communityName, communityId, isModerator },
               },
             }: any) => ({
               headerLeft: () => <BackButton />,
@@ -109,6 +109,7 @@ export default function SocialNavigator() {
                     navigation.navigate('CommunitySetting', {
                       communityId: communityId,
                       communityName: communityName,
+                      isModerator: isModerator,
                     });
                   }}
                 >

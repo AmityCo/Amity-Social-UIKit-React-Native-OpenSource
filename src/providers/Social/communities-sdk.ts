@@ -129,3 +129,43 @@ export const updateCommunityMember = ({
   });
   return communityMembers;
 };
+
+export const assignRolesToUsers = (
+  communityId: string,
+  roles: string[],
+  userIds: string[]
+) => {
+  const assignUserRoles = new Promise<boolean>(async (resolve, reject) => {
+    try {
+      const result = await CommunityRepository.Moderation.addRoles(
+        communityId,
+        roles,
+        userIds
+      );
+      resolve(result);
+    } catch (error) {
+      reject(error);
+    }
+  });
+  return assignUserRoles;
+};
+
+export const removeRolesFromUsers = (
+  communityId: string,
+  roles: string[],
+  userIds: string[]
+) => {
+  const removeUserRoles = new Promise<boolean>(async (resolve, reject) => {
+    try {
+      const result = await CommunityRepository.Moderation.removeRoles(
+        communityId,
+        roles,
+        userIds
+      );
+      resolve(result);
+    } catch (error) {
+      reject(error);
+    }
+  });
+  return removeUserRoles;
+};

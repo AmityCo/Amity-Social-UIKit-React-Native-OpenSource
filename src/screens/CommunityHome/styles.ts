@@ -62,7 +62,7 @@ export const getStyles = () => {
       padding: 20,
     },
     overlayCommunityText: {
-      color: theme.colors.base,
+      color: theme.colors.background,
       fontWeight: 'bold',
       fontSize: 20,
       marginBottom: 5,

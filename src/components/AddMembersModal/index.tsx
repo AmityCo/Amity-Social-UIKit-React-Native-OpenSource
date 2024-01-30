@@ -25,6 +25,7 @@ interface IModal {
   initUserList: UserInterface[];
   onClose: () => void;
   onSelect: (users: UserInterface[]) => void;
+  excludeUserList?: UserInterface[];
 }
 export type SelectUserList = {
   title: string;
@@ -35,6 +36,7 @@ const AddMembersModal = ({
   onClose,
   onSelect,
   initUserList,
+  excludeUserList = [],
 }: IModal) => {
   const styles = useStyle();
   const theme = useTheme() as MyMD3Theme;
@@ -50,30 +52,42 @@ const AddMembersModal = ({
     setSelectedUserList([...initUserList]);
   }, [initUserList]);
 
-  const queryAccounts = useCallback((text: string = '') => {
-    const unsubscribe = UserRepository.searchUserByDisplayName(
-      { displayName: text, limit: 20 },
-      ({ data, onNextPage }) => {
-        userNextPageRef.current = onNextPage;
-        setSectionedGroupUserList([]);
-        const groupedUser = data.reduce((acc, item) => {
-          const initial = item.displayName.charAt(0).toUpperCase();
-          const existingGroup = acc.find((group) => group.title === initial);
-          if (existingGroup) {
-            existingGroup.data.push(item);
-          } else {
-            acc.push({
-              title: initial,
-              data: [item],
-            });
-          }
-          return acc;
-        }, []);
-        setSectionedGroupUserList(groupedUser);
-      }
-    );
-    return () => unsubscribe();
-  }, []);
+  const queryAccounts = useCallback(
+    (text: string = '') => {
+      const unsubscribe = UserRepository.searchUserByDisplayName(
+        { displayName: text, limit: 20 },
+        ({ data, onNextPage }) => {
+          userNextPageRef.current = onNextPage;
+          setSectionedGroupUserList([]);
+          const groupedUser = data.reduce((acc, item) => {
+            const initial = item.displayName.charAt(0).toUpperCase();
+            //exclude already members
+            if (
+              !excludeUserList.some(
+                (excludedUser) => excludedUser.userId === item.userId
+              )
+            ) {
+              const existingGroup = acc.find(
+                (group) => group.title === initial
+              );
+              if (existingGroup) {
+                existingGroup.data.push(item);
+              } else {
+                acc.push({
+                  title: initial,
+                  data: [item],
+                });
+              }
+            }
+            return acc;
+          }, []);
+          setSectionedGroupUserList(groupedUser);
+        }
+      );
+      return () => unsubscribe();
+    },
+    [excludeUserList]
+  );
   const handleChange = (text: string) => {
     setSearchTerm(text);
   };

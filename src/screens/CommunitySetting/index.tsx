@@ -18,12 +18,15 @@ export const CommunitySetting: React.FC<ChatDetailProps> = ({
 }) => {
   const theme = useTheme() as MyMD3Theme;
   const styles = getStyles();
-  const { communityId } = route.params;
+  const { communityId, isModerator } = route.params;
   const handleMembersPress = () => {
     navigation.navigate('CommunityMemberDetail', {
       communityId: communityId,
+      isModerator: isModerator,
     });
   };
+
+  console.log(isModerator);
   const handleLeaveCommunityPress = async () => {
     const hasLeft = await CommunityRepository.leaveCommunity(communityId);
     if (hasLeft) {
