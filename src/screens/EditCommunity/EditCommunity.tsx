@@ -413,7 +413,8 @@ const EditCommunity = ({ navigation, route }) => {
         onSelect={handleAddMembers}
         onClose={() => setAddMembersModal(false)}
         visible={addMembersModal}
-        initUserList={selectedUserList}
+        initUserList={[]}
+        excludeUserList={[]}
       />
     </ScrollView>
   );
