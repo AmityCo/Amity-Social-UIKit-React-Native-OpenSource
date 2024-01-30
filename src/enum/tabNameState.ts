@@ -6,11 +6,3 @@ export enum TabName {
   Communities = 'Communities',
   Accounts = 'Accounts',
 }
-
-export type TabNameSubset =
-  | TabName.Accounts
-  | TabName.Communities
-  | TabName.Explorer
-  | TabName.Gallery
-  | TabName.NewsFeed
-  | TabName.Timeline;

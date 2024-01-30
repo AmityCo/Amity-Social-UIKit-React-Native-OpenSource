@@ -26,7 +26,7 @@ import { editIcon } from '../../svg/svg-xml-list';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import { useTheme } from 'react-native-paper';
 import FloatingButton from '../../components/FloatingButton';
-import { TabName, TabNameSubset } from '../../enum/tabNameState';
+import { TabName } from '../../enum/tabNameState';
 
 export default function UserProfile({ route }: any) {
   const theme = useTheme() as MyMD3Theme;
@@ -151,7 +151,7 @@ export default function UserProfile({ route }: any) {
     );
   };
 
-  const handleTab = (tabName: TabNameSubset) => {
+  const handleTab = (tabName: TabName) => {
     console.log('index: ', tabName); //this func not implmented yet
   };
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {

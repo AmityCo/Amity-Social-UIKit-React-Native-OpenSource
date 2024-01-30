@@ -37,7 +37,7 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import FloatingButton from '../../components/FloatingButton';
 import useImage from '../../hooks/useImage';
-import { TabName, TabNameSubset } from '../../enum/tabNameState';
+import { TabName } from '../../enum/tabNameState';
 
 export type FeedRefType = {
   handleLoadMore: () => void;
@@ -200,7 +200,7 @@ export default function CommunityHome({ route }: any) {
     );
   };
 
-  const handleTab = (tabName: TabNameSubset) => {
+  const handleTab = (tabName: TabName) => {
     console.log('index: ', tabName); //this func not implmented yet
   };
 

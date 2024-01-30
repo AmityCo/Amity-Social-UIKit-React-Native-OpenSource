@@ -21,7 +21,7 @@ import type { ISearchItem } from '../../components/SearchItem';
 import SearchItem from '../../components/SearchItem';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
-import { TabName, TabNameSubset } from '../../enum/tabNameState';
+import { TabName } from '../../enum/tabNameState';
 
 enum searchTypeEnum {
   user = 'user',
@@ -130,7 +130,7 @@ export default function CommunitySearch() {
   const cancelSearch = () => {
     navigation.goBack();
   };
-  const handleTabChange = (tabName: TabNameSubset) => {
+  const handleTabChange = (tabName: TabName) => {
     if (tabName === TabName.Communities) {
       setSearchType(searchTypeEnum.community);
       if (searchTerm.length > 0) {
