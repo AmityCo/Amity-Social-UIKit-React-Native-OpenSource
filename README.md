@@ -70,6 +70,33 @@ Then, inside another project, Copy tgz file to your application folder where you
 
 ```sh
 1. yarn add ./amity-react-native-social-ui-kit-x.x.x.tgz
+2. yarn add react-native-safe-area-context \react-native-image-picker \@react-native-async-storage/async-storage \react-native-svg@13.4.0 \react-native-screens \react-native-video \react-native-create-thumbnail@1.6.0 \@react-native-community/netinfo
+```
+
+### iOS Configuration
+
+```sh
+npx pod-install
+
+```
+
+### Android Configuration
+
+Build project gradle with your Android Studio
+
+### Add Camera permission (only iOS)
+
+Add following permissions to `info.plist` file (ios/{YourAppName}/Info.plist)
+
+```sh
+ <key>NSCameraUsageDescription</key>
+ <string>App needs access to the camera to take photos.</string>
+ <key>NSMicrophoneUsageDescription</key>
+ <string>App needs access to the microphone to record audio.</string>
+ <key>NSCameraUsageDescription</key>
+ <string>App needs access to the camera to take photos.</string>
+ <key>NSPhotoLibraryUsageDescription</key>
+ <string>App needs access to the gallery to select photos.</string>
 ```
 
 ### Usage
