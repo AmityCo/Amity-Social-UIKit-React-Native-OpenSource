@@ -58,22 +58,25 @@ const CustomTab = ({ tabName, onTabChange }: ICustomTab): ReactElement => {
   };
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        onLayout={getLayoutTabOneWidth}
-        onPress={() => handleTabPress({ name: tabName[0], tabIndex: 1 })}
-      >
-        <Text style={[styles.tabText, activeTab === 1 && styles.activeTabText]}>
-          {tabName[0]}
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onLayout={getLayoutTabTwoWidth}
-        onPress={() => handleTabPress({ name: tabName[1], tabIndex: 2 })}
-      >
-        <Text style={[styles.tabText, activeTab === 2 && styles.activeTabText]}>
-          {tabName[1]}
-        </Text>
-      </TouchableOpacity>
+      {tabName.map((tab, index) => {
+        const onLayout =
+          index === 0 ? getLayoutTabOneWidth : getLayoutTabTwoWidth;
+        return (
+          <TouchableOpacity
+            onLayout={onLayout}
+            onPress={() => handleTabPress({ name: tab, tabIndex: index + 1 })}
+          >
+            <Text
+              style={[
+                styles.tabText,
+                activeTab === index + 1 && styles.activeTabText,
+              ]}
+            >
+              {tab}
+            </Text>
+          </TouchableOpacity>
+        );
+      })}
       <Animated.View
         style={[styles.indicator, getIndicatorPosition(), dynamicWidthStyle]}
       />

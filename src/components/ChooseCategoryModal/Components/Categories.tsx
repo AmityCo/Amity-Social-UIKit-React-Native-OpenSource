@@ -1,11 +1,11 @@
 import { Image, Text, TouchableOpacity } from 'react-native';
-import React from 'react';
+import React, { memo } from 'react';
 import useImage from '../../../hooks/useImage';
 import { SvgXml } from 'react-native-svg';
 import { categoryIcon } from '../../../svg/svg-xml-list';
 import { useStyle } from '../styles';
 
-const RenderCategories = ({
+const Categories = ({
   item,
   onSelectCategory,
 }: {
@@ -35,4 +35,4 @@ const RenderCategories = ({
   );
 };
 
-export default RenderCategories;
+export default memo(Categories);

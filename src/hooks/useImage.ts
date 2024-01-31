@@ -14,16 +14,14 @@ const useImage = ({
   const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
 
   useEffect(() => {
-    if (fileId == null) {
-      setImageUrl(undefined);
-      return;
-    }
-
     async function run() {
+      if (!fileId) return;
       const file = await FileRepository.getFile(fileId);
-      const newImageUrl = !file
-        ? undefined
-        : await FileRepository.fileUrlWithSize(file.data.fileUrl, imageSize);
+      if (!file) return;
+      const newImageUrl = await FileRepository.fileUrlWithSize(
+        file.data.fileUrl,
+        imageSize
+      );
       setImageUrl(newImageUrl);
     }
     run();

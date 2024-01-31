@@ -13,8 +13,8 @@ import { SvgXml } from 'react-native-svg';
 import { closeIcon } from '../../svg/svg-xml-list';
 import { useStyle } from './styles';
 import { useTheme } from 'react-native-paper';
-import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
-import RenderCategories from './Components/RenderCategories';
+import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
+import Categories from './Components/Categories';
 
 interface IModal {
   visible: boolean;
@@ -102,7 +102,7 @@ const ChooseCategoryModal = ({
         <FlatList
           data={categoriesList}
           renderItem={({ item }) => (
-            <RenderCategories item={item} onSelectCategory={onSelectCategory} />
+            <Categories item={item} onSelectCategory={onSelectCategory} />
           )}
           keyExtractor={(item) => item.categoryId}
           onScroll={handleScroll}
