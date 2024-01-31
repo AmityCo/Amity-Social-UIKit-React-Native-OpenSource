@@ -76,7 +76,6 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
   }
   const handleLoadMore = () => {
     if (hasNextPage) {
-      console.log('hasNextPage:', hasNextPage)
       onNextPage && onNextPage();
     }
   };

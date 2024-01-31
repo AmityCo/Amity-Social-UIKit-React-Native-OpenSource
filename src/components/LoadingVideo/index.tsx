@@ -142,12 +142,13 @@ const LoadingVideo = ({
       uploadFileToAmity();
     }
   }, [fileId, isUploaded, source]);
+
   const handleOnPlay = () => {
     setIsPause(false)
-    console.log('play')
     playVideoFullScreen(source)
     onPlay && onPlay(source);
   };
+
   return (
     <View style={styles.container}>
       {!loading && (

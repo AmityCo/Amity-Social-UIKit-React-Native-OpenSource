@@ -6,7 +6,8 @@ export const getStyles = () => {
   const theme = useTheme() as MyMD3Theme;
   const styles = StyleSheet.create({
     container: {
-      backgroundColor: theme.colors.background
+      backgroundColor: theme.colors.background,
+      paddingBottom: 260
     },
     headerWrap: {
       flexDirection: 'row',

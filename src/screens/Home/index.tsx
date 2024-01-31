@@ -14,7 +14,7 @@ import {
   LogBox,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
-import { postIconOutlined, searchIcon } from '../../svg/svg-xml-list';
+import { plusIcon, postIconOutlined, searchIcon } from '../../svg/svg-xml-list';
 import FloatingButton from '../../components/FloatingButton';
 import useAuth from '../../hooks/useAuth';
 import Explore from '../Explore';
@@ -27,11 +27,16 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import AllMyCommunity from '../AllMyCommunity';
+import useConfig from '../../hooks/useConfig';
+import { ComponentID } from '../../util/enumUIKitID';
+
 LogBox.ignoreAllLogs(true);
 export default function Home() {
   const styles = getStyles();
   const { client } = useAuth();
   const theme = useTheme() as MyMD3Theme;
+
+  const { excludes } = useConfig()
 
   const [activeTab, setActiveTab] = useState(1);
   const [isVisible, setIsVisible] = useState(false);
@@ -42,11 +47,18 @@ export default function Home() {
   const onClickSearch = () => {
     navigation.navigate('CommunitySearch');
   };
+  const onClickAddCommunity = () => {
+    navigation.navigate('CreateCommunity');
+  };
   navigation.setOptions({
     headerRight: () => (
-      <TouchableOpacity onPress={onClickSearch} style={styles.btnWrap}>
-        <SvgXml xml={searchIcon(theme.colors.base)} width="25" height="25" />
+      activeTab === 3 ? <TouchableOpacity onPress={onClickAddCommunity} style={styles.btnWrap}>
+        <SvgXml xml={plusIcon(theme.colors.base)} width="25" height="25" />
       </TouchableOpacity>
+        :
+        <TouchableOpacity onPress={onClickSearch} style={styles.btnWrap}>
+          <SvgXml xml={searchIcon(theme.colors.base)} width="25" height="25" />
+        </TouchableOpacity>
     ),
     headerTitle: 'Community',
   });
@@ -87,7 +99,7 @@ export default function Home() {
     let exploreStyle: StyleProp<ImageStyle> | StyleProp<ImageStyle>[] = styles.invisible;
     let myCommunityStyle: StyleProp<ImageStyle> | StyleProp<ImageStyle>[] = styles.invisible;
 
-    if(activeTab=== 1){
+    if (activeTab === 1) {
       globalFeedStyle = styles.visible;
       exploreStyle = styles.invisible;
       myCommunityStyle = styles.invisible;
@@ -133,7 +145,7 @@ export default function Home() {
   return (
     <View>
       <CustomTab
-        tabName={['Newsfeed', 'Explore', 'My Communities']}
+        tabName={excludes.includes(ComponentID.StoryTab) ? ['Newsfeed', 'Explore'] : ['Newsfeed', 'Explore', 'My Communities']}
         onTabChange={handleTabChange}
       />
       {renderTabComponent()}

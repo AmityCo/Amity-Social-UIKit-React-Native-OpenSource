@@ -16,17 +16,15 @@ import { amityPostsFormatter } from '../../util/postDataFormatter';
 import { useDispatch, useSelector } from 'react-redux'
 import globalFeedSlice from '../../redux/slices/globalfeedSlice';
 import { RootState } from '../../redux/store';
-// import MyStories from '../../components/MyStories'
 import useConfig from '../../hooks/useConfig';
-// import { ComponentID } from '../../util/enumUIKitID';
+
+import { ComponentID } from '../../util/enumUIKitID';
+import MyCommunity from '../../components/MyCommunity';
 
 export default function GlobalFeed() {
 
-  const { excludes } = useConfig()
-  console.log('excludes: ', excludes);
-
   const { postList } = useSelector((state: RootState) => state.globalFeed)
-
+const {excludes} = useConfig()
   const { updateGlobalFeed, deleteByPostId } = globalFeedSlice.actions
   const dispatch = useDispatch()
 
@@ -90,7 +88,7 @@ export default function GlobalFeed() {
           onEndReached={handleLoadMore}
           ref={flatListRef}
           extraData={postList}
-          // ListHeaderComponent={!excludes.includes(ComponentID.StoryTab)&&<MyStories />}
+          ListHeaderComponent={excludes.includes(ComponentID.StoryTab) && <MyCommunity/>}
         />
 
       </View>

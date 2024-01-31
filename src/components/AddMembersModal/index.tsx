@@ -152,7 +152,6 @@ const AddMembersModal = ({ visible, onClose, onSelect, initUserList }: IModal) =
     const isEnd =
       layoutMeasurement.height + contentOffset.y >= contentSize.height;
     console.log('isEnd:', isEnd)
-    // setIsScrollEnd(isEnd);
   };
   const handleOnClose = () => {
     setSelectedUserList(initUserList)

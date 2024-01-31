@@ -30,7 +30,6 @@ const StoryCircleListItem = ({
   const prevSeen = usePrevious(item?.seen);
   const { getConfig } = useConfig()
   const [storyRingColor, setStoryRingColor] = useState<string[]>([])
-  console.log('storyRingColor: ', storyRingColor);
 
 
   useLayoutEffect(() => {

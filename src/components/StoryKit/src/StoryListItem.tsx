@@ -49,7 +49,7 @@ export const StoryListItem = ({
   storyContainerStyle,
   ...props
 }: StoryListItemProps) => {
-  console.log('currentPage: ', currentPage);
+
   const [load, setLoad] = useState<boolean>(true);
   const [pressed, setPressed] = useState<boolean>(false);
   const [content, setContent] = useState<IUserStoryItem[]>(
@@ -68,12 +68,7 @@ export const StoryListItem = ({
 
   useFocusEffect(
     React.useCallback(() => {
-      // This will be called when the screen is focused
-      // console.log('Screen focused currentPage', currentPage);
-
-      // Return a cleanup function that will be called when the screen loses focus
       return () => {
-        console.log('not focus')
         setPressed(true)
       };
     }, [])
@@ -218,7 +213,6 @@ export const StoryListItem = ({
 
 
   const handleLoadVideo = (data: OnLoadData) => {
-    console.log('data: ', data);
     setStoryDuration(data.duration * 1000)
 
   }

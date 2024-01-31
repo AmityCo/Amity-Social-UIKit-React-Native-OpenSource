@@ -7,10 +7,10 @@
   resolved "https://registry.yarnpkg.com/@aashutoshrathi/word-wrap/-/word-wrap-1.2.6.tgz#bd9154aec9983f77b3a034ecaa015c2e4201f6cf"
   integrity sha512-1Yjs2SvM8TflER/OD3cOjhWWOZb58A2t7wpE2S9XfBYTiIl+XFhQG2bjy4Pu1I+EAlCNUzRDYDdFwFYUKvXcIA==
 
-"@amityco/ts-sdk-react-native@^6.15.0":
-  version "6.15.0"
-  resolved "https://registry.yarnpkg.com/@amityco/ts-sdk-react-native/-/ts-sdk-react-native-6.15.0.tgz#33131eaf248c4c148aa63e2cc8d37efb7d19d2ad"
-  integrity sha512-rt7lOVeNt4/rAY5wFR3A8kL0Tx2Rry54tw2xpzjLrhdoPyyoE7LAap9o4+lbT09YRnr+HEZGVAcOkoz2uvUQcg==
+"@amityco/ts-sdk-react-native@^6.17.0":
+  version "6.17.0"
+  resolved "https://registry.yarnpkg.com/@amityco/ts-sdk-react-native/-/ts-sdk-react-native-6.17.0.tgz#52fc2f530e5d727b74e68349109f08a393c80122"
+  integrity sha512-6kxsE1V8RvwKq55S+uICYIiXuBuxHkaKzcdiMfvt2HckDYqOn2sQF1N09zkfnZqt/rTl+ex90pGeCTgOLwc27Q==
   dependencies:
     "@react-native-async-storage/async-storage" "^1.17.7"
     "@react-native-community/netinfo" "^9.4.1"
@@ -25,23 +25,6 @@
     react-native-uuid "^2.0.1"
     socket.io-client "2.2.0"
     ts-jest "^28.0.3"
-
-"@amityco/ts-sdk@6.14.2-8a53de7.0":
-  version "6.14.2-8a53de7.0"
-  resolved "https://registry.yarnpkg.com/@amityco/ts-sdk/-/ts-sdk-6.14.2-8a53de7.0.tgz#3fc7129f8aa5f06360a9edc0c29a88e9387fb456"
-  integrity sha512-pmv7Tps9WpSL1oD6Zmzdl+nuZqVNUcgsZ44N93uamSs04tMFW7wrmePAZfTVITTs7Clyv0jnjLacjLySxTq6JA==
-  dependencies:
-    "@react-native-async-storage/async-storage" "^1.17.7"
-    agentkeepalive "^4.2.1"
-    axios "^1.2.3"
-    debug "^4.3.4"
-    hls.js "^1.4.10"
-    js-base64 "^3.7.2"
-    mitt "^3.0.0"
-    mqtt "^4.3.7"
-    object-hash "^3.0.0"
-    react-native-uuid "^2.0.1"
-    socket.io-client "2.2.0"
 
 "@ampproject/remapping@^2.2.0":
   version "2.2.1"

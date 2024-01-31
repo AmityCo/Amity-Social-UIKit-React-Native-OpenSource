@@ -5,7 +5,7 @@
       "secondary_color": "#AB1234"
     }
   },
-  "excludes": ["create_story_page/*/*"],
+  "excludes": ["*/story_tab_component/*"],
   "customizations": {
     "select_target_page/*/*": {
       "page_theme": {

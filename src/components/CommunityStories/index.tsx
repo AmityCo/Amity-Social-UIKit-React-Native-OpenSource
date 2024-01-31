@@ -18,7 +18,7 @@ export default function CommunityStories({ communityId }: ICommunityStories) {
   console.log({ communityItem })
 
   const [communityStories, setCommunityStories] = useState<any>([])
-  console.log('communityStories: ', communityStories);
+
 
   const queryCommunities = () => {
 
@@ -54,7 +54,7 @@ export default function CommunityStories({ communityId }: ICommunityStories) {
 
     const params: Amity.GetStoriesByTargetParam = { targetType: 'community', targetId: communityId }
     StoryRepository.getActiveStoriesByTarget(params, ({ data }) => {
-      console.log('story data: ', data);
+
       const storyData = data.map((item: Amity.Story) => {
 
         return {

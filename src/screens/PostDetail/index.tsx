@@ -25,6 +25,7 @@ import CommentList from '../../components/Social/CommentList';
 import { CommentRepository, CommunityRepository, PostRepository, SubscriptionLevels, UserRepository, getCommunityTopic, getPostTopic, getUserTopic, subscribeTopic } from '@amityco/ts-sdk-react-native';
 import {
   createComment,
+  createReplyComment,
   deleteCommentById,
 } from '../../providers/Social/comment-sdk';
 
@@ -32,12 +33,14 @@ import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import { useTheme } from 'react-native-paper';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import BackButton from '../../components/BackButton';
-import {  useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { ISearchItem } from '../../components/SearchItem';
 import MentionPopup from '../../components/MentionPopup';
 import { IMentionPosition } from '../CreatePost';
 import _ from 'lodash';
+import { SvgXml } from 'react-native-svg';
+import { closeIcon } from '../../svg/svg-xml-list';
 
 
 const PostDetail = () => {
@@ -51,7 +54,7 @@ const PostDetail = () => {
     postIndex,
     isFromGlobalfeed
   } = route.params;
-  console.log('postId: ', postId);
+
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
   const [commentList, setCommentList] = useState<IComment[]>([]);
@@ -78,6 +81,9 @@ const PostDetail = () => {
   const [currentSearchUserName, setCurrentSearchUserName] = useState<string>('')
   const [cursorIndex, setCursorIndex] = useState<number>(0)
   const [mentionsPosition, setMentionsPosition] = useState<IMentionPosition[]>([])
+
+  const [replyUserName, setReplyUserName] = useState<string>('')
+  const [replyCommentId, setReplyCommentId] = useState<string>('')
 
   useEffect(() => {
     const checkMentionNames = mentionNames.filter((item) => {
@@ -107,13 +113,13 @@ const PostDetail = () => {
   });
 
   const getPost = (postId: string) => {
-    const unsubscribePost = PostRepository.getPost(
+    PostRepository.getPost(
       postId,
       async ({ data }) => {
         setPostCollection(data);
       }
     );
-    console.log('unSubscribePost:', unsubscribePost)
+
   };
 
   useEffect(() => {
@@ -169,7 +175,6 @@ const PostDetail = () => {
         if (data.error) throw data.error;
         if (!data.loading) {
           setCommentCollection(data);
-          console.log('data: ', data.data.length);
         }
       }
     );
@@ -223,6 +228,7 @@ const PostDetail = () => {
             editedAt: item.editedAt,
             createdAt: item.createdAt,
             childrenComment: item.children,
+            childrenNumber: item.childrenNumber,
             referenceId: item.referenceId,
             mentionPosition: item?.metadata?.mentioned ?? []
 
@@ -240,7 +246,6 @@ const PostDetail = () => {
   }, [commentCollection]);
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    console.log('load more comment')
     const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
 
     const isScrollEndReached =
@@ -258,10 +263,16 @@ const PostDetail = () => {
     }
     Keyboard.dismiss();
     setInputMessage('');
-    await createComment(inputMessage, postId, mentionNames?.map(item => item.targetId), mentionsPosition);
+    if (replyCommentId.length > 0) {
+      await createReplyComment(inputMessage, postId, replyCommentId, mentionNames?.map(item => item.targetId), mentionsPosition);
+    } else {
+      await createComment(inputMessage, postId, mentionNames?.map(item => item.targetId), mentionsPosition);
+    }
+
     setInputMessage('');
     setMentionNames([])
-    setMentionsPosition([])
+    setMentionsPosition([]);
+    onCloseReply();
   };
   const onDeleteComment = async (commentId: string) => {
     const isDeleted = await deleteCommentById(commentId);
@@ -361,6 +372,18 @@ const PostDetail = () => {
     // Flatten the array and render
     return <Text style={styles.inputText}>{result.flat()}</Text>;
   };
+
+
+  const handleClickReply = (user: UserInterface, commentId: string) => {
+    setReplyUserName(user.displayName)
+    setReplyCommentId(commentId)
+
+  }
+  const onCloseReply = () => {
+    setReplyUserName('')
+    setReplyCommentId('')
+  }
+
   return (
     loading ? <View>
 
@@ -381,9 +404,9 @@ const PostDetail = () => {
             <FlatList
               data={commentList}
               renderItem={({ item }) => (
-                <CommentList onDelete={onDeleteComment} commentDetail={item} />
+                <CommentList onDelete={onDeleteComment} commentDetail={item} onClickReply={handleClickReply} />
               )}
-              keyExtractor={(item) => item.commentId.toString()}
+              keyExtractor={(item, index) => item.commentId + index}
               onEndReachedThreshold={0.8}
               onEndReached={onNextPage}
               ref={flatListRef}
@@ -392,8 +415,19 @@ const PostDetail = () => {
 
         </ScrollView>
         {isShowMention && <MentionPopup userName={currentSearchUserName} onSelectMention={onSelectUserMention} />}
+        {replyUserName.length > 0 && <View style={styles.replyLabelWrap}>
+          <Text style={styles.replyLabel}>Replying to <Text style={styles.userNameLabel}>{replyUserName}</Text></Text>
+          <TouchableOpacity>
+            <TouchableOpacity onPress={onCloseReply}>
+              <SvgXml style={styles.closeIcon} xml={closeIcon(theme.colors.baseShade2)} width={20} />
+            </TouchableOpacity>
+
+          </TouchableOpacity>
+
+        </View>}
 
         <View style={styles.InputWrap}>
+
           <View style={styles.inputContainer}>
             <TextInput
               multiline
