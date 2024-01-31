@@ -14,7 +14,8 @@ export const AuthContext = React.createContext<AuthContextInterface>({
   logout: () => { },
   isConnected: false,
   sessionState: '',
-  apiRegion: 'sg'
+  apiRegion: 'sg',
+  authToken: ''
 });
 
 export const AuthContextProvider: FC<IAmityUIkitProvider> = ({
@@ -24,12 +25,14 @@ export const AuthContextProvider: FC<IAmityUIkitProvider> = ({
   apiRegion,
   apiEndpoint,
   children,
+  authToken
 }: IAmityUIkitProvider) => {
   const [error, setError] = useState('');
   const [isConnecting, setLoading] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const [sessionState, setSessionState] = useState('');
 
+  console.log('authToken: ', authToken);
   const client: Amity.Client = Client.createClient(apiKey, apiRegion, {
     apiEndpoint: { http: apiEndpoint },
   });
@@ -58,11 +61,18 @@ export const AuthContextProvider: FC<IAmityUIkitProvider> = ({
 
 
   const handleConnect = async () => {
+    let loginParam;
+
+    loginParam = {
+      userId: userId,
+      displayName: displayName, // optional
+    }
+    if (authToken?.length > 0) {
+      loginParam = { ...loginParam, authToken: authToken }
+    } 
     const response = await Client.login(
-      {
-        userId: userId,
-        displayName: displayName, // optional
-      },
+      loginParam
+      ,
       sessionHandler
     );
 

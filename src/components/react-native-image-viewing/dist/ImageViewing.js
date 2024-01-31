@@ -84,22 +84,26 @@ function ImageViewing({
     [imageList]
   );
   const playVideoFullScreen = async () => {
-    if(Platform.OS === 'ios'){
+    if (Platform.OS === 'ios') {
       onClickPlayButton(currentImageIndex);
       setIsPlaying(true)
       setPlayingUri(`https://api.${apiRegion}.amity.co/api/v3/files/${videoPosts[currentImageIndex]?.videoFileId?.original}/download`)
-    }else{
+      setTimeout(() => {
+        videoPlayerRef.current.presentFullscreenPlayer();
+      }, 100);
+
+    } else {
       navigation.navigate('VideoPlayer', { source: `https://api.${apiRegion}.amity.co/api/v3/files/${videoPosts[currentImageIndex]?.videoFileId?.original}/download` })
     }
 
   };
 
-  useEffect(() => {
-     if (videoPlayerRef && playingUri && isPlaying) {
-       videoPlayerRef.current.presentFullscreenPlayer();
-    }
-  }, [playingUri, isPlaying])
-  
+  // useEffect(() => {
+  //   if (videoPlayerRef && playingUri.length > 0 && isPlaying) {
+  //     videoPlayerRef.current.presentFullscreenPlayer();
+  //   }
+  // }, [playingUri, isPlaying])
+
   if (!visible) {
     return null;
   }
@@ -192,14 +196,14 @@ function ImageViewing({
         )}
       </View>
 
-    
-        <Video
-          source={{ uri: playingUri }}
-          onVideoFullscreenPlayerWillDismiss={onClosePlayer}
-          ref={videoPlayerRef}
-          fullscreen={true}
 
-        />
+      <Video
+        source={{ uri: playingUri }}
+        onVideoFullscreenPlayerWillDismiss={onClosePlayer}
+        ref={videoPlayerRef}
+        fullscreen={true}
+
+      />
 
 
     </Modal>

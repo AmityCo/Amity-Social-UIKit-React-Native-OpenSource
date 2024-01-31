@@ -27,6 +27,7 @@ import type { UserInterface } from '../../../types/user.interface';
 
 import {
   addCommentReaction,
+  getCommentsDataByIds,
   removeCommentReaction,
 } from '../../../providers/Social/comment-sdk';
 
@@ -119,6 +120,7 @@ const CommentList = ({
 
 
   useEffect(() => {
+
     getReplyComments()
     setIsOpenReply(true)
     return () => {
@@ -275,6 +277,7 @@ const CommentList = ({
       await addCommentReaction(commentId, 'like');
     }
   };
+
   const deletePostObject = () => {
     Alert.alert(
       'Delete this post',
@@ -454,7 +457,7 @@ const CommentList = ({
             renderItem={({ item }) => (
               <ReplyCommentList commentId={item.commentId} commentDetail={item} />
             )}
-
+            keyExtractor={(item, index) => item.commentId + index}
           />}
 
 
