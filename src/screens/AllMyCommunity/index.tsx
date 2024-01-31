@@ -1,5 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   View,
   Text,
@@ -13,50 +19,28 @@ import {
 import debounce from 'lodash.debounce';
 import { getStyles } from './styles';
 import { SvgXml } from 'react-native-svg';
-import { circleCloseIcon, closeIcon, plusIcon, searchIcon } from '../../svg/svg-xml-list';
-import { useNavigation } from '@react-navigation/native';
+import { circleCloseIcon, plusIcon, searchIcon } from '../../svg/svg-xml-list';
 import { CommunityRepository } from '@amityco/ts-sdk-react-native';
 import type { ISearchItem } from '../../components/SearchItem';
 import SearchItem from '../../components/SearchItem';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 
-export default function AllMyCommunity() {
-
-
-   const theme = useTheme() as MyMD3Theme;
+export default function AllMyCommunity({ navigation }) {
+  const theme = useTheme() as MyMD3Theme;
   const styles = getStyles();
   LogBox.ignoreAllLogs(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [searchType,] = useState('community');
+  const [searchType] = useState('community');
   const [communities, setCommunities] =
     useState<Amity.LiveCollection<Amity.Community>>();
-  const navigation = useNavigation<any>();
   const [searchList, setSearchList] = useState<ISearchItem[]>([]);
   const scrollViewRef = useRef(null);
-  const {
-    data: communitiesArr = [],
-    onNextPage,
-  } = communities ?? {};
+  const { data: communitiesArr = [], onNextPage } = communities ?? {};
 
-  const goBack=()=>{
-    navigation.goBack()
-  }
-  const onClickCreateCommunity = ()=>{
-    navigation.navigate("CreateCommunity")
-  }
-  navigation.setOptions({
-    // eslint-disable-next-line react/no-unstable-nested-components
-    headerLeft:()=>(  <TouchableOpacity onPress={goBack} style={styles.btnWrap}>
-      <SvgXml xml={closeIcon(theme.colors.base)} width="15" height="15" />
-    </TouchableOpacity>),
-    headerRight: () => (
-      <TouchableOpacity onPress={onClickCreateCommunity}>
-        <SvgXml xml={plusIcon(theme.colors.base)} width="25" height="25" />
-      </TouchableOpacity>
-    ),
-    headerTitle: 'My Community',
-  });
+  const onClickCreateCommunity = () => {
+    navigation.navigate('CreateCommunity');
+  };
 
   const handleChange = (text: string) => {
     setSearchTerm(text);
@@ -103,16 +87,28 @@ export default function AllMyCommunity() {
     }
   }, [communitiesArr]);
 
-
   const debouncedResults = useMemo(() => {
     return debounce(handleChange, 500);
   }, []);
 
+  const headerRight = useCallback(
+    () => (
+      <TouchableOpacity onPress={onClickCreateCommunity}>
+        <SvgXml xml={plusIcon(theme.colors.base)} width="25" height="25" />
+      </TouchableOpacity>
+    ),
+    []
+  );
+
   useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => headerRight(),
+      headerTitle: 'My Community',
+    });
     return () => {
       debouncedResults.cancel();
     };
-  });
+  }, []);
 
   const clearButton = () => {
     setSearchTerm('');
@@ -126,7 +122,6 @@ export default function AllMyCommunity() {
     <View style={styles.container}>
       <View style={styles.headerWrap}>
         <View style={styles.inputWrap}>
-
           <SvgXml xml={searchIcon(theme.colors.base)} width="20" height="20" />
 
           <TextInput
@@ -147,7 +142,8 @@ export default function AllMyCommunity() {
         ref={scrollViewRef}
         onScroll={handleScroll}
         scrollEventThrottle={20}
-        contentContainerStyle={styles.searchScrollList}>
+        contentContainerStyle={styles.searchScrollList}
+      >
         {searchList.map((item, index) => (
           <SearchItem key={index} target={item} />
         ))}

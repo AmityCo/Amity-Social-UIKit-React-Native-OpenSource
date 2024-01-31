@@ -10,7 +10,7 @@ import {
 } from '../../providers/Social/feed-sdk';
 import useAuth from '../../hooks/useAuth';
 import PostList, { type IPost } from '../../components/Social/PostList';
-import { getStyles } from './styles';
+import { useStyle } from './styles';
 import MyCommunity from '../../components/MyCommunity';
 
 import { amityPostsFormatter } from '../../util/postDataFormatter';
@@ -25,7 +25,7 @@ export default function GlobalFeed() {
   const { updateGlobalFeed, deleteByPostId } = globalFeedSlice.actions;
   const dispatch = useDispatch(); // ()=> dispatch(updateGlobalFeed())
 
-  const styles = getStyles();
+  const styles = useStyle();
   const { isConnected } = useAuth();
   const [postData, setPostData] = useState<IGlobalFeedRes>();
 

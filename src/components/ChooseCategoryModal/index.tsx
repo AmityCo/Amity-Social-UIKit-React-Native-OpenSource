@@ -5,32 +5,36 @@ import {
   View,
   Text,
   Modal,
-  Image,
   FlatList,
   type NativeSyntheticEvent,
   type NativeScrollEvent,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
-import { categoryIcon, closeIcon } from '../../svg/svg-xml-list';
-import useAuth from '../../hooks/useAuth';
-import { getStyles } from './styles';
+import { closeIcon } from '../../svg/svg-xml-list';
+import { useStyle } from './styles';
 import { useTheme } from 'react-native-paper';
-import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
+import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
+import Categories from './Components/Categories';
 
 interface IModal {
   visible: boolean;
   userId?: string;
   onClose: () => void;
   onSelect: (categoryId: string, categoryName: string) => void;
+  categoryId?: string;
 }
-const ChooseCategoryModal = ({ visible, onClose, onSelect }: IModal) => {
+const ChooseCategoryModal = ({
+  visible,
+  onClose,
+  onSelect,
+  categoryId,
+}: IModal) => {
   const theme = useTheme() as MyMD3Theme;
-  const styles = getStyles();
-  const { apiRegion } = useAuth();
-  const [categories, setCategories] = useState<Amity.LiveCollection<Amity.Category>>();
-  const { data: categoriesList, onNextPage } = categories ?? {}
+  const styles = useStyle();
+  const [categories, setCategories] =
+    useState<Amity.LiveCollection<Amity.Category>>();
+  const { data: categoriesList, onNextPage } = categories ?? {};
   const [unSubFunc, setUnSubPageFunc] = useState<() => void>();
-
 
   useEffect(() => {
     const loadCategories = async () => {
@@ -40,47 +44,29 @@ const ChooseCategoryModal = ({ visible, onClose, onSelect }: IModal) => {
           (data: Amity.LiveCollection<Amity.Category>) => {
             if (data) {
               setCategories(data);
+              if (categoryId) {
+                const currentCategoryName =
+                  data.data.find((item) => item.categoryId === categoryId)
+                    ?.name ?? '';
+                onSelect(categoryId, currentCategoryName);
+              }
             }
           }
         );
-        setUnSubPageFunc(() => unsubscribe)
+        setUnSubPageFunc(() => unsubscribe);
       } catch (error) {
         console.error('Failed to load categories:', error);
       }
     };
 
     loadCategories();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [categoryId, onSelect]);
 
   const onSelectCategory = (categoryId: string, categoryName: string) => {
     onSelect && onSelect(categoryId, categoryName);
     unSubFunc && unSubFunc();
     onClose && onClose();
-
   };
-  const renderCategories = ({ item }: { item: Amity.Category }) => {
-    return (
-      <TouchableOpacity
-        onPress={() =>
-          onSelectCategory(item.categoryId, item.name)
-        }
-        style={styles.rowContainer}
-      >
-        {item.avatarFileId ? <Image
-          style={styles.avatar}
-          source={
-            {
-              uri: `https://api.${apiRegion}.amity.co/api/v3/files/${item.avatarFileId}/download`,
-            }
-          }
-        /> : <SvgXml xml={categoryIcon} width={40} height={40} />}
-
-        <Text style={styles.communityText}>{item.name}</Text>
-      </TouchableOpacity>
-    );
-  };
-
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const scrollPosition = event.nativeEvent.contentOffset.y;
@@ -89,17 +75,19 @@ const ChooseCategoryModal = ({ visible, onClose, onSelect }: IModal) => {
     const contentHeight = event.nativeEvent.contentSize.height;
     const scrollViewHeight = event.nativeEvent.layoutMeasurement.height;
 
-    if (scrollPosition + scrollViewHeight >= contentHeight - endReachedThreshold) {
+    if (
+      scrollPosition + scrollViewHeight >=
+      contentHeight - endReachedThreshold
+    ) {
       // Trigger your action here when scrolling reaches the end
-      onNextPage && onNextPage()
+      onNextPage && onNextPage();
     }
   };
 
   const handleOnClose = () => {
     unSubFunc && unSubFunc();
-    onClose && onClose()
-
-  }
+    onClose && onClose();
+  };
   return (
     <Modal visible={visible} animationType="slide">
       <View style={styles.container}>
@@ -113,7 +101,9 @@ const ChooseCategoryModal = ({ visible, onClose, onSelect }: IModal) => {
         </View>
         <FlatList
           data={categoriesList}
-          renderItem={renderCategories}
+          renderItem={({ item }) => (
+            <Categories item={item} onSelectCategory={onSelectCategory} />
+          )}
           keyExtractor={(item) => item.categoryId}
           onScroll={handleScroll}
         />
@@ -123,4 +113,3 @@ const ChooseCategoryModal = ({ visible, onClose, onSelect }: IModal) => {
 };
 
 export default ChooseCategoryModal;
-

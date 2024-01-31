@@ -5,16 +5,20 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import { useState } from "react";
+import { useState } from 'react';
 const useImageIndexChange = (imageIndex, screen) => {
-    const [currentImageIndex, setImageIndex] = useState(imageIndex);
-    const onScroll = (event) => {
-        const { nativeEvent: { contentOffset: { x: scrollX }, }, } = event;
-        if (screen.width) {
-            const nextIndex = Math.round(scrollX / screen.width);
-            setImageIndex(nextIndex < 0 ? 0 : nextIndex);
-        }
-    };
-    return [currentImageIndex, onScroll];
+  const [currentImageIndex, setImageIndex] = useState(imageIndex);
+  const onScroll = (event) => {
+    const {
+      nativeEvent: {
+        contentOffset: { x: scrollX },
+      },
+    } = event;
+    if (screen.width) {
+      const nextIndex = Math.round(scrollX / screen.width);
+      setImageIndex(nextIndex < 0 ? 0 : nextIndex);
+    }
+  };
+  return [currentImageIndex, onScroll];
 };
 export default useImageIndexChange;

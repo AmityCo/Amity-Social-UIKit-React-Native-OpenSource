@@ -1,4 +1,9 @@
-import React, { useState, useEffect, useRef, type MutableRefObject } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  type MutableRefObject,
+} from 'react';
 import {
   View,
   Text,
@@ -10,7 +15,6 @@ import {
 } from 'react-native';
 import { getStyles } from './styles';
 import { UserRepository } from '@amityco/ts-sdk-react-native';
-import CloseButton from '../../components/BackButton';
 import Feed from '../Feed';
 import CustomTab from '../../components/CustomTab';
 import type { FeedRefType } from '../CommunityHome';
@@ -22,10 +26,11 @@ import { editIcon } from '../../svg/svg-xml-list';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import { useTheme } from 'react-native-paper';
 import FloatingButton from '../../components/FloatingButton';
+import { TabName } from '../../enum/tabNameState';
 
 export default function UserProfile({ route }: any) {
   const theme = useTheme() as MyMD3Theme;
-  const styles = getStyles()
+  const styles = getStyles();
   const { apiRegion, client } = useAuth();
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const { userId } = route.params;
@@ -33,8 +38,6 @@ export default function UserProfile({ route }: any) {
   const [followerCount, setFollowerCount] = useState<number>(0);
   const [followingCount, setFollowingCount] = useState<number>(0);
   const [followStatus, setFollowStatus] = useState<string>('loading');
-  const [showLoadingIndicator, setShowLoadingIndicator] = useState(false);
-  console.log('showLoadingIndicator:', showLoadingIndicator)
 
   const feedRef: MutableRefObject<FeedRefType | null> =
     useRef<FeedRefType | null>(null);
@@ -49,23 +52,19 @@ export default function UserProfile({ route }: any) {
     });
   };
   const onFollowTap = async () => {
-    setShowLoadingIndicator(true);
     const { data: followStatus } = await UserRepository.Relationship.follow(
       userId
     );
     if (followStatus) {
       setFollowStatus(followStatus.status);
-      setShowLoadingIndicator(false);
     }
   };
   React.useLayoutEffect(() => {
-    // Set the headerRight component to a TouchableOpacity
     navigation.setOptions({
-      headerLeft: () => <CloseButton />,
+      // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () => (
         <TouchableOpacity
           onPress={() => {
-            // Handle button press here
             navigation.navigate('UserProfileSetting', {
               userId: userId,
               follow: followStatus !== 'loading' ? followStatus : 'loading',
@@ -78,29 +77,8 @@ export default function UserProfile({ route }: any) {
           />
         </TouchableOpacity>
       ),
-      title: '',
     });
-  }, [navigation]);
-  useEffect(() => {
-    navigation.setOptions({
-      // Header options...
-      headerRight: () => (
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate('UserProfileSetting', {
-              userId: userId,
-              follow: followStatus,
-            });
-          }}
-        >
-          <Image
-            source={require('../../../assets/icon/threeDot.png')}
-            style={styles.dotIcon}
-          />
-        </TouchableOpacity>
-      ),
-    });
-  }, [followStatus]);
+  }, [followStatus, navigation, styles.dotIcon, userId]);
   useEffect(() => {
     const unsubscribeFollow = UserRepository.Relationship.getFollowInfo(
       userId,
@@ -118,7 +96,7 @@ export default function UserProfile({ route }: any) {
       if (value && !value.loading) {
         setUser(value.data);
       } else {
-        console.log('user profile query error ' + JSON.stringify(user));
+        console.log('user profile query error ' + JSON.stringify(value));
       }
     });
     unsubscribeFollow();
@@ -144,7 +122,7 @@ export default function UserProfile({ route }: any) {
 
     // Return the function to unsubscribe from the event so it gets removed on unmount
     return unsubscribe;
-  }, [navigation]);
+  }, [navigation, userId]);
   const editProfileButton = () => {
     return (
       <TouchableOpacity
@@ -168,8 +146,8 @@ export default function UserProfile({ route }: any) {
     );
   };
 
-  const handleTab = (index: number) => {
-    console.log('index: ', index);
+  const handleTab = (tabName: TabName) => {
+    console.log('index: ', tabName); //this func not implmented yet
   };
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
@@ -192,7 +170,7 @@ export default function UserProfile({ route }: any) {
       targetName: 'My Timeline',
       targetType: 'user',
     });
-  }
+  };
   return (
     <View style={styles.container}>
       <ScrollView
@@ -207,10 +185,10 @@ export default function UserProfile({ route }: any) {
               source={
                 user?.avatarFileId || user?.avatarCustomUrl
                   ? {
-                    uri: user.avatarFileId
-                      ? avatarFileURL(user.avatarFileId)
-                      : user.avatarCustomUrl,
-                  }
+                      uri: user.avatarFileId
+                        ? avatarFileURL(user.avatarFileId)
+                        : user.avatarCustomUrl,
+                    }
                   : require('../../../assets/icon/Placeholder.png')
               }
             />
@@ -228,10 +206,7 @@ export default function UserProfile({ route }: any) {
           </View>
           <View style={styles.descriptionContainer}>
             {user?.description ? (
-              <Text style={styles.descriptionText}>
-                {' '}
-                {user?.description}
-              </Text>
+              <Text style={styles.descriptionText}> {user?.description}</Text>
             ) : (
               <View />
             )}
@@ -245,7 +220,10 @@ export default function UserProfile({ route }: any) {
             <View />
           )}
         </View>
-        <CustomTab tabName={['Timeline', 'Gallery']} onTabChange={handleTab} />
+        <CustomTab
+          tabName={[TabName.Timeline, TabName.Gallery]}
+          onTabChange={handleTab}
+        />
         <Feed targetType="user" targetId={userId} ref={feedRef} />
         {/* <View style={styles.loadingIndicator}>
         <LoadingOverlay
@@ -254,8 +232,9 @@ export default function UserProfile({ route }: any) {
         />
       </View> */}
       </ScrollView>
-      {(client as Amity.Client).userId === userId && <FloatingButton onPress={handleOnPressPostBtn} isGlobalFeed={false} />}
+      {(client as Amity.Client).userId === userId && (
+        <FloatingButton onPress={handleOnPressPostBtn} isGlobalFeed={false} />
+      )}
     </View>
   );
 }
-

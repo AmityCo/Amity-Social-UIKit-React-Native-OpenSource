@@ -1,135 +1,83 @@
-import { CommunityRepository, createReport } from '@amityco/ts-sdk-react-native';
-import React, { useEffect, useState, useRef } from 'react';
-import {
-  FlatList,
-  View,
-  ActivityIndicator,
-  Platform,
-  ActionSheetIOS,
-  Alert,
-} from 'react-native';
-import { getStyles } from './styles';
-import CloseButton from '../../components/BackButton';
-import UserItem from '../../components/UserItem';
+import React, { useState, useLayoutEffect } from 'react';
+import { View, TouchableOpacity, Image } from 'react-native';
+import { useStyles } from './styles';
 import type { UserInterface } from '../../types/user.interface';
+import AddMembersModal from '../../components/AddMembersModal';
+import { updateCommunityMember } from '../../providers/Social/communities-sdk';
+import MemberActionModal from './Components/MemberActionModal';
+import CustomTab from '../../components/CustomTab';
+import { TabName } from '../../enum/tabNameState';
+import CommunityMembersTab from './Components/CommunityMembersTab';
 
 export default function CommunityMemberDetail({ navigation, route }: any) {
-  const styles = getStyles()
-  const [memberList, setMemberList] = useState<Amity.Member<'community'>[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [hasNextPage, setHasNextPage] = useState(false);
-  const { communityId } = route.params;
-  const onNextPageRef = useRef<(() => void) | null>(null);
-  const isFetchingRef = useRef(false);
-  const flatListRef = useRef(null);
+  const styles = useStyles();
+  const [member, setMember] = useState<UserInterface[]>([]);
+  const { communityId, isModerator } = route.params;
+  const [addMembersModal, setAddMembersModal] = React.useState(false);
+  const [actionModalVisible, setActionModalVisible] = useState(false);
+  const [userId, setUserId] = useState('');
+  const [activeTab, setActiveTab] = useState(TabName.Members);
 
-  React.useLayoutEffect(() => {
+  useLayoutEffect(() => {
     navigation.setOptions({
-      headerLeft: () => <CloseButton />,
-      title: 'Member',
+      // eslint-disable-next-line react/no-unstable-nested-components
+      headerRight: () => (
+        <TouchableOpacity
+          onPress={() => {
+            setAddMembersModal(true);
+          }}
+        >
+          <Image
+            source={require('../../../assets/icon/plus.png')}
+            style={styles.dotIcon}
+          />
+        </TouchableOpacity>
+      ),
     });
-  }, [navigation]);
-  useEffect(() => {
-    const loadMembers = async () => {
-      setLoading(true);
-      try {
-        const unsubscribe = CommunityRepository.Membership.getMembers(
-          { communityId, limit: 10 },
-          ({ data: members, onNextPage, hasNextPage, loading }) => {
-            if (!loading) {
-              setMemberList(members);
-              setHasNextPage(hasNextPage);
-              onNextPageRef.current = onNextPage;
-              isFetchingRef.current = false;
-              unsubscribe();
-            }
-          }
-        );
-      } catch (error) {
-        console.error('Failed to load categories:', error);
-        isFetchingRef.current = false;
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadMembers();
-  }, []);
-  // const handleMemberClick = (categoryId: string, categoryName: string) => {
-  //   setTimeout(() => {
-  //     navigation.navigate('CommunityList', { categoryId, categoryName });
-  //   }, 100);
-  // };
-  const reportUser = async (userId: string): Promise<boolean> => {
-    const didCreatePostReport = await createReport('user', userId);
+  }, [navigation, styles.dotIcon]);
 
-    return didCreatePostReport;
+  const onSelectMember = async (users: UserInterface[]) => {
+    const memberIds = users.map((user) => user.userId);
+    try {
+      await updateCommunityMember({ operation: 'ADD', communityId, memberIds });
+      // getMembers();
+    } catch (error) {
+      console.log(error);
+    }
   };
+
   const onThreeDotTap = (user: UserInterface) => {
-    if (Platform.OS === 'ios') {
-      ActionSheetIOS.showActionSheetWithOptions(
-        {
-          options: ['Cancel', 'Report User'],
-          cancelButtonIndex: 0,
-        },
-        () => {
-          reportUser(user.userId);
-        }
-      );
-    } else {
-      Alert.alert('Report', '', [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Report user',
-          onPress: () => {
-            reportUser(user.userId);
-          },
-        },
-      ]);
-    }
-  };
-  const renderMember = ({ item }: { item: Amity.Member<'community'> }) => {
-    if ((item as Record<string, any>).user) {
-      const userObject: UserInterface = {
-        userId: item.userId,
-        displayName: (item as Record<string, any>).user.displayName,
-        avatarFileId: (item as Record<string, any>).user.avatarFileId,
-      };
-      return (
-        <UserItem
-          user={userObject}
-          showThreeDot={true}
-          onThreeDotTap={onThreeDotTap}
-        />
-      );
-    }
-    return null;
+    setUserId(user.userId);
+    setActionModalVisible(true);
   };
 
-  const renderFooter = () => {
-    if (!loading) return null;
-    return (
-      <View style={styles.LoadingIndicator}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  };
-
-  const handleLoadMore = () => {
-    if (hasNextPage) {
-      onNextPageRef.current && onNextPageRef.current();
-    }
-  };
   return (
     <View style={styles.container}>
-      <FlatList
-        data={memberList}
-        renderItem={renderMember}
-        keyExtractor={(item) => item.userId.toString()}
-        ListFooterComponent={renderFooter}
-        // onEndReached={handleEndReached}
-        onEndReachedThreshold={0.8}
-        onEndReached={handleLoadMore}
-        ref={flatListRef}
+      <CustomTab
+        tabName={[TabName.Members, TabName.Moderators]}
+        onTabChange={setActiveTab}
+      />
+
+      <CommunityMembersTab
+        activeTab={activeTab}
+        communityId={communityId}
+        onThreeDotTap={onThreeDotTap}
+        setMember={setMember}
+      />
+      <AddMembersModal
+        onSelect={onSelectMember}
+        onClose={() => setAddMembersModal(false)}
+        visible={addMembersModal}
+        initUserList={[]}
+        excludeUserList={member}
+      />
+      <MemberActionModal
+        isVisible={actionModalVisible}
+        setIsVisible={setActionModalVisible}
+        userId={userId}
+        communityId={communityId}
+        hasModeratorPermission={isModerator}
+        isInModeratorTab={activeTab === TabName.Moderators}
       />
     </View>
   );

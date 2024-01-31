@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import {
   View,
@@ -14,20 +13,31 @@ import { SvgXml } from 'react-native-svg';
 import { circleCloseIcon, searchIcon } from '../../svg/svg-xml-list';
 import { useNavigation } from '@react-navigation/native';
 import CustomTab from '../../components/CustomTab';
-import { CommunityRepository, UserRepository } from '@amityco/ts-sdk-react-native';
+import {
+  CommunityRepository,
+  UserRepository,
+} from '@amityco/ts-sdk-react-native';
 import type { ISearchItem } from '../../components/SearchItem';
 import SearchItem from '../../components/SearchItem';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
+import { TabName } from '../../enum/tabNameState';
+
+enum searchTypeEnum {
+  user = 'user',
+  community = 'community',
+}
 
 export default function CommunitySearch() {
   const theme = useTheme() as MyMD3Theme;
   LogBox.ignoreAllLogs(true);
   const styles = getStyles();
   const [searchTerm, setSearchTerm] = useState('');
-  const [searchType, setSearchType] = useState('community');
-  const [communities, setCommunities] = useState<Amity.LiveCollection<Amity.Community>>();
-  const [usersObject, setUsersObject] = useState<Amity.LiveCollection<Amity.User>>();
+  const [searchType, setSearchType] = useState(searchTypeEnum.community);
+  const [communities, setCommunities] =
+    useState<Amity.LiveCollection<Amity.Community>>();
+  const [usersObject, setUsersObject] =
+    useState<Amity.LiveCollection<Amity.User>>();
   const navigation = useNavigation<any>();
   const [searchList, setSearchList] = useState<ISearchItem[]>([]);
   const {
@@ -53,11 +63,16 @@ export default function CommunitySearch() {
     } else if (searchTerm.length > 0 && searchType === 'user') {
       searchAccounts(searchTerm);
     }
-  }, [searchTerm]);
+  }, [searchTerm, searchType]);
 
   const searchCommunities = (text: string) => {
     const unsubscribe = CommunityRepository.getCommunities(
-      { displayName: text, membership: 'notMember', limit: 20, sortBy: 'displayName' },
+      {
+        displayName: text,
+        membership: 'notMember',
+        limit: 20,
+        sortBy: 'displayName',
+      },
       (data) => {
         setCommunities(data);
         if (data.data.length === 0) {
@@ -73,18 +88,14 @@ export default function CommunitySearch() {
         { displayName: text, limit: 20, sortBy: 'displayName' },
         (data) => {
           setUsersObject(data);
-
         }
-
       );
-      unsubscribe()
-
+      unsubscribe();
     }
-
   };
 
   useEffect(() => {
-    if (communitiesArr.length > 0 && searchType === 'community') {
+    if (communitiesArr.length > 0 && searchType === searchTypeEnum.community) {
       const searchItem: ISearchItem[] = communitiesArr.map((item) => {
         return {
           targetId: item?.communityId,
@@ -99,7 +110,7 @@ export default function CommunitySearch() {
   }, [communitiesArr, searchType]);
 
   useEffect(() => {
-    if (userArr && userArr.length > 0 && searchType === 'user') {
+    if (userArr && userArr.length > 0 && searchType === searchTypeEnum.user) {
       const searchUsers: ISearchItem[] = userArr.map((item) => {
         return {
           targetId: item?.userId,
@@ -112,8 +123,6 @@ export default function CommunitySearch() {
     }
   }, [userArr, searchType]);
 
-
-
   const clearButton = () => {
     setSearchTerm('');
   };
@@ -121,15 +130,14 @@ export default function CommunitySearch() {
   const cancelSearch = () => {
     navigation.goBack();
   };
-  const handleTabChange = (index: number) => {
-    if (index === 1) {
-      setSearchType('community');
+  const handleTabChange = (tabName: TabName) => {
+    if (tabName === TabName.Communities) {
+      setSearchType(searchTypeEnum.community);
       if (searchTerm.length > 0) {
         searchCommunities(searchTerm);
       }
-
-    } else if (index === 2) {
-      setSearchType('user');
+    } else if (tabName === TabName.Accounts) {
+      setSearchType(searchTypeEnum.user);
       if (searchTerm.length > 0) {
         searchAccounts(searchTerm);
       }
@@ -140,7 +148,11 @@ export default function CommunitySearch() {
       <View style={styles.headerWrap}>
         <View style={styles.inputWrap}>
           <TouchableOpacity onPress={() => searchAccounts(searchTerm)}>
-            <SvgXml xml={searchIcon(theme.colors.base)} width="20" height="20" />
+            <SvgXml
+              xml={searchIcon(theme.colors.base)}
+              width="20"
+              height="20"
+            />
           </TouchableOpacity>
           <TextInput
             style={styles.input}
@@ -157,7 +169,7 @@ export default function CommunitySearch() {
         </TouchableOpacity>
       </View>
       <CustomTab
-        tabName={['Communities', 'Accounts']}
+        tabName={[TabName.Communities, TabName.Accounts]}
         onTabChange={handleTabChange}
       />
       <ScrollView contentContainerStyle={styles.searchScrollList}>
