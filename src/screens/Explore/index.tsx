@@ -1,10 +1,13 @@
 import * as React from 'react';
-import { CategoryRepository, CommunityRepository } from '@amityco/ts-sdk-react-native';
+import {
+  CategoryRepository,
+  CommunityRepository,
+} from '@amityco/ts-sdk-react-native';
 import { useState, useEffect } from 'react';
 // import { useTranslation } from 'react-i18next';
 
 import { View, Text, ScrollView, Image, TouchableOpacity } from 'react-native';
-import { getStyles } from './styles';
+import { useStyles } from './styles';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import useAuth from '../../hooks/useAuth';
@@ -12,8 +15,7 @@ import { SvgXml } from 'react-native-svg';
 import { communityIcon } from '../../svg/svg-xml-list';
 
 export default function Explore() {
-
-  const styles = getStyles()
+  const styles = useStyles();
   const { apiRegion } = useAuth();
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const [recommendCommunityList, setRecommendCommunityList] = useState<
@@ -129,6 +131,7 @@ export default function Explore() {
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           {recommendCommunityList.map((community) => (
             <TouchableOpacity
+              key={community.communityId}
               style={styles.card}
               onPress={() =>
                 handleCommunityClick(
@@ -158,6 +161,7 @@ export default function Explore() {
         <View>
           {trendingCommunityList.map((community, index) => (
             <TouchableOpacity
+              key={community.communityId}
               style={styles.itemContainer}
               onPress={() =>
                 handleCommunityClick(

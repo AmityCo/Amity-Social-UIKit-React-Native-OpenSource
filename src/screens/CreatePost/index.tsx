@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   TouchableOpacity,
   View,
@@ -22,8 +23,12 @@ import {
   galleryIcon,
   playVideoIcon,
 } from '../../svg/svg-xml-list';
-import { getStyles } from './styles';
-import ImagePicker, { launchImageLibrary, type Asset, launchCamera } from 'react-native-image-picker';
+import { useStyles } from './styles';
+import ImagePicker, {
+  launchImageLibrary,
+  type Asset,
+  launchCamera,
+} from 'react-native-image-picker';
 import LoadingImage from '../../components/LoadingImage';
 import { createPostToFeed } from '../../providers/Social/feed-sdk';
 import LoadingVideo from '../../components/LoadingVideo';
@@ -51,7 +56,7 @@ export interface IMentionPosition {
 }
 const CreatePost = ({ route }: any) => {
   const theme = useTheme() as MyMD3Theme;
-  const styles = getStyles();
+  const styles = useStyles();
   const { targetId, targetType, targetName } = route.params;
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const [inputMessage, setInputMessage] = useState('');
@@ -59,108 +64,75 @@ const CreatePost = ({ route }: any) => {
   const [videoMultipleUri, setVideoMultipleUri] = useState<string[]>([]);
   const [displayImages, setDisplayImages] = useState<IDisplayImage[]>([]);
   const [displayVideos, setDisplayVideos] = useState<IDisplayImage[]>([]);
-  const [isShowMention, setIsShowMention] = useState<boolean>(false)
-  const [mentionNames, setMentionNames] = useState<ISearchItem[]>([])
+  const [isShowMention, setIsShowMention] = useState<boolean>(false);
+  const [mentionNames, setMentionNames] = useState<ISearchItem[]>([]);
 
-  const [currentSearchUserName, setCurrentSearchUserName] = useState<string>('')
+  const [currentSearchUserName, setCurrentSearchUserName] =
+    useState<string>('');
   const [cursorIndex, setCursorIndex] = useState(0);
-  const [mentionsPosition, setMentionsPosition] = useState<IMentionPosition[]>([])
+  const [mentionsPosition, setMentionsPosition] = useState<IMentionPosition[]>(
+    []
+  );
 
-  const [communityObject, setCommunityObject] = useState<Amity.LiveObject<Amity.Community>>();
+  const [communityObject, setCommunityObject] =
+    useState<Amity.LiveObject<Amity.Community>>();
   const { data: community } = communityObject ?? {};
 
   const { client, apiRegion } = useAuth();
 
-
-  const getCommunityDetail = () => {
+  const getCommunityDetail = useCallback(() => {
     if (targetType === 'community') {
       CommunityRepository.getCommunity(targetId, setCommunityObject);
     }
-  }
+  }, [targetId, targetType]);
   useEffect(() => {
-    getCommunityDetail()
-  }, [targetId])
+    getCommunityDetail();
+  }, [getCommunityDetail]);
 
-  const checkMention = (inputString: string) => {
-    // Check if "@" is at the first letter
-    const startsWithAt = /^@/.test(inputString);
+  const checkMention = useCallback(
+    (inputString: string) => {
+      // Check if "@" is at the first letter
+      const startsWithAt = /^@/.test(inputString);
 
-    // Check if "@" is inside the sentence without any letter before "@"
-    const insideWithoutLetterBefore = /[^a-zA-Z]@/.test(inputString);
+      // Check if "@" is inside the sentence without any letter before "@"
+      const insideWithoutLetterBefore = /[^a-zA-Z]@/.test(inputString);
 
-    const atSigns = inputString.match(/@/g);
-    const atSignsNumber = atSigns ? atSigns.length : 0;
-    if ((startsWithAt || insideWithoutLetterBefore) && atSignsNumber > mentionNames.length) {
-      setIsShowMention(true)
-    } else {
-      setIsShowMention(false)
-    }
-
-
-  };
+      const atSigns = inputString.match(/@/g);
+      const atSignsNumber = atSigns ? atSigns.length : 0;
+      if (
+        (startsWithAt || insideWithoutLetterBefore) &&
+        atSignsNumber > mentionNames.length
+      ) {
+        setIsShowMention(true);
+      } else {
+        setIsShowMention(false);
+      }
+    },
+    [mentionNames.length]
+  );
   useEffect(() => {
     if (isShowMention) {
-      const substringBeforeCursor = inputMessage.substring(0, cursorIndex)
+      const substringBeforeCursor = inputMessage.substring(0, cursorIndex);
       const lastAtsIndex = substringBeforeCursor.lastIndexOf('@');
       if (lastAtsIndex !== -1) {
-        const searchText: string = inputMessage.substring(lastAtsIndex + 1, cursorIndex + 1)
-        setCurrentSearchUserName(searchText)
+        const searchText: string = inputMessage.substring(
+          lastAtsIndex + 1,
+          cursorIndex + 1
+        );
+        setCurrentSearchUserName(searchText);
       }
-
     }
-  }, [cursorIndex])
+  }, [cursorIndex, inputMessage, isShowMention]);
 
   useEffect(() => {
-    checkMention(inputMessage)
-  }, [inputMessage])
-
+    checkMention(inputMessage);
+  }, [checkMention, inputMessage]);
 
   const goBack = () => {
-    setTimeout(() => {
-      navigation.goBack();
-    }, 300);
-
+    navigation.goBack();
   };
-  navigation.setOptions({
-    // eslint-disable-next-line react/no-unstable-nested-components
-    header: () => (
-      <SafeAreaView style={styles.barContainer} edges={['top']}>
-        <View style={styles.header}>
-          <TouchableOpacity style={styles.closeButton} onPress={goBack}>
-            <SvgXml xml={closeIcon(theme.colors.base)} width="17" height="17" />
-          </TouchableOpacity>
-          <View style={styles.headerTextContainer}>
-            <Text style={styles.headerText}>{targetName}</Text>
-          </View>
-          <TouchableOpacity
-            disabled={
-              inputMessage.length > 0 ||
-                displayImages.length > 0 ||
-                displayVideos.length > 0
-                ? false
-                : true
-            }
-            onPress={handleCreatePost}
-          >
-            <Text
-              style={
-                inputMessage.length > 0 ||
-                  displayImages.length > 0 ||
-                  displayVideos.length > 0
-                  ? styles.postText
-                  : [styles.postText, styles.disabled]
-              }
-            >
-              Post
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </SafeAreaView>
-    ),
-    headerTitle: '',
-  });
   const handleCreatePost = async () => {
-    const mentionUserIds: string[] = mentionNames.map(item => item.targetId)
+    const mentionUserIds: string[] = mentionNames.map((item) => item.targetId);
     if (displayImages.length > 0) {
       const fileIdArr: (string | undefined)[] = displayImages.map(
         (item) => item.fileId
@@ -199,11 +171,21 @@ const CreatePost = ({ route }: any) => {
         mentionUserIds.length > 0 ? mentionUserIds : [],
         mentionsPosition
       );
-      if ((community?.postSetting === 'ADMIN_REVIEW_POST_REQUIRED' || (community as Record<string,any>).needApprovalOnPostCreation) && response) {
+      if (
+        (community?.postSetting === 'ADMIN_REVIEW_POST_REQUIRED' ||
+          (community as Record<string, any>).needApprovalOnPostCreation) &&
+        response
+      ) {
+        const res = await checkCommunityPermission(
+          community.communityId,
+          client as Amity.Client,
+          apiRegion
+        );
 
-        const res = await checkCommunityPermission(community.communityId, client as Amity.Client, apiRegion)
-
-        if (res.permissions.length > 0 && res.permissions.includes('Post/ManagePosts')) {
+        if (
+          res.permissions.length > 0 &&
+          res.permissions.includes('Post/ManagePosts')
+        ) {
           navigation.goBack();
         } else {
           Alert.alert(
@@ -218,16 +200,13 @@ const CreatePost = ({ route }: any) => {
             { cancelable: false }
           );
         }
-
-      }
-      else if (response) {
+      } else if (response) {
         navigation.goBack();
       }
     }
   };
 
   const pickCamera = async () => {
-
     // const permission = await ImagePicker();
 
     const result: ImagePicker.ImagePickerResponse = await launchCamera({
@@ -235,33 +214,28 @@ const CreatePost = ({ route }: any) => {
       quality: 1,
       presentationStyle: 'fullScreen',
       videoQuality: 'high',
-
     });
-
-
 
     if (
       result.assets &&
-
       result.assets.length > 0 &&
       result.assets[0] !== null &&
       result.assets[0]
     ) {
       if (result.assets[0].type?.includes('image')) {
-        const imagesArr: string[]= [...imageMultipleUri];
+        const imagesArr: string[] = [...imageMultipleUri];
         imagesArr.push(result.assets[0].uri as string);
         setImageMultipleUri(imagesArr);
       } else {
         const selectedVideos: Asset[] = result.assets;
-        const imageUriArr: string[] = selectedVideos.map((item: Asset) => item.uri) as string[];
+        const imageUriArr: string[] = selectedVideos.map(
+          (item: Asset) => item.uri
+        ) as string[];
         const videosArr: string[] = [...videoMultipleUri];
         const totalVideos: string[] = videosArr.concat(imageUriArr);
         setVideoMultipleUri(totalVideos);
       }
-
     }
-
-
   };
 
   useEffect(() => {
@@ -331,7 +305,6 @@ const CreatePost = ({ route }: any) => {
             fileId: '',
             isUploaded: false,
             thumbNail: '',
-
           };
         })
       );
@@ -343,17 +316,16 @@ const CreatePost = ({ route }: any) => {
   }, [videoMultipleUri]);
 
   const pickImage = async () => {
-
     const result: ImagePicker.ImagePickerResponse = await launchImageLibrary({
-
       mediaType: 'photo',
       quality: 1,
-      selectionLimit: 10
-
+      selectionLimit: 10,
     });
     if (!result.didCancel && result.assets && result.assets.length > 0) {
       const selectedImages: Asset[] = result.assets;
-      const imageUriArr: string[] = selectedImages.map((item: Asset) => item.uri) as string[];
+      const imageUriArr: string[] = selectedImages.map(
+        (item: Asset) => item.uri
+      ) as string[];
       const imagesArr = [...imageMultipleUri];
       const totalImages = imagesArr.concat(imageUriArr);
       setImageMultipleUri(totalImages);
@@ -367,7 +339,9 @@ const CreatePost = ({ route }: any) => {
     });
     if (!result.didCancel && result.assets && result.assets.length > 0) {
       const selectedVideos: Asset[] = result.assets;
-      const imageUriArr: string[] = selectedVideos.map((item: Asset) => item.uri) as string[];
+      const imageUriArr: string[] = selectedVideos.map(
+        (item: Asset) => item.uri
+      ) as string[];
       const videosArr = [...videoMultipleUri];
       const totalVideos = videosArr.concat(imageUriArr);
       setVideoMultipleUri(totalVideos);
@@ -439,23 +413,33 @@ const CreatePost = ({ route }: any) => {
   };
 
   const onSelectUserMention = (user: ISearchItem) => {
+    const textAfterCursor: string = inputMessage.substring(
+      cursorIndex,
+      inputMessage.length + 1
+    );
+    const newTextAfterReplacement =
+      inputMessage.slice(0, cursorIndex - currentSearchUserName.length) +
+      user.displayName +
+      inputMessage.slice(cursorIndex, inputMessage.length);
+    const newInputMessage = newTextAfterReplacement + textAfterCursor;
+    const position: IMentionPosition = {
+      type: 'user',
+      length: user.displayName.length + 1,
+      index: cursorIndex - 1 - currentSearchUserName.length,
+      userId: user.targetId,
+      displayName: user.displayName,
+    };
 
-    const textAfterCursor: string = inputMessage.substring(cursorIndex, inputMessage.length + 1)
-    const newTextAfterReplacement = inputMessage.slice(0, cursorIndex - currentSearchUserName.length) + user.displayName + inputMessage.slice(cursorIndex, inputMessage.length);
-    const newInputMessage = newTextAfterReplacement + textAfterCursor
-    const position: IMentionPosition = { type: 'user', length: user.displayName.length + 1, index: cursorIndex - 1 - currentSearchUserName.length, userId: user.targetId, displayName: user.displayName }
-
-    setInputMessage(newInputMessage)
-    setMentionNames(prev => [...prev, user])
-    setMentionsPosition(prev => [...prev, position])
-    setCurrentSearchUserName('')
-  }
+    setInputMessage(newInputMessage);
+    setMentionNames((prev) => [...prev, user]);
+    setMentionsPosition((prev) => [...prev, position]);
+    setCurrentSearchUserName('');
+  };
   const handleSelectionChange = (event) => {
     setCursorIndex(event.nativeEvent.selection.start);
   };
 
-
-  const RenderTextWithMention = () => {
+  const renderTextWithMention = () => {
     if (mentionsPosition.length === 0) {
       return <Text style={styles.inputText}>{inputMessage}</Text>;
     }
@@ -483,28 +467,61 @@ const CreatePost = ({ route }: any) => {
 
     // Add any remaining non-highlighted text after the mentions
     const remainingText = inputMessage.slice(currentPosition);
-    result.push([<Text key="nonHighlighted-last" style={styles.inputText}>{remainingText}</Text>]);
+    result.push([
+      <Text key="nonHighlighted-last" style={styles.inputText}>
+        {remainingText}
+      </Text>,
+    ]);
 
     // Flatten the array and render
     return <Text style={styles.inputText}>{result.flat()}</Text>;
   };
 
-
   useEffect(() => {
     const checkMentionNames = mentionNames.filter((item) => {
-
-      return inputMessage.includes(item.displayName)
-    })
+      return inputMessage.includes(item.displayName);
+    });
     const checkMentionPosition = mentionsPosition.filter((item) => {
-
-      return inputMessage.includes(item.displayName as string)
-    })
-    setMentionNames(checkMentionNames)
-    setMentionsPosition(checkMentionPosition)
-  }, [inputMessage])
+      return inputMessage.includes(item.displayName as string);
+    });
+    setMentionNames(checkMentionNames);
+    setMentionsPosition(checkMentionPosition);
+  }, [inputMessage]);
 
   return (
     <View style={styles.AllInputWrap}>
+      <SafeAreaView style={styles.barContainer} edges={['top']}>
+        <View style={styles.header}>
+          <TouchableOpacity style={styles.closeButton} onPress={goBack}>
+            <SvgXml xml={closeIcon(theme.colors.base)} width="17" height="17" />
+          </TouchableOpacity>
+          <View style={styles.headerTextContainer}>
+            <Text style={styles.headerText}>{targetName}</Text>
+          </View>
+          <TouchableOpacity
+            disabled={
+              inputMessage.length > 0 ||
+              displayImages.length > 0 ||
+              displayVideos.length > 0
+                ? false
+                : true
+            }
+            onPress={handleCreatePost}
+          >
+            <Text
+              style={
+                inputMessage.length > 0 ||
+                displayImages.length > 0 ||
+                displayVideos.length > 0
+                  ? styles.postText
+                  : [styles.postText, styles.disabled]
+              }
+            >
+              Post
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.select({ ios: 100, android: 80 })}
@@ -515,17 +532,19 @@ const CreatePost = ({ route }: any) => {
             <TextInput
               multiline
               placeholder="What's going on..."
-              style={mentionNames.length > 0 ? [styles.textInput, styles.transparentText] : styles.textInput}
+              style={
+                mentionNames.length > 0
+                  ? [styles.textInput, styles.transparentText]
+                  : styles.textInput
+              }
               value={inputMessage}
               onChangeText={(text) => setInputMessage(text)}
               placeholderTextColor={theme.colors.baseShade3}
               onSelectionChange={handleSelectionChange}
             />
-            {mentionNames.length > 0 &&
-              <View style={styles.overlay}>
-                {/* {renderTextWithMention()} */}
-                <RenderTextWithMention />
-              </View>}
+            {mentionNames.length > 0 && (
+              <View style={styles.overlay}>{renderTextWithMention()}</View>
+            )}
           </View>
           {/* <InputWithMention /> */}
           <View style={styles.imageContainer}>
@@ -564,12 +583,14 @@ const CreatePost = ({ route }: any) => {
             )}
           </View>
         </ScrollView>
-        {
-          isShowMention && <MentionPopup userName={currentSearchUserName} onSelectMention={onSelectUserMention} />
-        }
+        {isShowMention && (
+          <MentionPopup
+            userName={currentSearchUserName}
+            onSelectMention={onSelectUserMention}
+          />
+        )}
 
         <View style={styles.InputWrap}>
-
           <TouchableOpacity
             disabled={displayVideos.length > 0 ? true : false}
             onPress={pickCamera}
@@ -600,8 +621,6 @@ const CreatePost = ({ route }: any) => {
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
-
-
     </View>
   );
 };

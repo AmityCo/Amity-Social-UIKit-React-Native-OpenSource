@@ -9,7 +9,7 @@ import React, {
 
 import { FlatList, View } from 'react-native';
 import PostList from '../../components/Social/PostList';
-import { getStyles } from './styles';
+import { useStyles } from './styles';
 import {
   CommunityRepository,
   PostRepository,
@@ -32,7 +32,7 @@ interface IFeed {
   targetType: string;
 }
 function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
-  const styles = getStyles();
+  const styles = useStyles();
   const [postData, setPostData] =
     useState<Amity.LiveCollection<Amity.Post<any>>>();
   const { postList } = useSelector((state: RootState) => state.feed);
@@ -137,7 +137,7 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
             postIndex={index}
           />
         )}
-        keyExtractor={(item) => item.postId.toString()}
+        keyExtractor={(_, index) => index.toString()}
         extraData={postList}
       />
     </View>

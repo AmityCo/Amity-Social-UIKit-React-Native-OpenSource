@@ -17,7 +17,7 @@ import {
 import type { RootStackParamList } from '../../routes/RouteParamList';
 import PostList, { IPost } from '../../components/Social/PostList';
 
-import { getStyles } from './styles';
+import { useStyles } from './styles';
 import type { IComment } from '../../components/Social/CommentList';
 import type { UserInterface } from '../../types/user.interface';
 import { getAmityUser } from '../../providers/user-provider';
@@ -38,7 +38,6 @@ import { RootState } from '../../redux/store';
 import { ISearchItem } from '../../components/SearchItem';
 import MentionPopup from '../../components/MentionPopup';
 import { IMentionPosition } from '../CreatePost';
-import _ from 'lodash';
 import { SvgXml } from 'react-native-svg';
 import { closeIcon } from '../../svg/svg-xml-list';
 
@@ -46,7 +45,7 @@ import { closeIcon } from '../../svg/svg-xml-list';
 const PostDetail = () => {
 
   const theme = useTheme() as MyMD3Theme;
-  const styles = getStyles();
+  const styles = useStyles();
   const route = useRoute<RouteProp<RootStackParamList, 'PostDetail'>>();
 
   const {
@@ -464,5 +463,4 @@ const PostDetail = () => {
   );
 };
 export default PostDetail;
-
 

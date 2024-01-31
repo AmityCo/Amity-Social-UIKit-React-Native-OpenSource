@@ -9,8 +9,6 @@ import {
   Animated,
   Modal,
   Pressable,
-  type StyleProp,
-  type ImageStyle,
   LogBox,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
@@ -19,26 +17,27 @@ import FloatingButton from '../../components/FloatingButton';
 import useAuth from '../../hooks/useAuth';
 import Explore from '../Explore';
 import GlobalFeed from '../GlobalFeed';
-import { getStyles } from './styles';
+import { useStyles } from './styles';
 import CreatePostModal from '../../components/CreatePostModal';
 import CustomTab from '../../components/CustomTab';
-import { useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import AllMyCommunity from '../AllMyCommunity';
 import useConfig from '../../hooks/useConfig';
 import { ComponentID } from '../../util/enumUIKitID';
 
+import { TabName } from '../../enum/tabNameState';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 LogBox.ignoreAllLogs(true);
 export default function Home() {
-  const styles = getStyles();
+  const styles = useStyles();
   const { client } = useAuth();
   const theme = useTheme() as MyMD3Theme;
 
   const { excludes } = useConfig()
 
-  const [activeTab, setActiveTab] = useState(1);
+  const [activeTab, setActiveTab] = useState<string>(TabName.NewsFeed);
   const [isVisible, setIsVisible] = useState(false);
 
   const [createPostModalVisible, setCreatePostModalVisible] = useState(false);
@@ -50,23 +49,25 @@ export default function Home() {
   const onClickAddCommunity = () => {
     navigation.navigate('CreateCommunity');
   };
-  navigation.setOptions({
-    headerRight: () => (
-      activeTab === 3 ? <TouchableOpacity onPress={onClickAddCommunity} style={styles.btnWrap}>
-        <SvgXml xml={plusIcon(theme.colors.base)} width="25" height="25" />
-      </TouchableOpacity>
-        :
-        <TouchableOpacity onPress={onClickSearch} style={styles.btnWrap}>
-          <SvgXml xml={searchIcon(theme.colors.base)} width="25" height="25" />
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        activeTab === TabName.MyCommunities ? <TouchableOpacity onPress={onClickAddCommunity} style={styles.btnWrap}>
+          <SvgXml xml={plusIcon(theme.colors.base)} width="25" height="25" />
         </TouchableOpacity>
-    ),
-    headerTitle: 'Community',
-  });
+          :
+          <TouchableOpacity onPress={onClickSearch} style={styles.btnWrap}>
+            <SvgXml xml={searchIcon(theme.colors.base)} width="25" height="25" />
+          </TouchableOpacity>
+      ),
+      headerTitle: 'Community',
+    });
+
+  }, [])
 
   const openCreatePostModal = () => {
     setCreatePostModalVisible(true);
   };
-
   const closeCreatePostModal = () => {
     setCreatePostModalVisible(false);
     closeModal();
@@ -94,41 +95,6 @@ export default function Home() {
     }
   }, [isVisible, slideAnimation]);
 
-  const renderTabComponent = () => {
-    let globalFeedStyle: StyleProp<ImageStyle> | StyleProp<ImageStyle>[] = styles.visible;
-    let exploreStyle: StyleProp<ImageStyle> | StyleProp<ImageStyle>[] = styles.invisible;
-    let myCommunityStyle: StyleProp<ImageStyle> | StyleProp<ImageStyle>[] = styles.invisible;
-
-    if (activeTab === 1) {
-      globalFeedStyle = styles.visible;
-      exploreStyle = styles.invisible;
-      myCommunityStyle = styles.invisible;
-    }
-    if (activeTab === 2) {
-      globalFeedStyle = styles.invisible;
-      exploreStyle = styles.visible;
-      myCommunityStyle = styles.invisible;
-    }
-    if (activeTab === 3) {
-      globalFeedStyle = styles.invisible;
-      exploreStyle = styles.invisible;
-      myCommunityStyle = styles.visible;
-    }
-    return (
-      <View>
-        <View style={globalFeedStyle}>
-          <GlobalFeed />
-          <FloatingButton onPress={openModal} />
-        </View>
-        <View style={exploreStyle}>
-          <Explore />
-        </View>
-        <View style={myCommunityStyle} >
-          <AllMyCommunity />
-        </View>
-      </View>
-    );
-  };
   const modalStyle = {
     transform: [
       {
@@ -139,17 +105,25 @@ export default function Home() {
       },
     ],
   };
-  const handleTabChange = (index: number) => {
-    setActiveTab(index);
-  };
   return (
     <View>
       <CustomTab
-        tabName={excludes.includes(ComponentID.StoryTab) ? ['Newsfeed', 'Explore'] : ['Newsfeed', 'Explore', 'My Communities']}
-        onTabChange={handleTabChange}
+        tabName={excludes.includes(ComponentID.StoryTab) ? [TabName.NewsFeed, TabName.Explorer] : [TabName.NewsFeed, TabName.Explorer, TabName.MyCommunities]}
+        onTabChange={setActiveTab}
       />
-      {renderTabComponent()}
-
+      {activeTab === TabName.NewsFeed ? (
+        <View>
+          <GlobalFeed />
+          <FloatingButton onPress={openModal} />
+        </View>
+      ) : activeTab === TabName.Explorer ? (
+        <View>
+          <Explore />
+        </View>
+      ) : <View>
+        <AllMyCommunity />
+      </View>
+      }
       <Modal
         animationType="fade"
         transparent={true}
@@ -162,7 +136,11 @@ export default function Home() {
               onPress={openCreatePostModal}
               style={styles.modalRow}
             >
-              <SvgXml xml={postIconOutlined(theme.colors.base)} width="28" height="28" />
+              <SvgXml
+                xml={postIconOutlined(theme.colors.base)}
+                width="28"
+                height="28"
+              />
               <Text style={styles.postText}>Post</Text>
             </TouchableOpacity>
             <CreatePostModal

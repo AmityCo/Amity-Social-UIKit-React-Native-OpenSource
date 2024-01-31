@@ -2,12 +2,12 @@ import { StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 
-export const getStyles = () => {
+export const useStyles = () => {
   const theme = useTheme() as MyMD3Theme;
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: theme.colors.background
+      backgroundColor: theme.colors.background,
     },
     input: {
       backgroundColor: theme.colors.secondary,
@@ -41,10 +41,9 @@ export const getStyles = () => {
     postBtnText: {
       color: theme.colors.primary,
       fontSize: 16,
-
     },
     postBtn: {
-      marginHorizontal: 12
+      marginHorizontal: 12,
     },
     commentItem: {
       padding: 16,
@@ -128,4 +127,4 @@ export const getStyles = () => {
   });
 
   return styles;
-}
+};

@@ -13,7 +13,7 @@ import {
 import { SvgXml } from 'react-native-svg';
 import { closeIcon } from '../../svg/svg-xml-list';
 
-import { getStyles } from './styles';
+import { useStyles } from './styles';
 import type { IDisplayImage } from '../../screens/CreatePost';
 import { editPost, getPostById } from '../../providers/Social/feed-sdk';
 import LoadingImage from '../LoadingImage';
@@ -31,58 +31,59 @@ interface IModal {
   visible: boolean;
   userId?: string;
   onClose: () => void;
-  onFinishEdit: (postData: { text: string, mediaUrls: string[] | IVideoPost[] }, type: string) => void;
+  onFinishEdit: (
+    postData: { text: string; mediaUrls: string[] | IVideoPost[] },
+    type: string
+  ) => void;
   postDetail: IPost;
   videoPostsArr?: IVideoPost[];
   imagePostsArr?: string[];
 }
-const EditPostModal = ({ visible, onClose, postDetail, onFinishEdit }: IModal) => {
-
-
-
+const EditPostModal = ({
+  visible,
+  onClose,
+  postDetail,
+  onFinishEdit,
+}: IModal) => {
   const theme = useTheme() as MyMD3Theme;
-  const styles = getStyles()
+  const styles = useStyles();
   const { apiRegion } = useAuth();
 
-  const [inputMessage, setInputMessage] = useState(postDetail?.data?.text ?? '');
+  const [inputMessage, setInputMessage] = useState(
+    postDetail?.data?.text ?? ''
+  );
 
-  const [videoPostList, setVideoPostList] = useState<IVideoPost[]>([])
+  const [videoPostList, setVideoPostList] = useState<IVideoPost[]>([]);
   const [displayImages, setDisplayImages] = useState<IDisplayImage[]>([]);
   const [displayVideos, setDisplayVideos] = useState<IDisplayImage[]>([]);
 
   const [imagePosts, setImagePosts] = useState<string[]>([]);
   const [videoPosts, setVideoPosts] = useState<IVideoPost[]>([]);
 
-  const [childrenPostArr, setChildrenPostArr] = useState<string[]>([])
-  const { updateByPostId } = globalFeedSlice.actions
-  const { updatePostDetail } = postDetailSlice.actions
-  const dispatch = useDispatch()
+  const [childrenPostArr, setChildrenPostArr] = useState<string[]>([]);
+  const { updateByPostId } = globalFeedSlice.actions;
+  const { updatePostDetail } = postDetailSlice.actions;
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (childrenPostArr.length > 0) {
-      getPostInfo()
+      getPostInfo();
     }
-  }, [childrenPostArr])
+  }, [childrenPostArr]);
 
   useEffect(() => {
-
-    getPost(postDetail.postId)
-
-  }, [postDetail.postId, visible])
+    getPost(postDetail.postId);
+  }, [postDetail.postId, visible]);
 
   const getPost = (postId: string) => {
-    const unsubscribePost = PostRepository.getPost(
-      postId,
-      async ({ data }) => {
-        setChildrenPostArr(data.children)
-
-      }
-    );
+    const unsubscribePost = PostRepository.getPost(postId, async ({ data }) => {
+      setChildrenPostArr(data.children);
+    });
     unsubscribePost();
   };
   const handleOnClose = () => {
-    onClose && onClose()
-  }
+    onClose && onClose();
+  };
 
   const getPostInfo = async () => {
     try {
@@ -99,16 +100,14 @@ const EditPostModal = ({ visible, onClose, postDetail, onFinishEdit }: IModal) =
             ...prev,
             `https://api.${apiRegion}.amity.co/api/v3/files/${item?.data.fileId}/download?size=medium`,
           ]);
-
         } else if (item.dataType === 'video') {
           setVideoPosts((prev) => [...prev, item.data]);
-
         }
       });
     } catch (error) {
       console.log('error: ', error);
     }
-  }
+  };
 
   const handleEditPost = async () => {
     if (displayImages.length > 0) {
@@ -116,9 +115,7 @@ const EditPostModal = ({ visible, onClose, postDetail, onFinishEdit }: IModal) =
         (item) => item.fileId
       );
 
-      const imageUrls: string[] = displayImages.map(
-        (item) => item.url
-      );
+      const imageUrls: string[] = displayImages.map((item) => item.url);
       const type: string = displayImages.length > 0 ? 'image' : 'text';
       const response = await editPost(
         postDetail.postId,
@@ -129,14 +126,22 @@ const EditPostModal = ({ visible, onClose, postDetail, onFinishEdit }: IModal) =
         type
       );
       if (response) {
-        const formattedPost = await amityPostsFormatter([response])
-        dispatch(updateByPostId({ postId: postDetail.postId, postDetail: formattedPost[0] }))
-        dispatch(updatePostDetail(formattedPost[0]))
-        onFinishEdit && onFinishEdit({
-          text: inputMessage,
-          mediaUrls: imageUrls,
-        },
-          type)
+        const formattedPost = await amityPostsFormatter([response]);
+        dispatch(
+          updateByPostId({
+            postId: postDetail.postId,
+            postDetail: formattedPost[0],
+          })
+        );
+        dispatch(updatePostDetail(formattedPost[0]));
+        onFinishEdit &&
+          onFinishEdit(
+            {
+              text: inputMessage,
+              mediaUrls: imageUrls,
+            },
+            type
+          );
       }
     } else {
       const fileIdArr: (string | undefined)[] = displayVideos.map(
@@ -152,33 +157,32 @@ const EditPostModal = ({ visible, onClose, postDetail, onFinishEdit }: IModal) =
         type
       );
       if (response) {
-        onFinishEdit && onFinishEdit({
-          text: inputMessage,
-          mediaUrls: videoPostList,
-        },
-          type)
-        handleOnClose()
+        onFinishEdit &&
+          onFinishEdit(
+            {
+              text: inputMessage,
+              mediaUrls: videoPostList,
+            },
+            type
+          );
+        handleOnClose();
       }
     }
   };
 
-
-
   useEffect(() => {
     if (imagePosts.length > 0) {
-      const imagesObject: IDisplayImage[] = imagePosts.map(
-        (url: string) => {
-          const parts = url.split("/");
-          const fileId = parts[parts.indexOf("files") + 1];
+      const imagesObject: IDisplayImage[] = imagePosts.map((url: string) => {
+        const parts = url.split('/');
+        const fileId = parts[parts.indexOf('files') + 1];
 
-          return {
-            url: url,
-            fileName: fileId as string,
-            fileId: fileId,
-            isUploaded: true,
-          };
-        }
-      );
+        return {
+          url: url,
+          fileName: fileId as string,
+          fileId: fileId,
+          isUploaded: true,
+        };
+      });
       setDisplayImages(imagesObject);
     }
   }, [imagePosts]);
@@ -187,8 +191,6 @@ const EditPostModal = ({ visible, onClose, postDetail, onFinishEdit }: IModal) =
     if (videoPosts.length > 0) {
       const videosObject: IDisplayImage[] = await Promise.all(
         videoPosts.map(async (item: IVideoPost) => {
-
-
           return {
             url: `https://api.${apiRegion}.amity.co/api/v3/files/${item.videoFileId.original}/download`,
             fileName: item.videoFileId.original,
@@ -204,11 +206,9 @@ const EditPostModal = ({ visible, onClose, postDetail, onFinishEdit }: IModal) =
   useEffect(() => {
     processVideo();
     if (videoPosts.length > 0) {
-      setVideoPostList(videoPosts)
+      setVideoPostList(videoPosts);
     }
   }, [videoPosts]);
-
-
 
   const handleOnCloseImage = (originalPath: string) => {
     setDisplayImages((prevData) => {
@@ -233,7 +233,6 @@ const EditPostModal = ({ visible, onClose, postDetail, onFinishEdit }: IModal) =
     });
   };
 
-
   return (
     <Modal visible={visible} animationType="slide">
       <View style={styles.header}>
@@ -243,7 +242,10 @@ const EditPostModal = ({ visible, onClose, postDetail, onFinishEdit }: IModal) =
         <View style={styles.headerTextContainer}>
           <Text style={styles.headerText}>Edit Post</Text>
         </View>
-        <TouchableOpacity onPress={handleEditPost} style={styles.headerTextContainer}>
+        <TouchableOpacity
+          onPress={handleEditPost}
+          style={styles.headerTextContainer}
+        >
           <Text style={styles.headerText}>Save</Text>
         </TouchableOpacity>
       </View>
@@ -263,7 +265,7 @@ const EditPostModal = ({ visible, onClose, postDetail, onFinishEdit }: IModal) =
                 onChangeText={(text) => setInputMessage(text)}
               />
               <View style={styles.imageContainer}>
-                {displayImages.length > 0 &&
+                {displayImages.length > 0 && (
                   <FlatList
                     data={displayImages}
                     renderItem={({ item, index }) => (
@@ -278,8 +280,8 @@ const EditPostModal = ({ visible, onClose, postDetail, onFinishEdit }: IModal) =
                     )}
                     extraData={displayImages}
                     numColumns={3}
-                  />}
-
+                  />
+                )}
 
                 {displayVideos.length > 0 && (
                   <FlatList
@@ -300,10 +302,7 @@ const EditPostModal = ({ visible, onClose, postDetail, onFinishEdit }: IModal) =
                 )}
               </View>
             </ScrollView>
-
           </KeyboardAvoidingView>
-
-
         </View>
       </View>
     </Modal>

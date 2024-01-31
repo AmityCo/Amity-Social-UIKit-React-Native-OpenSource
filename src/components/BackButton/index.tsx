@@ -13,21 +13,20 @@ interface IBackBtn {
   onPress?: () => any;
   goBack?: boolean;
 }
-export default function BackButton({ onPress, goBack= true }: IBackBtn) {
-  const theme = useTheme() as MyMD3Theme ;
+export default function BackButton({ onPress, goBack = true }: IBackBtn) {
+  const theme = useTheme() as MyMD3Theme;
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   return (
     <TouchableOpacity
       onPress={() => {
-        if(goBack){
+        if (goBack) {
           navigation.goBack();
         }
 
         onPress && onPress();
       }}
     >
-      <SvgXml xml={arrowBack(theme.colors.base)} width={24} height={20}/>
-    
+      <SvgXml xml={arrowBack(theme.colors.base)} width={24} height={20} />
     </TouchableOpacity>
   );
 }

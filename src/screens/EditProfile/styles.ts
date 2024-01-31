@@ -3,8 +3,8 @@ import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 const CAMERA_ICON_SIZE = 30;
 
-export const getStyles=()=>{
-  const theme = useTheme() as MyMD3Theme ;
+export const useStyles = () => {
+  const theme = useTheme() as MyMD3Theme;
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -68,7 +68,6 @@ export const getStyles=()=>{
       fontSize: 16,
     },
   });
-  
+
   return styles;
-}
- 
+};

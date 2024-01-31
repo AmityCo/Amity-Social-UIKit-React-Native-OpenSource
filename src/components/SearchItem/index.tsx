@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
-import { getStyles } from './styles';
+import { useStyles } from './styles';
 import { SvgXml } from 'react-native-svg';
 import { communityIcon, userIcon } from '../../svg/svg-xml-list';
 import { CategoryRepository } from '@amityco/ts-sdk-react-native';
@@ -17,13 +17,13 @@ export interface ISearchItem {
 export default function SearchItem({
   target,
   onPress,
-  userProfileNavigateEnabled = true
+  userProfileNavigateEnabled = true,
 }: {
   target: ISearchItem;
   onPress?: (target: ISearchItem) => void;
-  userProfileNavigateEnabled?: boolean
+  userProfileNavigateEnabled?: boolean;
 }) {
-  const styles = getStyles();
+  const styles = useStyles();
   const { apiRegion } = useAuth();
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const [categoryName, setCategoryName] = useState<string>('');
@@ -36,14 +36,16 @@ export default function SearchItem({
     }
     if (userProfileNavigateEnabled) {
       if (target.targetType === 'community') {
-        navigation.navigate('CommunityHome', { communityId: target.targetId, communityName: target.displayName });
+        navigation.navigate('CommunityHome', {
+          communityId: target.targetId,
+          communityName: target.displayName,
+        });
       } else {
         navigation.navigate('UserProfile', {
-          userId: target.targetId
+          userId: target.targetId,
         });
       }
     }
-
   };
   useEffect(() => {
     getCategory();
@@ -91,10 +93,9 @@ export default function SearchItem({
         )}
         <View>
           <Text style={styles.itemText}>{displayName()}</Text>
-          {
-            target.targetType === 'community' && <Text style={styles.categoryText}>{categoryName}</Text>
-          }
-
+          {target.targetType === 'community' && (
+            <Text style={styles.categoryText}>{categoryName}</Text>
+          )}
         </View>
       </View>
     </TouchableOpacity>

@@ -2,18 +2,18 @@ import { StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
 
-export const getStyles =()=>{
+export const useStyles = () => {
   const theme = useTheme() as MyMD3Theme;
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: theme.colors.screenBackground
+      backgroundColor: theme.colors.screenBackground,
     },
     categoryText: {
       marginLeft: 10,
       marginBottom: 10,
       fontSize: 15,
-      color: theme.colors.base
+      color: theme.colors.base,
     },
     LoadingIndicator: {
       paddingVertical: 20,
@@ -30,12 +30,12 @@ export const getStyles =()=>{
       marginBottom: 10,
       backgroundColor: '#D9E5FC',
     },
-    declineWarningText:{
+    declineWarningText: {
       color: theme.colors.baseShade1,
       paddingHorizontal: 16,
-      paddingVertical: 12
-    }
+      paddingVertical: 12,
+    },
   });
-  
-  return styles
-}
+
+  return styles;
+};

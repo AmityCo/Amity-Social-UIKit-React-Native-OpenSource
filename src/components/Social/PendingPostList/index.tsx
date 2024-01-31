@@ -1,22 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {
-  useEffect,
-  useState,
-  useMemo,
-} from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 // import { useTranslation } from 'react-i18next';
 
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Image,
-} from 'react-native';
+import { View, Text, TouchableOpacity, Image } from 'react-native';
 import { SvgXml } from 'react-native-svg';
-import {
-  personXml,
-} from '../../../svg/svg-xml-list';
-import { getStyles } from './styles';
+import { personXml } from '../../../svg/svg-xml-list';
+import { useStyles } from './styles';
 
 import type { UserInterface } from '../../../types/user.interface';
 import { useNavigation } from '@react-navigation/native';
@@ -41,12 +30,12 @@ export interface IPost {
   targetId: string;
   childrenPosts: string[];
   mentionees: string[];
-  mentionPosition?: IMentionPosition[]
+  mentionPosition?: IMentionPosition[];
 }
 export interface IPendingPostList {
   onAcceptDecline?: (postId: string) => void;
   postDetail: IPost;
-  isModerator?: boolean
+  isModerator?: boolean;
 }
 export interface MediaUri {
   uri: string;
@@ -60,19 +49,19 @@ export interface IVideoPost {
 export default function PendingPostList({
   postDetail,
   onAcceptDecline,
-  isModerator = false
-
+  isModerator = false,
 }: IPendingPostList) {
-  const [postData, setPostData] = useState<IPost>(postDetail)
-
+  const [postData, setPostData] = useState<IPost>(postDetail);
 
   const { apiRegion } = useAuth();
-  const styles = getStyles();
-  const [textPost, setTextPost] = useState<string>()
+  const styles = useStyles();
+  const [textPost, setTextPost] = useState<string>();
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
-  const [mentionPositionArr, setMentionsPositionArr] = useState<IMentionPosition[]>([])
-  const [loading, setLoading] = useState<boolean>(true)
+  const [mentionPositionArr, setMentionsPositionArr] = useState<
+    IMentionPosition[]
+  >([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const {
     data,
@@ -80,31 +69,24 @@ export default function PendingPostList({
     createdAt,
     user,
     childrenPosts = [],
-    mentionPosition
+    mentionPosition,
   } = postData ?? {};
-
-
 
   useEffect(() => {
     if (mentionPosition) {
-      setMentionsPositionArr(mentionPosition)
+      setMentionsPositionArr(mentionPosition);
     }
-
-  }, [mentionPosition])
-
+  }, [mentionPosition]);
 
   useEffect(() => {
     setTimeout(() => {
-      setLoading(false)
+      setLoading(false);
     }, 200);
-    setPostData(postDetail)
-
-  }, [postDetail])
-
+    setPostData(postDetail);
+  }, [postDetail]);
 
   useEffect(() => {
-    setTextPost(data?.text)
-
+    setTextPost(data?.text);
   }, [postDetail]);
 
   function getTimeDifference(timestamp: string): string {
@@ -148,9 +130,6 @@ export default function PendingPostList({
     }
   }
 
-
-
-
   const handleDisplayNamePress = () => {
     if (user?.userId) {
       navigation.navigate('UserProfile', {
@@ -159,15 +138,13 @@ export default function PendingPostList({
     }
   };
 
-
-
   const RenderTextWithMention = () => {
     if (mentionPositionArr.length === 0) {
       return <Text style={styles.inputText}>{textPost}</Text>;
     }
     const mentionClick = (userId: string) => {
       navigation.navigate('UserProfile', {
-        userId: userId
+        userId: userId,
       });
     };
     let currentPosition = 0;
@@ -178,7 +155,11 @@ export default function PendingPostList({
 
         // Add highlighted text
         const highlightedText = (
-          <Text onPress={() => mentionClick(userId)} key={`highlighted-${i}`} style={styles.mentionText}>
+          <Text
+            onPress={() => mentionClick(userId)}
+            key={`highlighted-${i}`}
+            style={styles.mentionText}
+          >
             {textPost.slice(index, index + length)}
           </Text>
         );
@@ -192,7 +173,11 @@ export default function PendingPostList({
 
     // Add any remaining non-highlighted text after the mentions
     const remainingText = textPost.slice(currentPosition);
-    result.push([<Text key="nonHighlighted-last" style={styles.inputText}>{remainingText}</Text>]);
+    result.push([
+      <Text key="nonHighlighted-last" style={styles.inputText}>
+        {remainingText}
+      </Text>,
+    ]);
 
     // Flatten the array and render
     return <Text style={styles.inputText}>{result.flat()}</Text>;
@@ -203,14 +188,12 @@ export default function PendingPostList({
   }, [childrenPosts]);
 
   async function approvePost() {
-    onAcceptDecline && onAcceptDecline(postId)
+    onAcceptDecline && onAcceptDecline(postId);
     await PostRepository.approvePost(postId);
-
   }
   async function declinePost() {
-    onAcceptDecline && onAcceptDecline(postId)
+    onAcceptDecline && onAcceptDecline(postId);
     await PostRepository.declinePost(postId);
-
   }
   return (
     <View key={postId} style={styles.postWrap}>
@@ -253,25 +236,23 @@ export default function PendingPostList({
             </View>
           )}
         </View>
-        {isModerator && <View style={styles.actionSection}>
-          <TouchableOpacity
-            onPress={() => approvePost()}
-            style={styles.acceptBtn}
-          >
-
-
-            <Text style={styles.acceptBtnText}>Accept</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => declinePost()}
-            style={styles.declineBtn}
-          >
-            <Text style={styles.declineBtnText}>Decline</Text>
-          </TouchableOpacity>
-        </View>}
-
+        {isModerator && (
+          <View style={styles.actionSection}>
+            <TouchableOpacity
+              onPress={() => approvePost()}
+              style={styles.acceptBtn}
+            >
+              <Text style={styles.acceptBtnText}>Accept</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => declinePost()}
+              style={styles.declineBtn}
+            >
+              <Text style={styles.declineBtnText}>Decline</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
-
     </View>
   );
 }

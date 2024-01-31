@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 
 // import { useTranslation } from 'react-i18next';
 
@@ -10,7 +10,8 @@ import {
 } from '../../providers/Social/feed-sdk';
 import useAuth from '../../hooks/useAuth';
 import PostList from '../../components/Social/PostList';
-import { getStyles } from './styles';
+import { useStyle } from './styles';
+import MyCommunity from '../../components/MyCommunity';
 
 import { amityPostsFormatter } from '../../util/postDataFormatter';
 import { useDispatch, useSelector } from 'react-redux';
@@ -19,7 +20,6 @@ import { RootState } from '../../redux/store';
 import useConfig from '../../hooks/useConfig';
 
 import { ComponentID } from '../../util/enumUIKitID';
-import MyCommunity from '../../components/MyCommunity';
 import { useFocusEffect } from '@react-navigation/native';
 
 export default function GlobalFeed() {
@@ -30,7 +30,7 @@ export default function GlobalFeed() {
   const { updateGlobalFeed, deleteByPostId } = globalFeedSlice.actions
   const dispatch = useDispatch()
 
-  const styles = getStyles();
+  const styles = useStyle();
   const { isConnected } = useAuth();
   const [postData, setPostData] = useState<IGlobalFeedRes>();
 

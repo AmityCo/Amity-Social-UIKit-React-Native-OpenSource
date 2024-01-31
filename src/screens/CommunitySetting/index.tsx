@@ -1,12 +1,11 @@
 import React from 'react';
 import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native';
-import { getStyles } from './styles';
+import { useStyles } from './styles';
 import { CommunityRepository } from '@amityco/ts-sdk-react-native';
-import CloseButton from '../../components/BackButton';
 import { SvgXml } from 'react-native-svg';
 import { arrowOutlined } from '../../svg/svg-xml-list';
 import { useTheme } from 'react-native-paper';
-import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
+import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 
 interface ChatDetailProps {
   navigation: any;
@@ -18,20 +17,16 @@ export const CommunitySetting: React.FC<ChatDetailProps> = ({
   route,
 }) => {
   const theme = useTheme() as MyMD3Theme;
-  const styles = getStyles();
-  const { communityId, communityName } = route.params;
-  React.useLayoutEffect(() => {
-    // Set the headerRight component to a TouchableOpacity
-    navigation.setOptions({
-      headerLeft: () => <CloseButton />,
-      title: communityName,
-    });
-  }, []);
+  const styles = useStyles();
+  const { communityId, isModerator } = route.params;
   const handleMembersPress = () => {
     navigation.navigate('CommunityMemberDetail', {
       communityId: communityId,
+      isModerator: isModerator,
     });
   };
+
+  console.log(isModerator);
   const handleLeaveCommunityPress = async () => {
     const hasLeft = await CommunityRepository.leaveCommunity(communityId);
     if (hasLeft) {
@@ -41,7 +36,6 @@ export const CommunitySetting: React.FC<ChatDetailProps> = ({
 
   const renderItem = ({ item }: any) => {
     switch (item.id) {
-  
       case 1:
         return (
           <TouchableOpacity
@@ -55,7 +49,7 @@ export const CommunitySetting: React.FC<ChatDetailProps> = ({
               />
             </View>
             <Text style={styles.rowText}>Members</Text>
-           <SvgXml xml={arrowOutlined(theme.colors.base)} width={24}/>
+            <SvgXml xml={arrowOutlined(theme.colors.base)} width={24} />
           </TouchableOpacity>
         );
       case 2:

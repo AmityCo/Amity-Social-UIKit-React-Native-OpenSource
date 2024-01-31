@@ -24,7 +24,7 @@ const StoryCircleListItem = ({
 }: StoryCircleListItemProps) => {
 
   const theme = useTheme() as MyMD3Theme;
-  const styles = getStyles()
+  const styles = useStyles()
   const [, setIsPressed] = useState(item?.seen);
 
   const prevSeen = usePrevious(item?.seen);
@@ -150,7 +150,7 @@ export default StoryCircleListItem;
 //     fontSize: 11,
 //   },
 // });
-export const getStyles = () => {
+export const useStyles = () => {
 
   const theme = useTheme() as MyMD3Theme;
 

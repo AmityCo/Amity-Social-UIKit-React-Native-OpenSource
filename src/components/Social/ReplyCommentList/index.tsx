@@ -11,7 +11,7 @@ import {
   Animated,
   Alert,
 } from 'react-native';
-import { getStyles } from './styles';
+import { useStyles } from './styles';
 import { SvgXml } from 'react-native-svg';
 import {
   expandIcon,
@@ -82,7 +82,7 @@ export default function ReplyCommentList({
     childrenNumber
   } = commentDetail;
   const theme = useTheme() as MyMD3Theme;
-  const styles = getStyles();
+  const styles = useStyles();
   const [isLike, setIsLike] = useState<boolean>(
     myReactions ? myReactions.includes('like') : false
   );

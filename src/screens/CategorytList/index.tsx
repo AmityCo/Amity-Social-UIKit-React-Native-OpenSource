@@ -8,18 +8,17 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import { getStyles } from './styles';
+import { useStyles } from './styles';
 import CloseButton from '../../components/BackButton';
 import useAuth from '../../hooks/useAuth';
 
 export default function CategoryList({ navigation }: any) {
-
   const { apiRegion } = useAuth();
   const [categories, setCategories] = useState<Amity.Category[]>([]);
   const [loading, setLoading] = useState(false);
   const [hasNextPage, setHasNextPage] = useState(false);
 
-  const styles = getStyles();
+  const styles = useStyles();
   const onNextPageRef = useRef<(() => void) | null>(null);
   const isFetchingRef = useRef(false);
   const onEndReachedCalledDuringMomentumRef = useRef(true);
@@ -27,7 +26,6 @@ export default function CategoryList({ navigation }: any) {
     // Set the headerRight component to a TouchableOpacity
     navigation.setOptions({
       headerLeft: () => <CloseButton />,
-      // eslint-disable-next-line react/no-unstable-nested-components
     });
   }, [navigation]);
   useEffect(() => {
@@ -75,8 +73,8 @@ export default function CategoryList({ navigation }: any) {
           source={
             item.avatarFileId
               ? {
-                uri: `https://api.${apiRegion}.amity.co/api/v3/files/${item.avatarFileId}/download`,
-              }
+                  uri: `https://api.${apiRegion}.amity.co/api/v3/files/${item.avatarFileId}/download`,
+                }
               : require('../../../assets/icon/Placeholder.png')
           }
         />

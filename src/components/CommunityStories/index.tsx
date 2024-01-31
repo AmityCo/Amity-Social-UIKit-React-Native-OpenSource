@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
-import { getStyles } from './styles';
+import { useStyles } from './styles';
 import { CommunityRepository, StoryRepository } from '@amityco/ts-sdk-react-native';
 import useAuth from '../../hooks/useAuth';
 import { IStoryItems } from '../MyStories';
@@ -12,7 +12,7 @@ interface ICommunityStories {
 }
 export default function CommunityStories({ communityId }: ICommunityStories) {
 
-  const styles = getStyles();
+  const styles = useStyles();
   const { apiRegion } = useAuth();
   const [communityItem, setCommunityItem] = useState<IStoryItems>()
   console.log({ communityItem })

@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
 
-export const getStyles = () => {
+export const useStyles = () => {
   const theme = useTheme() as MyMD3Theme;
   const styles = StyleSheet.create({
     container: {
@@ -26,7 +26,7 @@ export const getStyles = () => {
       width: 16,
       height: 12,
     },
- 
+
     followIcon: {
       width: 18,
       height: 16,
@@ -35,7 +35,7 @@ export const getStyles = () => {
     userDetail: {
       flexDirection: 'row',
       alignItems: 'flex-start',
-      backgroundColor: theme.colors.background
+      backgroundColor: theme.colors.background,
     },
     profileContainer: {
       backgroundColor: theme.colors.background,
@@ -47,7 +47,7 @@ export const getStyles = () => {
     descriptionText: {
       paddingVertical: 12,
       color: theme.colors.base,
-      fontSize: 17
+      fontSize: 17,
     },
     avatar: {
       width: 64,
@@ -57,7 +57,7 @@ export const getStyles = () => {
     },
     userInfo: {
       marginLeft: 16,
-      backgroundColor: theme.colors.background
+      backgroundColor: theme.colors.background,
     },
     title: {
       fontSize: 20,
@@ -67,12 +67,12 @@ export const getStyles = () => {
     },
     horizontalText: {
       flexDirection: 'row',
-      backgroundColor: theme.colors.background
+      backgroundColor: theme.colors.background,
     },
     textComponent: {
       marginBottom: 4,
       fontSize: 13,
-      color: theme.colors.base
+      color: theme.colors.base,
     },
     editProfileButton: {
       // flex: 1,
@@ -112,4 +112,4 @@ export const getStyles = () => {
   });
 
   return styles;
-}
+};

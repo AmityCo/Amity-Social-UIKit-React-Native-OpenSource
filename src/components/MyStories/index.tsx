@@ -1,6 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
-import { getStyles } from './styles';
+import { useStyles } from './styles';
 // import { CommunityRepository } from '@amityco/ts-sdk-react-native';
 // import { useNavigation } from '@react-navigation/native';
 // import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -20,7 +20,7 @@ export interface IStoryItems {
 export default function MyStories() {
 
 
-  const styles = getStyles();
+  const styles = useStyles();
   // const { apiRegion } = useAuth();
   // const [communityItems, setCommunityItems] = useState<IStoryItems[]>([])
 

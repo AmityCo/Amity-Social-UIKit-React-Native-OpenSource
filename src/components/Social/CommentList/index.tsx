@@ -12,7 +12,7 @@ import {
   Alert,
   FlatList,
 } from 'react-native';
-import { getStyles } from './styles';
+import { useStyles } from './styles';
 import { SvgXml } from 'react-native-svg';
 import {
   expandIcon,
@@ -27,7 +27,6 @@ import type { UserInterface } from '../../../types/user.interface';
 
 import {
   addCommentReaction,
-  getCommentsDataByIds,
   removeCommentReaction,
 } from '../../../providers/Social/comment-sdk';
 
@@ -77,7 +76,7 @@ const CommentList = ({
 }: ICommentList) => {
 
   const theme = useTheme() as MyMD3Theme;
-  const styles = getStyles();
+  const styles = useStyles();
 
   const {
     commentId,
@@ -112,12 +111,13 @@ const CommentList = ({
   const [textComment, setTextComment] = useState<string>(data?.text)
   const [isVisible, setIsVisible] = useState(false);
   const [isReportByMe, setIsReportByMe] = useState<boolean>(false);
-  const [editCommentModal, setEditCommentModal] = useState<boolean>(false)
-  const [isEditComment, setIsEditComment] = useState<boolean>(false)
+  const [editCommentModal, setEditCommentModal] = useState<boolean>(false);
+  const [isEditComment, setIsEditComment] = useState<boolean>(false);
   const slideAnimation = useRef(new Animated.Value(0)).current;
-  const [commentMentionPosition, setCommentMentionPosition] = useState<IMentionPosition[]>([])
+  const [commentMentionPosition, setCommentMentionPosition] = useState<
+    IMentionPosition[]
+  >([]);
   const navigation = useNavigation<any>();
-
 
   useEffect(() => {
 
@@ -131,9 +131,9 @@ const CommentList = ({
 
   useEffect(() => {
     if (mentionPosition) {
-      setCommentMentionPosition(mentionPosition)
+      setCommentMentionPosition(mentionPosition);
     }
-  }, [mentionPosition])
+  }, [mentionPosition]);
 
 
 
@@ -226,7 +226,7 @@ const CommentList = ({
             createdAt: item.createdAt,
             childrenComment: item.children,
             referenceId: item.referenceId,
-            mentionPosition: item?.metadata?.mentioned
+            mentionPosition: item?.metadata?.mentioned,
           };
         })
       );
@@ -270,7 +270,6 @@ const CommentList = ({
       setLikeReaction(likeReaction - 1);
       setIsLike(false);
       await removeCommentReaction(commentId, 'like');
-
     } else {
       setIsLike(true);
       setLikeReaction(likeReaction + 1);
@@ -325,24 +324,24 @@ const CommentList = ({
   };
 
   const openEditCommentModal = () => {
-    setIsVisible(false)
-    setEditCommentModal(true)
-  }
+    setIsVisible(false);
+    setEditCommentModal(true);
+  };
   const onEditComment = (editText: string) => {
-    setIsEditComment(true)
-    setEditCommentModal(false)
+    setIsEditComment(true);
+    setEditCommentModal(false);
     setTextComment(editText);
-  }
+  };
   const onCloseEditCommentModal = () => {
-    setEditCommentModal(false)
-  }
+    setEditCommentModal(false);
+  };
   const RenderTextWithMention = () => {
     if (commentMentionPosition.length === 0) {
       return <Text style={styles.inputText}>{textComment}</Text>;
     }
     const mentionClick = (userId: string) => {
       navigation.navigate('UserProfile', {
-        userId: userId
+        userId: userId,
       });
     };
     let currentPosition = 0;
@@ -353,7 +352,11 @@ const CommentList = ({
 
         // Add highlighted text
         const highlightedText = (
-          <Text onPress={() => mentionClick(userId)} key={`highlighted-${i}`} style={styles.mentionText}>
+          <Text
+            onPress={() => mentionClick(userId)}
+            key={`highlighted-${i}`}
+            style={styles.mentionText}
+          >
             {textComment.slice(index, index + length)}
           </Text>
         );
@@ -368,7 +371,11 @@ const CommentList = ({
 
     // Add any remaining non-highlighted text after the mentions
     const remainingText = textComment.slice(currentPosition);
-    result.push([<Text key="nonHighlighted-last" style={styles.inputText}>{remainingText}</Text>]);
+    result.push([
+      <Text key="nonHighlighted-last" style={styles.inputText}>
+        {remainingText}
+      </Text>,
+    ]);
 
     // Flatten the array and render
     return <Text style={styles.inputText}>{result.flat()}</Text>;
@@ -408,13 +415,12 @@ const CommentList = ({
             <Text style={styles.headerTextTime}>
               {getTimeDifference(createdAt)}
             </Text>
-            {(editedAt !== createdAt || isEditComment) && <Text style={styles.dot}>·</Text>}
-            {(editedAt !== createdAt || isEditComment) &&
-
-              <Text style={styles.headerTextTime}>
-                Edited
-              </Text>}
-
+            {(editedAt !== createdAt || isEditComment) && (
+              <Text style={styles.dot}>·</Text>
+            )}
+            {(editedAt !== createdAt || isEditComment) && (
+              <Text style={styles.headerTextTime}>Edited</Text>
+            )}
           </View>
           <View style={styles.commentBubble}>
             {textComment && <RenderTextWithMention />}
@@ -426,7 +432,11 @@ const CommentList = ({
               style={styles.likeBtn}
             >
               {isLike ? (
-                <SvgXml xml={likedXml(theme.colors.primary)} width="20" height="16" />
+                <SvgXml
+                  xml={likedXml(theme.colors.primary)}
+                  width="20"
+                  height="16"
+                />
               ) : (
                 <SvgXml xml={likeXml} width="20" height="16" />
               )}
@@ -447,7 +457,11 @@ const CommentList = ({
 
 
             <TouchableOpacity onPress={openModal} style={styles.threeDots}>
-              <SvgXml xml={threeDots(theme.colors.base)} width="20" height="16" />
+              <SvgXml
+                xml={threeDots(theme.colors.base)}
+                width="20"
+                height="16"
+              />
             </TouchableOpacity>
           </View>
 
@@ -483,7 +497,14 @@ const CommentList = ({
         onRequestClose={closeModal}
       >
         <Pressable onPress={closeModal} style={styles.modalContainer}>
-          <Animated.View style={[styles.modalContent, modalStyle, user?.userId === (client as Amity.Client).userId && styles.twoOptions]}>
+          <Animated.View
+            style={[
+              styles.modalContent,
+              modalStyle,
+              user?.userId === (client as Amity.Client).userId &&
+                styles.twoOptions,
+            ]}
+          >
             {user?.userId === (client as Amity.Client).userId ? (
               <View>
                 <TouchableOpacity
@@ -499,7 +520,6 @@ const CommentList = ({
                   <Text style={styles.deleteText}> Delete Comment</Text>
                 </TouchableOpacity>
               </View>
-
             ) : (
               <TouchableOpacity
                 onPress={reportCommentObject}

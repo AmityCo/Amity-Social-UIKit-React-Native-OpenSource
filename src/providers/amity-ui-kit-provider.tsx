@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Provider } from 'react-redux'
+import { Provider } from 'react-redux';
 import AuthContextProvider from './auth-provider';
 import { DefaultTheme, PaperProvider, type MD3Theme } from 'react-native-paper';
 import { store } from '../redux/store';
@@ -14,7 +14,7 @@ export interface IAmityUIkitProvider {
   children: any;
   theme?: CustomColors;
   darkMode?: boolean;
-  authToken?: string
+  authToken?: string;
 }
 
 interface CustomColors {
@@ -42,9 +42,8 @@ export default function AmityUiKitProvider({
   children,
   theme,
   darkMode = false,
-  authToken
+  authToken,
 }: IAmityUIkitProvider) {
-
   const customizedTheme: MyMD3Theme = {
     ...DefaultTheme,
     colors: {

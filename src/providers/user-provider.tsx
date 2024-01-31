@@ -39,7 +39,7 @@ export async function reportUser(userId: string): Promise<boolean> {
     const query = createQuery(createReport, 'user', userId);
 
     runQuery(query, (options) => {
-      if (options.loading == false) {
+      if (options.loading === false) {
         if (options.data !== undefined) {
           return resolve(options.data);
         } else {

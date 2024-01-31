@@ -2,8 +2,7 @@ import { StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../../providers/amity-ui-kit-provider';
 
-export const getStyles = () => {
-
+export const useStyles = () => {
   const theme = useTheme() as MyMD3Theme;
 
   const styles = StyleSheet.create({
@@ -30,13 +29,13 @@ export const getStyles = () => {
       fontWeight: '600',
       fontSize: 15,
       marginTop: 3,
-      color: theme.colors.base
+      color: theme.colors.base,
     },
     headerTextTime: {
       fontSize: 13,
       fontWeight: '400',
       marginVertical: 4,
-      color: theme.colors.baseShade1
+      color: theme.colors.baseShade1,
     },
     avatar: {
       width: 30,
@@ -83,7 +82,7 @@ export const getStyles = () => {
     },
     commentText: {
       fontSize: 15,
-      color: theme.colors.base
+      color: theme.colors.base,
     },
     likeBtn: {
       flexDirection: 'row',
@@ -158,4 +157,4 @@ export const getStyles = () => {
 
 
   return styles;
-}
+};

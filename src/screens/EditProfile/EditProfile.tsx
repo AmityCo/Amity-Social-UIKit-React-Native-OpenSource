@@ -18,7 +18,7 @@ import {
   type ImageLibraryOptions,
   type ImagePickerResponse,
 } from 'react-native-image-picker';
-import { getStyles } from './styles';
+import { useStyles } from './styles';
 import CloseButton from '../../components/BackButton/index';
 import DoneButton from '../../components/DoneButton/index';
 import { LoadingOverlay } from '../../components/LoadingOverlay/index';
@@ -63,7 +63,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
   navigation,
   route,
 }) => {
-  const styles = getStyles();
+  const styles = useStyles();
   const MAX_CHARACTER_COUNT = 100;
   const { apiRegion } = useAuth();
   const imageUriRef = useRef<string | undefined>(undefined);

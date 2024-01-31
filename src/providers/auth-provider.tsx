@@ -1,10 +1,9 @@
 
-import React, {  useEffect, useState, type FC, } from 'react';
+import React, { useEffect, useState, type FC, } from 'react';
 import { Client } from '@amityco/ts-sdk-react-native';
 import type { AuthContextInterface } from '../types/auth.interface';
 import { Alert } from 'react-native';
 import type { IAmityUIkitProvider } from './amity-ui-kit-provider';
-
 
 export const AuthContext = React.createContext<AuthContextInterface>({
   client: {},
@@ -15,7 +14,7 @@ export const AuthContext = React.createContext<AuthContextInterface>({
   isConnected: false,
   sessionState: '',
   apiRegion: 'sg',
-  authToken: ''
+  authToken: '',
 });
 
 export const AuthContextProvider: FC<IAmityUIkitProvider> = ({
@@ -25,7 +24,7 @@ export const AuthContextProvider: FC<IAmityUIkitProvider> = ({
   apiRegion,
   apiEndpoint,
   children,
-  authToken
+  authToken,
 }: IAmityUIkitProvider) => {
   const [error, setError] = useState('');
   const [isConnecting, setLoading] = useState(false);
@@ -44,21 +43,17 @@ export const AuthContextProvider: FC<IAmityUIkitProvider> = ({
   };
 
 
-
-
   useEffect(() => {
-    return Client.onSessionStateChange((state: Amity.SessionStates) => setSessionState(state));
+    return Client.onSessionStateChange((state: Amity.SessionStates) =>
+      setSessionState(state)
+    );
   }, []);
 
-
   useEffect(() => {
-
     if (sessionState === 'established') {
-      setIsConnected(true)
-
+      setIsConnected(true);
     }
-  }, [sessionState])
-
+  }, [sessionState]);
 
   const handleConnect = async () => {
     let loginParam;
@@ -66,18 +61,14 @@ export const AuthContextProvider: FC<IAmityUIkitProvider> = ({
     loginParam = {
       userId: userId,
       displayName: displayName, // optional
-    }
+    };
     if (authToken?.length > 0) {
-      loginParam = { ...loginParam, authToken: authToken }
-    } 
-    const response = await Client.login(
-      loginParam
-      ,
-      sessionHandler
-    );
+      loginParam = { ...loginParam, authToken: authToken };
+    }
+    const response = await Client.login(loginParam, sessionHandler);
 
     if (response) {
-      console.log('response:', response)
+      console.log('response:', response);
     }
   };
 
@@ -85,7 +76,6 @@ export const AuthContextProvider: FC<IAmityUIkitProvider> = ({
     setError('');
     setLoading(true);
     try {
-
       handleConnect();
     } catch (e) {
       const errorText =
@@ -124,7 +114,7 @@ export const AuthContextProvider: FC<IAmityUIkitProvider> = ({
         logout,
         isConnected,
         sessionState,
-        apiRegion: apiRegion.toLowerCase()
+        apiRegion: apiRegion.toLowerCase(),
       }}
     >
       {children}

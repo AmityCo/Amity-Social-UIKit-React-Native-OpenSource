@@ -1,20 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import {
-  View,
-  FlatList,
-} from 'react-native';
-import { getStyles } from './styles';
+import { View, FlatList } from 'react-native';
+import { useStyles } from './styles';
 import { UserRepository } from '@amityco/ts-sdk-react-native';
 import SearchItem, { ISearchItem } from '../SearchItem';
 export default function MentionPopup({
   userName,
-  onSelectMention
+  onSelectMention,
 }: {
-  userName: string
-  onSelectMention: (target: ISearchItem) => void
+  userName: string;
+  onSelectMention: (target: ISearchItem) => void;
 }) {
-  const styles = getStyles()
-  const [usersObject, setUsersObject] = useState<Amity.LiveCollection<Amity.User>>();
+  const styles = useStyles();
+  const [usersObject, setUsersObject] =
+    useState<Amity.LiveCollection<Amity.User>>();
   const [searchList, setSearchList] = useState<ISearchItem[]>([]);
 
   const {
@@ -26,30 +24,25 @@ export default function MentionPopup({
   } = usersObject ?? {};
 
   useEffect(() => {
-    searchAccounts(userName)
-  }, [userName])
+    searchAccounts(userName);
+  }, [userName]);
 
   const searchAccounts = (text: string = '') => {
-    let searchProps = {}
+    let searchProps = {};
     if (text.length > 2) {
-      searchProps = { displayName: userName, limit: 10, sortBy: 'displayName' }
-
+      searchProps = { displayName: userName, limit: 10, sortBy: 'displayName' };
     } else {
-      searchProps = { limit: 10, sortBy: 'displayName' }
+      searchProps = { limit: 10, sortBy: 'displayName' };
     }
-    const unsubscribe = UserRepository.getUsers(
-      searchProps,
-      (data) => {
-        setUsersObject(data);
-      }
-
-    );
-    unsubscribe()
+    const unsubscribe = UserRepository.getUsers(searchProps, (data) => {
+      setUsersObject(data);
+    });
+    unsubscribe();
   };
 
   const handleLoadMore = () => {
-    onNextPage && onNextPage()
-  }
+    onNextPage && onNextPage();
+  };
   useEffect(() => {
     if (userArr && userArr.length) {
       const searchUsers: ISearchItem[] = userArr.map((item) => {
@@ -65,23 +58,26 @@ export default function MentionPopup({
   }, [userArr]);
 
   const onSelectUser = (target: ISearchItem) => {
-    onSelectMention && onSelectMention(target)
-
-  }
+    onSelectMention && onSelectMention(target);
+  };
   return (
     <View style={styles.mentionContainer}>
       <FlatList
         data={searchList}
         renderItem={({ item, index }) => {
-          return <SearchItem key={index} target={item} userProfileNavigateEnabled={false} onPress={onSelectUser} />
+          return (
+            <SearchItem
+              key={index}
+              target={item}
+              userProfileNavigateEnabled={false}
+              onPress={onSelectUser}
+            />
+          );
         }}
-        keyExtractor={item => item.targetId}
+        keyExtractor={(item) => item.targetId}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.7}
-
       />
     </View>
-
-
   );
 }

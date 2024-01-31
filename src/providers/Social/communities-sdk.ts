@@ -1,4 +1,7 @@
-import { CommunityPostSettings, CommunityRepository } from '@amityco/ts-sdk-react-native';
+import {
+  CommunityPostSettings,
+  CommunityRepository,
+} from '@amityco/ts-sdk-react-native';
 
 export interface ICreateCommunity {
   description: string;
@@ -6,8 +9,7 @@ export interface ICreateCommunity {
   isPublic: boolean;
   userIds?: string[];
   category: string;
-  avatarFileId?: string
-
+  avatarFileId?: string;
 }
 export function getCommunityById(communityId: string): Promise<any> {
   const communityObject = new Promise((resolve, reject) => {
@@ -25,7 +27,9 @@ export function getCommunityById(communityId: string): Promise<any> {
   });
   return communityObject;
 }
-export function createCommunity(communityParam: ICreateCommunity): Promise<any> {
+export function createCommunity(
+  communityParam: ICreateCommunity
+): Promise<any> {
   const communityObject = new Promise(async (resolve) => {
     const newCommunity = {
       description: communityParam.description as string,
@@ -34,16 +38,51 @@ export function createCommunity(communityParam: ICreateCommunity): Promise<any> 
       categoryIds: [communityParam.category] as string[],
       userIds: communityParam.userIds as string[],
       postSetting: CommunityPostSettings.ANYONE_CAN_POST,
-      avatarFileId: communityParam.avatarFileId.length>0?communityParam.avatarFileId: undefined
+      avatarFileId:
+        communityParam.avatarFileId.length > 0
+          ? communityParam.avatarFileId
+          : undefined,
     };
 
-    const { data: community } = await CommunityRepository.createCommunity(newCommunity);
+    const { data: community } = await CommunityRepository.createCommunity(
+      newCommunity
+    );
     resolve(community);
   });
   return communityObject;
 }
-export async function checkCommunityPermission(communityId: string, client: Amity.Client, apiRegion: string): Promise<any> {
-  const url: string = `https://api.${apiRegion}.amity.co/api/v3/communities/${communityId}/permissions/me`
+
+export const updateCommunity = (
+  communityId: string,
+  communityParam: ICreateCommunity
+): Promise<Amity.Community | unknown> => {
+  const communityObject = new Promise(async (resolve, reject) => {
+    try {
+      const newCommunity = {
+        description: communityParam.description,
+        displayName: communityParam.displayName,
+        isPublic: communityParam.isPublic,
+        categoryIds: [communityParam.category],
+        avatarFileId: communityParam?.avatarFileId ?? undefined,
+      };
+      const { data: community } = await CommunityRepository.updateCommunity(
+        communityId,
+        newCommunity
+      );
+      resolve(community);
+    } catch (error) {
+      reject(error);
+    }
+  });
+  return communityObject;
+};
+
+export async function checkCommunityPermission(
+  communityId: string,
+  client: Amity.Client,
+  apiRegion: string
+): Promise<any> {
+  const url: string = `https://api.${apiRegion}.amity.co/api/v3/communities/${communityId}/permissions/me`;
   const accessToken = client.token.accessToken;
 
   try {
@@ -55,12 +94,78 @@ export async function checkCommunityPermission(communityId: string, client: Amit
       },
     });
 
-    const data = await response.json()
-    return data
+    const data = await response.json();
+    return data;
   } catch (error) {
-    console.log('error:', error)
+    console.log('error:', error);
   }
-
 }
 
+export const updateCommunityMember = ({
+  operation,
+  communityId,
+  memberIds,
+}: {
+  operation: 'ADD' | 'REMOVE';
+  communityId: string;
+  memberIds: string[];
+}) => {
+  const communityMembers = new Promise<boolean>(async (resolve, reject) => {
+    try {
+      const updateMembers =
+        operation === 'ADD'
+          ? await CommunityRepository.Membership.addMembers(
+              communityId,
+              memberIds
+            )
+          : await CommunityRepository.Membership.removeMembers(
+              communityId,
+              memberIds
+            );
+      resolve(updateMembers);
+    } catch (error) {
+      reject(error);
+    }
+  });
+  return communityMembers;
+};
 
+export const assignRolesToUsers = (
+  communityId: string,
+  roles: string[],
+  userIds: string[]
+) => {
+  const assignUserRoles = new Promise<boolean>(async (resolve, reject) => {
+    try {
+      const result = await CommunityRepository.Moderation.addRoles(
+        communityId,
+        roles,
+        userIds
+      );
+      resolve(result);
+    } catch (error) {
+      reject(error);
+    }
+  });
+  return assignUserRoles;
+};
+
+export const removeRolesFromUsers = (
+  communityId: string,
+  roles: string[],
+  userIds: string[]
+) => {
+  const removeUserRoles = new Promise<boolean>(async (resolve, reject) => {
+    try {
+      const result = await CommunityRepository.Moderation.removeRoles(
+        communityId,
+        roles,
+        userIds
+      );
+      resolve(result);
+    } catch (error) {
+      reject(error);
+    }
+  });
+  return removeUserRoles;
+};

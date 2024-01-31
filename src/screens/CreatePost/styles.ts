@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 
-export const getStyles = () => {
+export const useStyles = () => {
   const theme = useTheme() as MyMD3Theme;
   const styles = StyleSheet.create({
     barContainer: {
@@ -29,7 +29,7 @@ export const getStyles = () => {
       fontWeight: '600',
       fontSize: 17,
       textAlign: 'center',
-      color: theme.colors.base
+      color: theme.colors.base,
     },
     postText: {
       fontWeight: '400',
@@ -54,7 +54,7 @@ export const getStyles = () => {
 
       // Additional styles if needed
     },
-    transparentText:{
+    transparentText: {
       color: 'transparent',
     },
     inputContainer: {
@@ -69,8 +69,7 @@ export const getStyles = () => {
     inputText: {
       color: theme.colors.base,
       fontSize: 15,
-      letterSpacing: 0, 
-
+      letterSpacing: 0,
     },
     overlay: {
       ...StyleSheet.absoluteFillObject, // Take up the whole screen
@@ -119,5 +118,5 @@ export const getStyles = () => {
     },
   });
 
-  return styles
-}
+  return styles;
+};

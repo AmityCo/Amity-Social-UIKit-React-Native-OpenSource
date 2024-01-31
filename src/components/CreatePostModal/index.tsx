@@ -15,7 +15,7 @@ import { closeIcon } from '../../svg/svg-xml-list';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import useAuth from '../../hooks/useAuth';
-import { getStyles } from './styles';
+import { useStyles } from './styles';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 interface IModal {
@@ -26,7 +26,7 @@ interface IModal {
 }
 const CreatePostModal = ({ visible, onClose, userId, onSelect }: IModal) => {
   const theme = useTheme() as MyMD3Theme;
-  const styles = getStyles();
+  const styles = useStyles();
   const { apiRegion } = useAuth();
   const [communities, setCommunities] = useState<Amity.Community[]>([]);
   const [hasNextPageFunc, setHasNextPageFunc] = useState(false);
@@ -77,11 +77,10 @@ const CreatePostModal = ({ visible, onClose, userId, onSelect }: IModal) => {
       } catch (error) {
         console.error('Failed to load communities:', error);
         isFetchingRef.current = false;
-      } 
+      }
     };
 
     loadCommunities();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const renderMyTimeLine = () => {
     return (
@@ -94,8 +93,8 @@ const CreatePostModal = ({ visible, onClose, userId, onSelect }: IModal) => {
           source={
             myUser
               ? {
-                uri: `https://api.${apiRegion}.amity.co/api/v3/files/${myUser.avatarFileId}/download`,
-              }
+                  uri: `https://api.${apiRegion}.amity.co/api/v3/files/${myUser.avatarFileId}/download`,
+                }
               : require('./../../../assets/icon/Placeholder.png')
           }
         />
@@ -118,6 +117,7 @@ const CreatePostModal = ({ visible, onClose, userId, onSelect }: IModal) => {
   const renderCommunity = ({ item }: { item: Amity.Community }) => {
     return (
       <TouchableOpacity
+        key={item.communityId}
         onPress={() =>
           onSelectFeed(item.communityId, item.displayName, 'community')
         }
@@ -128,8 +128,8 @@ const CreatePostModal = ({ visible, onClose, userId, onSelect }: IModal) => {
           source={
             item.avatarFileId
               ? {
-                uri: `https://api.${apiRegion}.amity.co/api/v3/files/${item.avatarFileId}/download`,
-              }
+                  uri: `https://api.${apiRegion}.amity.co/api/v3/files/${item.avatarFileId}/download`,
+                }
               : require('./../../../assets/icon/Placeholder.png')
           }
         />
@@ -137,7 +137,6 @@ const CreatePostModal = ({ visible, onClose, userId, onSelect }: IModal) => {
       </TouchableOpacity>
     );
   };
-
 
   const handleEndReached = () => {
     if (
@@ -149,10 +148,14 @@ const CreatePostModal = ({ visible, onClose, userId, onSelect }: IModal) => {
       onEndReachedCalledDuringMomentumRef.current = true;
       onNextPageRef.current && onNextPageRef.current();
     }
-  }
+  };
 
   return (
-    <Modal visible={visible} animationType="slide" onTouchEnd={handleEndReached}>
+    <Modal
+      visible={visible}
+      animationType="slide"
+      onTouchEnd={handleEndReached}
+    >
       <View style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
@@ -170,7 +173,8 @@ const CreatePostModal = ({ visible, onClose, userId, onSelect }: IModal) => {
             const yOffset = nativeEvent.contentOffset.y;
             const contentHeight = nativeEvent.contentSize.height;
             const scrollViewHeight = nativeEvent.layoutMeasurement.height;
-            const isNearBottom = contentHeight - yOffset <= scrollViewHeight * 1.7; // Adjust the multiplier as needed
+            const isNearBottom =
+              contentHeight - yOffset <= scrollViewHeight * 1.7; // Adjust the multiplier as needed
 
             if (isNearBottom) {
               handleEndReached();
@@ -178,7 +182,7 @@ const CreatePostModal = ({ visible, onClose, userId, onSelect }: IModal) => {
           }}
           scrollEventThrottle={16} // Adjust as needed
         >
-          {communities.map(item=>renderCommunity({item}))}
+          {communities.map((item) => renderCommunity({ item }))}
 
           {/* You can add any additional components or content here */}
         </ScrollView>
@@ -188,4 +192,3 @@ const CreatePostModal = ({ visible, onClose, userId, onSelect }: IModal) => {
 };
 
 export default CreatePostModal;
-

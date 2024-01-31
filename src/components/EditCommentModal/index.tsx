@@ -12,7 +12,7 @@ import {
 import { SvgXml } from 'react-native-svg';
 import { closeIcon } from '../../svg/svg-xml-list';
 
-import { getStyles } from './styles';
+import { useStyles } from './styles';
 
 import type { IComment } from '../Social/CommentList';
 import { editComment } from '../../providers/Social/comment-sdk';
@@ -26,25 +26,29 @@ interface IModal {
   onFinishEdit: (editText: string) => void;
   commentDetail: IComment;
 }
-const EditCommentModal = ({ visible, onClose, commentDetail, onFinishEdit }: IModal) => {
+const EditCommentModal = ({
+  visible,
+  onClose,
+  commentDetail,
+  onFinishEdit,
+}: IModal) => {
   const theme = useTheme() as MyMD3Theme;
-  const styles = getStyles();
-  const [inputMessage, setInputMessage] = useState(commentDetail?.data?.text ?? '');
-
-
+  const styles = useStyles();
+  const [inputMessage, setInputMessage] = useState(
+    commentDetail?.data?.text ?? ''
+  );
 
   const handleEditComment = async () => {
-
     if (inputMessage) {
-      const editedComment = await editComment(inputMessage, commentDetail.commentId)
+      const editedComment = await editComment(
+        inputMessage,
+        commentDetail.commentId
+      );
       if (editedComment) {
-        onFinishEdit && onFinishEdit(inputMessage)
+        onFinishEdit && onFinishEdit(inputMessage);
       }
     }
-
   };
-
-
 
   return (
     <Modal visible={visible} animationType="slide">
@@ -55,7 +59,10 @@ const EditCommentModal = ({ visible, onClose, commentDetail, onFinishEdit }: IMo
         <View style={styles.headerTextContainer}>
           <Text style={styles.headerText}>Edit Comment</Text>
         </View>
-        <TouchableOpacity onPress={handleEditComment} style={styles.headerTextContainer}>
+        <TouchableOpacity
+          onPress={handleEditComment}
+          style={styles.headerTextContainer}
+        >
           <Text style={styles.headerText}>Save</Text>
         </TouchableOpacity>
       </View>
@@ -76,8 +83,6 @@ const EditCommentModal = ({ visible, onClose, commentDetail, onFinishEdit }: IMo
               />
             </ScrollView>
           </KeyboardAvoidingView>
-
-
         </View>
       </View>
     </Modal>
@@ -85,4 +90,3 @@ const EditCommentModal = ({ visible, onClose, commentDetail, onFinishEdit }: IMo
 };
 
 export default EditCommentModal;
-
