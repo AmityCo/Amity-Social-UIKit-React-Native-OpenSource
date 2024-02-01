@@ -177,7 +177,7 @@ const PostDetail = () => {
         dataTypes: { matchType: 'any', values: ['text', 'image'] },
         referenceId: postId,
         referenceType: 'post',
-        limit: 20,
+        limit: 8,
       },
       (data: Amity.LiveCollection<Amity.Comment>) => {
         if (data.error) throw data.error;
