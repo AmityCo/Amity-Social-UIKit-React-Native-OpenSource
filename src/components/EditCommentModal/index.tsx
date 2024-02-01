@@ -12,7 +12,7 @@ import {
 import { SvgXml } from 'react-native-svg';
 import { closeIcon } from '../../svg/svg-xml-list';
 
-import { getStyles } from './styles';
+import { useStyles } from './styles';
 
 import type { IComment } from '../Social/CommentList';
 import { editComment } from '../../providers/Social/comment-sdk';
@@ -33,7 +33,7 @@ const EditCommentModal = ({
   onFinishEdit,
 }: IModal) => {
   const theme = useTheme() as MyMD3Theme;
-  const styles = getStyles();
+  const styles = useStyles();
   const [inputMessage, setInputMessage] = useState(
     commentDetail?.data?.text ?? ''
   );

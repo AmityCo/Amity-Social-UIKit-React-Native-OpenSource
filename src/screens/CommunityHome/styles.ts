@@ -2,8 +2,7 @@ import { StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
 
-export const getStyles = () => {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+export const useStyles = () => {
   const theme = useTheme() as MyMD3Theme;
   const styles = StyleSheet.create({
     container: {
@@ -43,7 +42,7 @@ export const getStyles = () => {
     },
     imageContainer: {
       width: '100%',
-      height: 260,
+      height: 160,
     },
     image: {
       width: '100%',

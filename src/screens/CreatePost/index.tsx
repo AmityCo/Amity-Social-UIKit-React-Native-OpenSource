@@ -23,7 +23,7 @@ import {
   galleryIcon,
   playVideoIcon,
 } from '../../svg/svg-xml-list';
-import { getStyles } from './styles';
+import { useStyles } from './styles';
 import ImagePicker, {
   launchImageLibrary,
   type Asset,
@@ -56,7 +56,7 @@ export interface IMentionPosition {
 }
 const CreatePost = ({ route }: any) => {
   const theme = useTheme() as MyMD3Theme;
-  const styles = getStyles();
+  const styles = useStyles();
   const { targetId, targetType, targetName } = route.params;
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const [inputMessage, setInputMessage] = useState('');

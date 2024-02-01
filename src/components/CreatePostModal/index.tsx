@@ -15,7 +15,7 @@ import { closeIcon } from '../../svg/svg-xml-list';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import useAuth from '../../hooks/useAuth';
-import { getStyles } from './styles';
+import { useStyles } from './styles';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 interface IModal {
@@ -26,7 +26,7 @@ interface IModal {
 }
 const CreatePostModal = ({ visible, onClose, userId, onSelect }: IModal) => {
   const theme = useTheme() as MyMD3Theme;
-  const styles = getStyles();
+  const styles = useStyles();
   const { apiRegion } = useAuth();
   const [communities, setCommunities] = useState<Amity.Community[]>([]);
   const [hasNextPageFunc, setHasNextPageFunc] = useState(false);

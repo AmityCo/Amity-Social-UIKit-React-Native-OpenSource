@@ -8,7 +8,7 @@ import {
   ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { getStyles } from './styles';
+import { useStyles } from './styles';
 import { SvgXml } from 'react-native-svg';
 import { circleCloseIcon, searchIcon } from '../../svg/svg-xml-list';
 import { useNavigation } from '@react-navigation/native';
@@ -31,7 +31,7 @@ enum searchTypeEnum {
 export default function CommunitySearch() {
   const theme = useTheme() as MyMD3Theme;
   LogBox.ignoreAllLogs(true);
-  const styles = getStyles();
+  const styles = useStyles();
   const [searchTerm, setSearchTerm] = useState('');
   const [searchType, setSearchType] = useState(searchTypeEnum.community);
   const [communities, setCommunities] =

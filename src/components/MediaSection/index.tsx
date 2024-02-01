@@ -10,7 +10,7 @@ import {
 
 import { SvgXml } from 'react-native-svg';
 
-import { getStyles } from './styles';
+import { useStyles } from './styles';
 import useAuth from '../../hooks/useAuth';
 import { IVideoPost, MediaUri } from '../Social/PostList';
 import { getPostById } from '../../providers/Social/feed-sdk';
@@ -26,12 +26,13 @@ export default function MediaSection({ childrenPosts }: IMediaSection) {
   const { apiRegion } = useAuth();
   const [imagePosts, setImagePosts] = useState<string[]>([]);
   const [videoPosts, setVideoPosts] = useState<IVideoPost[]>([]);
+
   const [imagePostsFullSize, setImagePostsFullSize] = useState<MediaUri[]>([]);
   const [videoPostsFullSize, setVideoPostsFullSize] = useState<MediaUri[]>([]);
   const [visibleFullImage, setIsVisibleFullImage] = useState<boolean>(false);
   const [imageIndex, setImageIndex] = useState<number>(0);
 
-  const styles = getStyles();
+  const styles = useStyles();
   let imageStyle: StyleProp<ImageStyle> | StyleProp<ImageStyle>[] =
     styles.imageLargePost;
   let colStyle: StyleProp<ImageStyle> = styles.col2;

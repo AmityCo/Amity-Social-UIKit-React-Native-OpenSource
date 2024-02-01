@@ -27,7 +27,7 @@ import type { MyMD3Theme } from '../providers/amity-ui-kit-provider';
 import { useTheme } from 'react-native-paper';
 import { Image, TouchableOpacity } from 'react-native';
 import { SvgXml } from 'react-native-svg';
-import { closeIcon, searchIcon } from '../svg/svg-xml-list';
+import { closeIcon } from '../svg/svg-xml-list';
 import { useStyles } from '../routes/style';
 import BackButton from '../components/BackButton';
 import CloseButton from '../components/CloseButton';
@@ -38,12 +38,6 @@ export default function SocialNavigator() {
   const { isConnected } = useAuth();
   const theme = useTheme() as MyMD3Theme;
 
-  // const renderPostDeatil = () => {
-  //   return <PostDetail />;
-  // };
-  const onClickSearch = (navigation: NativeStackNavigationProp<any>) => {
-    navigation.navigate('CommunitySearch');
-  };
   const styles = useStyles();
   return (
     <NavigationContainer independent={true}>
@@ -62,25 +56,7 @@ export default function SocialNavigator() {
             },
           }}
         >
-          <Stack.Screen
-            name="Home"
-            component={Home}
-            options={({ navigation }) => ({
-              headerRight: () => (
-                <TouchableOpacity
-                  onPress={() => onClickSearch(navigation)}
-                  style={styles.btnWrap}
-                >
-                  <SvgXml
-                    xml={searchIcon(theme.colors.base)}
-                    width="25"
-                    height="25"
-                  />
-                </TouchableOpacity>
-              ),
-              headerTitle: 'Community',
-            })}
-          />
+          <Stack.Screen name="Home" component={Home} />
           {/* <Stack.Screen name="Community" component={Home} /> */}
           <Stack.Screen name="Explore" component={Explore} />
           <Stack.Screen name="PostDetail" component={PostDetail} />

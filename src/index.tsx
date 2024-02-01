@@ -11,13 +11,13 @@ const LINKING_ERROR =
 const AmityReactNativeSocialUiKit = NativeModules.AmityReactNativeSocialUiKit
   ? NativeModules.AmityReactNativeSocialUiKit
   : new Proxy(
-    {},
-    {
-      get() {
-        throw new Error(LINKING_ERROR);
-      },
-    }
-  );
+      {},
+      {
+        get() {
+          throw new Error(LINKING_ERROR);
+        },
+      }
+    );
 
 export function multiply(a: number, b: number): Promise<number> {
   return AmityReactNativeSocialUiKit.multiply(a, b + 2 + 3);

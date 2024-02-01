@@ -23,7 +23,7 @@ import {
   Pressable,
 } from 'react-native';
 import CustomTab from '../../components/CustomTab';
-import { getStyles } from './styles';
+import { useStyles } from './styles';
 import Feed from '../Feed';
 import useAuth from '../../hooks/useAuth';
 import { SvgXml } from 'react-native-svg';
@@ -36,6 +36,7 @@ import { checkCommunityPermission } from '../../providers/Social/communities-sdk
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import FloatingButton from '../../components/FloatingButton';
+
 import useImage from '../../hooks/useImage';
 import { TabName } from '../../enum/tabNameState';
 
@@ -46,7 +47,7 @@ export type FeedRefType = {
 export default function CommunityHome({ route }: any) {
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const theme = useTheme() as MyMD3Theme;
-  const styles = getStyles();
+  const styles = useStyles();
   const { apiRegion, client } = useAuth();
   const { communityId, communityName } = route.params as {
     communityId: string;

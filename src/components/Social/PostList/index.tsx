@@ -22,7 +22,7 @@ import {
   personXml,
   threeDots,
 } from '../../../svg/svg-xml-list';
-import { getStyles } from './styles';
+import { useStyles } from './styles';
 
 import type { UserInterface } from '../../../types/user.interface';
 import {
@@ -89,7 +89,7 @@ export default function PostList({
 
   const theme = useTheme() as MyMD3Theme;
   const { client, apiRegion } = useAuth();
-  const styles = getStyles();
+  const styles = useStyles();
   const [isLike, setIsLike] = useState<boolean>(false);
   const [likeReaction, setLikeReaction] = useState<number>(0);
   const [communityName, setCommunityName] = useState('');

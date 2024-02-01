@@ -1,7 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { PostRepository } from '@amityco/ts-sdk-react-native';
 import React, { useEffect, useState } from 'react';
 import { FlatList, View, Text } from 'react-native';
-import { getStyles } from './styles';
+import { useStyles } from './styles';
 import CloseButton from '../../components/BackButton';
 import useAuth from '../../hooks/useAuth';
 import { RootStackParamList } from 'src/routes/RouteParamList';
@@ -18,7 +19,7 @@ export default function PendingPosts() {
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const { client } = useAuth();
 
-  const styles = getStyles();
+  const styles = useStyles();
 
   React.useLayoutEffect(() => {
     // Set the headerRight component to a TouchableOpacity

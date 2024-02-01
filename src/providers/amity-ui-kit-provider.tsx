@@ -3,6 +3,7 @@ import { Provider } from 'react-redux';
 import AuthContextProvider from './auth-provider';
 import { DefaultTheme, PaperProvider, type MD3Theme } from 'react-native-paper';
 import { store } from '../redux/store';
+import { ConfigProvider } from './config-provider';
 export type CusTomTheme = typeof DefaultTheme;
 export interface IAmityUIkitProvider {
   userId: string;
@@ -26,6 +27,7 @@ interface CustomColors {
   baseShade2?: string;
   baseShade3?: string;
   screenBackground?: string;
+  storiesRing: { colorOne: string; colorTwo: string };
 }
 export interface MyMD3Theme extends MD3Theme {
   colors: MD3Theme['colors'] & CustomColors;
@@ -54,6 +56,10 @@ export default function AmityUiKitProvider({
       baseShade2: theme?.baseShade2 ?? '#898E9E',
       baseShade3: theme?.baseShade3 ?? '#A5A9B5',
       screenBackground: theme?.screenBackground ?? '#EBECEF',
+      storiesRing: {
+        colorOne: theme?.storiesRing.colorOne ?? '#339AF9',
+        colorTwo: theme?.storiesRing.colorTwo ?? '#78FA58',
+      },
     },
   };
 
@@ -70,6 +76,7 @@ export default function AmityUiKitProvider({
       baseShade2: '#EBECEF', // Base color for comments, like text
       baseShade3: '#EBECEF', // Base color for placeHolder
       screenBackground: '#000000',
+      storiesRing: { colorOne: '#339AF9', colorTwo: '#78FA58' },
     },
   };
 
@@ -83,9 +90,11 @@ export default function AmityUiKitProvider({
         apiEndpoint={apiEndpoint}
         authToken={authToken}
       >
-        <PaperProvider theme={darkMode ? defaultDarkTheme : customizedTheme}>
-          {children}
-        </PaperProvider>
+        <ConfigProvider>
+          <PaperProvider theme={darkMode ? defaultDarkTheme : customizedTheme}>
+            {children}
+          </PaperProvider>
+        </ConfigProvider>
       </AuthContextProvider>
     </Provider>
   );

@@ -5,7 +5,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { View, Text, TouchableOpacity, Image } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { personXml } from '../../../svg/svg-xml-list';
-import { getStyles } from './styles';
+import { useStyles } from './styles';
 
 import type { UserInterface } from '../../../types/user.interface';
 import { useNavigation } from '@react-navigation/native';
@@ -54,7 +54,7 @@ export default function PendingPostList({
   const [postData, setPostData] = useState<IPost>(postDetail);
 
   const { apiRegion } = useAuth();
-  const styles = getStyles();
+  const styles = useStyles();
   const [textPost, setTextPost] = useState<string>();
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native';
-import { getStyles } from './styles';
+import { useStyles } from './styles';
 import { CommunityRepository } from '@amityco/ts-sdk-react-native';
 import { SvgXml } from 'react-native-svg';
 import { arrowOutlined } from '../../svg/svg-xml-list';
@@ -17,7 +17,7 @@ export const CommunitySetting: React.FC<ChatDetailProps> = ({
   route,
 }) => {
   const theme = useTheme() as MyMD3Theme;
-  const styles = getStyles();
+  const styles = useStyles();
   const { communityId, isModerator } = route.params;
   const handleMembersPress = () => {
     navigation.navigate('CommunityMemberDetail', {

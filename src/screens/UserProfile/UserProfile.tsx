@@ -13,7 +13,7 @@ import {
   type NativeScrollEvent,
   ScrollView,
 } from 'react-native';
-import { getStyles } from './styles';
+import { useStyles } from './styles';
 import { UserRepository } from '@amityco/ts-sdk-react-native';
 import Feed from '../Feed';
 import CustomTab from '../../components/CustomTab';
@@ -30,7 +30,7 @@ import { TabName } from '../../enum/tabNameState';
 
 export default function UserProfile({ route }: any) {
   const theme = useTheme() as MyMD3Theme;
-  const styles = getStyles();
+  const styles = useStyles();
   const { apiRegion, client } = useAuth();
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const { userId } = route.params;
