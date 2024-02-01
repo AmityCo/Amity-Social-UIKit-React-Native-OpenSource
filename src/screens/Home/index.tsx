@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 // import { useTranslation } from 'react-i18next';
@@ -35,7 +36,7 @@ export default function Home() {
   const { client } = useAuth();
   const theme = useTheme() as MyMD3Theme;
 
-  const { excludes } = useConfig()
+  const { excludes } = useConfig();
 
   const [activeTab, setActiveTab] = useState<string>(TabName.NewsFeed);
   const [isVisible, setIsVisible] = useState(false);
@@ -51,19 +52,26 @@ export default function Home() {
   };
   useEffect(() => {
     navigation.setOptions({
-      headerRight: () => (
-        activeTab === TabName.MyCommunities ? <TouchableOpacity onPress={onClickAddCommunity} style={styles.btnWrap}>
-          <SvgXml xml={plusIcon(theme.colors.base)} width="25" height="25" />
-        </TouchableOpacity>
-          :
-          <TouchableOpacity onPress={onClickSearch} style={styles.btnWrap}>
-            <SvgXml xml={searchIcon(theme.colors.base)} width="25" height="25" />
+      headerRight: () =>
+        activeTab === TabName.MyCommunities ? (
+          <TouchableOpacity
+            onPress={onClickAddCommunity}
+            style={styles.btnWrap}
+          >
+            <SvgXml xml={plusIcon(theme.colors.base)} width="25" height="25" />
           </TouchableOpacity>
-      ),
+        ) : (
+          <TouchableOpacity onPress={onClickSearch} style={styles.btnWrap}>
+            <SvgXml
+              xml={searchIcon(theme.colors.base)}
+              width="25"
+              height="25"
+            />
+          </TouchableOpacity>
+        ),
       headerTitle: 'Community',
     });
-
-  }, [])
+  }, []);
 
   const openCreatePostModal = () => {
     setCreatePostModalVisible(true);
@@ -108,7 +116,11 @@ export default function Home() {
   return (
     <View>
       <CustomTab
-        tabName={excludes.includes(ComponentID.StoryTab) ? [TabName.NewsFeed, TabName.Explorer] : [TabName.NewsFeed, TabName.Explorer, TabName.MyCommunities]}
+        tabName={
+          excludes.includes(ComponentID.StoryTab)
+            ? [TabName.NewsFeed, TabName.Explorer]
+            : [TabName.NewsFeed, TabName.Explorer, TabName.MyCommunities]
+        }
         onTabChange={setActiveTab}
       />
       {activeTab === TabName.NewsFeed ? (
@@ -120,10 +132,11 @@ export default function Home() {
         <View>
           <Explore />
         </View>
-      ) : <View>
-        <AllMyCommunity />
-      </View>
-      }
+      ) : (
+        <View>
+          <AllMyCommunity />
+        </View>
+      )}
       <Modal
         animationType="fade"
         transparent={true}

@@ -70,15 +70,13 @@ export const useStyles = () => {
       paddingHorizontal: 8,
       marginTop: 12,
       flexDirection: 'row',
-      justifyContent:'center',
-      alignItems: 'center'
-
-    }
-    ,
-    viewMoreText:{
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    viewMoreText: {
       fontWeight: '600',
       color: theme.colors.baseShade1,
-     paddingHorizontal: 4
+      paddingHorizontal: 4,
     },
     commentText: {
       fontSize: 15,
@@ -136,12 +134,12 @@ export const useStyles = () => {
     },
     timeRow: {
       flexDirection: 'row',
-      alignItems: 'center'
+      alignItems: 'center',
     },
     dot: {
       color: theme.colors.baseShade1,
       fontWeight: '900',
-      paddingHorizontal: 5
+      paddingHorizontal: 5,
     },
     mentionText: {
       color: theme.colors.primary,
@@ -150,11 +148,8 @@ export const useStyles = () => {
     inputText: {
       color: theme.colors.base,
       fontSize: 15,
-
     },
   });
-
-
 
   return styles;
 };

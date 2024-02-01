@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { CommunityRepository } from '@amityco/ts-sdk-react-native';
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { FlatList, View, Text, ActivityIndicator, Image } from 'react-native';

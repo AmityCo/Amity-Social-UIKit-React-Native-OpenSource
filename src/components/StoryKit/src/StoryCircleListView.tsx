@@ -16,7 +16,7 @@ const StoryCircleListView = ({
   avatarImageStyle,
   avatarWrapperStyle,
   avatarFlatListProps,
-  isCommunityStory = false
+  isCommunityStory = false,
 }: StoryCircleListViewProps) => {
   return (
     <FlatList

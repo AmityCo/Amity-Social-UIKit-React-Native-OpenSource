@@ -28,7 +28,6 @@ import {
   removeCommentReaction,
 } from '../../../providers/Social/comment-sdk';
 
-
 import { Pressable } from 'react-native';
 import useAuth from '../../../hooks/useAuth';
 import {
@@ -55,7 +54,7 @@ export interface IComment {
   childrenComment: string[];
   referenceId: string;
   mentionees?: string[];
-  mentionPosition?: IMentionPosition[]
+  mentionPosition?: IMentionPosition[];
   childrenNumber: number;
 }
 export interface IReplyCommentList {
@@ -67,7 +66,7 @@ export interface IReplyCommentList {
 export default function ReplyCommentList({
   commentDetail,
   onDelete,
-  commentId
+  commentId,
 }: IReplyCommentList) {
   const {
     // commentId,
@@ -79,7 +78,7 @@ export default function ReplyCommentList({
     childrenComment,
     editedAt,
     mentionPosition,
-    childrenNumber
+    childrenNumber,
   } = commentDetail;
   const theme = useTheme() as MyMD3Theme;
   const styles = useStyles();
@@ -92,21 +91,22 @@ export default function ReplyCommentList({
 
   const { client, apiRegion } = useAuth();
 
-  const [textComment, setTextComment] = useState<string>(data.text)
+  const [textComment, setTextComment] = useState<string>(data.text);
   const [isVisible, setIsVisible] = useState(false);
   const [isReportByMe, setIsReportByMe] = useState<boolean>(false);
-  const [editCommentModal, setEditCommentModal] = useState<boolean>(false)
-  const [isEditComment, setIsEditComment] = useState<boolean>(false)
+  const [editCommentModal, setEditCommentModal] = useState<boolean>(false);
+  const [isEditComment, setIsEditComment] = useState<boolean>(false);
   const slideAnimation = useRef(new Animated.Value(0)).current;
-  const [commentMentionPosition, setCommentMentionPosition] = useState<IMentionPosition[]>([])
+  const [commentMentionPosition, setCommentMentionPosition] = useState<
+    IMentionPosition[]
+  >([]);
   const navigation = useNavigation<any>();
-
 
   useEffect(() => {
     if (mentionPosition) {
-      setCommentMentionPosition(mentionPosition)
+      setCommentMentionPosition(mentionPosition);
     }
-  }, [mentionPosition])
+  }, [mentionPosition]);
 
   const openModal = () => {
     setIsVisible(true);
@@ -166,9 +166,7 @@ export default function ReplyCommentList({
     }
   }
 
-
   useEffect(() => {
-
     checkIsReport();
   }, [childrenComment]);
 
@@ -177,7 +175,6 @@ export default function ReplyCommentList({
       setLikeReaction(likeReaction - 1);
       setIsLike(false);
       await removeCommentReaction(commentId, 'like');
-
     } else {
       setIsLike(true);
       setLikeReaction(likeReaction + 1);
@@ -231,24 +228,24 @@ export default function ReplyCommentList({
   };
 
   const openEditCommentModal = () => {
-    setIsVisible(false)
-    setEditCommentModal(true)
-  }
+    setIsVisible(false);
+    setEditCommentModal(true);
+  };
   const onEditComment = (editText: string) => {
-    setIsEditComment(true)
-    setEditCommentModal(false)
+    setIsEditComment(true);
+    setEditCommentModal(false);
     setTextComment(editText);
-  }
+  };
   const onCloseEditCommentModal = () => {
-    setEditCommentModal(false)
-  }
+    setEditCommentModal(false);
+  };
   const RenderTextWithMention = () => {
     if (commentMentionPosition.length === 0) {
       return <Text style={styles.inputText}>{textComment}</Text>;
     }
     const mentionClick = (userId: string) => {
       navigation.navigate('UserProfile', {
-        userId: userId
+        userId: userId,
       });
     };
     let currentPosition = 0;
@@ -259,7 +256,11 @@ export default function ReplyCommentList({
 
         // Add highlighted text
         const highlightedText = (
-          <Text onPress={() => mentionClick(userId)} key={`highlighted-${i}`} style={styles.mentionText}>
+          <Text
+            onPress={() => mentionClick(userId)}
+            key={`highlighted-${i}`}
+            style={styles.mentionText}
+          >
             {textComment.slice(index, index + length)}
           </Text>
         );
@@ -274,21 +275,18 @@ export default function ReplyCommentList({
 
     // Add any remaining non-highlighted text after the mentions
     const remainingText = textComment.slice(currentPosition);
-    result.push([<Text key="nonHighlighted-last" style={styles.inputText}>{remainingText}</Text>]);
+    result.push([
+      <Text key="nonHighlighted-last" style={styles.inputText}>
+        {remainingText}
+      </Text>,
+    ]);
 
     // Flatten the array and render
     return <Text style={styles.inputText}>{result.flat()}</Text>;
   };
   return (
-    <View
-      key={commentId}
-      style={styles.replyCommentWrap}
-    >
-      <View
-        style={
-          styles.replyHeaderSection
-        }
-      >
+    <View key={commentId} style={styles.replyCommentWrap}>
+      <View style={styles.replyHeaderSection}>
         {user?.avatarFileId ? (
           <Image
             style={styles.avatar}
@@ -310,13 +308,12 @@ export default function ReplyCommentList({
             <Text style={styles.headerTextTime}>
               {getTimeDifference(createdAt)}
             </Text>
-            {(editedAt !== createdAt || isEditComment) && <Text style={styles.dot}>·</Text>}
-            {(editedAt !== createdAt || isEditComment) &&
-
-              <Text style={styles.headerTextTime}>
-                Edited
-              </Text>}
-
+            {(editedAt !== createdAt || isEditComment) && (
+              <Text style={styles.dot}>·</Text>
+            )}
+            {(editedAt !== createdAt || isEditComment) && (
+              <Text style={styles.headerTextTime}>Edited</Text>
+            )}
           </View>
           <View style={styles.commentBubble}>
             {textComment && <RenderTextWithMention />}
@@ -328,7 +325,11 @@ export default function ReplyCommentList({
               style={styles.likeBtn}
             >
               {isLike ? (
-                <SvgXml xml={likedXml(theme.colors.primary)} width="20" height="16" />
+                <SvgXml
+                  xml={likedXml(theme.colors.primary)}
+                  width="20"
+                  height="16"
+                />
               ) : (
                 <SvgXml xml={likeXml} width="20" height="16" />
               )}
@@ -338,18 +339,23 @@ export default function ReplyCommentList({
               </Text>
             </TouchableOpacity>
 
-
             <TouchableOpacity onPress={openModal} style={styles.threeDots}>
-              <SvgXml xml={threeDots(theme.colors.base)} width="20" height="16" />
+              <SvgXml
+                xml={threeDots(theme.colors.base)}
+                width="20"
+                height="16"
+              />
             </TouchableOpacity>
           </View>
           <View>
-            {childrenComment.length > 0 &&
+            {childrenComment.length > 0 && (
               <Pressable style={styles.viewMoreReplyBtn}>
                 <SvgXml xml={expandIcon} />
-                <Text style={styles.viewMoreText}>View {childrenNumber} replies</Text>
+                <Text style={styles.viewMoreText}>
+                  View {childrenNumber} replies
+                </Text>
               </Pressable>
-            }
+            )}
           </View>
           {/* {commentList.length > 0 && (
             <FlatList
@@ -370,7 +376,14 @@ export default function ReplyCommentList({
         onRequestClose={closeModal}
       >
         <Pressable onPress={closeModal} style={styles.modalContainer}>
-          <Animated.View style={[styles.modalContent, modalStyle, user?.userId === (client as Amity.Client).userId && styles.twoOptions]}>
+          <Animated.View
+            style={[
+              styles.modalContent,
+              modalStyle,
+              user?.userId === (client as Amity.Client).userId &&
+                styles.twoOptions,
+            ]}
+          >
             {user?.userId === (client as Amity.Client).userId ? (
               <View>
                 <TouchableOpacity
@@ -386,7 +399,6 @@ export default function ReplyCommentList({
                   <Text style={styles.deleteText}> Delete Comment</Text>
                 </TouchableOpacity>
               </View>
-
             ) : (
               <TouchableOpacity
                 onPress={reportCommentObject}

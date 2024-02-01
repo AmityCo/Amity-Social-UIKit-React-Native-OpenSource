@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useRef } from 'react';
 import {
   Animated,
@@ -49,18 +50,17 @@ export const StoryListItem = ({
   storyContainerStyle,
   ...props
 }: StoryListItemProps) => {
-
   const [load, setLoad] = useState<boolean>(true);
   const [pressed, setPressed] = useState<boolean>(false);
   const [content, setContent] = useState<IUserStoryItem[]>(
     stories.map((x) => ({
       ...x,
       finish: 0,
-    })),
+    }))
   );
 
   const [current, setCurrent] = useState(0);
-  const [storyDuration, setStoryDuration] = useState(duration)
+  const [storyDuration, setStoryDuration] = useState(duration);
 
   const progress = useRef(new Animated.Value(0)).current;
 
@@ -69,7 +69,7 @@ export const StoryListItem = ({
   useFocusEffect(
     React.useCallback(() => {
       return () => {
-        setPressed(true)
+        setPressed(true);
       };
     }, [])
   );
@@ -95,7 +95,6 @@ export const StoryListItem = ({
     });
     setContent(data);
     start();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage]);
 
   const prevCurrent = usePrevious(current);
@@ -116,7 +115,6 @@ export const StoryListItem = ({
         }
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [current]);
 
   function start() {
@@ -211,11 +209,9 @@ export const StoryListItem = ({
     }
   }, [currentPage, index, onStorySeen, current]);
 
-
   const handleLoadVideo = (data: OnLoadData) => {
-    setStoryDuration(data.duration * 1000)
-
-  }
+    setStoryDuration(data.duration * 1000);
+  };
   return (
     <GestureRecognizer
       key={key}
@@ -226,23 +222,25 @@ export const StoryListItem = ({
     >
       <SafeAreaView>
         <View style={styles.backgroundContainer}>
-          {(content[current].story_type === 'video') ?
+          {content[current].story_type === 'video' ? (
             <Video
               source={{ uri: content[current].story_video }}
               style={styles.video}
-              resizeMode='contain'
+              resizeMode="contain"
               controls={false}
               onReadyForDisplay={() => start()}
-              paused={content[current].story_page !== currentPage ? true : pressed}
+              paused={
+                content[current].story_page !== currentPage ? true : pressed
+              }
               onLoad={handleLoadVideo}
-
-            /> :
+            />
+          ) : (
             <Image
               onLoadEnd={() => start()}
               source={{ uri: content[current].story_image }}
               style={[styles.image, storyImageStyle]}
             />
-          }
+          )}
 
           {load && (
             <View style={styles.spinnerContainer}>
@@ -255,7 +253,7 @@ export const StoryListItem = ({
         <View
           style={[styles.animationBarContainer, animationBarContainerStyle]}
         >
-          {content.map((_index,key) => {
+          {content.map((_index, key) => {
             return (
               <View
                 key={key}
@@ -355,7 +353,7 @@ export const StoryListItem = ({
           onPress={onSwipeUp}
           style={styles.swipeUpBtn}
         >
-          <Text style={styles.swipeText}></Text>
+          <Text style={styles.swipeText} />
           <Text style={styles.swipeText}>{swipeText}</Text>
         </TouchableOpacity>
       )}

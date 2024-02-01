@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import * as React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 // import { useTranslation } from 'react-i18next';
@@ -75,9 +76,7 @@ export default function CreateCommunity() {
 
       headerTitle: 'Create Community',
     });
-  }, [])
-
-
+  }, []);
 
   // const pickImage = async () => {
   //   let result = await ImagePicker.launchImageLibraryAsync({

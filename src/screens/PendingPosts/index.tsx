@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { PostRepository } from '@amityco/ts-sdk-react-native';
 import React, { useEffect, useState } from 'react';
 import { FlatList, View, Text } from 'react-native';

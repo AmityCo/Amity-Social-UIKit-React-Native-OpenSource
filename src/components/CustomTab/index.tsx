@@ -59,15 +59,27 @@ const CustomTab = ({ tabName, onTabChange }: ICustomTab): ReactElement => {
     setTabThreeWidth(width);
   };
   const dynamicWidthStyle: StyleProp<any> = {
-    width: activeTab === 1 ? tabOneWidth - 20 : activeTab === 2 ? tabTwoWidth - 20 : activeTab === 3 ? tabThreeWidth - 20 : undefined,
+    width:
+      activeTab === 1
+        ? tabOneWidth - 20
+        : activeTab === 2
+        ? tabTwoWidth - 20
+        : activeTab === 3
+        ? tabThreeWidth - 20
+        : undefined,
   };
   return (
     <View style={styles.container}>
       {tabName.map((tab, index) => {
         const onLayout =
-          index === 0 ? getLayoutTabOneWidth : index === 1 ? getLayoutTabTwoWidth : getLayoutTabThreeWidth;
+          index === 0
+            ? getLayoutTabOneWidth
+            : index === 1
+            ? getLayoutTabTwoWidth
+            : getLayoutTabThreeWidth;
         return (
           <TouchableOpacity
+            key={tab}
             onLayout={onLayout}
             onPress={() => handleTabPress({ name: tab, tabIndex: index + 1 })}
           >

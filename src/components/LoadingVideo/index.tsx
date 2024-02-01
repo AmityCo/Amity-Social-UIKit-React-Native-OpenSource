@@ -138,8 +138,8 @@ const LoadingVideo = ({
   }, [fileId, isUploaded, source]);
 
   const handleOnPlay = () => {
-    setIsPause(false)
-    playVideoFullScreen(source)
+    setIsPause(false);
+    playVideoFullScreen(source);
     onPlay && onPlay(source);
   };
 

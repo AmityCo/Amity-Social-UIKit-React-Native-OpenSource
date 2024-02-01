@@ -10,7 +10,7 @@ export const useStyles = () => {
   const styles = StyleSheet.create({
     container: {
       backgroundColor: theme.colors.background,
-      paddingBottom: excludes.includes(ComponentID.StoryTab) ? 0 : 250
+      paddingBottom: excludes.includes(ComponentID.StoryTab) ? 0 : 250,
     },
     headerWrap: {
       flexDirection: 'row',

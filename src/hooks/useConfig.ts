@@ -1,8 +1,8 @@
-import { useContext } from "react";
-import { ConfigContext } from "../providers/config-provider";
+import { useContext } from 'react';
+import { ConfigContext } from '../providers/config-provider';
 
 interface IUIKitConfig {
-  globalTheme: Record<string,any>;
+  globalTheme: Record<string, any>;
   excludes: string[];
   getConfig: (key: string) => any;
 }
@@ -12,7 +12,7 @@ const useConfig = (): IUIKitConfig => {
   return {
     globalTheme,
     excludes,
-    getConfig
+    getConfig,
   };
 };
 

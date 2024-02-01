@@ -54,7 +54,7 @@ export interface CustomButtonRenderProps<T = Record<string, any>> {
 }
 
 export type RenderCustomButton<T = Record<string, any>> = (
-  props: CustomButtonRenderProps<T>,
+  props: CustomButtonRenderProps<T>
 ) => React.ReactNode;
 
 export interface TextRenderProps<T = Record<string, any>> {
@@ -99,7 +99,7 @@ export interface StoryCircleListViewProps extends SharedCircleListProps {
    * - `keyExtractor`
    */
   avatarFlatListProps?: CircleListViewFlatListProps;
-  isCommunityStory?: boolean
+  isCommunityStory?: boolean;
 }
 
 export interface StoryCircleListItemProps extends SharedCircleListProps {

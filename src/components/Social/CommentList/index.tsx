@@ -59,7 +59,7 @@ export interface IComment {
   childrenComment: string[];
   referenceId: string;
   mentionees?: string[];
-  mentionPosition?: IMentionPosition[]
+  mentionPosition?: IMentionPosition[];
   childrenNumber: number;
 }
 export interface ICommentList {
@@ -72,9 +72,8 @@ export interface ICommentList {
 const CommentList = ({
   commentDetail,
   onDelete,
-  onClickReply
+  onClickReply,
 }: ICommentList) => {
-
   const theme = useTheme() as MyMD3Theme;
   const styles = useStyles();
 
@@ -89,7 +88,7 @@ const CommentList = ({
     editedAt,
     mentionPosition,
     childrenNumber,
-    referenceId
+    referenceId,
   } = commentDetail ?? {};
 
   const [isLike, setIsLike] = useState<boolean>(
@@ -99,16 +98,18 @@ const CommentList = ({
     reactions?.like ? reactions?.like : 0
   );
 
-
   const { client, apiRegion } = useAuth();
   const [replyCommentList, setReplyCommentList] = useState<IComment[]>([]);
-  const [previewReplyCommentList, setPreviewReplyCommentList] = useState<IComment[]>([]);
-  const [replyCommentCollection, setReplyCommentCollection] = useState<Amity.LiveCollection<Amity.InternalComment<any>>>()
+  const [previewReplyCommentList, setPreviewReplyCommentList] = useState<
+    IComment[]
+  >([]);
+  const [replyCommentCollection, setReplyCommentCollection] =
+    useState<Amity.LiveCollection<Amity.InternalComment<any>>>();
 
-  const { onNextPage, hasNextPage } = replyCommentCollection ?? {}
+  const { onNextPage, hasNextPage } = replyCommentCollection ?? {};
 
-  const [isOpenReply, setIsOpenReply] = useState<boolean>(false)
-  const [textComment, setTextComment] = useState<string>(data?.text)
+  const [isOpenReply, setIsOpenReply] = useState<boolean>(false);
+  const [textComment, setTextComment] = useState<string>(data?.text);
   const [isVisible, setIsVisible] = useState(false);
   const [isReportByMe, setIsReportByMe] = useState<boolean>(false);
   const [editCommentModal, setEditCommentModal] = useState<boolean>(false);
@@ -120,22 +121,18 @@ const CommentList = ({
   const navigation = useNavigation<any>();
 
   useEffect(() => {
-
-    getReplyComments()
-    setIsOpenReply(true)
+    getReplyComments();
+    setIsOpenReply(true);
     return () => {
-      setIsOpenReply(false)
-    }
-  }, [])
-
+      setIsOpenReply(false);
+    };
+  }, []);
 
   useEffect(() => {
     if (mentionPosition) {
       setCommentMentionPosition(mentionPosition);
     }
   }, [mentionPosition]);
-
-
 
   const openModal = () => {
     setIsVisible(true);
@@ -195,11 +192,14 @@ const CommentList = ({
     }
   }
 
-  const formatReplyComments = async (replyComments, isPreviewReply: boolean = false) => {
+  const formatReplyComments = async (
+    replyComments,
+    isPreviewReply: boolean = false
+  ) => {
     if (isPreviewReply) {
-      setPreviewReplyCommentList([])
+      setPreviewReplyCommentList([]);
     } else {
-      setReplyCommentList([])
+      setReplyCommentList([]);
     }
 
     if (replyComments && replyComments.length > 0) {
@@ -235,32 +235,26 @@ const CommentList = ({
       } else {
         setReplyCommentList([...formattedCommentList]);
       }
-
     }
   };
   const getReplyComments = async () => {
-
     const getCommentsParams: Amity.CommentLiveCollection = {
-      referenceType: "post",
+      referenceType: 'post',
       referenceId: referenceId, // post ID
-      dataTypes: { values: ["text", "image"], matchType: "any" },
+      dataTypes: { values: ['text', 'image'], matchType: 'any' },
       limit: 3,
-      parentId: commentId
+      parentId: commentId,
     };
 
-    CommentRepository.getComments(
-      getCommentsParams,
-      (result) => {
-        setReplyCommentCollection(result)
-        formatReplyComments(result.data);
-      }
-    );
-
-  }
+    CommentRepository.getComments(getCommentsParams, (result) => {
+      setReplyCommentCollection(result);
+      formatReplyComments(result.data);
+    });
+  };
   const openReplyComment = () => {
-    setIsOpenReply(true)
-    getReplyComments()
-  }
+    setIsOpenReply(true);
+    getReplyComments();
+  };
   useEffect(() => {
     checkIsReport();
   }, [childrenComment]);
@@ -382,18 +376,11 @@ const CommentList = ({
   };
 
   const onHandleReply = () => {
-    onClickReply && onClickReply(user, commentId)
-  }
+    onClickReply && onClickReply(user, commentId);
+  };
   return (
-    <View
-      key={commentId}
-      style={styles.commentWrap}
-    >
-      <View
-        style={
-          styles.headerSection
-        }
-      >
+    <View key={commentId} style={styles.commentWrap}>
+      <View style={styles.headerSection}>
         {user?.avatarFileId ? (
           <Image
             style={styles.avatar}
@@ -455,7 +442,6 @@ const CommentList = ({
               <Text style={styles.btnText}>Reply</Text>
             </TouchableOpacity>
 
-
             <TouchableOpacity onPress={openModal} style={styles.threeDots}>
               <SvgXml
                 xml={threeDots(theme.colors.base)}
@@ -465,30 +451,52 @@ const CommentList = ({
             </TouchableOpacity>
           </View>
 
-          {(previewReplyCommentList.length > 0 && !isOpenReply) && <ReplyCommentList commentId={previewReplyCommentList[previewReplyCommentList.length - 1]?.commentId} commentDetail={previewReplyCommentList[previewReplyCommentList.length - 1]} />}
-          {isOpenReply && <FlatList
-            data={replyCommentList}
-            renderItem={({ item }) => (
-              <ReplyCommentList commentId={item.commentId} commentDetail={item} />
-            )}
-            keyExtractor={(item, index) => item.commentId + index}
-          />}
+          {previewReplyCommentList.length > 0 && !isOpenReply && (
+            <ReplyCommentList
+              commentId={
+                previewReplyCommentList[previewReplyCommentList.length - 1]
+                  ?.commentId
+              }
+              commentDetail={
+                previewReplyCommentList[previewReplyCommentList.length - 1]
+              }
+            />
+          )}
+          {isOpenReply && (
+            <FlatList
+              data={replyCommentList}
+              renderItem={({ item }) => (
+                <ReplyCommentList
+                  commentId={item.commentId}
+                  commentDetail={item}
+                />
+              )}
+              keyExtractor={(item, index) => item.commentId + index}
+            />
+          )}
 
+          {childrenComment.length > 0 && !isOpenReply && (
+            <TouchableOpacity
+              onPress={() => openReplyComment()}
+              style={styles.viewMoreReplyBtn}
+            >
+              <SvgXml xml={expandIcon} />
+              <Text style={styles.viewMoreText}>
+                View {childrenNumber} replies
+              </Text>
+            </TouchableOpacity>
+          )}
 
-
-
-          {(childrenComment.length > 0 && !isOpenReply) && <TouchableOpacity onPress={() => openReplyComment()} style={styles.viewMoreReplyBtn}>
-            <SvgXml xml={expandIcon} />
-            <Text style={styles.viewMoreText}>View {childrenNumber} replies</Text>
-          </TouchableOpacity>}
-
-
-          {(isOpenReply && hasNextPage) && <TouchableOpacity onPress={() => onNextPage()} style={styles.viewMoreReplyBtn}>
-            <SvgXml xml={expandIcon} />
-            <Text style={styles.viewMoreText}>View more replies</Text>
-          </TouchableOpacity>}
+          {isOpenReply && hasNextPage && (
+            <TouchableOpacity
+              onPress={() => onNextPage()}
+              style={styles.viewMoreReplyBtn}
+            >
+              <SvgXml xml={expandIcon} />
+              <Text style={styles.viewMoreText}>View more replies</Text>
+            </TouchableOpacity>
+          )}
         </View>
-
       </View>
       <Modal
         animationType="fade"
@@ -541,5 +549,5 @@ const CommentList = ({
       />
     </View>
   );
-}
-export default CommentList
+};
+export default CommentList;

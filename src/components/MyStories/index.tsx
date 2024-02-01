@@ -15,15 +15,11 @@ export interface IStoryItems {
   isPublic: boolean;
   isOfficial: boolean;
   hasStories: boolean;
-
 }
 export default function MyStories() {
-
-
   const styles = useStyles();
   // const { apiRegion } = useAuth();
   // const [communityItems, setCommunityItems] = useState<IStoryItems[]>([])
-
 
   // const queryCommunities = () => {
   //   const unsubscribe = CommunityRepository.getCommunities(
@@ -187,16 +183,12 @@ export default function MyStories() {
   //   },
   // ];
 
-
-
   return (
     <View style={styles.container}>
       {/* {communityItems?.length > 0 && <InstaStory
         data={data}
         duration={7}
       />} */}
-
-
     </View>
   );
 }

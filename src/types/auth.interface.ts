@@ -7,5 +7,5 @@ export type AuthContextInterface = {
   isConnected: boolean;
   sessionState: string;
   apiRegion: string;
-  authToken?: string
+  authToken?: string;
 };

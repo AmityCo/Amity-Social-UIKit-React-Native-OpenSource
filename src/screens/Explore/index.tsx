@@ -85,8 +85,8 @@ export default function Explore() {
               source={
                 categoryList[index]?.avatarFileId
                   ? {
-                    uri: `https://api.${apiRegion}.amity.co/api/v3/files/${categoryList[index]?.avatarFileId}/download`,
-                  }
+                      uri: `https://api.${apiRegion}.amity.co/api/v3/files/${categoryList[index]?.avatarFileId}/download`,
+                    }
                   : require('../../../assets/icon/Placeholder.png')
               }
             />
@@ -107,9 +107,10 @@ export default function Explore() {
                 source={
                   categoryList[index + 1]?.avatarFileId
                     ? {
-                      uri: `https://api.${apiRegion}.amity.co/api/v3/files/${categoryList[index + 1]?.avatarFileId
+                        uri: `https://api.${apiRegion}.amity.co/api/v3/files/${
+                          categoryList[index + 1]?.avatarFileId
                         }/download`,
-                    }
+                      }
                     : require('../../../assets/icon/Placeholder.png')
                 }
               />
@@ -140,12 +141,21 @@ export default function Explore() {
                 )
               }
             >
-              {community.avatarFileId ? <Image
-                style={styles.avatar}
-                source={{
-                  uri: `https://api.${apiRegion}.amity.co/api/v3/files/${community.avatarFileId}/download`,
-                }}
-              /> : <SvgXml xml={communityIcon} style={styles.avatar} width={40} height={40} />}
+              {community.avatarFileId ? (
+                <Image
+                  style={styles.avatar}
+                  source={{
+                    uri: `https://api.${apiRegion}.amity.co/api/v3/files/${community.avatarFileId}/download`,
+                  }}
+                />
+              ) : (
+                <SvgXml
+                  xml={communityIcon}
+                  style={styles.avatar}
+                  width={40}
+                  height={40}
+                />
+              )}
 
               <Text style={styles.name}>{community.displayName}</Text>
               <Text style={styles.recommendSubDetail}>
@@ -170,17 +180,25 @@ export default function Explore() {
                 )
               }
             >
-              {community.avatarFileId ? <Image
-                style={styles.avatar}
-                source={
-                  community.avatarFileId
-                    ? {
-                      uri: `https://api.${apiRegion}.amity.co/api/v3/files/${community.avatarFileId}/download`,
-                    }
-                    : require('../../../assets/icon/Placeholder.png')
-                }
-              />
-                : <SvgXml xml={communityIcon} style={styles.avatar} width={40} height={40} />}
+              {community.avatarFileId ? (
+                <Image
+                  style={styles.avatar}
+                  source={
+                    community.avatarFileId
+                      ? {
+                          uri: `https://api.${apiRegion}.amity.co/api/v3/files/${community.avatarFileId}/download`,
+                        }
+                      : require('../../../assets/icon/Placeholder.png')
+                  }
+                />
+              ) : (
+                <SvgXml
+                  xml={communityIcon}
+                  style={styles.avatar}
+                  width={40}
+                  height={40}
+                />
+              )}
 
               <View style={styles.trendingTextContainer}>
                 <Text style={styles.number}>{index + 1}</Text>

@@ -91,7 +91,6 @@ export async function createReplyComment(
   parentId: string,
   mentionUserIds: string[],
   mentionPosition: IMentionPosition[]
-  
 ): Promise<Amity.InternalComment> {
   const createCommentObject: Promise<Amity.InternalComment> = new Promise(
     async (resolve, reject) => {
@@ -102,9 +101,11 @@ export async function createReplyComment(
           },
           referenceId: postId,
           referenceType: 'post' as Amity.CommentReferenceType,
-          mentionees: [{ type: 'user', userIds: mentionUserIds }] as Amity.UserMention[],
-          metadata:{ mentioned: mentionPosition},
-          parentId: parentId
+          mentionees: [
+            { type: 'user', userIds: mentionUserIds },
+          ] as Amity.UserMention[],
+          metadata: { mentioned: mentionPosition },
+          parentId: parentId,
         };
 
         const { data: comment } = await CommentRepository.createComment(

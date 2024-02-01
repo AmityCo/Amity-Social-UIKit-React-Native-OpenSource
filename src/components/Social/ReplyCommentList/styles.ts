@@ -3,7 +3,6 @@ import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../../providers/amity-ui-kit-provider';
 
 export const useStyles = () => {
-
   const theme = useTheme() as MyMD3Theme;
 
   const styles = StyleSheet.create({
@@ -30,13 +29,13 @@ export const useStyles = () => {
       fontWeight: '600',
       fontSize: 15,
       marginTop: 3,
-      color: theme.colors.base
+      color: theme.colors.base,
     },
     headerTextTime: {
       fontSize: 13,
       fontWeight: '400',
       marginVertical: 4,
-      color: theme.colors.baseShade1
+      color: theme.colors.baseShade1,
     },
     avatar: {
       width: 30,
@@ -71,19 +70,17 @@ export const useStyles = () => {
       paddingHorizontal: 8,
       marginTop: 12,
       flexDirection: 'row',
-      justifyContent:'center',
-      alignItems: 'center'
-
-    }
-    ,
-    viewMoreText:{
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    viewMoreText: {
       fontWeight: '600',
       color: theme.colors.baseShade1,
-     paddingHorizontal: 4
+      paddingHorizontal: 4,
     },
     commentText: {
       fontSize: 15,
-      color: theme.colors.base
+      color: theme.colors.base,
     },
     likeBtn: {
       flexDirection: 'row',
@@ -137,12 +134,12 @@ export const useStyles = () => {
     },
     timeRow: {
       flexDirection: 'row',
-      alignItems: 'center'
+      alignItems: 'center',
     },
     dot: {
       color: theme.colors.baseShade1,
       fontWeight: '900',
-      paddingHorizontal: 5
+      paddingHorizontal: 5,
     },
     mentionText: {
       color: theme.colors.primary,
@@ -151,11 +148,8 @@ export const useStyles = () => {
     inputText: {
       color: theme.colors.base,
       fontSize: 15,
-
     },
   });
 
-
-
   return styles;
-}
+};

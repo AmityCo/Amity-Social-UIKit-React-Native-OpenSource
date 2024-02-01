@@ -38,7 +38,6 @@ export default function SocialNavigator() {
   const { isConnected } = useAuth();
   const theme = useTheme() as MyMD3Theme;
 
- 
   const styles = useStyles();
   return (
     <NavigationContainer independent={true}>
@@ -57,10 +56,7 @@ export default function SocialNavigator() {
             },
           }}
         >
-          <Stack.Screen
-            name="Home"
-            component={Home}
-          />
+          <Stack.Screen name="Home" component={Home} />
           {/* <Stack.Screen name="Community" component={Home} /> */}
           <Stack.Screen name="Explore" component={Explore} />
           <Stack.Screen name="PostDetail" component={PostDetail} />

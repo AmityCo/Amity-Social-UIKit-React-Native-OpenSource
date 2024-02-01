@@ -148,7 +148,7 @@ const AddMembersModal = ({
     const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
     const isEnd =
       layoutMeasurement.height + contentOffset.y >= contentSize.height;
-    console.log('isEnd:', isEnd)
+    console.log('isEnd:', isEnd);
   };
   const handleOnClose = () => {
     setSelectedUserList(initUserList);

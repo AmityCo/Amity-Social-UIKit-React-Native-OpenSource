@@ -27,7 +27,6 @@ export const createStyles = () => {
       top: '27%',
       left: '50%',
       transform: [{ translateX: -25 }, { translateY: -25 }],
-
     },
     progressBar: {
       marginVertical: 10,

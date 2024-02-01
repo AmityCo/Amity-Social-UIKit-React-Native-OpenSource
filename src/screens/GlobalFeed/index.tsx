@@ -25,10 +25,9 @@ import { useFocusEffect } from '@react-navigation/native';
 export default function GlobalFeed() {
   const { postList } = useSelector((state: RootState) => state.globalFeed);
 
-
-  const { excludes } = useConfig()
-  const { updateGlobalFeed, deleteByPostId } = globalFeedSlice.actions
-  const dispatch = useDispatch()
+  const { excludes } = useConfig();
+  const { updateGlobalFeed, deleteByPostId } = globalFeedSlice.actions;
+  const dispatch = useDispatch();
 
   const styles = useStyle();
   const { isConnected } = useAuth();
@@ -82,14 +81,20 @@ export default function GlobalFeed() {
         <FlatList
           data={postList}
           renderItem={({ item, index }) => (
-            <PostList onDelete={onDeletePost} postDetail={item} postIndex={index} />
+            <PostList
+              onDelete={onDeletePost}
+              postDetail={item}
+              postIndex={index}
+            />
           )}
           keyExtractor={(item) => item.postId.toString()}
           onEndReachedThreshold={0.5}
           onEndReached={handleLoadMore}
           ref={flatListRef}
           extraData={postList}
-          ListHeaderComponent={excludes.includes(ComponentID.StoryTab) && <MyCommunity />}
+          ListHeaderComponent={
+            excludes.includes(ComponentID.StoryTab) && <MyCommunity />
+          }
         />
       </View>
     </View>

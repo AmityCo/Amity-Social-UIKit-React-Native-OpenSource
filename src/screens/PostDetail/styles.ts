@@ -100,30 +100,29 @@ export const useStyles = () => {
     inputTextOverlayWrap: {
       flexDirection: 'row',
       backgroundColor: theme.colors.secondary,
-
     },
-    replyLabelWrap:{
+    replyLabelWrap: {
       height: 40,
       backgroundColor: theme.colors.secondary,
       paddingVertical: 10,
       justifyContent: 'space-between',
       flexDirection: 'row',
-      alignItems: 'center'
+      alignItems: 'center',
     },
-    replyLabel:{
+    replyLabel: {
       color: theme.colors.baseShade1,
       fontSize: 15,
       paddingLeft: 16,
-      paddingRight: 12
+      paddingRight: 12,
     },
-    closeIcon:{
-      marginRight: 12
+    closeIcon: {
+      marginRight: 12,
     },
-    userNameLabel:{
+    userNameLabel: {
       fontSize: 15,
       fontWeight: '600',
-      color: theme.colors.baseShade1
-    }
+      color: theme.colors.baseShade1,
+    },
   });
 
   return styles;

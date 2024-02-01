@@ -43,7 +43,6 @@
     "create_story_page/*/hyper_link": {
       "hyper_link_icon": "hyper_link.png",
       "background_color": "#1234DB"
-    
     },
     "create_story_page/*/share_story_button": {
       "share_icon": "share_story_button.png",
@@ -131,7 +130,7 @@
 
     "*/story_tab_component/*": {},
     "*/story_tab_component/story_ring": {
-      "progress_color":["#339AF9", "#78FA58"],
+      "progress_color": ["#339AF9", "#78FA58"],
       "background_color": "#AB1234"
     },
     "*/story_tab_component/create_new_story_button": {

@@ -41,7 +41,7 @@ export default function AllMyCommunity() {
   const { data: communitiesArr = [], onNextPage } = communities ?? {};
 
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
-  
+
   const onClickCreateCommunity = () => {
     navigation.navigate('CreateCommunity');
   };
