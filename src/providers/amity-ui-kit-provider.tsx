@@ -57,8 +57,8 @@ export default function AmityUiKitProvider({
       baseShade3: theme?.baseShade3 ?? '#A5A9B5',
       screenBackground: theme?.screenBackground ?? '#EBECEF',
       storiesRing: {
-        colorOne: theme?.storiesRing.colorOne ?? '#339AF9',
-        colorTwo: theme?.storiesRing.colorTwo ?? '#78FA58',
+        colorOne: theme?.storiesRing?.colorOne ?? '#339AF9',
+        colorTwo: theme?.storiesRing?.colorTwo ?? '#78FA58',
       },
     },
   };
