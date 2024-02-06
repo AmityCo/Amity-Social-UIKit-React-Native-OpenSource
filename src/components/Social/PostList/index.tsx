@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useRef, useState, useMemo } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 // import { useTranslation } from 'react-i18next';
 
 import {
@@ -45,6 +45,8 @@ import { useDispatch } from 'react-redux';
 import globalFeedSlice from '../../../redux/slices/globalfeedSlice';
 import { IMentionPosition } from '../../../screens/CreatePost';
 import feedSlice from '../../../redux/slices/feedSlice';
+import RenderTextWithMention from './Components/RenderTextWithMention';
+import { RootStackParamList } from '../../../routes/RouteParamList';
 
 export interface IPost {
   postId: string;
@@ -86,7 +88,6 @@ export default function PostList({
   isGlobalfeed = true,
 }: IPostList) {
   const [postData, setPostData] = useState<IPost>(postDetail);
-
   const theme = useTheme() as MyMD3Theme;
   const { client, apiRegion } = useAuth();
   const styles = useStyles();
@@ -101,7 +102,8 @@ export default function PostList({
   const [editPostModalVisible, setEditPostModalVisible] =
     useState<boolean>(false);
   const slideAnimation = useRef(new Animated.Value(0)).current;
-  const navigation = useNavigation<NativeStackNavigationProp<any>>();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const dispatch = useDispatch();
 
   const [mentionPositionArr, setMentionsPositionArr] = useState<
@@ -206,7 +208,6 @@ export default function PostList({
       return 'comments';
     }
   }
-
   function getTimeDifference(timestamp: string): string {
     // Convert the timestamp string to a Date object
     const timestampDate = Date.parse(timestamp);
@@ -428,56 +429,6 @@ export default function PostList({
     setIsEdit(true);
   };
 
-  const RenderTextWithMention = () => {
-    if (mentionPositionArr.length === 0) {
-      return <Text style={styles.inputText}>{textPost}</Text>;
-    }
-    const mentionClick = (userId: string) => {
-      navigation.navigate('UserProfile', {
-        userId: userId,
-      });
-    };
-    let currentPosition = 0;
-    const result: (string | JSX.Element)[][] = mentionPositionArr.map(
-      ({ index, length, userId }, i) => {
-        // Add non-highlighted text before the mention
-        const nonHighlightedText = textPost.slice(currentPosition, index);
-
-        // Add highlighted text
-        const highlightedText = (
-          <Text
-            onPress={() => mentionClick(userId)}
-            key={`highlighted-${i}`}
-            style={styles.mentionText}
-          >
-            {textPost.slice(index, index + length)}
-          </Text>
-        );
-
-        // Update currentPosition for the next iteration
-        currentPosition = index + length;
-
-        // Return an array of non-highlighted and highlighted text
-        return [nonHighlightedText, highlightedText];
-      }
-    );
-
-    // Add any remaining non-highlighted text after the mentions
-    const remainingText = textPost.slice(currentPosition);
-    result.push([
-      <Text key="nonHighlighted-last" style={styles.inputText}>
-        {remainingText}
-      </Text>,
-    ]);
-
-    // Flatten the array and render
-    return <Text style={styles.inputText}>{result.flat()}</Text>;
-  };
-
-  const memoizedMediaSection = useMemo(() => {
-    return <MediaSection childrenPosts={childrenPosts} />;
-  }, [childrenPosts]);
-
   return (
     <View key={postId} style={styles.postWrap}>
       <View style={styles.headerSection}>
@@ -535,11 +486,15 @@ export default function PostList({
       </View>
       <View>
         <View style={styles.bodySection}>
-          {/* {textPost && <Text style={styles.bodyText}>{textPost}</Text>} */}
-          {textPost && <RenderTextWithMention />}
+          {textPost && (
+            <RenderTextWithMention
+              mentionPositionArr={mentionPositionArr}
+              textPost={textPost}
+            />
+          )}
           {childrenPosts.length > 0 && (
             <View style={styles.mediaWrap}>
-              {!loading && memoizedMediaSection}
+              {!loading && <MediaSection childrenPosts={childrenPosts} />}
             </View>
           )}
         </View>

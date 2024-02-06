@@ -32,6 +32,7 @@ import { useStyles } from '../routes/style';
 import BackButton from '../components/BackButton';
 import CloseButton from '../components/CloseButton';
 import EditCommunity from '../screens/EditCommunity/EditCommunity';
+import VideoPlayerFull from '../screens/VideoPlayerFullScreen';
 
 export default function SocialNavigator() {
   const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -182,6 +183,11 @@ export default function SocialNavigator() {
           <Stack.Screen
             name="UserProfileSetting"
             component={UserProfileSetting}
+          />
+          <Stack.Screen
+            name="VideoPlayer"
+            component={VideoPlayerFull}
+            options={{ headerShown: false }}
           />
         </Stack.Navigator>
       )}
