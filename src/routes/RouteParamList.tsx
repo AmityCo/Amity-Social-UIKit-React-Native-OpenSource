@@ -11,7 +11,10 @@ export type RootStackParamList = {
   CommunityList: {
     categoryId: string;
   };
-  CommunityHome: undefined;
+  CommunityHome: {
+    communityId: string;
+    communityName: string;
+  };
   MemberDetail: undefined;
   Community: undefined;
   Explore: undefined;

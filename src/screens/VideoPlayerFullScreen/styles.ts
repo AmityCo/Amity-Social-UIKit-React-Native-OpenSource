@@ -45,6 +45,7 @@ const styles = StyleSheet.create({
     margin: 12,
     backgroundColor: 'rgba(255, 255, 255, 0.4)',
     borderRadius: 72,
+    position: 'absolute',
   },
 });
 

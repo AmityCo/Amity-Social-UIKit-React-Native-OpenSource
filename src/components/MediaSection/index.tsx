@@ -22,7 +22,7 @@ import { playBtn } from '../../svg/svg-xml-list';
 interface IMediaSection {
   childrenPosts: string[];
 }
-export default function MediaSection({ childrenPosts }: IMediaSection) {
+const MediaSection: React.FC<IMediaSection> = ({ childrenPosts }) => {
   const { apiRegion } = useAuth();
   const [imagePosts, setImagePosts] = useState<string[]>([]);
   const [videoPosts, setVideoPosts] = useState<IVideoPost[]>([]);
@@ -106,8 +106,7 @@ export default function MediaSection({ childrenPosts }: IMediaSection) {
             return `https://api.${apiRegion}.amity.co/api/v3/files/${item?.thumbnailFileId}/download?size=medium`;
           })
         : [];
-    let mediaPosts: string[] = [];
-    mediaPosts =
+    const mediaPosts =
       [...imagePosts].length > 0 ? [...imagePosts] : [...thumbnailFileIds];
     const imageElement = mediaPosts.map((item: string, index: number) => {
       if (mediaPosts.length === 1) {
@@ -256,4 +255,6 @@ export default function MediaSection({ childrenPosts }: IMediaSection) {
       />
     </View>
   );
-}
+};
+
+export default React.memo(MediaSection);

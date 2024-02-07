@@ -21,21 +21,20 @@ import useConfig from '../../hooks/useConfig';
 
 import { ComponentID } from '../../util/enumUIKitID';
 import { useFocusEffect } from '@react-navigation/native';
+import { RefreshControl } from 'react-native';
 
 export default function GlobalFeed() {
   const { postList } = useSelector((state: RootState) => state.globalFeed);
-
+  const [refreshing, setRefreshing] = useState(false);
   const { excludes } = useConfig();
-  const { updateGlobalFeed, deleteByPostId } = globalFeedSlice.actions;
+  const { updateGlobalFeed, deleteByPostId, clearFeed } =
+    globalFeedSlice.actions;
   const dispatch = useDispatch();
-
   const styles = useStyle();
   const { isConnected } = useAuth();
   const [postData, setPostData] = useState<IGlobalFeedRes>();
-
   const { data: posts = [], nextPage } = postData ?? {};
   const flatListRef = useRef(null);
-
   async function getGlobalFeedList(
     page: Amity.Page<number> = { after: 0, limit: 8 }
   ): Promise<void> {
@@ -49,6 +48,13 @@ export default function GlobalFeed() {
       getGlobalFeedList(nextPage);
     }
   };
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    dispatch(clearFeed());
+    await getGlobalFeedList();
+    setRefreshing(false);
+  }, [clearFeed, dispatch]);
+
   useFocusEffect(
     useCallback(() => {
       if (isConnected) {
@@ -91,6 +97,14 @@ export default function GlobalFeed() {
           onEndReachedThreshold={0.5}
           onEndReached={handleLoadMore}
           ref={flatListRef}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={['lightblue']}
+              tintColor="lightblue"
+            />
+          }
           extraData={postList}
           ListHeaderComponent={
             excludes.includes(ComponentID.StoryTab) && <MyCommunity />
