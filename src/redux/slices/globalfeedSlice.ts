@@ -17,7 +17,10 @@ const globalFeedSlice = createSlice({
         const uniqueIds = new Set(state.postList.map((post) => post.postId));
         return arr.filter((post) => !uniqueIds.has(post.postId));
       };
-      state.postList = [...getUniqueArrayById(action.payload)];
+      state.postList = [
+        ...state.postList,
+        ...getUniqueArrayById(action.payload),
+      ];
     },
 
     updateByPostId: (
