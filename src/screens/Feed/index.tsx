@@ -7,7 +7,7 @@ import React, {
 
 // import { useTranslation } from 'react-i18next';
 
-import { FlatList, View } from 'react-native';
+import { FlatList, RefreshControl, View } from 'react-native';
 import PostList from '../../components/Social/PostList';
 import { useStyles } from './styles';
 import {
@@ -37,6 +37,7 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
     useState<Amity.LiveCollection<Amity.Post<any>>>();
   const { postList } = useSelector((state: RootState) => state.feed);
   const { clearFeed, updateFeed, deleteByPostId } = feedSlice.actions;
+  const [refreshing, setRefreshing] = useState(false);
   const { data: posts, onNextPage, hasNextPage } = postData ?? {};
   const [unSubFunc, setUnSubPageFunc] = useState<() => void>();
   const dispatch = useDispatch();
@@ -91,6 +92,13 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
       onNextPage && onNextPage();
     }
   };
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    dispatch(clearFeed());
+    getFeed();
+    setRefreshing(false);
+  }, [clearFeed, dispatch, getFeed]);
+
   useFocusEffect(
     useCallback(() => {
       getFeed();
@@ -137,6 +145,14 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
             postIndex={index}
           />
         )}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={['lightblue']}
+            tintColor="lightblue"
+          />
+        }
         keyExtractor={(_, index) => index.toString()}
         extraData={postList}
       />
