@@ -196,6 +196,7 @@
     "react-native-image-picker": "5.1.0",
     "react-native-insta-story": "^1.1.9",
     "react-native-media-controls": "^2.3.0",
+    "react-native-modal-selector": "^2.1.2",
     "react-native-orientation-locker": "^1.5.0",
     "react-native-pager-view": "6.1.4",
     "react-native-paper": "^5.10.6",

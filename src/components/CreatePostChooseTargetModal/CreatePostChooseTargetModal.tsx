@@ -1,5 +1,5 @@
 import { CommunityRepository } from '@amityco/ts-sdk-react-native';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import {
   TouchableOpacity,
   View,
@@ -23,15 +23,21 @@ interface IModal {
   userId?: string;
   onClose: () => void;
   onSelect: () => void;
+  postType: string;
 }
-const CreatePostModal = ({ visible, onClose, userId, onSelect }: IModal) => {
+const CreatePostChooseTargetModal = ({
+  visible,
+  onClose,
+  userId,
+  onSelect,
+  postType,
+}: IModal) => {
   const theme = useTheme() as MyMD3Theme;
   const styles = useStyles();
   const { apiRegion } = useAuth();
   const [communities, setCommunities] = useState<Amity.Community[]>([]);
   const [hasNextPageFunc, setHasNextPageFunc] = useState(false);
   const [myUser, setMyUser] = useState<UserInterface>();
-
   const onNextPageRef = useRef<(() => void) | null>(null);
   const isFetchingRef = useRef(false);
   const onEndReachedCalledDuringMomentumRef = useRef(true);
@@ -105,13 +111,29 @@ const CreatePostModal = ({ visible, onClose, userId, onSelect }: IModal) => {
   const onSelectFeed = (
     targetId: string,
     targetName: string,
-    targetType: string
+    targetType: string,
+    postSetting?: ValueOf<
+      Readonly<{
+        ONLY_ADMIN_CAN_POST: 'ONLY_ADMIN_CAN_POST';
+        ADMIN_REVIEW_POST_REQUIRED: 'ADMIN_REVIEW_POST_REQUIRED';
+        ANYONE_CAN_POST: 'ANYONE_CAN_POST';
+      }>
+    >,
+    needApprovalOnPostCreation?: string
   ) => {
     onSelect && onSelect();
-    navigation.navigate('CreatePost', {
+    const targetscreen =
+      postType === 'post'
+        ? 'CreatePost'
+        : postType === 'poll'
+        ? 'CreatePoll'
+        : null;
+    navigation.navigate(targetscreen, {
       targetId: targetId,
       targetName: targetName,
       targetType: targetType,
+      postSetting: postSetting,
+      needApprovalOnPostCreation: needApprovalOnPostCreation,
     });
   };
   const renderCommunity = ({ item }: { item: Amity.Community }) => {
@@ -119,7 +141,13 @@ const CreatePostModal = ({ visible, onClose, userId, onSelect }: IModal) => {
       <TouchableOpacity
         key={item.communityId}
         onPress={() =>
-          onSelectFeed(item.communityId, item.displayName, 'community')
+          onSelectFeed(
+            item.communityId,
+            item.displayName,
+            'community',
+            item.postSetting,
+            (item as Record<string, any>).needApprovalOnPostCreation
+          )
         }
         style={styles.rowContainer}
       >
@@ -191,4 +219,4 @@ const CreatePostModal = ({ visible, onClose, userId, onSelect }: IModal) => {
   );
 };
 
-export default CreatePostModal;
+export default memo(CreatePostChooseTargetModal);

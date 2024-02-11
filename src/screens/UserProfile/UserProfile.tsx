@@ -27,6 +27,9 @@ import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import { useTheme } from 'react-native-paper';
 import FloatingButton from '../../components/FloatingButton';
 import { TabName } from '../../enum/tabNameState';
+import { useDispatch } from 'react-redux';
+import uiSlice from '../../redux/slices/uiSlice';
+import { PostTargetType } from '../../enum/postTargetType';
 
 export default function UserProfile({ route }: any) {
   const theme = useTheme() as MyMD3Theme;
@@ -34,6 +37,8 @@ export default function UserProfile({ route }: any) {
   const { apiRegion, client } = useAuth();
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const { userId } = route.params;
+  const { openPostTypeChoiceModal } = uiSlice.actions;
+  const dispatch = useDispatch();
   const [user, setUser] = useState<Amity.User>();
   const [followerCount, setFollowerCount] = useState<number>(0);
   const [followingCount, setFollowingCount] = useState<number>(0);
@@ -165,11 +170,14 @@ export default function UserProfile({ route }: any) {
     }
   }
   const handleOnPressPostBtn = () => {
-    navigation.navigate('CreatePost', {
-      targetId: userId,
-      targetName: 'My Timeline',
-      targetType: 'user',
-    });
+    dispatch(
+      openPostTypeChoiceModal({
+        userId: userId,
+        targetId: userId,
+        targetName: 'My Timeline',
+        targetType: PostTargetType.user,
+      })
+    );
   };
   return (
     <View style={styles.container}>
