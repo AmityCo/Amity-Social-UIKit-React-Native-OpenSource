@@ -105,7 +105,7 @@ export const useStyles = () => {
       borderRadius: 5,
       backgroundColor: theme.colors.border,
       paddingHorizontal: 10,
-      paddingVertical: 16,
+      paddingVertical: 5,
       marginVertical: 5,
     },
     scheduleOptionContainer: {

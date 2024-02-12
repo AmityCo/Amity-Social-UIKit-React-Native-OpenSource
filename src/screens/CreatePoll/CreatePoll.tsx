@@ -8,6 +8,7 @@ import {
   ScrollView,
   Alert,
   ActivityIndicator,
+  ViewStyle,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { circleCloseIcon, plusIcon } from '../../svg/svg-xml-list';
@@ -66,57 +67,58 @@ const CreatePoll = ({ navigation, route }) => {
 
   const handleCreatePost = useCallback(async () => {
     setLoading(true);
-    createPoll({
+    const {
+      data: { pollId },
+    } = await createPoll({
       question: optionQuestion,
       answerType: answerType,
       answers: pollOptions,
       closedIn: closedId,
-    }).then(async ({ data: { pollId } }) => {
-      if (pollId) {
-        const response = await PostRepository.createPost({
-          targetType,
-          targetId,
-          data: { pollId, text: optionQuestion },
-          dataType: 'poll',
-        });
-        setLoading(false);
-        if (targetType === 'community') {
+    });
+    if (pollId) {
+      const response = await PostRepository.createPost({
+        dataType: 'poll',
+        targetType,
+        targetId,
+        data: { pollId, text: optionQuestion },
+      });
+      setLoading(false);
+      if (targetType === 'community') {
+        if (
+          (postSetting === 'ADMIN_REVIEW_POST_REQUIRED' ||
+            needApprovalOnPostCreation) &&
+          response
+        ) {
+          const res = await checkCommunityPermission(
+            targetId,
+            client as Amity.Client,
+            apiRegion
+          );
           if (
-            (postSetting === 'ADMIN_REVIEW_POST_REQUIRED' ||
-              needApprovalOnPostCreation) &&
-            response
+            res.permissions.length > 0 &&
+            res.permissions.includes('Post/ManagePosts')
           ) {
-            const res = await checkCommunityPermission(
-              targetId,
-              client as Amity.Client,
-              apiRegion
-            );
-            if (
-              res.permissions.length > 0 &&
-              res.permissions.includes('Post/ManagePosts')
-            ) {
-              goBack();
-            } else {
-              Alert.alert(
-                'Post submitted',
-                'Your post has been submitted to the pending list. It will be reviewed by community moderator',
-                [
-                  {
-                    text: 'OK',
-                    onPress: () => goBack(),
-                  },
-                ],
-                { cancelable: false }
-              );
-            }
-          } else {
             goBack();
+          } else {
+            Alert.alert(
+              'Post submitted',
+              'Your post has been submitted to the pending list. It will be reviewed by community moderator',
+              [
+                {
+                  text: 'OK',
+                  onPress: () => goBack(),
+                },
+              ],
+              { cancelable: false }
+            );
           }
         } else {
           goBack();
         }
+      } else {
+        goBack();
       }
-    });
+    }
   }, [
     answerType,
     apiRegion,
@@ -202,28 +204,41 @@ const CreatePoll = ({ navigation, route }) => {
             Choose at least {MIN_OPTIONS} options
           </Text>
           {pollOptions.map((pollOption, index) => {
+            const onReachMaxChar =
+              pollOption.data.length === MAX_POLL_ANSWER_LENGTH;
+            const errorContinerStyle: ViewStyle = onReachMaxChar && {
+              borderWidth: 1,
+              borderColor: 'red',
+            };
             return (
-              <View key={index} style={styles.pollOptionContainer}>
-                <View style={styles.rowContainer}>
-                  <TextInput
-                    maxLength={MAX_POLL_ANSWER_LENGTH}
-                    value={pollOptions[index].data}
-                    multiline
-                    placeholder="Add option"
-                    style={styles.fillSpace}
-                    onChangeText={(text) => onChangeOptionText(text, index)}
-                  />
-                  <SvgXml
-                    xml={circleCloseIcon}
-                    width="20"
-                    height="20"
-                    onPress={() => onPressRemoveOption(index)}
-                  />
+              <>
+                <View
+                  key={index}
+                  style={[styles.pollOptionContainer, errorContinerStyle]}
+                >
+                  <View style={styles.rowContainer}>
+                    <TextInput
+                      maxLength={MAX_POLL_ANSWER_LENGTH}
+                      value={pollOptions[index].data}
+                      multiline
+                      placeholder="Add option"
+                      style={styles.fillSpace}
+                      onChangeText={(text) => onChangeOptionText(text, index)}
+                    />
+                    <SvgXml
+                      xml={circleCloseIcon}
+                      width="20"
+                      height="20"
+                      onPress={() => onPressRemoveOption(index)}
+                    />
+                  </View>
                 </View>
-                <Text style={styles.optionWordCount}>
-                  {pollOption.data.length}/{MAX_POLL_ANSWER_LENGTH}
-                </Text>
-              </View>
+                {onReachMaxChar && (
+                  <Text style={styles.errorText}>
+                    You have reached 200 character limit
+                  </Text>
+                )}
+              </>
             );
           })}
           {pollOptions.length < 10 && (
