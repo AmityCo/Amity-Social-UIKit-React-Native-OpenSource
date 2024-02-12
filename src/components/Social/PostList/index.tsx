@@ -492,10 +492,8 @@ export default function PostList({
               textPost={textPost}
             />
           )}
-          {childrenPosts.length > 0 && (
-            <View style={styles.mediaWrap}>
-              {!loading && <MediaSection childrenPosts={childrenPosts} />}
-            </View>
+          {childrenPosts.length > 0 && !loading && (
+            <MediaSection childrenPosts={childrenPosts} />
           )}
         </View>
 
