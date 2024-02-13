@@ -21,6 +21,8 @@ import { createPoll } from '../../providers/Social/pool.sdk';
 import { PostRepository } from '@amityco/ts-sdk-react-native';
 import { checkCommunityPermission } from '../../providers/Social/communities-sdk';
 import useAuth from '../../hooks/useAuth';
+import MentionInput from '../../components/MentionInput/MentionInput';
+import { ISearchItem } from '../../components/SearchItem';
 
 const CreatePoll = ({ navigation, route }) => {
   const theme = useTheme() as MyMD3Theme;
@@ -32,6 +34,8 @@ const CreatePoll = ({ navigation, route }) => {
     Pick<Amity.PollAnswer, 'data' | 'dataType'>[]
   >([]);
   const [optionQuestion, setOptionQuestion] = useState('');
+  const [mentionUsers, setMentionUsers] = useState<ISearchItem[]>([]);
+  const [mentionPosition, setMentionPosition] = useState([]);
   const [timeFrame, setTimeFrame] = useState<{ key: number; label: string }>(
     null
   );
@@ -76,11 +80,19 @@ const CreatePoll = ({ navigation, route }) => {
       closedIn: closedId,
     });
     if (pollId) {
+      const mentionees = [
+        {
+          type: 'user',
+          userIds: mentionUsers.map((user) => user.targetId),
+        },
+      ];
       const response = await PostRepository.createPost({
         dataType: 'poll',
         targetType,
         targetId,
         data: { pollId, text: optionQuestion },
+        mentionees,
+        metadata: { mentioned: mentionPosition },
       });
       setLoading(false);
       if (targetType === 'community') {
@@ -125,6 +137,8 @@ const CreatePoll = ({ navigation, route }) => {
     client,
     closedId,
     goBack,
+    mentionPosition,
+    mentionUsers,
     needApprovalOnPostCreation,
     optionQuestion,
     pollOptions,
@@ -184,12 +198,15 @@ const CreatePoll = ({ navigation, route }) => {
               {`${optionQuestion.length}/${MAX_POLL_QUESRION_LENGTH}`}
             </Text>
           </View>
-          <TextInput
+          <MentionInput
+            inputMessage={optionQuestion}
+            setInputMessage={setOptionQuestion}
+            mentionUsers={mentionUsers}
+            setMentionUsers={setMentionUsers}
+            mentionsPosition={mentionPosition}
+            setMentionsPosition={setMentionPosition}
             maxLength={MAX_POLL_QUESRION_LENGTH}
             multiline
-            style={styles.input}
-            placeholder="What's your poll question?"
-            onChangeText={setOptionQuestion}
           />
         </View>
         <View style={styles.inputContainer}>
