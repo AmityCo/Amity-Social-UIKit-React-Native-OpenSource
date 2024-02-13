@@ -199,6 +199,7 @@ const CreatePoll = ({ navigation, route }) => {
             </Text>
           </View>
           <MentionInput
+            placeholder="What's your poll question?"
             inputMessage={optionQuestion}
             setInputMessage={setOptionQuestion}
             mentionUsers={mentionUsers}

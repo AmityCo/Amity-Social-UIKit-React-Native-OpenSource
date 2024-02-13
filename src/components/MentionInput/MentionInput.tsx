@@ -118,7 +118,7 @@ const MentionInput: FC<IMentionInput> = ({
   };
 
   return (
-    <View style={styles.inputContainer}>
+    <>
       <TextInput
         style={
           mentionUsers.length > 0
@@ -139,7 +139,7 @@ const MentionInput: FC<IMentionInput> = ({
           onSelectMention={onSelectUserMention}
         />
       )}
-    </View>
+    </>
   );
 };
 

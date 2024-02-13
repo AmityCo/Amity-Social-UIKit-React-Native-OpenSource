@@ -6,13 +6,6 @@ export const useStyles = () => {
   const theme = useTheme() as MyMD3Theme;
 
   const styles = StyleSheet.create({
-    inputContainer: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'flex-start',
-      backgroundColor: theme.colors.secondary,
-      borderRadius: 5,
-    },
     mentionText: {
       color: theme.colors.primary,
       fontSize: 15,
@@ -23,6 +16,7 @@ export const useStyles = () => {
       letterSpacing: 0,
     },
     textInput: {
+      marginTop: 12,
       borderWidth: 0,
       borderBottomWidth: 0,
       backgroundColor: 'transparent',
