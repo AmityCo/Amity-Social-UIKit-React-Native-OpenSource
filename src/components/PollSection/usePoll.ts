@@ -43,7 +43,7 @@ export const usePoll = (pollId: string, shouldFetch: boolean) => {
     (async () => {
       try {
         const { data } = await getPollById(pollId);
-        setPollData({ ...data });
+        setPollData(data);
       } catch (error) {
         console.log(error);
       }
@@ -51,7 +51,7 @@ export const usePoll = (pollId: string, shouldFetch: boolean) => {
   }, [pollId, shouldFetch]);
 
   return {
-    data: { ...pollData },
+    data: pollData,
     endDays,
     totalVote,
     isPollClosed,
