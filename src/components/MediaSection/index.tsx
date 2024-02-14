@@ -27,7 +27,7 @@ const MediaSection: React.FC<IMediaSection> = ({ childrenPosts }) => {
   const { apiRegion } = useAuth();
   const [imagePosts, setImagePosts] = useState<string[]>([]);
   const [videoPosts, setVideoPosts] = useState<IVideoPost[]>([]);
-  const [pollIds, setPollIds] = useState([]);
+  const [pollIds, setPollIds] = useState<{ pollId: string }[]>([]);
 
   const [imagePostsFullSize, setImagePostsFullSize] = useState<MediaUri[]>([]);
   const [videoPostsFullSize, setVideoPostsFullSize] = useState<MediaUri[]>([]);
@@ -247,7 +247,7 @@ const MediaSection: React.FC<IMediaSection> = ({ childrenPosts }) => {
   return (
     <View>
       {pollIds.length > 0 ? (
-        <PollSection pollId={pollIds[0].pollId as string} />
+        <PollSection pollId={pollIds[0].pollId} />
       ) : (
         renderMediaPosts()
       )}

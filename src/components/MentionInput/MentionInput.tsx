@@ -50,16 +50,15 @@ const MentionInput: FC<IMentionInput> = ({
   }, [checkMention, inputMessage]);
 
   useEffect(() => {
-    if (isShowMention) {
-      const substringBeforeCursor = inputMessage.substring(0, cursorIndex);
-      const lastAtsIndex = substringBeforeCursor.lastIndexOf('@');
-      if (lastAtsIndex !== -1) {
-        const searchText: string = inputMessage.substring(
-          lastAtsIndex + 1,
-          cursorIndex + 1
-        );
-        setCurrentSearchUserName(searchText);
-      }
+    if (!isShowMention) return;
+    const substringBeforeCursor = inputMessage.substring(0, cursorIndex);
+    const lastAtsIndex = substringBeforeCursor.lastIndexOf('@');
+    if (lastAtsIndex !== -1) {
+      const searchText: string = inputMessage.substring(
+        lastAtsIndex + 1,
+        cursorIndex + 1
+      );
+      setCurrentSearchUserName(searchText);
     }
   }, [cursorIndex, inputMessage, isShowMention]);
 
@@ -97,10 +96,12 @@ const MentionInput: FC<IMentionInput> = ({
       cursorIndex,
       inputMessage.length + 1
     );
-    const newTextAfterReplacement =
-      inputMessage.slice(0, cursorIndex - currentSearchUserName.length) +
-      user.displayName +
-      inputMessage.slice(cursorIndex, inputMessage.length);
+    const firstText = inputMessage.slice(
+      0,
+      cursorIndex - currentSearchUserName.length
+    );
+    const lastText = inputMessage.slice(cursorIndex, inputMessage.length);
+    const newTextAfterReplacement = `${firstText}${user.displayName}${lastText}`;
     const newInputMessage = newTextAfterReplacement + textAfterCursor;
     const position: IMentionPosition = {
       type: 'user',

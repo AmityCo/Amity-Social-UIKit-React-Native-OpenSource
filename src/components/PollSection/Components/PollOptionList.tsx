@@ -60,16 +60,15 @@ const PollOptionList: FC<IPollOptionList> = ({
   );
 
   const renderSubmitButton = useMemo(() => {
-    if (!isPollClosed && !isAlreadyVoted) {
-      return (
-        <TouchableOpacity
-          onPress={() => onSubmit(selectedOption)}
-          style={styles.submitBtn}
-        >
-          <Text style={styles.submit}>Submit</Text>
-        </TouchableOpacity>
-      );
-    } else return null;
+    if (isPollClosed || isAlreadyVoted) return null;
+    return (
+      <TouchableOpacity
+        onPress={() => onSubmit(selectedOption)}
+        style={styles.submitBtn}
+      >
+        <Text style={styles.submit}>Submit</Text>
+      </TouchableOpacity>
+    );
   }, [isPollClosed, isAlreadyVoted, styles, onSubmit, selectedOption]);
 
   const renderViewAllOptions = useMemo(() => {
@@ -100,7 +99,8 @@ const PollOptionList: FC<IPollOptionList> = ({
         const selectedIcon = selectedItem ? radioOn() : radioOff();
         const selectedOptionContainerStyle: ViewStyle =
           selectedItem && styles.selectedOptionContainer;
-        const length = (option.voteCount / totalVote) * 100;
+        const lengthPercentage = (option.voteCount / totalVote) * 100;
+        const length = isNaN(lengthPercentage) ? 0 : lengthPercentage;
         const onResultOptionStyle: ViewStyle =
           (isAlreadyVoted || isPollClosed) &&
           option.isVotedByUser &&
@@ -108,7 +108,7 @@ const PollOptionList: FC<IPollOptionList> = ({
         return (
           <TouchableOpacity
             disabled={isPollClosed || isAlreadyVoted}
-            key={option.id + isAlreadyVoted}
+            key={`${option.id}${option.isVotedByUser}`}
             style={[
               styles.pollOptionContainer,
               selectedOptionContainerStyle,
@@ -124,10 +124,7 @@ const PollOptionList: FC<IPollOptionList> = ({
             </View>
             {(isPollClosed || isAlreadyVoted) && (
               <>
-                <PollBar
-                  myVote={option.isVotedByUser}
-                  length={isNaN(length) ? 0 : length}
-                />
+                <PollBar myVote={option.isVotedByUser} length={length} />
                 <Text>{option.voteCount} votes</Text>
               </>
             )}

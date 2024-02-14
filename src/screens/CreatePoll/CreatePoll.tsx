@@ -79,58 +79,50 @@ const CreatePoll = ({ navigation, route }) => {
       answers: pollOptions,
       closedIn: closedId,
     });
-    if (pollId) {
-      const mentionees = [
+    if (!pollId) return;
+    const mentionees = [
+      {
+        type: 'user',
+        userIds: mentionUsers.map((user) => user.targetId),
+      },
+    ];
+    const response = await PostRepository.createPost({
+      dataType: 'poll',
+      targetType,
+      targetId,
+      data: { pollId, text: optionQuestion },
+      mentionees,
+      metadata: { mentioned: mentionPosition },
+    });
+    setLoading(false);
+    if (targetType !== 'community') return goBack();
+    if (
+      !response ||
+      postSetting !== 'ADMIN_REVIEW_POST_REQUIRED' ||
+      !needApprovalOnPostCreation
+    )
+      return goBack();
+    const res = await checkCommunityPermission(
+      targetId,
+      client as Amity.Client,
+      apiRegion
+    );
+    if (
+      res.permissions.length > 0 &&
+      res.permissions.includes('Post/ManagePosts')
+    )
+      return goBack();
+    Alert.alert(
+      'Post submitted',
+      'Your post has been submitted to the pending list. It will be reviewed by community moderator',
+      [
         {
-          type: 'user',
-          userIds: mentionUsers.map((user) => user.targetId),
+          text: 'OK',
+          onPress: () => goBack(),
         },
-      ];
-      const response = await PostRepository.createPost({
-        dataType: 'poll',
-        targetType,
-        targetId,
-        data: { pollId, text: optionQuestion },
-        mentionees,
-        metadata: { mentioned: mentionPosition },
-      });
-      setLoading(false);
-      if (targetType === 'community') {
-        if (
-          (postSetting === 'ADMIN_REVIEW_POST_REQUIRED' ||
-            needApprovalOnPostCreation) &&
-          response
-        ) {
-          const res = await checkCommunityPermission(
-            targetId,
-            client as Amity.Client,
-            apiRegion
-          );
-          if (
-            res.permissions.length > 0 &&
-            res.permissions.includes('Post/ManagePosts')
-          ) {
-            goBack();
-          } else {
-            Alert.alert(
-              'Post submitted',
-              'Your post has been submitted to the pending list. It will be reviewed by community moderator',
-              [
-                {
-                  text: 'OK',
-                  onPress: () => goBack(),
-                },
-              ],
-              { cancelable: false }
-            );
-          }
-        } else {
-          goBack();
-        }
-      } else {
-        goBack();
-      }
-    }
+      ],
+      { cancelable: false }
+    );
   }, [
     answerType,
     apiRegion,
