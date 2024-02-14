@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import { getPollById } from '../../providers/Social/pool.sdk';
+import dayjs from 'dayjs';
 
 export const usePoll = (pollId: string, shouldFetch: boolean) => {
   const [pollData, setPollData] = useState<Amity.Poll | undefined>(undefined);
 
   const endDays = useMemo(() => {
     if (pollData?.closedAt) {
-      const endDate = new Date(pollData.closedAt);
-      const differenceMs = endDate.getTime() - Date.now();
-      const daysRemaining = Math.ceil(differenceMs / (1000 * 60 * 60 * 24));
+      const endDate = dayjs(pollData.closedAt);
+      const daysRemaining = endDate.diff(dayjs(), 'day');
       return daysRemaining || 0;
     }
     return 0;
