@@ -22,7 +22,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import useAuth from '../../hooks/useAuth';
 import { SvgXml } from 'react-native-svg';
-import { editIcon } from '../../svg/svg-xml-list';
+import { block_unblock, editIcon } from '../../svg/svg-xml-list';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import { useTheme } from 'react-native-paper';
 import FloatingButton from '../../components/FloatingButton';
@@ -43,7 +43,6 @@ export default function UserProfile({ route }: any) {
   const [followerCount, setFollowerCount] = useState<number>(0);
   const [followingCount, setFollowingCount] = useState<number>(0);
   const [followStatus, setFollowStatus] = useState<string>('loading');
-
   const feedRef: MutableRefObject<FeedRefType | null> =
     useRef<FeedRefType | null>(null);
   const scrollViewRef = useRef(null);
@@ -63,6 +62,10 @@ export default function UserProfile({ route }: any) {
     if (followStatus) {
       setFollowStatus(followStatus.status);
     }
+  };
+  const onUnblockUser = async () => {
+    await UserRepository.Relationship.unBlockUser(userId);
+    setFollowStatus('none');
   };
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -150,6 +153,17 @@ export default function UserProfile({ route }: any) {
       </TouchableOpacity>
     );
   };
+  const unBlockButton = () => {
+    return (
+      <TouchableOpacity
+        style={styles.editProfileButton}
+        onPress={onUnblockUser}
+      >
+        <SvgXml width={24} height={20} xml={block_unblock(theme.colors.base)} />
+        <Text style={styles.editProfileText}>Unblock user</Text>
+      </TouchableOpacity>
+    );
+  };
 
   const handleTab = (tabName: TabName) => {
     console.log('index: ', tabName); //this func not implmented yet
@@ -179,6 +193,17 @@ export default function UserProfile({ route }: any) {
       })
     );
   };
+
+  const renderButtons = () => {
+    return !followStatus
+      ? editProfileButton()
+      : followStatus === 'none'
+      ? followButton()
+      : followStatus === 'blocked'
+      ? unBlockButton()
+      : null;
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView
@@ -219,26 +244,13 @@ export default function UserProfile({ route }: any) {
               <View />
             )}
           </View>
-
-          {followStatus === 'none' ? (
-            followButton()
-          ) : followStatus === undefined ? ( // userID is the current user ID
-            editProfileButton()
-          ) : (
-            <View />
-          )}
+          {renderButtons()}
         </View>
         <CustomTab
           tabName={[TabName.Timeline, TabName.Gallery]}
           onTabChange={handleTab}
         />
         <Feed targetType="user" targetId={userId} ref={feedRef} />
-        {/* <View style={styles.loadingIndicator}>
-        <LoadingOverlay
-          isLoading={showLoadingIndicator}
-          loadingText="Loading..."
-        />
-      </View> */}
       </ScrollView>
       {(client as Amity.Client).userId === userId && (
         <FloatingButton onPress={handleOnPressPostBtn} isGlobalFeed={false} />

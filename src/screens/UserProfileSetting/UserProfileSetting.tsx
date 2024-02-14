@@ -1,14 +1,18 @@
-import React, { useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { UserRepository, createReport } from '@amityco/ts-sdk-react-native';
 import CloseButton from '../../components/BackButton';
 import { styles } from './styles';
+import { block_unblock, report, unfollow } from '../../svg/svg-xml-list';
+import { SvgXml } from 'react-native-svg';
+import { LoadingOverlay } from '../../components/LoadingOverlay';
 
 export default function UserProfileSetting({ navigation, route }: any) {
   const { userId, follow } = route.params;
   const [showLoadingIndicator, setShowLoadingIndicator] = useState(false);
-  console.log('showLoadingIndicator: ', showLoadingIndicator);
   const [followStatus, setFollowStatus] = useState(follow);
+  const isBlocked = followStatus === 'blocked';
+  const isFollowed = followStatus === 'accepted';
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerLeft: () => <CloseButton />,
@@ -18,83 +22,77 @@ export default function UserProfileSetting({ navigation, route }: any) {
 
   const handleReportUserPress = async () => {
     setShowLoadingIndicator(true);
-    const didCreateUserReport = await createReport('user', userId);
+    await createReport('user', userId);
     setShowLoadingIndicator(false);
-    return didCreateUserReport;
   };
   const handleUnfollowPress = async () => {
     setShowLoadingIndicator(true);
-    const hasUnfollowed = await UserRepository.Relationship.unfollow(userId);
-    if (hasUnfollowed) {
-      setShowLoadingIndicator(false);
-      setFollowStatus('none');
-    }
-    return hasUnfollowed;
+    await UserRepository.Relationship.unfollow(userId);
+    setShowLoadingIndicator(false);
+    setFollowStatus('none');
   };
 
-  const renderItem = ({ item }: any) => {
-    switch (item.id) {
-      case 1:
-        return followStatus === 'accepted' ? (
-          <TouchableOpacity
-            style={styles.rowContainer}
-            onPress={handleUnfollowPress}
-          >
-            <View style={styles.iconContainer}>
-              <Image
-                source={require('../../../assets/icon/unfollow.png')}
-                style={styles.unfollowIcon}
-              />
-            </View>
-            <Text style={styles.rowText}>Unfollow</Text>
-          </TouchableOpacity>
-        ) : (
-          <View />
-        );
-      case 2:
-        return (
-          <TouchableOpacity
-            style={styles.rowContainer}
-            onPress={handleReportUserPress}
-          >
-            <View style={styles.iconContainer}>
-              <Image
-                source={require('../../../assets/icon/report.png')}
-                style={styles.groupIcon}
-              />
-            </View>
-            <Text style={styles.rowText}>Report user</Text>
-            {/* <Image
-              source={require('../../../assets/icon/arrowRight.png')}
-              style={styles.arrowIcon}
-            /> */}
-          </TouchableOpacity>
-        );
-      default:
-        return null;
-    }
+  const handleBlockUser = async () => {
+    setShowLoadingIndicator(true);
+    await UserRepository.Relationship.blockUser(userId);
+    setShowLoadingIndicator(false);
+    setFollowStatus('blocked');
   };
 
-  const data = [{ id: 1 }, { id: 2 }];
+  const handleUnblockUser = async () => {
+    setShowLoadingIndicator(true);
+    await UserRepository.Relationship.unBlockUser(userId);
+    setShowLoadingIndicator(false);
+    setFollowStatus('none');
+  };
 
+  const settingsData = [];
+  if (isFollowed) {
+    settingsData.push({
+      name: 'unfollow',
+      icon: unfollow,
+      label: 'Unfollow',
+      callBack: handleUnfollowPress,
+    });
+  }
+  if (followStatus) {
+    settingsData.push(
+      {
+        name: 'report',
+        icon: report,
+        label: 'Report user',
+        callBack: handleReportUserPress,
+      },
+      {
+        name: 'block',
+        icon: block_unblock,
+        label: isBlocked ? 'Unblock user' : 'Block user',
+        callBack: isBlocked ? handleUnblockUser : handleBlockUser,
+      }
+    );
+  }
+
+  const renderItem = useCallback((item: any) => {
+    if (!item.label || !item.icon || !item.callBack) return null;
+    return (
+      <TouchableOpacity
+        key={item.label}
+        style={styles.rowContainer}
+        onPress={() => item.callBack()}
+      >
+        <View style={styles.iconContainer}>
+          <SvgXml xml={item.icon()} width="20" height="20" />
+        </View>
+        <Text style={styles.rowText}>{item.label}</Text>
+      </TouchableOpacity>
+    );
+  }, []);
   return (
     <View style={styles.container}>
-      <FlatList
-        data={data}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
-      />
-      {/* <View style={styles.loadingIndicator}> */}
-      {/* {showLoadingIndicator ? (
-        <LoadingOverlay
-          isLoading={showLoadingIndicator}
-          loadingText="Loading..."
-        />
-      ) : (
-        <View />
-      )} */}
-
-      {/* </View> */}
+      <LoadingOverlay isLoading={showLoadingIndicator} loadingText={null} />
+      {settingsData.map((setting) => {
+        return renderItem(setting);
+      })}
     </View>
   );
 }

@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
   overlay: {
-    // ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFillObject,
     backgroundColor: '#fff',
     zIndex: 1,
     alignItems: 'center',
