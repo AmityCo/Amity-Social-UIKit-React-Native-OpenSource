@@ -17,8 +17,7 @@ import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import { useTheme } from 'react-native-paper';
 import ModalSelector from 'react-native-modal-selector';
 import Header from './Components/Header';
-import { createPoll } from '../../providers/Social/pool.sdk';
-import { PostRepository } from '@amityco/ts-sdk-react-native';
+import { PollRepository, PostRepository } from '@amityco/ts-sdk-react-native';
 import { checkCommunityPermission } from '../../providers/Social/communities-sdk';
 import useAuth from '../../hooks/useAuth';
 import MentionInput from '../../components/MentionInput/MentionInput';
@@ -73,7 +72,7 @@ const CreatePoll = ({ navigation, route }) => {
     setLoading(true);
     const {
       data: { pollId },
-    } = await createPoll({
+    } = await PollRepository.createPoll({
       question: optionQuestion,
       answerType: answerType,
       answers: pollOptions,

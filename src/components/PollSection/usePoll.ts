@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { getPollById } from '../../providers/Social/pool.sdk';
 import dayjs from 'dayjs';
+import { PollRepository } from '@amityco/ts-sdk-react-native';
 
 export const usePoll = (pollId: string, shouldFetch: boolean) => {
   const [pollData, setPollData] = useState<Amity.Poll | undefined>(undefined);
@@ -42,8 +42,7 @@ export const usePoll = (pollId: string, shouldFetch: boolean) => {
   useEffect(() => {
     (async () => {
       try {
-        const { data } = await getPollById(pollId);
-        setPollData(data);
+        PollRepository.getPoll(pollId, ({ data }) => setPollData(data));
       } catch (error) {
         console.log(error);
       }

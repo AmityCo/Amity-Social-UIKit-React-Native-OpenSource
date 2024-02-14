@@ -3,7 +3,7 @@ import { useStyles } from './style';
 import React, { memo, useCallback, useState } from 'react';
 import { usePoll } from './usePoll';
 import PollOptionList from './Components/PollOptionList';
-import { votePoll } from '../../providers/Social/pool.sdk';
+import { PollRepository } from '@amityco/ts-sdk-react-native';
 
 interface IPollSection {
   pollId: string;
@@ -22,7 +22,7 @@ const PollSection: React.FC<IPollSection> = ({ pollId }) => {
 
   const onSubmit = useCallback(
     async (answerIds: string[]) => {
-      await votePoll({ pollId, answerIds });
+      await PollRepository.votePoll(pollId, answerIds);
       setShouldFetch(!shouldFetch);
     },
     [pollId, shouldFetch]
