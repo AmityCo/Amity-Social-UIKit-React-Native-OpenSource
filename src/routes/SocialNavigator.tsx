@@ -126,6 +126,7 @@ export default function SocialNavigator() {
               },
             }: any) => ({
               title: communityName,
+              headerTitleAlign: 'center',
               headerLeft: () => <BackButton />,
             })}
           />

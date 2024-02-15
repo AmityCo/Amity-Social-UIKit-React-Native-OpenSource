@@ -246,11 +246,15 @@ export default function UserProfile({ route }: any) {
           </View>
           {renderButtons()}
         </View>
-        <CustomTab
-          tabName={[TabName.Timeline, TabName.Gallery]}
-          onTabChange={handleTab}
-        />
-        <Feed targetType="user" targetId={userId} ref={feedRef} />
+        {followStatus !== 'blocked' && (
+          <>
+            <CustomTab
+              tabName={[TabName.Timeline, TabName.Gallery]}
+              onTabChange={handleTab}
+            />
+            <Feed targetType="user" targetId={userId} ref={feedRef} />
+          </>
+        )}
       </ScrollView>
       {(client as Amity.Client).userId === userId && (
         <FloatingButton onPress={handleOnPressPostBtn} isGlobalFeed={false} />
