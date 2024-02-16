@@ -43,6 +43,9 @@ export default function UserProfile({ route }: any) {
   const [followerCount, setFollowerCount] = useState<number>(0);
   const [followingCount, setFollowingCount] = useState<number>(0);
   const [followStatus, setFollowStatus] = useState<string>('loading');
+  const isMyProfile = !followStatus;
+  const isBlocked = followStatus === 'blocked';
+  const isUnfollowed = followStatus === 'none';
   const feedRef: MutableRefObject<FeedRefType | null> =
     useRef<FeedRefType | null>(null);
   const scrollViewRef = useRef(null);
@@ -74,7 +77,8 @@ export default function UserProfile({ route }: any) {
         <TouchableOpacity
           onPress={() => {
             navigation.navigate('UserProfileSetting', {
-              userId: userId,
+              displayName: user?.displayName,
+              user: userId,
               follow: followStatus !== 'loading' ? followStatus : 'loading',
             });
           }}
@@ -86,7 +90,7 @@ export default function UserProfile({ route }: any) {
         </TouchableOpacity>
       ),
     });
-  }, [followStatus, navigation, styles.dotIcon, userId]);
+  }, [followStatus, navigation, styles.dotIcon, user?.displayName, userId]);
   useEffect(() => {
     const unsubscribeFollow = UserRepository.Relationship.getFollowInfo(
       userId,
@@ -195,11 +199,11 @@ export default function UserProfile({ route }: any) {
   };
 
   const renderButtons = () => {
-    return !followStatus
+    return isMyProfile
       ? editProfileButton()
-      : followStatus === 'none'
+      : isUnfollowed
       ? followButton()
-      : followStatus === 'blocked'
+      : isFinite
       ? unBlockButton()
       : null;
   };
@@ -246,7 +250,7 @@ export default function UserProfile({ route }: any) {
           </View>
           {renderButtons()}
         </View>
-        {followStatus !== 'blocked' && (
+        {isBlocked && (
           <>
             <CustomTab
               tabName={[TabName.Timeline, TabName.Gallery]}
