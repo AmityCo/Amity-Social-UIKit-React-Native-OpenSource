@@ -22,7 +22,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import useAuth from '../../hooks/useAuth';
 import { SvgXml } from 'react-native-svg';
-import { block_unblock, editIcon } from '../../svg/svg-xml-list';
+import { blockOrUnblock, editIcon } from '../../svg/svg-xml-list';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import { useTheme } from 'react-native-paper';
 import FloatingButton from '../../components/FloatingButton';
@@ -77,8 +77,7 @@ export default function UserProfile({ route }: any) {
         <TouchableOpacity
           onPress={() => {
             navigation.navigate('UserProfileSetting', {
-              displayName: user?.displayName,
-              user: userId,
+              user,
               follow: followStatus !== 'loading' ? followStatus : 'loading',
             });
           }}
@@ -90,7 +89,7 @@ export default function UserProfile({ route }: any) {
         </TouchableOpacity>
       ),
     });
-  }, [followStatus, navigation, styles.dotIcon, user?.displayName, userId]);
+  }, [followStatus, navigation, styles.dotIcon, user]);
   useEffect(() => {
     const unsubscribeFollow = UserRepository.Relationship.getFollowInfo(
       userId,
@@ -163,7 +162,11 @@ export default function UserProfile({ route }: any) {
         style={styles.editProfileButton}
         onPress={onUnblockUser}
       >
-        <SvgXml width={24} height={20} xml={block_unblock(theme.colors.base)} />
+        <SvgXml
+          width={24}
+          height={20}
+          xml={blockOrUnblock(theme.colors.base)}
+        />
         <Text style={styles.editProfileText}>Unblock user</Text>
       </TouchableOpacity>
     );
@@ -199,13 +202,10 @@ export default function UserProfile({ route }: any) {
   };
 
   const renderButtons = () => {
-    return isMyProfile
-      ? editProfileButton()
-      : isUnfollowed
-      ? followButton()
-      : isFinite
-      ? unBlockButton()
-      : null;
+    if (isMyProfile) return editProfileButton();
+    if (isUnfollowed) return followButton();
+    if (isBlocked) return unBlockButton();
+    return null;
   };
 
   return (
@@ -250,7 +250,7 @@ export default function UserProfile({ route }: any) {
           </View>
           {renderButtons()}
         </View>
-        {isBlocked && (
+        {!isBlocked && (
           <>
             <CustomTab
               tabName={[TabName.Timeline, TabName.Gallery]}

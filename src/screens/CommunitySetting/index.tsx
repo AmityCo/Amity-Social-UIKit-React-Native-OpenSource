@@ -19,6 +19,11 @@ interface ChatDetailProps {
   route: any;
 }
 
+export enum SettingType {
+  basicInfo = 'basic_info',
+  leaveOrClose = 'leave_or_close',
+}
+
 export const CommunitySetting: React.FC<ChatDetailProps> = ({
   navigation,
   route,
@@ -81,7 +86,7 @@ export const CommunitySetting: React.FC<ChatDetailProps> = ({
           leftIcon: require('../../../assets/icon/groupMember.png'),
           callBack: handleMembersPress,
           rightIcon: arrowOutlined(theme.colors.base),
-          type: 'basic_info',
+          type: SettingType.basicInfo,
         },
       ],
     },
@@ -93,21 +98,21 @@ export const CommunitySetting: React.FC<ChatDetailProps> = ({
           leftIcon: null,
           callBack: handleLeaveCommunityPress,
           rightIcon: null,
-          type: 'leave_or_close',
+          type: SettingType.leaveOrClose,
         },
         {
           name: 'Close Community',
           leftIcon: null,
           callBack: handleCloseCommunityPress,
           rightIcon: null,
-          type: 'leave_or_close',
+          type: SettingType.leaveOrClose,
         },
       ],
     },
   ];
 
   const renderSettingItems = ({ item }) => {
-    if (item.type === 'basic_info') {
+    if (item.type === SettingType.basicInfo) {
       return (
         <TouchableOpacity style={styles.rowContainer} onPress={item.callBack}>
           <View style={styles.iconContainer}>

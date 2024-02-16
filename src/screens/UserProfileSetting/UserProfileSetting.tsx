@@ -5,16 +5,26 @@ import CloseButton from '../../components/BackButton';
 import { useStyles } from './styles';
 import {
   arrowOutlined,
-  block_unblock,
+  blockOrUnblock,
   editIcon,
   report,
   unfollow,
 } from '../../svg/svg-xml-list';
 import { SvgXml } from 'react-native-svg';
 import { LoadingOverlay } from '../../components/LoadingOverlay';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RouteProp } from '@react-navigation/native';
+import { RootStackParamList } from 'src/routes/RouteParamList';
 
-export default function UserProfileSetting({ navigation, route }: any) {
-  const { userId, follow, displayName } = route.params;
+export default function UserProfileSetting({
+  navigation,
+  route,
+}: {
+  navigation: NativeStackNavigationProp<RootStackParamList>;
+  route: RouteProp<RootStackParamList, 'UserProfileSetting'>;
+}) {
+  const { user, follow } = route.params;
+  const { userId, displayName } = user;
   const styles = useStyles();
   const [showLoadingIndicator, setShowLoadingIndicator] = useState(false);
   const [followStatus, setFollowStatus] = useState(follow);
@@ -34,18 +44,21 @@ export default function UserProfileSetting({ navigation, route }: any) {
     await createReport('user', userId);
     setShowLoadingIndicator(false);
   }, [userId]);
+
   const handleUnfollowPress = useCallback(async () => {
     setShowLoadingIndicator(true);
     await UserRepository.Relationship.unfollow(userId);
     setShowLoadingIndicator(false);
     setFollowStatus('none');
   }, [userId]);
+
   const handleBlockUser = useCallback(async () => {
     setShowLoadingIndicator(true);
     await UserRepository.Relationship.blockUser(userId);
     setShowLoadingIndicator(false);
     setFollowStatus('blocked');
   }, [userId]);
+
   const handleUnblockUser = useCallback(async () => {
     setShowLoadingIndicator(true);
     await UserRepository.Relationship.unBlockUser(userId);
@@ -53,53 +66,57 @@ export default function UserProfileSetting({ navigation, route }: any) {
     setFollowStatus('none');
   }, [userId]);
 
+  const onProfileEditPress = useCallback(() => {
+    navigation.navigate('EditProfile', { user });
+  }, [navigation, user]);
+
   const settingData = useMemo(() => {
     const userSettingData = [];
-    if (isMyProfile) {
+    if (!isMyProfile) {
       userSettingData.push({
-        title: 'Basic info',
+        title: 'Manage',
         data: [
           {
-            label: 'Edit Profile',
-            leftIcon: editIcon,
-            rightIcon: arrowOutlined,
-            callBack: () => {},
-            type: 'basic_info',
+            type: 'manage',
+            leftIcon: report,
+            label: 'Report user',
+            callBack: handleReportUserPress,
+          },
+          {
+            type: 'manage',
+            leftIcon: blockOrUnblock,
+            label: isBlocked ? 'Unblock user' : 'Block user',
+            callBack: isBlocked ? handleUnblockUser : handleBlockUser,
           },
         ],
       });
-    } else {
-      userSettingData.push({ title: 'Manage', data: [] });
-      userSettingData.map((setting) => {
-        if (setting.title === 'Manage')
-          if (isFollowed)
-            return setting.data.push({
-              type: 'manage',
-              leftIcon: unfollow,
-              label: 'Unfollow',
-              callBack: handleUnfollowPress,
-            });
-        if (followStatus)
-          return setting.data.push(
-            {
-              type: 'manage',
-              leftIcon: report,
-              label: 'Report user',
-              callBack: handleReportUserPress,
-            },
-            {
-              type: 'manage',
-              leftIcon: block_unblock,
-              label: isBlocked ? 'Unblock user' : 'Block user',
-              callBack: isBlocked ? handleUnblockUser : handleBlockUser,
-            }
-          );
-        return setting;
-      });
+      if (isFollowed) {
+        userSettingData.map((setting) => {
+          setting.data.unshift({
+            type: 'manage',
+            leftIcon: unfollow,
+            label: 'Unfollow',
+            callBack: handleUnfollowPress,
+          });
+          return setting;
+        });
+      }
+
+      return userSettingData;
     }
+    userSettingData.push({
+      title: 'Basic info',
+      data: [
+        {
+          label: 'Edit Profile',
+          leftIcon: editIcon,
+          rightIcon: arrowOutlined,
+          callBack: onProfileEditPress,
+        },
+      ],
+    });
     return userSettingData;
   }, [
-    followStatus,
     handleBlockUser,
     handleReportUserPress,
     handleUnblockUser,
@@ -107,6 +124,7 @@ export default function UserProfileSetting({ navigation, route }: any) {
     isBlocked,
     isFollowed,
     isMyProfile,
+    onProfileEditPress,
   ]);
 
   const renderSectionItem = useCallback(
@@ -115,7 +133,7 @@ export default function UserProfileSetting({ navigation, route }: any) {
         <TouchableOpacity
           key={item.label}
           style={styles.rowContainer}
-          onPress={() => item.callBack()}
+          onPress={item.callBack}
         >
           <View style={styles.iconContainer}>
             <SvgXml xml={item.leftIcon()} width="20" height="20" />

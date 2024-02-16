@@ -122,13 +122,12 @@ const CreatePostChooseTargetModal = ({
     needApprovalOnPostCreation?: string
   ) => {
     onSelect && onSelect();
-    const targetscreen =
-      postType === 'post'
-        ? 'CreatePost'
-        : postType === 'poll'
-        ? 'CreatePoll'
-        : null;
-    navigation.navigate(targetscreen, {
+    const targetscreen = () => {
+      if (postType === 'post') return 'CreatePost';
+      if (postType === 'poll') return 'CreatePoll';
+      return null;
+    };
+    navigation.navigate(targetscreen(), {
       targetId: targetId,
       targetName: targetName,
       targetType: targetType,
