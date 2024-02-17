@@ -71,13 +71,17 @@ export const useStyles = () => {
     },
     leaveChatText: {
       fontSize: 16,
-      fontWeight: '600',
       color: '#FF0000',
     },
     leaveChatLabel: {
       fontSize: 16,
-      fontWeight: '600',
       color: 'red',
+    },
+    header: {
+      fontWeight: '600',
+      fontSize: 17,
+      marginLeft: 20,
+      color: theme.colors.base,
     },
   });
 

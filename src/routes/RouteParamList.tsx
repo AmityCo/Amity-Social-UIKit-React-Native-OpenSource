@@ -58,11 +58,11 @@ export type RootStackParamList = {
     userId: string;
   };
   UserProfileSetting: {
-    userId: string;
+    user: Amity.User;
     follow: string;
   };
   EditProfile: {
-    userId: string;
+    user: Amity.User;
   };
   EditCommunity: {
     communityId: string;
