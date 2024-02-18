@@ -7,9 +7,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-
 import { SvgXml } from 'react-native-svg';
-
 import { useStyles } from './styles';
 import useAuth from '../../hooks/useAuth';
 import { IVideoPost, MediaUri } from '../Social/PostList';
@@ -83,7 +81,11 @@ const MediaSection: React.FC<IMediaSection> = ({ childrenPosts }) => {
           });
         } else if (item.dataType === 'video') {
           setVideoPosts((prev) => {
-            return !prev.includes(item.data) ? [...prev, item.data] : [...prev];
+            const isExisted = prev.some(
+              (video) =>
+                video.videoFileId.original === item.data.videoFileId.original
+            );
+            return !isExisted ? [...prev, item.data] : [...prev];
           });
         } else if (item.dataType === 'poll') {
           setPollIds((prev) => {

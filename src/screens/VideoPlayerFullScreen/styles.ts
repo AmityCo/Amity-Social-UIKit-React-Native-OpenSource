@@ -47,6 +47,13 @@ const styles = StyleSheet.create({
     borderRadius: 72,
     position: 'absolute',
   },
+  loadingOverlay: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+  },
 });
 
 export default styles;
