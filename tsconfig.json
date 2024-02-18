@@ -1,27 +1,28 @@
 {
-    "compilerOptions": {
-      "baseUrl": "./",
-       "paths": {
-        "@amityco/asc-react-native-ui-kit": ["./src/index"],
-        "react": [ "./node_modules/@types/react" ]
-      },
-      "allowUnreachableCode": false,
-      "allowUnusedLabels": false,
-      "esModuleInterop": true,
-      "jsx": "react",
-      "lib": ["esnext"],
-      "module": "esnext",
-      "moduleResolution": "node",
-      "noFallthroughCasesInSwitch": true,
-      "noImplicitReturns": true,
-      "noImplicitUseStrict": false,
-      "noUncheckedIndexedAccess": true,
-      "noUnusedLocals": true,
-      "noUnusedParameters": true,
-      "resolveJsonModule": true,
-      "skipLibCheck": true,
-      "strict": false,
-      "target": "esnext",
-      "noImplicitAny": false
-    }
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "@amityco/asc-react-native-ui-kit": ["./src/index"],
+      "react": ["./node_modules/@types/react"]
+    },
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "esModuleInterop": true,
+    "jsx": "react",
+    "lib": ["esnext"],
+    "module": "esnext",
+    "moduleResolution": "node",
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "noImplicitUseStrict": false,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "target": "esnext",
+    "noImplicitAny": false,
+    "allowSyntheticDefaultImports": true
   }
+}

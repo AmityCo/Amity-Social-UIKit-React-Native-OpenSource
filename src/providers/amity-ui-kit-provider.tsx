@@ -7,7 +7,7 @@ import { ConfigProvider } from './config-provider';
 export type CusTomTheme = typeof DefaultTheme;
 export interface IAmityUIkitProvider {
   userId: string;
-  displayName: string;
+  displayName?: string;
   apiKey: string;
   apiRegion?: string;
   apiEndpoint?: string;

@@ -33,6 +33,8 @@ import BackButton from '../components/BackButton';
 import CloseButton from '../components/CloseButton';
 import EditCommunity from '../screens/EditCommunity/EditCommunity';
 import VideoPlayerFull from '../screens/VideoPlayerFullScreen';
+import PostTypeChoiceModal from '../components/PostTypeChoiceModal/PostTypeChoiceModal';
+import CreatePoll from '../screens/CreatePoll/CreatePoll';
 
 export default function SocialNavigator() {
   const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -124,6 +126,7 @@ export default function SocialNavigator() {
               },
             }: any) => ({
               title: communityName,
+              headerTitleAlign: 'center',
               headerLeft: () => <BackButton />,
             })}
           />
@@ -159,6 +162,11 @@ export default function SocialNavigator() {
             options={{ headerShown: false }}
           />
           <Stack.Screen
+            name="CreatePoll"
+            component={CreatePoll}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
             name="UserProfile"
             component={UserProfile}
             options={{
@@ -191,6 +199,7 @@ export default function SocialNavigator() {
           />
         </Stack.Navigator>
       )}
+      <PostTypeChoiceModal />
     </NavigationContainer>
   );
 }

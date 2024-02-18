@@ -1,6 +1,6 @@
 import { Image, Text, TouchableOpacity } from 'react-native';
 import React, { memo } from 'react';
-import useImage from '../../../hooks/useImage';
+import useFile from '../../../hooks/useFile';
 import { SvgXml } from 'react-native-svg';
 import { categoryIcon } from '../../../svg/svg-xml-list';
 import { useStyle } from '../styles';
@@ -12,7 +12,7 @@ const Categories = ({
   item: Amity.Category;
   onSelectCategory: (id: string, name: string) => void;
 }) => {
-  const avatarURL = useImage({ fileId: item.avatarFileId });
+  const avatarURL = useFile({ fileId: item.avatarFileId });
   const styles = useStyle();
   return (
     <TouchableOpacity

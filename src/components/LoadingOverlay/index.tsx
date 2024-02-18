@@ -4,7 +4,7 @@ import { styles } from './styles';
 
 interface LoadingOverlayProps {
   isLoading: boolean;
-  loadingText: string;
+  loadingText?: string;
 }
 
 export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
@@ -19,7 +19,7 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
     <View style={styles.overlay}>
       <View style={styles.indicatorContainer}>
         <ActivityIndicator size="large" color="#fff" />
-        <Text style={styles.loadingText}>{loadingText}</Text>
+        {loadingText && <Text style={styles.loadingText}>{loadingText}</Text>}
       </View>
     </View>
   );

@@ -151,7 +151,7 @@ const CreatePost = ({ route }: any) => {
         mentionsPosition
       );
       if (response) {
-        navigation.goBack();
+        goBack();
       }
     } else {
       const fileIdArr: (string | undefined)[] = displayVideos.map(
@@ -171,37 +171,39 @@ const CreatePost = ({ route }: any) => {
         mentionUserIds.length > 0 ? mentionUserIds : [],
         mentionsPosition
       );
-      if (
-        (community?.postSetting === 'ADMIN_REVIEW_POST_REQUIRED' ||
-          (community as Record<string, any>).needApprovalOnPostCreation) &&
-        response
-      ) {
-        const res = await checkCommunityPermission(
-          community.communityId,
-          client as Amity.Client,
-          apiRegion
-        );
-
+      if (targetType === 'community') {
         if (
-          res.permissions.length > 0 &&
-          res.permissions.includes('Post/ManagePosts')
+          (community?.postSetting === 'ADMIN_REVIEW_POST_REQUIRED' ||
+            (community as Record<string, any>).needApprovalOnPostCreation) &&
+          response
         ) {
-          navigation.goBack();
-        } else {
-          Alert.alert(
-            'Post submitted',
-            'Your post has been submitted to the pending list. It will be reviewed by community moderator',
-            [
-              {
-                text: 'OK',
-                onPress: () => navigation.goBack(),
-              },
-            ],
-            { cancelable: false }
+          const res = await checkCommunityPermission(
+            community.communityId,
+            client as Amity.Client,
+            apiRegion
           );
+
+          if (
+            res.permissions.length > 0 &&
+            res.permissions.includes('Post/ManagePosts')
+          ) {
+            goBack();
+          } else {
+            Alert.alert(
+              'Post submitted',
+              'Your post has been submitted to the pending list. It will be reviewed by community moderator',
+              [
+                {
+                  text: 'OK',
+                  onPress: () => goBack(),
+                },
+              ],
+              { cancelable: false }
+            );
+          }
         }
-      } else if (response) {
-        navigation.goBack();
+      } else {
+        goBack();
       }
     }
   };

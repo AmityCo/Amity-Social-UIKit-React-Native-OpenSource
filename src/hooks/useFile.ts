@@ -2,15 +2,15 @@ import { useEffect, useState } from 'react';
 import { FileRepository } from '@amityco/ts-sdk-react-native';
 import { ImageSizeState, ImageSizeSubset } from '../enum/imageSizeState';
 
-interface UseImageProps {
+interface useFileProps {
   fileId: string;
   imageSize?: ImageSizeSubset;
 }
 
-const useImage = ({
+const useFile = ({
   fileId,
   imageSize = ImageSizeState.medium,
-}: UseImageProps) => {
+}: useFileProps) => {
   const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
 
   useEffect(() => {
@@ -30,4 +30,4 @@ const useImage = ({
   return imageUrl;
 };
 
-export default useImage;
+export default useFile;

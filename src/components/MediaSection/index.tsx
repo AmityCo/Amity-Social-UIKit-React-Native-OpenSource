@@ -18,6 +18,7 @@ import { useSelector } from 'react-redux';
 import ImageView from '../../components/react-native-image-viewing/dist';
 import { RootState } from '../../redux/store';
 import { playBtn } from '../../svg/svg-xml-list';
+import PollSection from '../PollSection/PollSection';
 
 interface IMediaSection {
   childrenPosts: string[];
@@ -26,6 +27,7 @@ const MediaSection: React.FC<IMediaSection> = ({ childrenPosts }) => {
   const { apiRegion } = useAuth();
   const [imagePosts, setImagePosts] = useState<string[]>([]);
   const [videoPosts, setVideoPosts] = useState<IVideoPost[]>([]);
+  const [pollIds, setPollIds] = useState<{ pollId: string }[]>([]);
 
   const [imagePostsFullSize, setImagePostsFullSize] = useState<MediaUri[]>([]);
   const [videoPostsFullSize, setVideoPostsFullSize] = useState<MediaUri[]>([]);
@@ -81,6 +83,10 @@ const MediaSection: React.FC<IMediaSection> = ({ childrenPosts }) => {
           });
         } else if (item.dataType === 'video') {
           setVideoPosts((prev) => {
+            return !prev.includes(item.data) ? [...prev, item.data] : [...prev];
+          });
+        } else if (item.dataType === 'poll') {
+          setPollIds((prev) => {
             return !prev.includes(item.data) ? [...prev, item.data] : [...prev];
           });
         }
@@ -240,7 +246,11 @@ const MediaSection: React.FC<IMediaSection> = ({ childrenPosts }) => {
 
   return (
     <View>
-      {renderMediaPosts()}
+      {pollIds.length > 0 ? (
+        <PollSection pollId={pollIds[0].pollId} />
+      ) : (
+        renderMediaPosts()
+      )}
       <ImageView
         images={
           imagePostsFullSize.length > 0
