@@ -1,7 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { CommunityRepository } from '@amityco/ts-sdk-react-native';
 import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { FlatList, View, Text, ActivityIndicator, Image } from 'react-native';
+import {
+  FlatList,
+  View,
+  Text,
+  ActivityIndicator,
+  Image,
+  TouchableOpacity,
+} from 'react-native';
 import { useStyles } from './styles';
 import CloseButton from '../../components/BackButton';
 import useAuth from '../../hooks/useAuth';
@@ -53,10 +60,30 @@ export default function CommunityList({ navigation, route }: any) {
 
     loadCommunities();
   }, []);
+  const onPressCommunity = useCallback(
+    ({
+      communityId,
+      communityName,
+    }: {
+      communityId: string;
+      communityName: string;
+    }) => {
+      navigation.navigate('CommunityHome', { communityId, communityName });
+    },
+    []
+  );
 
   const renderCommunity = ({ item }: { item: Amity.Community }) => {
     return (
-      <View style={styles.rowContainer}>
+      <TouchableOpacity
+        style={styles.rowContainer}
+        onPress={() =>
+          onPressCommunity({
+            communityId: item.communityId,
+            communityName: item.displayName,
+          })
+        }
+      >
         <Image
           style={styles.avatar}
           source={
@@ -68,7 +95,7 @@ export default function CommunityList({ navigation, route }: any) {
           }
         />
         <Text style={styles.categoryText}>{item.displayName}</Text>
-      </View>
+      </TouchableOpacity>
     );
   };
 
