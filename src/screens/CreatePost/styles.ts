@@ -51,7 +51,7 @@ export const useStyles = () => {
       marginHorizontal: 3,
       zIndex: 999,
       paddingVertical: 5,
-
+      color: theme.colors.base,
       // Additional styles if needed
     },
     transparentText: {

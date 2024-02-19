@@ -1,5 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Dimensions, TouchableOpacity } from 'react-native';
+import {
+  ActivityIndicator,
+  Alert,
+  Dimensions,
+  TouchableOpacity,
+} from 'react-native';
 
 import { View } from 'react-native';
 import Video from 'react-native-video';
@@ -22,7 +27,7 @@ const VideoPlayerFull = () => {
   const { source } = route.params;
   const videoRef = useRef(null);
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
-
+  const [loading, setLoading] = useState(false);
   const [orientation, setOrientation] = useState('LANDSCAPE');
 
   const determineAndSetOrientation = () => {
@@ -55,10 +60,31 @@ const VideoPlayerFull = () => {
         }
         resizeMode="contain"
         controls={true}
+        bufferConfig={{
+          minBufferMs: 1000,
+          maxBufferMs: 1500,
+          bufferForPlaybackMs: 1500,
+          bufferForPlaybackAfterRebufferMs: 2500,
+        }}
+        onLoadStart={() => {
+          setLoading(true);
+        }}
+        onLoad={() => {
+          setLoading(false);
+        }}
+        onError={() => {
+          Alert.alert('Error while playing video');
+        }}
+        onVideoError={() => {
+          Alert.alert('Error while playing video');
+        }}
       />
       <TouchableOpacity style={styles.closeButton} onPress={onClose}>
         <SvgXml xml={closeIcon(theme.colors.backdrop)} width="16" height="16" />
       </TouchableOpacity>
+      <View style={styles.loadingOverlay}>
+        <ActivityIndicator animating={loading} color="#fff" size="large" />
+      </View>
     </View>
   );
 };

@@ -47,7 +47,7 @@ const CommunityList = ({
       key={item.communityId}
       style={styles.itemContainer}
     >
-      {item.avatarFileId ? (
+      {item.avatarFileId && avatarUrl ? (
         <Image source={{ uri: avatarUrl }} style={styles.avatar} />
       ) : (
         <SvgXml

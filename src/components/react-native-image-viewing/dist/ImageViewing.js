@@ -199,12 +199,12 @@ function ImageViewing({
         )}
       </View>
 
-      <Video
+      {playingUri && <Video
         source={{ uri: playingUri }}
         onVideoFullscreenPlayerWillDismiss={onClosePlayer}
         ref={videoPlayerRef}
         fullscreen={true}
-      />
+      />}
     </Modal>
   );
 }
