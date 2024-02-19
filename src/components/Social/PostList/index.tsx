@@ -220,7 +220,6 @@ export default function PostList({
         await addPostReaction(postId, 'like');
       }
     } catch (error) {
-      console.error('Error:', error);
       setLikeReaction((prev) => prev);
     }
   }, [
