@@ -66,7 +66,7 @@ export default function Explore() {
     }, 100);
   };
   const categoryListComponent = () => {
-    const categoryElements = [];
+    const categoryElements: JSX.Element[] = [];
     const maxLength = categoryList.length > 8 ? 8 : categoryList.length;
     for (let index = 0; index < maxLength; index += 2) {
       categoryElements.push(
