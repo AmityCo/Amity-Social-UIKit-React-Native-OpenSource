@@ -119,13 +119,10 @@ export const useStyles = () => {
     rowContainer: {
       flexDirection: 'row',
       justifyContent: 'flex-start',
-      // paddingLeft: 10,
-      marginBottom: 10,
-    },
-    column: {
       alignItems: 'center',
-      flexDirection: 'row',
-      flex: 1,
+      width: '50%',
+      paddingHorizontal: 8,
+      marginBottom: 10,
     },
     columnText: {
       fontSize: 16,
@@ -133,6 +130,10 @@ export const useStyles = () => {
       marginLeft: 10,
       marginBottom: 10,
       color: theme.colors.base,
+    },
+    wrapContainer: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
     },
   });
   return styles;
