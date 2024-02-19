@@ -69,7 +69,7 @@ export default function Explore() {
     [navigation]
   );
 
-  const categoryListComponent = useCallback(() => {
+  const renderCategoryList = useCallback(() => {
     const truncatedCategoryList = categoryList.slice(0, 8);
     return (
       <View style={styles.wrapContainer}>
@@ -202,7 +202,7 @@ export default function Explore() {
             />
           </TouchableOpacity>
         </View>
-        {categoryListComponent()}
+        {renderCategoryList()}
       </View>
     </ScrollView>
   );
