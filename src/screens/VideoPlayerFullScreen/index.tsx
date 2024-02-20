@@ -61,10 +61,10 @@ const VideoPlayerFull = () => {
         resizeMode="contain"
         controls={true}
         bufferConfig={{
-          minBufferMs: 1000,
+          minBufferMs: 1500,
           maxBufferMs: 1500,
           bufferForPlaybackMs: 1500,
-          bufferForPlaybackAfterRebufferMs: 2500,
+          bufferForPlaybackAfterRebufferMs: 1500,
         }}
         onLoadStart={() => {
           setLoading(true);
