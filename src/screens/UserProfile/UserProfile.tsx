@@ -30,6 +30,7 @@ import { TabName } from '../../enum/tabNameState';
 import { useDispatch } from 'react-redux';
 import uiSlice from '../../redux/slices/uiSlice';
 import { PostTargetType } from '../../enum/postTargetType';
+import UserProfileGallery from './Components/UserProfileGallery';
 
 export default function UserProfile({ route }: any) {
   const theme = useTheme() as MyMD3Theme;
@@ -43,6 +44,7 @@ export default function UserProfile({ route }: any) {
   const [followerCount, setFollowerCount] = useState<number>(0);
   const [followingCount, setFollowingCount] = useState<number>(0);
   const [followStatus, setFollowStatus] = useState<string>('loading');
+  const [currentTab, setCurrentTab] = useState<TabName>(TabName.Timeline);
   const isMyProfile = !followStatus;
   const isBlocked = followStatus === 'blocked';
   const isUnfollowed = followStatus === 'none';
@@ -172,9 +174,6 @@ export default function UserProfile({ route }: any) {
     );
   };
 
-  const handleTab = (tabName: TabName) => {
-    console.log('index: ', tabName); //this func not implmented yet
-  };
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
 
@@ -208,9 +207,18 @@ export default function UserProfile({ route }: any) {
     return null;
   };
 
+  const renderTabs = () => {
+    if (currentTab === TabName.Timeline)
+      return <Feed targetType="user" targetId={userId} ref={feedRef} />;
+    if (currentTab === TabName.Gallery)
+      return <UserProfileGallery userId={userId} />;
+    return null;
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView
+        style={{ flex: 1 }}
         ref={scrollViewRef}
         onScroll={handleScroll}
         scrollEventThrottle={20}
@@ -254,9 +262,9 @@ export default function UserProfile({ route }: any) {
           <>
             <CustomTab
               tabName={[TabName.Timeline, TabName.Gallery]}
-              onTabChange={handleTab}
+              onTabChange={setCurrentTab}
             />
-            <Feed targetType="user" targetId={userId} ref={feedRef} />
+            {renderTabs()}
           </>
         )}
       </ScrollView>
