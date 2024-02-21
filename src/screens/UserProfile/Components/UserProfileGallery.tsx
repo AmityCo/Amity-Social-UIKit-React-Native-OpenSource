@@ -20,7 +20,7 @@ const UserProfileGallery: FC<IUserProfileGallery> = ({ userId }) => {
   const styles = useStyles();
   const data = tabName === TabName.Photos ? images : videos;
 
-  const onPressThumbnail = useCallback((item, index) => {
+  const onPressThumbnail = useCallback((index) => {
     setImageIndex(index);
     setShowFullImage(true);
   }, []);
@@ -28,7 +28,7 @@ const UserProfileGallery: FC<IUserProfileGallery> = ({ userId }) => {
   const renderGalleryContent = useCallback(
     ({ item, index }) => {
       return (
-        <TouchableOpacity onPress={() => onPressThumbnail(item, index)}>
+        <TouchableOpacity onPress={() => onPressThumbnail(index)}>
           <Image source={{ uri: item.uri }} style={styles.thumbnail} />
           {item.dataType === 'video' && (
             <View style={styles.playButton}>
