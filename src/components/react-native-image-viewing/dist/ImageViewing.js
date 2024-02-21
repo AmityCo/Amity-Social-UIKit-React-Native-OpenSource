@@ -173,10 +173,9 @@ if (Platform.OS === 'ios') {
                   <SvgXml xml={playBtn} width="50" height="50" />
               </TouchableOpacity>
               )}
-                                     </View>
+            </View>
           )}
           onMomentumScrollEnd={onScroll}
-          //@ts-ignore
           keyExtractor={(imageSrc, index) =>
             keyExtractor
               ? keyExtractor(imageSrc, index)
