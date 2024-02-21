@@ -85,20 +85,17 @@ function ImageViewing({
     [imageList]
   );
   const playVideoFullScreen = async () => {
-    if (Platform.OS === 'ios') {
+if (Platform.OS === 'ios') {
       onClickPlayButton(currentImageIndex);
-      setIsPlaying(true);
       setPlayingUri(
         `https://api.${apiRegion}.amity.co/api/v3/files/${videoPosts[currentImageIndex]?.videoFileId?.original}/download`
       );
-      setTimeout(() => {
-        videoPlayerRef.current.presentFullscreenPlayer();
-      }, 100);
+      setIsPlaying(true);
     } else {
-      navigation.navigate('VideoPlayer', {
-        source: `https://api.${apiRegion}.amity.co/api/v3/files/${videoPosts[currentImageIndex]?.videoFileId?.original}/download`,
-      });
-    }
+    navigation.navigate('VideoPlayer', {
+      source: `https://api.${apiRegion}.amity.co/api/v3/files/${videoPosts[currentImageIndex]?.videoFileId?.original}/download`,
+    });
+}
   };
 
   // useEffect(() => {
@@ -159,7 +156,7 @@ function ImageViewing({
             <View>
               {/* Your overlay content */}
 
-              <ImageItem
+              {!playingUri && <ImageItem
                 onZoom={onZoom}
                 imageSrc={imageSrc}
                 onRequestClose={onRequestCloseEnhanced}
@@ -167,19 +164,18 @@ function ImageViewing({
                 delayLongPress={delayLongPress}
                 swipeToCloseEnabled={swipeToCloseEnabled}
                 doubleTapToZoomEnabled={doubleTapToZoomEnabled}
-              />
-              {isVideoButton && (
-                <TouchableOpacity
-                  style={styles.playButton}
-                  onPress={playVideoFullScreen}
-                >
+              />}
+              {isVideoButton && !playingUri &&(
+              <TouchableOpacity
+              style={styles.playButton}
+              onPress={playVideoFullScreen}
+              >
                   <SvgXml xml={playBtn} width="50" height="50" />
-                </TouchableOpacity>
+              </TouchableOpacity>
               )}
             </View>
           )}
           onMomentumScrollEnd={onScroll}
-          //@ts-ignore
           keyExtractor={(imageSrc, index) =>
             keyExtractor
               ? keyExtractor(imageSrc, index)
@@ -197,14 +193,15 @@ function ImageViewing({
             })}
           </Animated.View>
         )}
+      {playingUri && <Video 
+       resizeMode='contain'
+       style={{width : "100%", height : "100%"}}
+       controls={true}
+       source={{ uri: playingUri }}
+       onVideoFullscreenPlayerWillDismiss={onClosePlayer}
+       ref={videoPlayerRef}
+     />}
       </View>
-
-      {playingUri && <Video
-        source={{ uri: playingUri }}
-        onVideoFullscreenPlayerWillDismiss={onClosePlayer}
-        ref={videoPlayerRef}
-        fullscreen={true}
-      />}
     </Modal>
   );
 }
@@ -246,7 +243,7 @@ const styles = StyleSheet.create({
     width: 320,
     height: 200,
   },
-});
+  });
 const EnhancedImageViewing = (props) => (
   <ImageViewing key={props.imageIndex} {...props} />
 );

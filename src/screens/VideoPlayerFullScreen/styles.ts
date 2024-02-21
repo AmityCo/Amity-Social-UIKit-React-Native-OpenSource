@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet } from 'react-native';
+import { Dimensions, StyleSheet, StatusBar } from 'react-native';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
@@ -41,8 +41,8 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     padding: 7,
-    alignSelf: 'flex-end',
-    margin: 12,
+    top: StatusBar.currentHeight + 12,
+    right: 12,
     backgroundColor: 'rgba(255, 255, 255, 0.4)',
     borderRadius: 72,
     position: 'absolute',

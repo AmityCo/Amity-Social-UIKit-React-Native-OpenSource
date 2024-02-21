@@ -27,7 +27,9 @@ end
 
 target 'AmityReactNativeSocialUiKitExample' do
   config = use_native_modules!
-
+  pod 'SPTPersistentCache', :modular_headers => true
+  pod 'DVAssetLoaderDelegate', :modular_headers => true
+  $RNVideoUseVideoCaching = true
   # Flags change depending on the env values.
   flags = get_default_flags()
 
