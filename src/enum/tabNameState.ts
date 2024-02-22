@@ -8,4 +8,6 @@ export enum TabName {
   Members = 'Members',
   Moderators = 'Moderators',
   MyCommunities = 'MyCommunities',
+  Videos = 'Videos',
+  Photos = 'Photos',
 }

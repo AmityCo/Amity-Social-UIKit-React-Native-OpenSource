@@ -95,6 +95,7 @@ if (Platform.OS === 'ios') {
     navigation.navigate('VideoPlayer', {
       source: `https://api.${apiRegion}.amity.co/api/v3/files/${videoPosts[currentImageIndex]?.videoFileId?.original}/download`,
     });
+    onRequestCloseEnhanced()
 }
   };
 

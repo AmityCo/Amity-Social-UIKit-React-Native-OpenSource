@@ -9,7 +9,10 @@ export const usePoll = (pollId: string, shouldFetch: boolean) => {
     if (pollData?.closedAt) {
       const endDate = dayjs(pollData.closedAt);
       const daysRemaining = endDate.diff(dayjs(), 'day');
-      return daysRemaining || 0;
+      if (daysRemaining > 0) return daysRemaining;
+      const hoursRemaining = endDate.diff(dayjs(), 'hour');
+      if (hoursRemaining > 0) return 1;
+      return 0;
     }
     return 0;
   }, [pollData]);

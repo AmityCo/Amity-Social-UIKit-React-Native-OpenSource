@@ -1,6 +1,8 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
+
+const { width } = Dimensions.get('screen');
 
 export const useStyles = () => {
   const theme = useTheme() as MyMD3Theme;
@@ -108,6 +110,54 @@ export const useStyles = () => {
       fontSize: 16,
       fontWeight: '600',
       color: theme.colors.base,
+    },
+    tabContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginVertical: 10,
+      paddingHorizontal: 10,
+    },
+    tab: {
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      borderRadius: 20,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: theme.colors.border,
+      marginRight: 10,
+    },
+    focusedTab: {
+      backgroundColor: theme.colors.primary,
+    },
+    tabText: {
+      color: theme.colors.baseShade1,
+      fontWeight: '500',
+    },
+    focusedTabText: {
+      color: theme.colors.background,
+    },
+    emptyContentContainer: {
+      height: 350,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    emptyContentText: {
+      marginTop: 10,
+      fontSize: 16,
+      color: theme.colors.baseShade1,
+    },
+    thumbnail: {
+      width: width * 0.5 - 30,
+      height: width * 0.5 - 30,
+      borderRadius: 10,
+      margin: 10,
+    },
+    playButton: {
+      position: 'absolute',
+      width: '100%',
+      height: '100%',
+      justifyContent: 'center',
+      alignItems: 'center',
     },
   });
 
