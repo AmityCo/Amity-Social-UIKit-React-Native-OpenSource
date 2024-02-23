@@ -84,8 +84,9 @@ export const useStyles = () => {
     },
     likeBtn: {
       flexDirection: 'row',
-      paddingRight: 6,
       paddingTop: 4,
+      marginRight: 15,
+      alignItems: 'center',
     },
     actionSection: {
       flexDirection: 'row',
@@ -94,7 +95,7 @@ export const useStyles = () => {
       color: theme.colors.primary,
       fontSize: 15,
       fontWeight: '600',
-      marginHorizontal: 4,
+      marginLeft: 1,
     },
     btnText: {
       color: theme.colors.baseShade2,
