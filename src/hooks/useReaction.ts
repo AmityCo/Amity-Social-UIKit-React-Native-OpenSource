@@ -19,7 +19,7 @@ export const useReaction = ({
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    ReactionRepository.getReactions(
+    const unsubscribe = ReactionRepository.getReactions(
       { referenceId, referenceType },
       async ({ data: reactorList, error }) => {
         setIsLoading(true);
@@ -43,6 +43,7 @@ export const useReaction = ({
         setIsLoading(false);
       }
     );
+    return () => unsubscribe();
   }, [referenceId, referenceType]);
 
   return {
