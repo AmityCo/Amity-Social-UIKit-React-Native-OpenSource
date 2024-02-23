@@ -380,6 +380,13 @@ export default function PostList({
     setIsEdit(true);
   };
 
+  const onClickReactions = useCallback(() => {
+    navigation.navigate('ReactionList', {
+      referenceId: postId,
+      referenceType: 'post',
+    });
+  }, [navigation, postId]);
+
   return (
     <View key={postId} style={styles.postWrap}>
       <View style={styles.headerSection}>
@@ -449,7 +456,7 @@ export default function PostList({
         {likeReaction === 0 && commentsCount === 0 ? (
           ''
         ) : (
-          <TouchableWithoutFeedback onPress={() => onClickComment()}>
+          <TouchableWithoutFeedback onPress={onClickReactions}>
             <View style={styles.countSection}>
               {likeReaction ? (
                 <Text style={styles.likeCountText}>
@@ -469,10 +476,7 @@ export default function PostList({
         )}
 
         <View style={styles.actionSection}>
-          <TouchableOpacity
-            onPress={() => addReactionToPost()}
-            style={styles.likeBtn}
-          >
+          <TouchableOpacity onPress={addReactionToPost} style={styles.likeBtn}>
             {isLike ? (
               <SvgXml
                 xml={likedXml(theme.colors.primary)}
@@ -485,10 +489,7 @@ export default function PostList({
 
             <Text style={isLike ? styles.likedText : styles.btnText}>Like</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => onClickComment()}
-            style={styles.commentBtn}
-          >
+          <TouchableOpacity onPress={onClickComment} style={styles.commentBtn}>
             <SvgXml xml={commentXml} width="20" height="16" />
             <Text style={styles.btnText}>Comment</Text>
           </TouchableOpacity>

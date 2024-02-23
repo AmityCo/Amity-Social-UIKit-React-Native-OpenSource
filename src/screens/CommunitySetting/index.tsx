@@ -100,16 +100,19 @@ export const CommunitySetting: React.FC<ChatDetailProps> = ({
           rightIcon: null,
           type: SettingType.leaveOrClose,
         },
-        {
-          name: 'Close Community',
-          leftIcon: null,
-          callBack: handleCloseCommunityPress,
-          rightIcon: null,
-          type: SettingType.leaveOrClose,
-        },
       ],
     },
   ];
+
+  if (isModerator) {
+    communitySettingData[1].data.push({
+      name: 'Close Community',
+      leftIcon: null,
+      callBack: handleCloseCommunityPress,
+      rightIcon: null,
+      type: SettingType.leaveOrClose,
+    });
+  }
 
   const renderSettingItems = ({ item }) => {
     if (item.type === SettingType.basicInfo) {

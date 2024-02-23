@@ -75,8 +75,8 @@ export default function Home() {
       <CustomTab
         tabName={
           excludes.includes(ComponentID.StoryTab)
-            ? [TabName.NewsFeed, TabName.Explorer]
-            : [TabName.NewsFeed, TabName.Explorer, TabName.MyCommunities]
+            ? [TabName.NewsFeed, TabName.Explore]
+            : [TabName.NewsFeed, TabName.Explore, TabName.MyCommunities]
         }
         onTabChange={setActiveTab}
       />
@@ -85,7 +85,7 @@ export default function Home() {
           <GlobalFeed />
           <FloatingButton onPress={openModal} />
         </View>
-      ) : activeTab === TabName.Explorer ? (
+      ) : activeTab === TabName.Explore ? (
         <View>
           <Explore />
         </View>

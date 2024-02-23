@@ -35,6 +35,7 @@ import EditCommunity from '../screens/EditCommunity/EditCommunity';
 import VideoPlayerFull from '../screens/VideoPlayerFullScreen';
 import PostTypeChoiceModal from '../components/PostTypeChoiceModal/PostTypeChoiceModal';
 import CreatePoll from '../screens/CreatePoll/CreatePoll';
+import ReactionListScreen from '../screens/ReactionListScreen/ReactionListScreen';
 
 export default function SocialNavigator() {
   const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -60,7 +61,6 @@ export default function SocialNavigator() {
           }}
         >
           <Stack.Screen name="Home" component={Home} />
-          {/* <Stack.Screen name="Community" component={Home} /> */}
           <Stack.Screen name="Explore" component={Explore} />
           <Stack.Screen name="PostDetail" component={PostDetail} />
           <Stack.Screen
@@ -196,6 +196,14 @@ export default function SocialNavigator() {
             name="VideoPlayer"
             component={VideoPlayerFull}
             options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="ReactionList"
+            component={ReactionListScreen}
+            options={{
+              title: 'Reactions',
+              headerLeft: () => <BackButton />,
+            }}
           />
         </Stack.Navigator>
       )}

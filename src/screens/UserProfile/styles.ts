@@ -147,8 +147,8 @@ export const useStyles = () => {
       color: theme.colors.baseShade1,
     },
     thumbnail: {
-      width: width * 0.5 - 30,
-      height: width * 0.5 - 30,
+      width: width * 0.5 - 20,
+      height: width * 0.5 - 20,
       borderRadius: 10,
       margin: 10,
     },
