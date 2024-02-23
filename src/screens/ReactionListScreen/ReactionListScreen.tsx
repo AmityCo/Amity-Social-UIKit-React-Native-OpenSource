@@ -44,10 +44,10 @@ const ReactionListScreen = ({ navigation, route }) => {
     [onPressReactor, styles]
   );
   const renderContentLoading = useCallback(() => {
-    return Array.from({ length: 8 }, (item) => {
+    return Array.from({ length: 8 }, (_, index) => {
       return (
         <ContentLoader
-          key={item?.toString()}
+          key={index}
           height={70}
           speed={1}
           width={380}

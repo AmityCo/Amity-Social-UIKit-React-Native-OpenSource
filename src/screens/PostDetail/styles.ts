@@ -21,6 +21,7 @@ export const useStyles = () => {
     AllInputWrap: {
       backgroundColor: theme.colors.screenBackground,
       flex: 1,
+      marginTop: -16,
     },
     InputWrap: {
       backgroundColor: theme.colors.background,

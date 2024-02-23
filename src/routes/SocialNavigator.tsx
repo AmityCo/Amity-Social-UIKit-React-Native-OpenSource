@@ -62,7 +62,14 @@ export default function SocialNavigator() {
         >
           <Stack.Screen name="Home" component={Home} />
           <Stack.Screen name="Explore" component={Explore} />
-          <Stack.Screen name="PostDetail" component={PostDetail} />
+          <Stack.Screen
+            name="PostDetail"
+            component={PostDetail}
+            options={{
+              headerLeft: () => <BackButton />,
+              title: '',
+            }}
+          />
           <Stack.Screen
             name="CategoryList"
             component={CategoryList}
