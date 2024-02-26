@@ -1,12 +1,16 @@
 import { Platform, StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
+import useConfig from '../../hooks/useConfig';
+import { ComponentID } from '../../util/enumUIKitID';
 
-export const getStyles = () => {
+export const useStyles = () => {
   const theme = useTheme() as MyMD3Theme;
+  const { excludes } = useConfig();
   const styles = StyleSheet.create({
     container: {
       backgroundColor: theme.colors.background,
+      paddingBottom: excludes.includes(ComponentID.StoryTab) ? 0 : 250,
     },
     headerWrap: {
       flexDirection: 'row',

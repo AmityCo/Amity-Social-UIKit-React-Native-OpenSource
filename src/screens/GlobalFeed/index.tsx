@@ -9,29 +9,32 @@ import {
   type IGlobalFeedRes,
 } from '../../providers/Social/feed-sdk';
 import useAuth from '../../hooks/useAuth';
-import PostList, { type IPost } from '../../components/Social/PostList';
-import { getStyles } from './styles';
+import PostList from '../../components/Social/PostList';
+import { useStyle } from './styles';
 import MyCommunity from '../../components/MyCommunity';
 
 import { amityPostsFormatter } from '../../util/postDataFormatter';
 import { useDispatch, useSelector } from 'react-redux';
 import globalFeedSlice from '../../redux/slices/globalfeedSlice';
-import { RootState } from 'src/redux/store';
+import { type RootState } from '../../redux/store';
+import useConfig from '../../hooks/useConfig';
+
+import { ComponentID } from '../../util/enumUIKitID';
 import { useFocusEffect } from '@react-navigation/native';
+import { RefreshControl } from 'react-native';
 
 export default function GlobalFeed() {
   const { postList } = useSelector((state: RootState) => state.globalFeed);
-
-  const { updateGlobalFeed, deleteByPostId } = globalFeedSlice.actions;
-  const dispatch = useDispatch(); // ()=> dispatch(updateGlobalFeed())
-
-  const styles = getStyles();
+  const [refreshing, setRefreshing] = useState(false);
+  const { excludes } = useConfig();
+  const { updateGlobalFeed, deleteByPostId, clearFeed } =
+    globalFeedSlice.actions;
+  const dispatch = useDispatch();
+  const styles = useStyle();
   const { isConnected } = useAuth();
   const [postData, setPostData] = useState<IGlobalFeedRes>();
-
   const { data: posts = [], nextPage } = postData ?? {};
   const flatListRef = useRef(null);
-
   async function getGlobalFeedList(
     page: Amity.Page<number> = { after: 0, limit: 8 }
   ): Promise<void> {
@@ -45,6 +48,13 @@ export default function GlobalFeed() {
       getGlobalFeedList(nextPage);
     }
   };
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    dispatch(clearFeed());
+    await getGlobalFeedList();
+    setRefreshing(false);
+  }, [clearFeed, dispatch]);
+
   useFocusEffect(
     useCallback(() => {
       if (isConnected) {
@@ -70,9 +80,6 @@ export default function GlobalFeed() {
       dispatch(deleteByPostId({ postId }));
     }
   };
-  const onPostChange = (post: IPost) => {
-    console.log('post:', post);
-  };
 
   return (
     <View style={styles.feedWrap}>
@@ -83,7 +90,6 @@ export default function GlobalFeed() {
             <PostList
               onDelete={onDeletePost}
               postDetail={item}
-              onChange={onPostChange}
               postIndex={index}
             />
           )}
@@ -91,8 +97,18 @@ export default function GlobalFeed() {
           onEndReachedThreshold={0.5}
           onEndReached={handleLoadMore}
           ref={flatListRef}
-          ListHeaderComponent={<MyCommunity />}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={['lightblue']}
+              tintColor="lightblue"
+            />
+          }
           extraData={postList}
+          ListHeaderComponent={
+            excludes.includes(ComponentID.StoryTab) && <MyCommunity />
+          }
         />
       </View>
     </View>

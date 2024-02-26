@@ -7,7 +7,7 @@ import {
   privateIcon,
 } from '../../../svg/svg-xml-list';
 import { useStyle } from '../styles';
-import useImage from '../../../hooks/useImage';
+import useFile from '../../../hooks/useFile';
 import type { MyMD3Theme } from '../../../providers/amity-ui-kit-provider';
 import { useTheme } from 'react-native-paper';
 import { PrivacyState } from '../../../enum/privacyState';
@@ -30,7 +30,7 @@ const CommunityList = ({
   const MAX_LENGTH = 6;
   const theme = useTheme() as MyMD3Theme;
   const styles = useStyle();
-  const avatarUrl = useImage({ fileId: item.avatarFileId });
+  const avatarUrl = useFile({ fileId: item.avatarFileId });
   const getDisplayName = ({ text, type }: { text?: string; type: string }) => {
     if (text) {
       const reduceLetter = type === PrivacyState.private ? 3 : 0;
@@ -47,7 +47,7 @@ const CommunityList = ({
       key={item.communityId}
       style={styles.itemContainer}
     >
-      {item.avatarFileId ? (
+      {item.avatarFileId && avatarUrl ? (
         <Image source={{ uri: avatarUrl }} style={styles.avatar} />
       ) : (
         <SvgXml

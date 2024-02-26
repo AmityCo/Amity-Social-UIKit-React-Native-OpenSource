@@ -23,19 +23,19 @@ import {
   galleryIcon,
   playVideoIcon,
 } from '../../svg/svg-xml-list';
-import { getStyles } from './styles';
-
-import * as ImagePicker from 'expo-image-picker';
-
+import { useStyles } from './styles';
+import ImagePicker, {
+  launchImageLibrary,
+  type Asset,
+  launchCamera,
+} from 'react-native-image-picker';
 import LoadingImage from '../../components/LoadingImage';
 import { createPostToFeed } from '../../providers/Social/feed-sdk';
 import LoadingVideo from '../../components/LoadingVideo';
-import * as VideoThumbnails from 'expo-video-thumbnails';
-import { Video, ResizeMode } from 'expo-av';
-import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
-import MentionPopup from '../../components/MentionPopup';
+import { useTheme } from 'react-native-paper';
 import { ISearchItem } from '../../components/SearchItem';
+import MentionPopup from '../../components/MentionPopup';
 import { CommunityRepository } from '@amityco/ts-sdk-react-native';
 import { checkCommunityPermission } from '../../providers/Social/communities-sdk';
 import useAuth from '../../hooks/useAuth';
@@ -56,7 +56,7 @@ export interface IMentionPosition {
 }
 const CreatePost = ({ route }: any) => {
   const theme = useTheme() as MyMD3Theme;
-  const styles = getStyles();
+  const styles = useStyles();
   const { targetId, targetType, targetName } = route.params;
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const [inputMessage, setInputMessage] = useState('');
@@ -76,11 +76,8 @@ const CreatePost = ({ route }: any) => {
 
   const [communityObject, setCommunityObject] =
     useState<Amity.LiveObject<Amity.Community>>();
-  // const { data: community, loading, error } = data ?? {};
   const { data: community } = communityObject ?? {};
 
-  // const { data: community, loading, error } = data ?? {};
-  const videoRef = React.useRef(null);
   const { client, apiRegion } = useAuth();
 
   const getCommunityDetail = useCallback(() => {
@@ -131,17 +128,6 @@ const CreatePost = ({ route }: any) => {
     checkMention(inputMessage);
   }, [checkMention, inputMessage]);
 
-  const playVideoFullScreen = async (fileUrl: string) => {
-    if (videoRef) {
-      await (videoRef as React.MutableRefObject<any>).current.loadAsync({
-        uri: fileUrl,
-      });
-      await (
-        videoRef as React.MutableRefObject<any>
-      ).current.presentFullscreenPlayer();
-      await (videoRef as React.MutableRefObject<any>).current.playAsync()();
-    }
-  };
   const goBack = () => {
     navigation.goBack();
   };
@@ -165,7 +151,7 @@ const CreatePost = ({ route }: any) => {
         mentionsPosition
       );
       if (response) {
-        navigation.goBack();
+        goBack();
       }
     } else {
       const fileIdArr: (string | undefined)[] = displayVideos.map(
@@ -185,60 +171,71 @@ const CreatePost = ({ route }: any) => {
         mentionUserIds.length > 0 ? mentionUserIds : [],
         mentionsPosition
       );
-      if (
-        (community?.postSetting === 'ADMIN_REVIEW_POST_REQUIRED' ||
-          (community as Record<string, any>).needApprovalOnPostCreation) &&
-        response
-      ) {
-        const res = await checkCommunityPermission(
-          community.communityId,
-          client as Amity.Client,
-          apiRegion
-        );
-
+      if (targetType === 'community') {
         if (
-          res.permissions.length > 0 &&
-          res.permissions.includes('Post/ManagePosts')
+          (community?.postSetting === 'ADMIN_REVIEW_POST_REQUIRED' ||
+            (community as Record<string, any>).needApprovalOnPostCreation) &&
+          response
         ) {
-          navigation.goBack();
-        } else {
-          Alert.alert(
-            'Post submitted',
-            'Your post has been submitted to the pending list. It will be reviewed by community moderator',
-            [
-              {
-                text: 'OK',
-                onPress: () => navigation.goBack(),
-              },
-            ],
-            { cancelable: false }
+          const res = await checkCommunityPermission(
+            community.communityId,
+            client as Amity.Client,
+            apiRegion
           );
+
+          if (
+            res.permissions.length > 0 &&
+            res.permissions.includes('Post/ManagePosts')
+          ) {
+            goBack();
+          } else {
+            Alert.alert(
+              'Post submitted',
+              'Your post has been submitted to the pending list. It will be reviewed by community moderator',
+              [
+                {
+                  text: 'OK',
+                  onPress: () => goBack(),
+                },
+              ],
+              { cancelable: false }
+            );
+          }
         }
-      } else if (response) {
-        navigation.goBack();
+      } else {
+        goBack();
       }
     }
   };
 
   const pickCamera = async () => {
-    const permission = await ImagePicker.requestCameraPermissionsAsync();
-    if (permission.granted) {
-      let result: ImagePicker.ImagePickerResult =
-        await ImagePicker.launchCameraAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.All,
-          allowsEditing: false,
-          aspect: [4, 3],
-        });
+    // const permission = await ImagePicker();
 
-      if (
-        result.assets &&
-        result.assets.length > 0 &&
-        result.assets[0] !== null &&
-        result.assets[0]
-      ) {
-        const imagesArr = [...imageMultipleUri];
-        imagesArr.push(result.assets[0].uri);
+    const result: ImagePicker.ImagePickerResponse = await launchCamera({
+      mediaType: 'mixed',
+      quality: 1,
+      presentationStyle: 'fullScreen',
+      videoQuality: 'high',
+    });
+
+    if (
+      result.assets &&
+      result.assets.length > 0 &&
+      result.assets[0] !== null &&
+      result.assets[0]
+    ) {
+      if (result.assets[0].type?.includes('image')) {
+        const imagesArr: string[] = [...imageMultipleUri];
+        imagesArr.push(result.assets[0].uri as string);
         setImageMultipleUri(imagesArr);
+      } else {
+        const selectedVideos: Asset[] = result.assets;
+        const imageUriArr: string[] = selectedVideos.map(
+          (item: Asset) => item.uri
+        ) as string[];
+        const videosArr: string[] = [...videoMultipleUri];
+        const totalVideos: string[] = videosArr.concat(imageUriArr);
+        setVideoMultipleUri(totalVideos);
       }
     }
   };
@@ -285,13 +282,13 @@ const CreatePost = ({ route }: any) => {
       const videosObject: IDisplayImage[] = await Promise.all(
         videoMultipleUri.map(async (url: string) => {
           const fileName: string = url.substring(url.lastIndexOf('/') + 1);
-          const thumbnail = await VideoThumbnails.getThumbnailAsync(url);
+
           return {
             url: url,
             fileName: fileName,
             fileId: '',
             isUploaded: false,
-            thumbNail: thumbnail.uri,
+            thumbNail: '',
           };
         })
       );
@@ -304,13 +301,12 @@ const CreatePost = ({ route }: any) => {
       const videosObject: IDisplayImage[] = await Promise.all(
         filteredDuplicate.map(async (url: string) => {
           const fileName: string = url.substring(url.lastIndexOf('/') + 1);
-          const thumbnail = await VideoThumbnails.getThumbnailAsync(url);
           return {
             url: url,
             fileName: fileName,
             fileId: '',
             isUploaded: false,
-            thumbNail: thumbnail.uri,
+            thumbNail: '',
           };
         })
       );
@@ -322,32 +318,32 @@ const CreatePost = ({ route }: any) => {
   }, [videoMultipleUri]);
 
   const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: false,
+    const result: ImagePicker.ImagePickerResponse = await launchImageLibrary({
+      mediaType: 'photo',
       quality: 1,
-      allowsMultipleSelection: true,
+      selectionLimit: 10,
     });
-
-    if (!result.canceled && result.assets && result.assets.length > 0) {
-      const selectedImages = result.assets;
-      const imageUriArr: string[] = selectedImages.map((item) => item.uri);
+    if (!result.didCancel && result.assets && result.assets.length > 0) {
+      const selectedImages: Asset[] = result.assets;
+      const imageUriArr: string[] = selectedImages.map(
+        (item: Asset) => item.uri
+      ) as string[];
       const imagesArr = [...imageMultipleUri];
       const totalImages = imagesArr.concat(imageUriArr);
       setImageMultipleUri(totalImages);
     }
   };
   const pickVideo = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Videos,
-      allowsEditing: false,
+    const result: ImagePicker.ImagePickerResponse = await launchImageLibrary({
+      mediaType: 'video',
       quality: 1,
-      allowsMultipleSelection: true,
+      selectionLimit: 10,
     });
-
-    if (!result.canceled && result.assets && result.assets.length > 0) {
-      const selectedVideos = result.assets;
-      const imageUriArr: string[] = selectedVideos.map((item) => item.uri);
+    if (!result.didCancel && result.assets && result.assets.length > 0) {
+      const selectedVideos: Asset[] = result.assets;
+      const imageUriArr: string[] = selectedVideos.map(
+        (item: Asset) => item.uri
+      ) as string[];
       const videosArr = [...videoMultipleUri];
       const totalVideos = videosArr.concat(imageUriArr);
       setVideoMultipleUri(totalVideos);
@@ -488,11 +484,10 @@ const CreatePost = ({ route }: any) => {
       return inputMessage.includes(item.displayName);
     });
     const checkMentionPosition = mentionsPosition.filter((item) => {
-      return inputMessage.includes(item.displayName);
+      return inputMessage.includes(item.displayName as string);
     });
     setMentionNames(checkMentionNames);
     setMentionsPosition(checkMentionPosition);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputMessage]);
 
   return (
@@ -583,7 +578,6 @@ const CreatePost = ({ route }: any) => {
                     isUploaded={item.isUploaded}
                     fileId={item.fileId}
                     thumbNail={item.thumbNail as string}
-                    onPlay={playVideoFullScreen}
                   />
                 )}
                 numColumns={3}
@@ -629,7 +623,6 @@ const CreatePost = ({ route }: any) => {
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
-      <Video ref={videoRef} resizeMode={ResizeMode.CONTAIN} />
     </View>
   );
 };

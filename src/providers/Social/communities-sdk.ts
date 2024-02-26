@@ -84,6 +84,7 @@ export async function checkCommunityPermission(
 ): Promise<any> {
   const url: string = `https://api.${apiRegion}.amity.co/api/v3/communities/${communityId}/permissions/me`;
   const accessToken = client.token.accessToken;
+
   try {
     const response = await fetch(url, {
       method: 'GET',
@@ -99,3 +100,72 @@ export async function checkCommunityPermission(
     console.log('error:', error);
   }
 }
+
+export const updateCommunityMember = ({
+  operation,
+  communityId,
+  memberIds,
+}: {
+  operation: 'ADD' | 'REMOVE';
+  communityId: string;
+  memberIds: string[];
+}) => {
+  const communityMembers = new Promise<boolean>(async (resolve, reject) => {
+    try {
+      const updateMembers =
+        operation === 'ADD'
+          ? await CommunityRepository.Membership.addMembers(
+              communityId,
+              memberIds
+            )
+          : await CommunityRepository.Membership.removeMembers(
+              communityId,
+              memberIds
+            );
+      resolve(updateMembers);
+    } catch (error) {
+      reject(error);
+    }
+  });
+  return communityMembers;
+};
+
+export const assignRolesToUsers = (
+  communityId: string,
+  roles: string[],
+  userIds: string[]
+) => {
+  const assignUserRoles = new Promise<boolean>(async (resolve, reject) => {
+    try {
+      const result = await CommunityRepository.Moderation.addRoles(
+        communityId,
+        roles,
+        userIds
+      );
+      resolve(result);
+    } catch (error) {
+      reject(error);
+    }
+  });
+  return assignUserRoles;
+};
+
+export const removeRolesFromUsers = (
+  communityId: string,
+  roles: string[],
+  userIds: string[]
+) => {
+  const removeUserRoles = new Promise<boolean>(async (resolve, reject) => {
+    try {
+      const result = await CommunityRepository.Moderation.removeRoles(
+        communityId,
+        roles,
+        userIds
+      );
+      resolve(result);
+    } catch (error) {
+      reject(error);
+    }
+  });
+  return removeUserRoles;
+};

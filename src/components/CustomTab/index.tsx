@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { getStyles } from './styles';
+import { useStyles } from './styles';
 import { TabName } from '../../enum/tabNameState';
 
 interface ICustomTab {
@@ -15,11 +15,13 @@ interface ICustomTab {
   tabName: TabName[];
 }
 const CustomTab = ({ tabName, onTabChange }: ICustomTab): ReactElement => {
-  const styles = getStyles();
+  const styles = useStyles();
   const [activeTab, setActiveTab] = useState(1);
   const [indicatorAnim] = useState(new Animated.Value(0));
   const [tabOneWidth, setTabOneWidth] = useState<number>(0);
   const [tabTwoWidth, setTabTwoWidth] = useState<number>(0);
+  const [tabThreeWidth, setTabThreeWidth] = useState<number>(0);
+
   const handleTabPress = ({
     name,
     tabIndex,
@@ -39,8 +41,8 @@ const CustomTab = ({ tabName, onTabChange }: ICustomTab): ReactElement => {
   const getIndicatorPosition = () => {
     const tabWidth = tabOneWidth;
     const translateX = indicatorAnim.interpolate({
-      inputRange: [0, 1, 2],
-      outputRange: [8, 12, tabWidth + 12],
+      inputRange: [0, 1, 2, 3],
+      outputRange: [8, 12, tabWidth + 12, tabOneWidth + tabTwoWidth + 12],
     });
     return { transform: [{ translateX }] };
   };
@@ -52,28 +54,46 @@ const CustomTab = ({ tabName, onTabChange }: ICustomTab): ReactElement => {
     var { width } = event.nativeEvent.layout;
     setTabTwoWidth(width);
   };
-
+  const getLayoutTabThreeWidth = (event: LayoutChangeEvent) => {
+    var { width } = event.nativeEvent.layout;
+    setTabThreeWidth(width);
+  };
   const dynamicWidthStyle: StyleProp<any> = {
-    width: activeTab === 1 ? tabOneWidth - 20 : tabTwoWidth - 20,
+    width:
+      activeTab === 1
+        ? tabOneWidth - 20
+        : activeTab === 2
+        ? tabTwoWidth - 20
+        : activeTab === 3
+        ? tabThreeWidth - 20
+        : undefined,
   };
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        onLayout={getLayoutTabOneWidth}
-        onPress={() => handleTabPress({ name: tabName[0], tabIndex: 1 })}
-      >
-        <Text style={[styles.tabText, activeTab === 1 && styles.activeTabText]}>
-          {tabName[0]}
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onLayout={getLayoutTabTwoWidth}
-        onPress={() => handleTabPress({ name: tabName[1], tabIndex: 2 })}
-      >
-        <Text style={[styles.tabText, activeTab === 2 && styles.activeTabText]}>
-          {tabName[1]}
-        </Text>
-      </TouchableOpacity>
+      {tabName.map((tab, index) => {
+        const onLayout =
+          index === 0
+            ? getLayoutTabOneWidth
+            : index === 1
+            ? getLayoutTabTwoWidth
+            : getLayoutTabThreeWidth;
+        return (
+          <TouchableOpacity
+            key={tab}
+            onLayout={onLayout}
+            onPress={() => handleTabPress({ name: tab, tabIndex: index + 1 })}
+          >
+            <Text
+              style={[
+                styles.tabText,
+                activeTab === index + 1 && styles.activeTabText,
+              ]}
+            >
+              {tab}
+            </Text>
+          </TouchableOpacity>
+        );
+      })}
       <Animated.View
         style={[styles.indicator, getIndicatorPosition(), dynamicWidthStyle]}
       />

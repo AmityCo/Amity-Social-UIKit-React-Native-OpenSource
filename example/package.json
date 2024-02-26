@@ -1,5 +1,5 @@
 {
-  "name": "example",
+  "name": "@amityco/react-native-social-ui-kit-example",
   "version": "1.0.0",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
@@ -9,19 +9,24 @@
     "web": "expo start --web"
   },
   "dependencies": {
-    "expo": "~48.0.9",
-    "expo-status-bar": "~1.4.4",
+    "@react-navigation/native": "^6.1.10",
+    "@react-navigation/native-stack": "^6.9.18",
+    "@react-navigation/stack": "^6.3.21",
+    "expo": "~50.0.7",
+    "expo-status-bar": "~1.11.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-native": "0.71.4",
-    "react-native-safe-area-context": "4.4.1",
-    "react-native-web": "~0.18.10"
+    "react-native": "0.73.4",
+    "react-native-safe-area-context": "^4.9.0",
+    "react-native-screens": "^3.29.0",
+    "react-native-video": "^5.2.1",
+    "react-native-web": "~0.19.6"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
-    "@expo/webpack-config": "^0.17.2",
+    "@expo/webpack-config": "^18.0.1",
     "babel-loader": "^8.1.0",
-    "babel-plugin-module-resolver": "^4.1.0"
+    "babel-plugin-module-resolver": "^5.0.0"
   },
   "private": true
 }

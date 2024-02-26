@@ -39,7 +39,7 @@ export async function reportUser(userId: string): Promise<boolean> {
     const query = createQuery(createReport, 'user', userId);
 
     runQuery(query, (options) => {
-      if (options.loading == false) {
+      if (options.loading === false) {
         if (options.data !== undefined) {
           return resolve(options.data);
         } else {
@@ -52,13 +52,11 @@ export async function reportUser(userId: string): Promise<boolean> {
 
 export async function getAmityUser(userId: string): Promise<any> {
   return await new Promise((resolve, reject) => {
-    let userObject: Record<string, any> = {};
-    const unsubscribe = UserRepository.getUser(userId, (value) => {
-      if (value) {
-        userObject = value;
+    const unsubscribe = UserRepository.getUser(userId, (userObject) => {
+      if (userObject) {
         resolve({ userObject, unsubscribe });
       } else {
-        reject((value as Record<string, any>).error);
+        reject((userObject as Record<string, any>).error);
       }
     });
   });

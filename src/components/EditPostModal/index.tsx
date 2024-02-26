@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import {
   TouchableOpacity,
@@ -13,7 +14,7 @@ import {
 import { SvgXml } from 'react-native-svg';
 import { closeIcon } from '../../svg/svg-xml-list';
 
-import { getStyles } from './styles';
+import { useStyles } from './styles';
 import type { IDisplayImage } from '../../screens/CreatePost';
 import { editPost, getPostById } from '../../providers/Social/feed-sdk';
 import LoadingImage from '../LoadingImage';
@@ -46,7 +47,7 @@ const EditPostModal = ({
   onFinishEdit,
 }: IModal) => {
   const theme = useTheme() as MyMD3Theme;
-  const styles = getStyles();
+  const styles = useStyles();
   const { apiRegion } = useAuth();
 
   const [inputMessage, setInputMessage] = useState(

@@ -3,11 +3,13 @@ import { Store, configureStore } from '@reduxjs/toolkit';
 import globalFeedSlice from '../slices/globalfeedSlice';
 import feedSlice from '../slices/feedSlice';
 import postDetailSlice from '../slices/postDetailSlice';
+import uiSlice from '../slices/uiSlice';
 export const store: Store = configureStore({
   reducer: {
     globalFeed: globalFeedSlice.reducer,
     postDetail: postDetailSlice.reducer,
     feed: feedSlice.reducer,
+    ui: uiSlice.reducer,
   },
 });
 

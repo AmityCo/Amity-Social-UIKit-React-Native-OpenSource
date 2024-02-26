@@ -27,22 +27,20 @@ import type { MyMD3Theme } from '../providers/amity-ui-kit-provider';
 import { useTheme } from 'react-native-paper';
 import { Image, TouchableOpacity } from 'react-native';
 import { SvgXml } from 'react-native-svg';
-import { closeIcon, searchIcon } from '../svg/svg-xml-list';
+import { closeIcon } from '../svg/svg-xml-list';
 import { useStyles } from '../routes/style';
 import BackButton from '../components/BackButton';
 import CloseButton from '../components/CloseButton';
 import EditCommunity from '../screens/EditCommunity/EditCommunity';
+import VideoPlayerFull from '../screens/VideoPlayerFullScreen';
+import PostTypeChoiceModal from '../components/PostTypeChoiceModal/PostTypeChoiceModal';
+import CreatePoll from '../screens/CreatePoll/CreatePoll';
 
 export default function SocialNavigator() {
   const Stack = createNativeStackNavigator<RootStackParamList>();
   const { isConnected } = useAuth();
   const theme = useTheme() as MyMD3Theme;
-  // const renderPostDeatil = () => {
-  //   return <PostDetail />;
-  // };
-  const onClickSearch = (navigation: NativeStackNavigationProp<any>) => {
-    navigation.navigate('CommunitySearch');
-  };
+
   const styles = useStyles();
   return (
     <NavigationContainer independent={true}>
@@ -61,25 +59,7 @@ export default function SocialNavigator() {
             },
           }}
         >
-          <Stack.Screen
-            name="Home"
-            component={Home}
-            options={({ navigation }) => ({
-              headerRight: () => (
-                <TouchableOpacity
-                  onPress={() => onClickSearch(navigation)}
-                  style={styles.btnWrap}
-                >
-                  <SvgXml
-                    xml={searchIcon(theme.colors.base)}
-                    width="25"
-                    height="25"
-                  />
-                </TouchableOpacity>
-              ),
-              headerTitle: 'Community',
-            })}
-          />
+          <Stack.Screen name="Home" component={Home} />
           {/* <Stack.Screen name="Community" component={Home} /> */}
           <Stack.Screen name="Explore" component={Explore} />
           <Stack.Screen name="PostDetail" component={PostDetail} />
@@ -96,7 +76,7 @@ export default function SocialNavigator() {
             options={({
               navigation,
               route: {
-                params: { communityName, communityId },
+                params: { communityName, communityId, isModerator },
               },
             }: any) => ({
               headerLeft: () => <BackButton />,
@@ -108,6 +88,7 @@ export default function SocialNavigator() {
                     navigation.navigate('CommunitySetting', {
                       communityId: communityId,
                       communityName: communityName,
+                      isModerator: isModerator,
                     });
                   }}
                 >
@@ -130,8 +111,25 @@ export default function SocialNavigator() {
           <Stack.Screen
             name="CommunityMemberDetail"
             component={CommunityMemberDetail}
+            options={{
+              headerLeft: () => <BackButton />,
+              headerTitleAlign: 'center',
+              title: 'Member',
+            }}
           />
-          <Stack.Screen name="CommunitySetting" component={CommunitySetting} />
+          <Stack.Screen
+            name="CommunitySetting"
+            component={CommunitySetting}
+            options={({
+              route: {
+                params: { communityName },
+              },
+            }: any) => ({
+              title: communityName,
+              headerTitleAlign: 'center',
+              headerLeft: () => <BackButton />,
+            })}
+          />
           <Stack.Screen name="CreateCommunity" component={CreateCommunity} />
           <Stack.Screen name="CommunityList" component={CommunityList} />
           <Stack.Screen
@@ -164,6 +162,11 @@ export default function SocialNavigator() {
             options={{ headerShown: false }}
           />
           <Stack.Screen
+            name="CreatePoll"
+            component={CreatePoll}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
             name="UserProfile"
             component={UserProfile}
             options={{
@@ -189,8 +192,14 @@ export default function SocialNavigator() {
             name="UserProfileSetting"
             component={UserProfileSetting}
           />
+          <Stack.Screen
+            name="VideoPlayer"
+            component={VideoPlayerFull}
+            options={{ headerShown: false }}
+          />
         </Stack.Navigator>
       )}
+      <PostTypeChoiceModal />
     </NavigationContainer>
   );
 }

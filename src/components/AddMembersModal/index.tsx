@@ -1,5 +1,5 @@
 import { UserRepository } from '@amityco/ts-sdk-react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import {
   TouchableOpacity,
   View,
@@ -11,20 +11,21 @@ import {
   TextInput,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
-import { getStyles } from './styles';
+import { useStyle } from './styles';
 import { circleCloseIcon, closeIcon, searchIcon } from '../../svg/svg-xml-list';
 import type { UserInterface } from '../../types/user.interface';
 import UserItem from '../UserItem';
 import SectionHeader from '../ListSectionHeader';
 import SelectedUserHorizontal from '../SelectedUserHorizontal';
 import { useTheme } from 'react-native-paper';
-import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
+import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 interface IModal {
   visible: boolean;
   userId?: string;
   initUserList: UserInterface[];
   onClose: () => void;
   onSelect: (users: UserInterface[]) => void;
+  excludeUserList?: UserInterface[];
 }
 export type SelectUserList = {
   title: string;
@@ -35,106 +36,72 @@ const AddMembersModal = ({
   onClose,
   onSelect,
   initUserList,
+  excludeUserList = [],
 }: IModal) => {
-  const styles = getStyles();
+  const styles = useStyle();
   const theme = useTheme() as MyMD3Theme;
-  const [sectionedUserList, setSectionedUserList] = useState<SelectUserList[]>(
-    []
-  );
   const [sectionedGroupUserList, setSectionedGroupUserList] = useState<
     SelectUserList[]
   >([]);
   const [selectedUserList, setSelectedUserList] =
     useState<UserInterface[]>(initUserList);
-  // const [isScrollEnd, setIsScrollEnd] = useState(false);
-  const [usersObject, setUsersObject] =
-    useState<Amity.LiveCollection<Amity.User>>();
+  const userNextPageRef = useRef<() => void>(null);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const { data: userArr = [], onNextPage } = usersObject ?? {};
-
   useEffect(() => {
-    setSelectedUserList(initUserList);
+    setSelectedUserList([...initUserList]);
   }, [initUserList]);
 
-  const queryAccounts = (text: string = '') => {
-    const unsubscribe = UserRepository.searchUserByDisplayName(
-      { displayName: text, limit: 20 },
-      (data) => {
-        setSectionedUserList([]);
-        setSectionedGroupUserList([]);
-        setUsersObject(data);
-      }
-    );
-    return () => unsubscribe();
-  };
+  const queryAccounts = useCallback(
+    (text: string = '') => {
+      const unsubscribe = UserRepository.searchUserByDisplayName(
+        { displayName: text, limit: 20 },
+        ({ data, onNextPage }) => {
+          userNextPageRef.current = onNextPage;
+          setSectionedGroupUserList([]);
+          const groupedUser = data.reduce((acc, item) => {
+            const initial = item.displayName.charAt(0).toUpperCase();
+            //exclude existing members
+            if (
+              !excludeUserList.some(
+                (excludedUser) => excludedUser.userId === item.userId
+              )
+            ) {
+              const existingGroup = acc.find(
+                (group) => group.title === initial
+              );
+              if (existingGroup) {
+                existingGroup.data.push(item);
+              } else {
+                acc.push({
+                  title: initial,
+                  data: [item],
+                });
+              }
+            }
+            return acc;
+          }, []);
+          setSectionedGroupUserList(groupedUser);
+        }
+      );
+      return () => unsubscribe();
+    },
+    [excludeUserList]
+  );
   const handleChange = (text: string) => {
     setSearchTerm(text);
   };
+
   useEffect(() => {
-    if (searchTerm.length > 2) {
+    if (searchTerm.length === 0 || searchTerm.length > 2) {
       queryAccounts(searchTerm);
     }
-  }, [searchTerm]);
+  }, [queryAccounts, searchTerm]);
 
   const clearButton = () => {
     setSearchTerm('');
-    setSectionedUserList([]);
     setSectionedGroupUserList([]);
   };
-
-  const createSectionGroup = () => {
-    userArr.forEach((item) => {
-      const firstChar = (item.displayName as string).charAt(0).toUpperCase();
-      const isAlphabet = /^[A-Z]$/i.test(firstChar);
-      const currentLetter = isAlphabet
-        ? (item.displayName as string).charAt(0).toUpperCase()
-        : '#';
-      setSectionedUserList((prev) => [
-        ...prev,
-        {
-          title: currentLetter as string,
-          data: [
-            {
-              userId: item.userId,
-              displayName: item.displayName as string,
-              avatarFileId: item.avatarFileId as string,
-            },
-          ],
-        },
-      ]);
-    });
-  };
-  useEffect(() => {
-    createSectionGroup();
-  }, [userArr]);
-
-  useEffect(() => {
-    queryAccounts();
-  }, []);
-
-  useEffect(() => {
-    const jsonData: SelectUserList[] = [...sectionedUserList];
-
-    const groupedData: SelectUserList[] = [...sectionedGroupUserList];
-
-    jsonData.forEach((item) => {
-      const existingItemIndex = groupedData.findIndex(
-        (groupedItem) => groupedItem.title === item.title
-      );
-
-      if (existingItemIndex !== -1 && groupedData) {
-        // If the title already exists in the groupedData array, merge the data arrays
-        (groupedData[existingItemIndex] as Record<string, any>).data.push(
-          ...item.data
-        );
-      } else {
-        // If the title does not exist, add the entire item to the groupedData array
-        groupedData.push(item);
-      }
-    });
-    setSectionedGroupUserList(groupedData);
-  }, [sectionedUserList]);
 
   const renderSectionHeader = ({ section }: { section: SelectUserList }) => (
     <SectionHeader title={section.title} />
@@ -182,16 +149,13 @@ const AddMembersModal = ({
     const isEnd =
       layoutMeasurement.height + contentOffset.y >= contentSize.height;
     console.log('isEnd:', isEnd);
-    // setIsScrollEnd(isEnd);
   };
   const handleOnClose = () => {
     setSelectedUserList(initUserList);
     onClose && onClose();
   };
   const handleLoadMore = () => {
-    if (onNextPage) {
-      onNextPage();
-    }
+    userNextPageRef?.current && userNextPageRef.current();
   };
 
   const onDeleteUserPressed = (user: UserInterface) => {
@@ -261,7 +225,7 @@ const AddMembersModal = ({
           renderSectionHeader={renderSectionHeader}
           onEndReached={handleLoadMore}
           onEndReachedThreshold={0.8}
-          // keyExtractor={(item, index) => index}
+          keyExtractor={(item) => item.userId.toString()}
         />
       </View>
     </Modal>

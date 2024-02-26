@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import * as React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 // import { useTranslation } from 'react-i18next';
@@ -22,12 +23,11 @@ import {
 } from '../../svg/svg-xml-list';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-// import * as ImagePicker from 'expo-image-picker';
-import { getStyles } from './styles';
+import { useStyles } from './styles';
 import ChooseCategoryModal from '../../components/ChooseCategoryModal';
 import { RadioButton } from 'react-native-radio-buttons-group';
 import AddMembersModal from '../../components/AddMembersModal';
-import type { UserInterface } from 'src/types/user.interface';
+import type { UserInterface } from '../../types/user.interface';
 import {
   createCommunity,
   type ICreateCommunity,
@@ -35,12 +35,12 @@ import {
 import useAuth from '../../hooks/useAuth';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
-import * as ImagePicker from 'expo-image-picker';
+import ImagePicker, { launchImageLibrary } from 'react-native-image-picker';
 import { uploadImageFile } from '../../providers/file-provider';
 import { PrivacyState } from '../../enum/privacyState';
 
 export default function CreateCommunity() {
-  const styles = getStyles();
+  const styles = useStyles();
   const theme = useTheme() as MyMD3Theme;
   const { apiRegion } = useAuth();
   const [image, setImage] = useState<string>();
@@ -64,16 +64,19 @@ export default function CreateCommunity() {
   const onClickBack = () => {
     navigation.goBack();
   };
-  navigation.setOptions({
-    // eslint-disable-next-line react/no-unstable-nested-components
-    headerLeft: () => (
-      <TouchableOpacity onPress={onClickBack} style={styles.btnWrap}>
-        <SvgXml xml={closeIcon(theme.colors.base)} width="15" height="15" />
-      </TouchableOpacity>
-    ),
 
-    headerTitle: 'Create Community',
-  });
+  useEffect(() => {
+    navigation.setOptions({
+      // eslint-disable-next-line react/no-unstable-nested-components
+      headerLeft: () => (
+        <TouchableOpacity onPress={onClickBack} style={styles.btnWrap}>
+          <SvgXml xml={closeIcon(theme.colors.base)} width="15" height="15" />
+        </TouchableOpacity>
+      ),
+
+      headerTitle: 'Create Community',
+    });
+  }, []);
 
   // const pickImage = async () => {
   //   let result = await ImagePicker.launchImageLibraryAsync({
@@ -104,13 +107,12 @@ export default function CreateCommunity() {
   }, [image, uploadFile]);
 
   const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: false,
+    const result: ImagePicker.ImagePickerResponse = await launchImageLibrary({
+      mediaType: 'photo',
       quality: 1,
+      selectionLimit: 1,
     });
-
-    if (!result.canceled && result.assets && result.assets.length > 0) {
+    if (!result.didCancel && result.assets && result.assets.length > 0) {
       setImage(result.assets[0]?.uri);
     }
   };
@@ -398,6 +400,7 @@ export default function CreateCommunity() {
         onClose={() => setAddMembersModal(false)}
         visible={addMembersModal}
         initUserList={selectedUserList}
+        excludeUserList={[]}
       />
     </ScrollView>
   );

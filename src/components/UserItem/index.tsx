@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
-import { getStyles } from './styles';
+import { useStyles } from './styles';
 import RoundCheckbox from '../RoundCheckbox/index';
-import type { UserInterface } from 'src/types/user.interface';
+import type { UserInterface } from '../../types/user.interface';
 import useAuth from '../../hooks/useAuth';
 
 export default function UserItem({
@@ -18,7 +18,7 @@ export default function UserItem({
   onPress?: (user: UserInterface) => void;
   onThreeDotTap?: (user: UserInterface) => void;
 }) {
-  const styles = getStyles();
+  const styles = useStyles();
   const { apiRegion } = useAuth();
   const [isChecked, setIsChecked] = useState(false);
   const maxLength = 25;

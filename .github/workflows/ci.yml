@@ -7,10 +7,6 @@ on:
     branches:
       - main
 
-env:
-  SKIP_YARN_COREPACK_CHECK: true
-  COREPACK_ROOT: true
-
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -39,7 +35,7 @@ jobs:
       - name: Run unit tests
         run: yarn test --maxWorkers=2 --coverage
 
-  build:
+  build-library:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -49,4 +45,17 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: Build package
-        run: yarn prepack
+        run: yarn prepare
+
+  build-web:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Build example for Web
+        run: |
+          yarn example expo export:web

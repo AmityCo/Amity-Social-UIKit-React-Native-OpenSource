@@ -1,8 +1,8 @@
 import { StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
-import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
+import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 
-export const getStyles = () => {
+export const useStyles = () => {
   const theme = useTheme() as MyMD3Theme;
   const styles = StyleSheet.create({
     container: {
@@ -71,13 +71,17 @@ export const getStyles = () => {
     },
     leaveChatText: {
       fontSize: 16,
-      fontWeight: '600',
       color: '#FF0000',
     },
     leaveChatLabel: {
       fontSize: 16,
-      fontWeight: '600',
       color: 'red',
+    },
+    header: {
+      fontWeight: '600',
+      fontSize: 17,
+      marginLeft: 20,
+      color: theme.colors.base,
     },
   });
 

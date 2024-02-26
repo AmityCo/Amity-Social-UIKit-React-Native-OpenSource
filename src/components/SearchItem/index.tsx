@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
-import { getStyles } from './styles';
+import { useStyles } from './styles';
 import { SvgXml } from 'react-native-svg';
 import { communityIcon, userIcon } from '../../svg/svg-xml-list';
 import { CategoryRepository } from '@amityco/ts-sdk-react-native';
@@ -23,7 +23,7 @@ export default function SearchItem({
   onPress?: (target: ISearchItem) => void;
   userProfileNavigateEnabled?: boolean;
 }) {
-  const styles = getStyles();
+  const styles = useStyles();
   const { apiRegion } = useAuth();
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const [categoryName, setCategoryName] = useState<string>('');

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState, type FC } from 'react';
 import { Client } from '@amityco/ts-sdk-react-native';
 import type { AuthContextInterface } from '../types/auth.interface';
@@ -13,6 +14,7 @@ export const AuthContext = React.createContext<AuthContextInterface>({
   isConnected: false,
   sessionState: '',
   apiRegion: 'sg',
+  authToken: '',
 });
 
 export const AuthContextProvider: FC<IAmityUIkitProvider> = ({
@@ -22,6 +24,7 @@ export const AuthContextProvider: FC<IAmityUIkitProvider> = ({
   apiRegion,
   apiEndpoint,
   children,
+  authToken,
 }: IAmityUIkitProvider) => {
   const [error, setError] = useState('');
   const [isConnecting, setLoading] = useState(false);
@@ -51,13 +54,16 @@ export const AuthContextProvider: FC<IAmityUIkitProvider> = ({
   }, [sessionState]);
 
   const handleConnect = async () => {
-    const response = await Client.login(
-      {
-        userId: userId,
-        displayName: displayName, // optional
-      },
-      sessionHandler
-    );
+    let loginParam;
+
+    loginParam = {
+      userId: userId,
+      displayName: displayName, // optional
+    };
+    if (authToken?.length > 0) {
+      loginParam = { ...loginParam, authToken: authToken };
+    }
+    const response = await Client.login(loginParam, sessionHandler);
 
     if (response) {
       console.log('response:', response);
@@ -106,7 +112,7 @@ export const AuthContextProvider: FC<IAmityUIkitProvider> = ({
         logout,
         isConnected,
         sessionState,
-        apiRegion: apiRegion?.toLowerCase() as string,
+        apiRegion: apiRegion.toLowerCase(),
       }}
     >
       {children}

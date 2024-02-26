@@ -23,7 +23,7 @@ import {
   Pressable,
 } from 'react-native';
 import CustomTab from '../../components/CustomTab';
-import { getStyles } from './styles';
+import { useStyles } from './styles';
 import Feed from '../Feed';
 import useAuth from '../../hooks/useAuth';
 import { SvgXml } from 'react-native-svg';
@@ -36,8 +36,11 @@ import { checkCommunityPermission } from '../../providers/Social/communities-sdk
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import FloatingButton from '../../components/FloatingButton';
-import useImage from '../../hooks/useImage';
+import { useDispatch } from 'react-redux';
+import useFile from '../../hooks/useFile';
 import { TabName } from '../../enum/tabNameState';
+import uiSlice from '../../redux/slices/uiSlice';
+import { PostTargetType } from '../../enum/postTargetType';
 
 export type FeedRefType = {
   handleLoadMore: () => void;
@@ -46,7 +49,9 @@ export type FeedRefType = {
 export default function CommunityHome({ route }: any) {
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const theme = useTheme() as MyMD3Theme;
-  const styles = getStyles();
+  const styles = useStyles();
+  const dispatch = useDispatch();
+  const { openPostTypeChoiceModal } = uiSlice.actions;
   const { apiRegion, client } = useAuth();
   const { communityId, communityName } = route.params as {
     communityId: string;
@@ -55,7 +60,7 @@ export default function CommunityHome({ route }: any) {
   const [isJoin, setIsJoin] = useState(true);
   const [communityData, setCommunityData] =
     useState<Amity.LiveObject<Amity.Community>>();
-  const avatarUrl = useImage({ fileId: communityData?.data.avatarFileId });
+  const avatarUrl = useFile({ fileId: communityData?.data.avatarFileId });
   const feedRef: MutableRefObject<FeedRefType | null> =
     useRef<FeedRefType | null>(null);
   const scrollViewRef = useRef(null);
@@ -63,7 +68,15 @@ export default function CommunityHome({ route }: any) {
   const [isShowPendingArea, setIsShowPendingArea] = useState<boolean>(false);
   const [isUserHasPermission, setIsUserHasPermission] =
     useState<boolean>(false);
-  const [postSetting, setPostSetting] = useState<string>('');
+  const [postSetting, setPostSetting] = useState<
+    ValueOf<
+      Readonly<{
+        ONLY_ADMIN_CAN_POST: 'ONLY_ADMIN_CAN_POST';
+        ADMIN_REVIEW_POST_REQUIRED: 'ADMIN_REVIEW_POST_REQUIRED';
+        ANYONE_CAN_POST: 'ANYONE_CAN_POST';
+      }>
+    >
+  >(null);
   const disposers: Amity.Unsubscriber[] = useMemo(() => [], []);
   const isSubscribed = useRef(false);
   const subscribePostTopic = useCallback(
@@ -111,8 +124,16 @@ export default function CommunityHome({ route }: any) {
       res.permissions.includes('Post/ManagePosts')
     ) {
       setIsUserHasPermission(true);
+      navigation.setParams({ isModerator: true });
     }
-  }, [apiRegion, client, communityId, disposers, subscribePostTopic]);
+  }, [
+    apiRegion,
+    client,
+    communityId,
+    disposers,
+    navigation,
+    subscribePostTopic,
+  ]);
 
   useFocusEffect(
     useCallback(() => {
@@ -169,6 +190,7 @@ export default function CommunityHome({ route }: any) {
     navigation.navigate('CommunityMemberDetail', {
       communityId: communityId,
       communityName: communityName,
+      isModerator: isUserHasPermission,
     });
   };
   function triggerLoadMoreFunction() {
@@ -233,11 +255,17 @@ export default function CommunityHome({ route }: any) {
     );
   };
   const handleOnPressPostBtn = () => {
-    navigation.navigate('CreatePost', {
-      targetId: communityId,
-      targetName: communityName,
-      targetType: 'community',
-    });
+    dispatch(
+      openPostTypeChoiceModal({
+        userId: (client as Amity.Client).userId as string,
+        targetId: communityId,
+        targetName: communityName,
+        targetType: PostTargetType.community,
+        postSetting: postSetting,
+        needApprovalOnPostCreation: (communityData?.data as Record<string, any>)
+          .needApprovalOnPostCreation,
+      })
+    );
   };
 
   const onEditProfileTap = () => {

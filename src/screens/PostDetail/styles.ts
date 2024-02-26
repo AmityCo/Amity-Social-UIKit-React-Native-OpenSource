@@ -1,8 +1,8 @@
 import { StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
-import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
+import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 
-export const getStyles = () => {
+export const useStyles = () => {
   const theme = useTheme() as MyMD3Theme;
   const styles = StyleSheet.create({
     container: {
@@ -100,6 +100,28 @@ export const getStyles = () => {
     inputTextOverlayWrap: {
       flexDirection: 'row',
       backgroundColor: theme.colors.secondary,
+    },
+    replyLabelWrap: {
+      height: 40,
+      backgroundColor: theme.colors.secondary,
+      paddingVertical: 10,
+      justifyContent: 'space-between',
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    replyLabel: {
+      color: theme.colors.baseShade1,
+      fontSize: 15,
+      paddingLeft: 16,
+      paddingRight: 12,
+    },
+    closeIcon: {
+      marginRight: 12,
+    },
+    userNameLabel: {
+      fontSize: 15,
+      fontWeight: '600',
+      color: theme.colors.baseShade1,
     },
   });
 

@@ -17,18 +17,21 @@ import {
   type NativeScrollEvent,
 } from 'react-native';
 import debounce from 'lodash.debounce';
-import { getStyles } from './styles';
+import { useStyles } from './styles';
 import { SvgXml } from 'react-native-svg';
-import { circleCloseIcon, plusIcon, searchIcon } from '../../svg/svg-xml-list';
+import { circleCloseIcon, plusIcon } from '../../svg/svg-xml-list';
 import { CommunityRepository } from '@amityco/ts-sdk-react-native';
 import type { ISearchItem } from '../../components/SearchItem';
 import SearchItem from '../../components/SearchItem';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { SearchIcon } from '../../svg/SearchIcon';
 
-export default function AllMyCommunity({ navigation }) {
+export default function AllMyCommunity() {
   const theme = useTheme() as MyMD3Theme;
-  const styles = getStyles();
+  const styles = useStyles();
   LogBox.ignoreAllLogs(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchType] = useState('community');
@@ -37,6 +40,8 @@ export default function AllMyCommunity({ navigation }) {
   const [searchList, setSearchList] = useState<ISearchItem[]>([]);
   const scrollViewRef = useRef(null);
   const { data: communitiesArr = [], onNextPage } = communities ?? {};
+
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
   const onClickCreateCommunity = () => {
     navigation.navigate('CreateCommunity');
@@ -122,7 +127,7 @@ export default function AllMyCommunity({ navigation }) {
     <View style={styles.container}>
       <View style={styles.headerWrap}>
         <View style={styles.inputWrap}>
-          <SvgXml xml={searchIcon(theme.colors.base)} width="20" height="20" />
+       <SearchIcon color={theme.colors.base }/>
 
           <TextInput
             style={styles.input}

@@ -2,13 +2,12 @@ import React, { useCallback, useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { useStyle } from './styles';
 import { CommunityRepository } from '@amityco/ts-sdk-react-native';
-import { arrowOutlined } from '../../svg/svg-xml-list';
-import { SvgXml } from 'react-native-svg';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import { useTheme } from 'react-native-paper';
 import CommunityList from './Components/CommunityList';
+import ArrowOutlinedIcon from '../../svg/ArrowOutlinedIcon';
 
 interface ICommunityItems {
   communityId: string;
@@ -63,12 +62,10 @@ export default function MyCommunity() {
       <View style={styles.titleContainer}>
         <Text style={styles.title}>My Community</Text>
         <TouchableOpacity onPress={onClickSeeAll}>
-          <SvgXml
-            style={styles.arrowIcon}
-            width={17}
-            height={17}
-            xml={arrowOutlined(theme.colors.base)}
-          />
+          <View style={styles.arrowIcon}>
+            <ArrowOutlinedIcon width={17} height={17} color={theme.colors.base} />
+          </View>
+
         </TouchableOpacity>
       </View>
 
@@ -86,11 +83,7 @@ export default function MyCommunity() {
         ))}
         <TouchableOpacity onPress={onClickSeeAll} style={styles.seeAllBtn}>
           <View style={styles.seeAllIcon}>
-            <SvgXml
-              width={15}
-              height={15}
-              xml={arrowOutlined(theme.colors.base)}
-            />
+            <ArrowOutlinedIcon width={15} height={15} color={theme.colors.base} />
           </View>
           <Text style={styles.seeAllText}>See all</Text>
         </TouchableOpacity>
