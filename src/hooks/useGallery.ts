@@ -1,12 +1,12 @@
 import { PostRepository } from '@amityco/ts-sdk-react-native';
 import { useCallback, useEffect, useState } from 'react';
-import { getPostById } from '../../src/providers/Social/feed-sdk';
 import useAuth from './useAuth';
 
 export const useGallery = (userId: string) => {
   const { apiRegion } = useAuth();
   const [images, setImages] = useState([]);
   const [videos, setVideos] = useState([]);
+  const [getNextPage, setGetNextPage] = useState<() => void | null>(null);
   const getFile = useCallback(
     (fileId: string): string => {
       return `https://api.${apiRegion}.amity.co/api/v3/files/${fileId}/download?size=medium`;
@@ -21,25 +21,26 @@ export const useGallery = (userId: string) => {
         sortBy: 'lastCreated',
         feedType: 'published',
       },
-      async ({ data, error }) => {
+      async ({ data, error, onNextPage, hasNextPage }) => {
         if (error) return null;
+        hasNextPage ? setGetNextPage(onNextPage) : setGetNextPage(null);
         const childredIds = data.flatMap((item) => item.children);
-        const response = await Promise.all(
-          childredIds.map(async (id: string) => {
-            const { data: post } = await getPostById(id);
-            const uri =
-              post.dataType === 'image'
-                ? getFile(post.data.fileId)
-                : post.dataType === 'video'
-                ? getFile(post.data.thumbnailFileId)
-                : null;
-            return {
-              dataType: post.dataType,
-              ...post.data,
-              uri,
-            };
-          })
+        const { data: postData } = await PostRepository.getPostByIds(
+          childredIds
         );
+        const response = postData.map((post) => {
+          const uri =
+            post.dataType === 'image'
+              ? getFile(post.data.fileId)
+              : post.dataType === 'video'
+              ? getFile(post.data.thumbnailFileId)
+              : null;
+          return {
+            dataType: post.dataType,
+            ...post.data,
+            uri,
+          };
+        });
         if (!response) return null;
         const categorizedData: {
           [key in 'image' | 'video' | 'poll']: any[];
@@ -62,5 +63,6 @@ export const useGallery = (userId: string) => {
   return {
     images,
     videos,
+    getNextPage,
   };
 };

@@ -1,9 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import {
-  type RouteProp,
-  useRoute,
-  useNavigation,
-} from '@react-navigation/native';
+import { type RouteProp, useRoute } from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
@@ -46,8 +42,6 @@ import {
 
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import { useTheme } from 'react-native-paper';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import BackButton from '../../components/BackButton';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { ISearchItem } from '../../components/SearchItem';
@@ -62,8 +56,6 @@ const PostDetail = () => {
   const route = useRoute<RouteProp<RootStackParamList, 'PostDetail'>>();
 
   const { postId, postIndex, isFromGlobalfeed } = route.params;
-
-  const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
   const [commentList, setCommentList] = useState<IComment[]>([]);
   const [commentCollection, setCommentCollection] =
@@ -113,17 +105,6 @@ const PostDetail = () => {
     setMentionNames(checkMentionNames);
     setMentionsPosition(checkMentionPosition);
   }, [inputMessage]);
-
-  const onBackPress = () => {
-    // navigation.navigate('Home', { postIdCallBack: postData.postId })
-    // navigation.goBack()
-
-    navigation.goBack();
-  };
-  navigation.setOptions({
-    headerLeft: () => <BackButton onPress={onBackPress} goBack={false} />,
-    title: '',
-  });
 
   const getPost = (postId: string) => {
     PostRepository.getPost(postId, async ({ data }) => {

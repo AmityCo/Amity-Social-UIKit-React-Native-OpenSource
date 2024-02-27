@@ -16,6 +16,7 @@ import { useStyles } from './styles';
 import { SvgXml } from 'react-native-svg';
 import {
   expandIcon,
+  likeCircle,
   likedXml,
   likeXml,
   personXml,
@@ -378,6 +379,14 @@ const CommentList = ({
   const onHandleReply = () => {
     onClickReply && onClickReply(user, commentId);
   };
+
+  const onPressCommentReaction = () => {
+    navigation.navigate('ReactionList', {
+      referenceId: commentId,
+      referenceType: 'comment',
+    });
+  };
+
   return (
     <View key={commentId} style={styles.commentWrap}>
       <View style={styles.headerSection}>
@@ -429,9 +438,18 @@ const CommentList = ({
               )}
 
               <Text style={isLike ? styles.likedText : styles.btnText}>
-                {!isLike && likeReaction === 0 ? 'Like' : likeReaction}
+                {!isLike ? 'Like' : 'Liked'}
               </Text>
             </TouchableOpacity>
+            {likeReaction > 0 && (
+              <TouchableOpacity
+                onPress={onPressCommentReaction}
+                style={styles.likeBtn}
+              >
+                <SvgXml xml={likeCircle} width="20" height="16" />
+                <Text style={styles.likedText}>{likeReaction}</Text>
+              </TouchableOpacity>
+            )}
             <TouchableOpacity
               onPress={onHandleReply}
               // onPress={() => addReactionToComment()}

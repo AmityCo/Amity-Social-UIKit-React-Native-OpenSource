@@ -13,7 +13,7 @@ interface IUserProfileGallery {
 }
 
 const UserProfileGallery: FC<IUserProfileGallery> = ({ userId }) => {
-  const { images, videos } = useGallery(userId);
+  const { images, videos, getNextPage } = useGallery(userId);
   const [showFullImage, setShowFullImage] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
   const [tabName, setTabName] = useState<TabName>(TabName.Photos);
@@ -53,10 +53,13 @@ const UserProfileGallery: FC<IUserProfileGallery> = ({ userId }) => {
     }
     return (
       <FlatList
+        onEndReached={() => {
+          getNextPage && getNextPage();
+        }}
         scrollEnabled={false}
         data={data}
         renderItem={renderGalleryContent}
-        keyExtractor={(item) => item}
+        keyExtractor={(item) => item.uri}
         initialNumToRender={10}
         maxToRenderPerBatch={10}
         numColumns={2}
@@ -65,6 +68,7 @@ const UserProfileGallery: FC<IUserProfileGallery> = ({ userId }) => {
     );
   }, [
     data,
+    getNextPage,
     renderGalleryContent,
     styles.emptyContentContainer,
     styles.emptyContentText,

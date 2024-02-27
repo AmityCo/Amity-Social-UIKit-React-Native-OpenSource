@@ -63,6 +63,7 @@ const PollOptionList: FC<IPollOptionList> = ({
     if (isPollClosed || isAlreadyVoted) return null;
     return (
       <TouchableOpacity
+        disabled={selectedOption.length === 0}
         onPress={() => onSubmit(selectedOption)}
         style={styles.submitBtn}
       >
