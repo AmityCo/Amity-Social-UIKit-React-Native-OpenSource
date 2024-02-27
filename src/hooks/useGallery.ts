@@ -6,7 +6,7 @@ export const useGallery = (userId: string) => {
   const { apiRegion } = useAuth();
   const [images, setImages] = useState([]);
   const [videos, setVideos] = useState([]);
-  const [getNextPage, setgetNextPage] = useState<() => void>(() => {});
+  const [getNextPage, setGetNextPage] = useState<() => void | null>(null);
   const getFile = useCallback(
     (fileId: string): string => {
       return `https://api.${apiRegion}.amity.co/api/v3/files/${fileId}/download?size=medium`;
@@ -23,7 +23,7 @@ export const useGallery = (userId: string) => {
       },
       async ({ data, error, onNextPage, hasNextPage }) => {
         if (error) return null;
-        hasNextPage && setgetNextPage(onNextPage);
+        hasNextPage ? setGetNextPage(onNextPage) : setGetNextPage(null);
         const childredIds = data.flatMap((item) => item.children);
         const { data: postData } = await PostRepository.getPostByIds(
           childredIds

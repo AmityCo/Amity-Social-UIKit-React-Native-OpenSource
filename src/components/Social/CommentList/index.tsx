@@ -438,7 +438,7 @@ const CommentList = ({
               )}
 
               <Text style={isLike ? styles.likedText : styles.btnText}>
-                {!isLike ? 'Like' : 'liked'}
+                {!isLike ? 'Like' : 'Liked'}
               </Text>
             </TouchableOpacity>
             {likeReaction > 0 && (

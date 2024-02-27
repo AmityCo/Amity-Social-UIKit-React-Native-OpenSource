@@ -59,7 +59,7 @@ const UserProfileGallery: FC<IUserProfileGallery> = ({ userId }) => {
         scrollEnabled={false}
         data={data}
         renderItem={renderGalleryContent}
-        keyExtractor={(_, index) => index.toString()}
+        keyExtractor={(item) => item.uri}
         initialNumToRender={10}
         maxToRenderPerBatch={10}
         numColumns={2}
