@@ -82,14 +82,16 @@ In Pod file, add these lines under your target,  
   pod 'DVAssetLoaderDelegate', :modular_headers => true
   $RNVideoUseVideoCaching = true  
 ```
+<img width="610" alt="Update Pod File" src="https://github.com/AmityCo/Amity-Social-UIKit-React-Native-CLI-OpenSource/assets/155952277/40117769-4dee-4506-8b4c-703769fa7f2a">
 
- <img width="650" alt="Update Pod File" src="https://private-user-images.githubusercontent.com/155952277/306702506-94ca36af-d378-4028-a4ec-9b4d90e0047b.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MDkwMzAxMTIsIm5iZiI6MTcwOTAyOTgxMiwicGF0aCI6Ii8xNTU5NTIyNzcvMzA2NzAyNTA2LTk0Y2EzNmFmLWQzNzgtNDAyOC1hNGVjLTliNGQ5MGUwMDQ3Yi5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjQwMjI3JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI0MDIyN1QxMDMwMTJaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT00M2U1NDViZjdmYjcyY2VjNTU5ZDkzMjAyMTFkOGMwMmFjMWE3MDVkNGQ1Y2FkZmU3MjBlNTJhYjExMjc3N2ExJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCZhY3Rvcl9pZD0wJmtleV9pZD0wJnJlcG9faWQ9MCJ9.reYP207FKDDud51R4OXghtCC2Z4HObASAJK-QHsrWxs">
+
 
 In XCode, 
 
 Set `Minimum Deployments  at least iOS 12.0`
 
-<img width="1500" alt="Minimum Deployments  at least iOS 12.0" src="https://private-user-images.githubusercontent.com/155952277/306706261-54c48612-f3ac-4caa-ad47-0a05abee0e53.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MDkwMzAxMTIsIm5iZiI6MTcwOTAyOTgxMiwicGF0aCI6Ii8xNTU5NTIyNzcvMzA2NzA2MjYxLTU0YzQ4NjEyLWYzYWMtNGNhYS1hZDQ3LTBhMDVhYmVlMGU1My5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjQwMjI3JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI0MDIyN1QxMDMwMTJaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT05YTczZDNmYTNkMDU1N2U1ZjBjODMzZDllZDBhNThiZTU2MDY5NWU0ZDFiNzdhMmRhMjY4YTlkMTIzNjlhYTBmJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCZhY3Rvcl9pZD0wJmtleV9pZD0wJnJlcG9faWQ9MCJ9.UNr0_5JqGukaoqEAyVL4zBBWRTTs2H6o4HDDAmGiNb4">
+<img width="833" alt="Minimum Deployments  at least iOS 12.0" src="https://github.com/AmityCo/Amity-Social-UIKit-React-Native-CLI-OpenSource/assets/155952277/eb87497c-52ce-4e91-a3ad-f46077724378">
+
 
 ```sh
 npx pod-install
@@ -102,7 +104,8 @@ Build project gradle with your Android Studio
 
 In android/build.gradle,  add kotlinVersion above 1.7.0 in buildscript > ext  
 
-<img width="650" alt="add kotlinVersion above 1.7.0" src="https://private-user-images.githubusercontent.com/155952277/306702063-43943488-c055-4ecc-9cec-d279e7828a91.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MDkwMzAxMTIsIm5iZiI6MTcwOTAyOTgxMiwicGF0aCI6Ii8xNTU5NTIyNzcvMzA2NzAyMDYzLTQzOTQzNDg4LWMwNTUtNGVjYy05Y2VjLWQyNzllNzgyOGE5MS5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjQwMjI3JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI0MDIyN1QxMDMwMTJaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT00YmJjYmJhOGRlZTA2YTBlN2Q2YmVkNDE0YjA0MTk2MWI3YjFjMWY5YTUwNzBkY2UyMTY2NWE3ZDdkZTFhMjMyJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCZhY3Rvcl9pZD0wJmtleV9pZD0wJnJlcG9faWQ9MCJ9.9zg0EQNwFXWL-Eu-07yntUbM57-xNNf0QW-2l6o3RBo">
+<img width="545" alt="add kotlinVersion above 1.7.0" src="https://github.com/AmityCo/Amity-Social-UIKit-React-Native-CLI-OpenSource/assets/155952277/1a8618fa-6da3-4a37-8bb8-442119e0b536">
+
 
 ### Add Camera permission (only iOS)
 
