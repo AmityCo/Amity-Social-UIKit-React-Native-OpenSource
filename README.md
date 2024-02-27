@@ -70,10 +70,26 @@ Then, inside another project, Copy tgz file to your application folder where you
 
 ```sh
 1. yarn add ./amity-react-native-social-ui-kit-x.x.x.tgz
-2. yarn add react-native-safe-area-context \react-native-image-picker \@react-native-async-storage/async-storage \react-native-svg@13.4.0 \react-native-screens \react-native-video \react-native-create-thumbnail@1.6.0 \@react-native-community/netinfo
+2. yarn add react-native-safe-area-context \react-native-image-picker \@react-native-async-storage/async-storage \react-native-svg \react-native-screens \"react-native-video@^6.0.0-beta.5" \react-native-create-thumbnail
 ```
 
 ### iOS Configuration
+
+In Pod file, add these lines under your target,  
+
+```
+  pod 'SPTPersistentCache', :modular_headers => true
+  pod 'DVAssetLoaderDelegate', :modular_headers => true
+  $RNVideoUseVideoCaching = true  
+```
+
+ <img width="650" alt="Update Pod File" src="https://private-user-images.githubusercontent.com/155952277/306702506-94ca36af-d378-4028-a4ec-9b4d90e0047b.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MDkwMzAxMTIsIm5iZiI6MTcwOTAyOTgxMiwicGF0aCI6Ii8xNTU5NTIyNzcvMzA2NzAyNTA2LTk0Y2EzNmFmLWQzNzgtNDAyOC1hNGVjLTliNGQ5MGUwMDQ3Yi5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjQwMjI3JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI0MDIyN1QxMDMwMTJaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT00M2U1NDViZjdmYjcyY2VjNTU5ZDkzMjAyMTFkOGMwMmFjMWE3MDVkNGQ1Y2FkZmU3MjBlNTJhYjExMjc3N2ExJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCZhY3Rvcl9pZD0wJmtleV9pZD0wJnJlcG9faWQ9MCJ9.reYP207FKDDud51R4OXghtCC2Z4HObASAJK-QHsrWxs">
+
+In XCode, 
+
+Set `Minimum Deployments  at least iOS 12.0`
+
+<img width="1500" alt="Minimum Deployments  at least iOS 12.0" src="https://private-user-images.githubusercontent.com/155952277/306706261-54c48612-f3ac-4caa-ad47-0a05abee0e53.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MDkwMzAxMTIsIm5iZiI6MTcwOTAyOTgxMiwicGF0aCI6Ii8xNTU5NTIyNzcvMzA2NzA2MjYxLTU0YzQ4NjEyLWYzYWMtNGNhYS1hZDQ3LTBhMDVhYmVlMGU1My5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjQwMjI3JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI0MDIyN1QxMDMwMTJaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT05YTczZDNmYTNkMDU1N2U1ZjBjODMzZDllZDBhNThiZTU2MDY5NWU0ZDFiNzdhMmRhMjY4YTlkMTIzNjlhYTBmJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCZhY3Rvcl9pZD0wJmtleV9pZD0wJnJlcG9faWQ9MCJ9.UNr0_5JqGukaoqEAyVL4zBBWRTTs2H6o4HDDAmGiNb4">
 
 ```sh
 npx pod-install
@@ -83,6 +99,10 @@ npx pod-install
 ### Android Configuration
 
 Build project gradle with your Android Studio
+
+In android/build.gradle,  add kotlinVersion above 1.7.0 in buildscript > ext  
+
+<img width="650" alt="add kotlinVersion above 1.7.0" src="https://private-user-images.githubusercontent.com/155952277/306702063-43943488-c055-4ecc-9cec-d279e7828a91.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MDkwMzAxMTIsIm5iZiI6MTcwOTAyOTgxMiwicGF0aCI6Ii8xNTU5NTIyNzcvMzA2NzAyMDYzLTQzOTQzNDg4LWMwNTUtNGVjYy05Y2VjLWQyNzllNzgyOGE5MS5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjQwMjI3JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI0MDIyN1QxMDMwMTJaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT00YmJjYmJhOGRlZTA2YTBlN2Q2YmVkNDE0YjA0MTk2MWI3YjFjMWY5YTUwNzBkY2UyMTY2NWE3ZDdkZTFhMjMyJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCZhY3Rvcl9pZD0wJmtleV9pZD0wJnJlcG9faWQ9MCJ9.9zg0EQNwFXWL-Eu-07yntUbM57-xNNf0QW-2l6o3RBo">
 
 ### Add Camera permission (only iOS)
 
