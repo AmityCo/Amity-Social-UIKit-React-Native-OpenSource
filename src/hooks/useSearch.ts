@@ -9,7 +9,7 @@ const useSearch = (searchText: string = '') => {
       { displayName: text, limit: 5, sortBy: 'displayName' },
       ({ data, error, hasNextPage, onNextPage }) => {
         if (error) return null;
-        hasNextPage && setGetNextPage(() => onNextPage);
+        hasNextPage ? setGetNextPage(() => onNextPage) : setGetNextPage(null);
         const mappedSearchData = data.map((item) => {
           return {
             ...item,
