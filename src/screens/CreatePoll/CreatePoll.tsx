@@ -202,6 +202,7 @@ const CreatePoll = ({ navigation, route }) => {
                 setIsScrollEnabled(true);
               }}
               placeholder="What's your poll question?"
+              placeholderTextColor={theme.colors.baseShade3}
               setInputMessage={setOptionQuestion}
               mentionUsers={mentionUsers}
               setMentionUsers={setMentionUsers}
