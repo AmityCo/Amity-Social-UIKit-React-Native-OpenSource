@@ -35,6 +35,7 @@ const CreatePoll = ({ navigation, route }) => {
   const [optionQuestion, setOptionQuestion] = useState('');
   const [mentionUsers, setMentionUsers] = useState<ISearchItem[]>([]);
   const [mentionPosition, setMentionPosition] = useState([]);
+  const [isScrollEnabled, setIsScrollEnabled] = useState(true);
   const [timeFrame, setTimeFrame] = useState<{ key: number; label: string }>(
     null
   );
@@ -175,7 +176,10 @@ const CreatePoll = ({ navigation, route }) => {
         isBtnDisable={isBtnDisable}
         handleCreatePost={handleCreatePost}
       />
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <ScrollView
+        scrollEnabled={isScrollEnabled}
+        contentContainerStyle={styles.scrollContainer}
+      >
         {loading && (
           <ActivityIndicator animating={loading} color={'black'} size="large" />
         )}
@@ -190,6 +194,12 @@ const CreatePoll = ({ navigation, route }) => {
             </Text>
           </View>
           <MentionInput
+            onFocus={() => {
+              setIsScrollEnabled(false);
+            }}
+            onBlur={() => {
+              setIsScrollEnabled(true);
+            }}
             placeholder="What's your poll question?"
             setInputMessage={setOptionQuestion}
             mentionUsers={mentionUsers}
@@ -230,7 +240,7 @@ const CreatePoll = ({ navigation, route }) => {
                       value={pollOptions[index].data}
                       multiline
                       placeholder="Add option"
-                      style={styles.fillSpace}
+                      style={styles.optionInput}
                       onChangeText={(text) => onChangeOptionText(text, index)}
                     />
                     <SvgXml

@@ -7,7 +7,6 @@ import {
   View,
   Text,
   FlatList,
-  TextInput,
   Platform,
   KeyboardAvoidingView,
   ScrollView,
@@ -35,10 +34,10 @@ import LoadingVideo from '../../components/LoadingVideo';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import { useTheme } from 'react-native-paper';
 import { ISearchItem } from '../../components/SearchItem';
-import MentionPopup from '../../components/MentionPopup';
 import { CommunityRepository } from '@amityco/ts-sdk-react-native';
 import { checkCommunityPermission } from '../../providers/Social/communities-sdk';
 import useAuth from '../../hooks/useAuth';
+import MentionInput from '../../components/MentionInput/MentionInput';
 
 export interface IDisplayImage {
   url: string;
@@ -64,12 +63,8 @@ const CreatePost = ({ route }: any) => {
   const [videoMultipleUri, setVideoMultipleUri] = useState<string[]>([]);
   const [displayImages, setDisplayImages] = useState<IDisplayImage[]>([]);
   const [displayVideos, setDisplayVideos] = useState<IDisplayImage[]>([]);
-  const [isShowMention, setIsShowMention] = useState<boolean>(false);
+  const [isScrollEnabled, setIsScrollEnabled] = useState(true);
   const [mentionNames, setMentionNames] = useState<ISearchItem[]>([]);
-
-  const [currentSearchUserName, setCurrentSearchUserName] =
-    useState<string>('');
-  const [cursorIndex, setCursorIndex] = useState(0);
   const [mentionsPosition, setMentionsPosition] = useState<IMentionPosition[]>(
     []
   );
@@ -89,50 +84,11 @@ const CreatePost = ({ route }: any) => {
     getCommunityDetail();
   }, [getCommunityDetail]);
 
-  const checkMention = useCallback(
-    (inputString: string) => {
-      // Check if "@" is at the first letter
-      const startsWithAt = /^@/.test(inputString);
-
-      // Check if "@" is inside the sentence without any letter before "@"
-      const insideWithoutLetterBefore = /[^a-zA-Z]@/.test(inputString);
-
-      const atSigns = inputString.match(/@/g);
-      const atSignsNumber = atSigns ? atSigns.length : 0;
-      if (
-        (startsWithAt || insideWithoutLetterBefore) &&
-        atSignsNumber > mentionNames.length
-      ) {
-        setIsShowMention(true);
-      } else {
-        setIsShowMention(false);
-      }
-    },
-    [mentionNames.length]
-  );
-  useEffect(() => {
-    if (isShowMention) {
-      const substringBeforeCursor = inputMessage.substring(0, cursorIndex);
-      const lastAtsIndex = substringBeforeCursor.lastIndexOf('@');
-      if (lastAtsIndex !== -1) {
-        const searchText: string = inputMessage.substring(
-          lastAtsIndex + 1,
-          cursorIndex + 1
-        );
-        setCurrentSearchUserName(searchText);
-      }
-    }
-  }, [cursorIndex, inputMessage, isShowMention]);
-
-  useEffect(() => {
-    checkMention(inputMessage);
-  }, [checkMention, inputMessage]);
-
   const goBack = () => {
     navigation.goBack();
   };
   const handleCreatePost = async () => {
-    const mentionUserIds: string[] = mentionNames.map((item) => item.targetId);
+    const mentionUserIds: string[] = mentionNames.map((item) => item.id);
     if (displayImages.length > 0) {
       const fileIdArr: (string | undefined)[] = displayImages.map(
         (item) => item.fileId
@@ -414,82 +370,6 @@ const CreatePost = ({ route }: any) => {
     });
   };
 
-  const onSelectUserMention = (user: ISearchItem) => {
-    const textAfterCursor: string = inputMessage.substring(
-      cursorIndex,
-      inputMessage.length + 1
-    );
-    const newTextAfterReplacement =
-      inputMessage.slice(0, cursorIndex - currentSearchUserName.length) +
-      user.displayName +
-      inputMessage.slice(cursorIndex, inputMessage.length);
-    const newInputMessage = newTextAfterReplacement + textAfterCursor;
-    const position: IMentionPosition = {
-      type: 'user',
-      length: user.displayName.length + 1,
-      index: cursorIndex - 1 - currentSearchUserName.length,
-      userId: user.targetId,
-      displayName: user.displayName,
-    };
-
-    setInputMessage(newInputMessage);
-    setMentionNames((prev) => [...prev, user]);
-    setMentionsPosition((prev) => [...prev, position]);
-    setCurrentSearchUserName('');
-  };
-  const handleSelectionChange = (event) => {
-    setCursorIndex(event.nativeEvent.selection.start);
-  };
-
-  const renderTextWithMention = () => {
-    if (mentionsPosition.length === 0) {
-      return <Text style={styles.inputText}>{inputMessage}</Text>;
-    }
-
-    let currentPosition = 0;
-    const result: (string | JSX.Element)[][] = mentionsPosition.map(
-      ({ index, length }, i) => {
-        // Add non-highlighted text before the mention
-        const nonHighlightedText = inputMessage.slice(currentPosition, index);
-
-        // Add highlighted text
-        const highlightedText = (
-          <Text key={`highlighted-${i}`} style={styles.mentionText}>
-            {inputMessage.slice(index, index + length)}
-          </Text>
-        );
-
-        // Update currentPosition for the next iteration
-        currentPosition = index + length;
-
-        // Return an array of non-highlighted and highlighted text
-        return [nonHighlightedText, highlightedText];
-      }
-    );
-
-    // Add any remaining non-highlighted text after the mentions
-    const remainingText = inputMessage.slice(currentPosition);
-    result.push([
-      <Text key="nonHighlighted-last" style={styles.inputText}>
-        {remainingText}
-      </Text>,
-    ]);
-
-    // Flatten the array and render
-    return <Text style={styles.inputText}>{result.flat()}</Text>;
-  };
-
-  useEffect(() => {
-    const checkMentionNames = mentionNames.filter((item) => {
-      return inputMessage.includes(item.displayName);
-    });
-    const checkMentionPosition = mentionsPosition.filter((item) => {
-      return inputMessage.includes(item.displayName as string);
-    });
-    setMentionNames(checkMentionNames);
-    setMentionsPosition(checkMentionPosition);
-  }, [inputMessage]);
-
   return (
     <View style={styles.AllInputWrap}>
       <SafeAreaView style={styles.barContainer} edges={['top']}>
@@ -529,26 +409,22 @@ const CreatePost = ({ route }: any) => {
         keyboardVerticalOffset={Platform.select({ ios: 100, android: 80 })}
         style={styles.AllInputWrap}
       >
-        <ScrollView style={styles.container}>
-          <View style={styles.inputContainer}>
-            <TextInput
-              multiline
-              placeholder="What's going on..."
-              style={
-                mentionNames.length > 0
-                  ? [styles.textInput, styles.transparentText]
-                  : styles.textInput
-              }
-              value={inputMessage}
-              onChangeText={(text) => setInputMessage(text)}
-              placeholderTextColor={theme.colors.baseShade3}
-              onSelectionChange={handleSelectionChange}
-            />
-            {mentionNames.length > 0 && (
-              <View style={styles.overlay}>{renderTextWithMention()}</View>
-            )}
-          </View>
-          {/* <InputWithMention /> */}
+        <ScrollView style={styles.container} scrollEnabled={isScrollEnabled}>
+          <MentionInput
+            onFocus={() => {
+              setIsScrollEnabled(false);
+            }}
+            onBlur={() => {
+              setIsScrollEnabled(true);
+            }}
+            multiline
+            placeholder="What's going on..."
+            setInputMessage={setInputMessage}
+            mentionsPosition={[]}
+            setMentionsPosition={setMentionsPosition}
+            mentionUsers={mentionNames}
+            setMentionUsers={setMentionNames}
+          />
           <View style={styles.imageContainer}>
             {displayImages.length > 0 && (
               <FlatList
@@ -585,12 +461,6 @@ const CreatePost = ({ route }: any) => {
             )}
           </View>
         </ScrollView>
-        {isShowMention && (
-          <MentionPopup
-            userName={currentSearchUserName}
-            onSelectMention={onSelectUserMention}
-          />
-        )}
 
         <View style={styles.InputWrap}>
           <TouchableOpacity

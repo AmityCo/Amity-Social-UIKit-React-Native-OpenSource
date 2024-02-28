@@ -78,6 +78,7 @@ export const useStyles = () => {
       fontSize: 14,
       color: theme.colors.baseShade3,
       marginTop: 4,
+      marginBottom: 12,
     },
     addOptionBtn: {
       borderRadius: 5,
@@ -97,6 +98,11 @@ export const useStyles = () => {
     },
     fillSpace: {
       flex: 1,
+    },
+    optionInput: {
+      flex: 1,
+      padding: 5,
+      fontSize: 15,
     },
     scrollContainer: {
       paddingVertical: 16,

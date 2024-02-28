@@ -9,7 +9,7 @@ export const useStyles = () => {
     mentionListContainer: {
       marginTop: 10,
       width: '100%',
-      maxHeight: 100,
+      maxHeight: 150,
       top: 0,
       backgroundColor: theme.colors.background,
       borderWidth: 1,
