@@ -82,7 +82,7 @@ const CreatePoll = ({ navigation, route }) => {
     const mentionees = [
       {
         type: 'user',
-        userIds: mentionUsers.map((user) => user.targetId),
+        userIds: mentionUsers.map((user) => user.id),
       },
     ];
     const response = await PostRepository.createPost({
@@ -191,7 +191,6 @@ const CreatePoll = ({ navigation, route }) => {
           </View>
           <MentionInput
             placeholder="What's your poll question?"
-            inputMessage={optionQuestion}
             setInputMessage={setOptionQuestion}
             mentionUsers={mentionUsers}
             setMentionUsers={setMentionUsers}

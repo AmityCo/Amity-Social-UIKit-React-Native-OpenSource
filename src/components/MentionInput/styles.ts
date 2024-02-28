@@ -6,6 +6,31 @@ export const useStyles = () => {
   const theme = useTheme() as MyMD3Theme;
 
   const styles = StyleSheet.create({
+    mentionListContainer: {
+      marginTop: 10,
+      width: '100%',
+      maxHeight: 100,
+      top: 0,
+      backgroundColor: theme.colors.background,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      borderRadius: 5,
+      elevation: 5,
+    },
+    mentionContainer: {
+      padding: 10,
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    avatar: {
+      width: 30,
+      height: 30,
+      marginRight: 10,
+    },
+    mentionUserName: {
+      fontSize: 14,
+      color: theme.colors.base,
+    },
     mentionText: {
       color: theme.colors.primary,
       fontSize: 15,

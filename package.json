@@ -197,6 +197,7 @@
     "react-content-loader": "^6.2.1",
     "react-hook-form": "^7.49.3",
     "react-i18next": "12.1.5",
+    "react-native-controlled-mentions": "^2.2.5",
     "react-native-gesture-handler": "^2.14.0",
     "react-native-insta-story": "^1.1.9",
     "react-native-media-controls": "^2.3.0",
