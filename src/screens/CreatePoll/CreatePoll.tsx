@@ -193,22 +193,24 @@ const CreatePoll = ({ navigation, route }) => {
               {`${optionQuestion.length}/${MAX_POLL_QUESRION_LENGTH}`}
             </Text>
           </View>
-          <MentionInput
-            onFocus={() => {
-              setIsScrollEnabled(false);
-            }}
-            onBlur={() => {
-              setIsScrollEnabled(true);
-            }}
-            placeholder="What's your poll question?"
-            setInputMessage={setOptionQuestion}
-            mentionUsers={mentionUsers}
-            setMentionUsers={setMentionUsers}
-            mentionsPosition={mentionPosition}
-            setMentionsPosition={setMentionPosition}
-            maxLength={MAX_POLL_QUESRION_LENGTH}
-            multiline
-          />
+          <View style={styles.mentionInputContainer}>
+            <MentionInput
+              onFocus={() => {
+                setIsScrollEnabled(false);
+              }}
+              onBlur={() => {
+                setIsScrollEnabled(true);
+              }}
+              placeholder="What's your poll question?"
+              setInputMessage={setOptionQuestion}
+              mentionUsers={mentionUsers}
+              setMentionUsers={setMentionUsers}
+              mentionsPosition={mentionPosition}
+              setMentionsPosition={setMentionPosition}
+              maxLength={MAX_POLL_QUESRION_LENGTH}
+              multiline
+            />
+          </View>
         </View>
         <View style={styles.inputContainer}>
           <View style={styles.rowContainer}>
@@ -240,6 +242,7 @@ const CreatePoll = ({ navigation, route }) => {
                       value={pollOptions[index].data}
                       multiline
                       placeholder="Add option"
+                      placeholderTextColor={theme.colors.baseShade3}
                       style={styles.optionInput}
                       onChangeText={(text) => onChangeOptionText(text, index)}
                     />

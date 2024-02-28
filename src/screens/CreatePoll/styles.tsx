@@ -61,6 +61,9 @@ export const useStyles = () => {
       borderBottomWidth: 1,
       paddingBottom: 20,
     },
+    mentionInputContainer: {
+      marginTop: 15,
+    },
     rowContainer: {
       flexDirection: 'row',
       justifyContent: 'space-between',
