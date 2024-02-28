@@ -419,8 +419,9 @@ const CreatePost = ({ route }: any) => {
             }}
             multiline
             placeholder="What's going on..."
+            placeholderTextColor={theme.colors.baseShade3}
             setInputMessage={setInputMessage}
-            mentionsPosition={[]}
+            mentionsPosition={mentionsPosition}
             setMentionsPosition={setMentionsPosition}
             mentionUsers={mentionNames}
             setMentionUsers={setMentionNames}
