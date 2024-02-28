@@ -38,6 +38,8 @@ import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import ImagePicker, { launchImageLibrary } from 'react-native-image-picker';
 import { uploadImageFile } from '../../providers/file-provider';
 import { PrivacyState } from '../../enum/privacyState';
+import CloseIcon from '../../svg/CloseIcon';
+import ArrowOutlinedIcon from '../../svg/ArrowOutlinedIcon';
 
 export default function CreateCommunity() {
   const styles = useStyles();
@@ -70,7 +72,7 @@ export default function CreateCommunity() {
       // eslint-disable-next-line react/no-unstable-nested-components
       headerLeft: () => (
         <TouchableOpacity onPress={onClickBack} style={styles.btnWrap}>
-          <SvgXml xml={closeIcon(theme.colors.base)} width="15" height="15" />
+          <CloseIcon width={15} height={15} color={theme.colors.base} />
         </TouchableOpacity>
       ),
 
@@ -259,6 +261,7 @@ export default function CreateCommunity() {
                 width={15}
                 height={15}
               />
+              <ArrowOutlinedIcon width={15} height={15} color={theme.colors.base} />
             </Pressable>
           </View>
           <View style={styles.radioGroup}>
@@ -344,11 +347,8 @@ export default function CreateCommunity() {
                         <TouchableOpacity
                           onPress={() => onDeleteUserPressed(item)}
                         >
-                          <SvgXml
-                            xml={closeIcon(theme.colors.base)}
-                            width={12}
-                            height={12}
-                          />
+
+                          <CloseIcon width={12} height={12} color={theme.colors.base} />
                         </TouchableOpacity>
                       </View>
                     )}

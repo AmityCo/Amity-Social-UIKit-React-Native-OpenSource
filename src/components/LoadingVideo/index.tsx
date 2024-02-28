@@ -2,12 +2,10 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { View, Image, TouchableOpacity, Platform } from 'react-native';
 import * as Progress from 'react-native-progress';
-import { SvgXml } from 'react-native-svg';
 import {
   deleteAmityFile,
   uploadVideoFile,
 } from '../../providers/file-provider';
-import { closeIcon, playBtn } from '../../svg/svg-xml-list';
 import { createStyles } from './styles';
 import * as VideoThumbnails from 'expo-video-thumbnails';
 import Video from 'react-native-video';
@@ -15,6 +13,8 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
+import CloseIcon from '../../svg/CloseIcon';
+import PlayIcon from '../../svg/PlayIcon';
 
 interface OverlayImageProps {
   source: string;
@@ -146,7 +146,7 @@ const LoadingVideo = ({
     <View style={styles.container}>
       {!loading && (
         <TouchableOpacity style={styles.playButton} onPress={handleOnPlay}>
-          <SvgXml xml={playBtn} width="50" height="50" />
+          <PlayIcon width={50} height={50}/>
         </TouchableOpacity>
       )}
       {thumbNailImage ? (
@@ -189,7 +189,7 @@ const LoadingVideo = ({
       )}
       {!loading && (
         <TouchableOpacity style={styles.closeButton} onPress={handleDelete}>
-          <SvgXml xml={closeIcon(theme.colors.base)} width="12" height="12" />
+          <CloseIcon width={12} height={12} color={theme.colors.base} />
         </TouchableOpacity>
       )}
       {/* <Video

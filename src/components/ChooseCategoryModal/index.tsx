@@ -9,12 +9,11 @@ import {
   type NativeSyntheticEvent,
   type NativeScrollEvent,
 } from 'react-native';
-import { SvgXml } from 'react-native-svg';
-import { closeIcon } from '../../svg/svg-xml-list';
 import { useStyle } from './styles';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import Categories from './Components/Categories';
+import CloseIcon from '../../svg/CloseIcon';
 
 interface IModal {
   visible: boolean;
@@ -93,7 +92,7 @@ const ChooseCategoryModal = ({
       <View style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity style={styles.closeButton} onPress={handleOnClose}>
-            <SvgXml xml={closeIcon(theme.colors.base)} width="17" height="17" />
+          <CloseIcon color={theme.colors.base} />
           </TouchableOpacity>
           <View style={styles.headerTextContainer}>
             <Text style={styles.headerText}>Select Category</Text>

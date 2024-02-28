@@ -13,15 +13,7 @@ import {
   StyleProp,
   ImageStyle,
 } from 'react-native';
-import { SvgXml } from 'react-native-svg';
-import {
-  arrowXml,
-  commentXml,
-  likedXml,
-  likeXml,
-  personXml,
-  threeDots,
-} from '../../../svg/svg-xml-list';
+
 import { useStyles } from './styles';
 import type { UserInterface } from '../../../types/user.interface';
 import {
@@ -47,6 +39,13 @@ import feedSlice from '../../../redux/slices/feedSlice';
 import RenderTextWithMention from './Components/RenderTextWithMention';
 import { RootStackParamList } from '../../../routes/RouteParamList';
 import { useTimeDifference } from '../../../hooks/useTimeDifference';
+import PersonIcon from '../../../svg/PersonIcon';
+import { ThreeDotsIcon } from '../../../svg/ThreeDotsIcon';
+import { LikedIcon } from '../../../svg/LikedIcon';
+import { LikeIcon } from '../../../svg/LikeIcon';
+import CommentIcon from '../../../svg/CommentIcon';
+import { ChevronRightIcon } from '../../../svg/ChevronRightIcon';
+import RadioOffIcon from '../../../svg/RadioOffIcon';
 
 export interface IPost {
   postId: string;
@@ -332,7 +331,7 @@ export default function PostList({
               styles.modalContent,
               modalStyle,
               user?.userId === (client as Amity.Client).userId &&
-                styles.twoOptions,
+              styles.twoOptions,
             ]}
           >
             {user?.userId === (client as Amity.Client).userId ? (
@@ -395,7 +394,7 @@ export default function PostList({
             />
           ) : (
             <View style={styles.avatar}>
-              <SvgXml xml={personXml} width="20" height="16" />
+              <PersonIcon />
             </View>
           )}
 
@@ -407,13 +406,7 @@ export default function PostList({
 
               {communityName && (
                 <>
-                  <SvgXml
-                    style={styles.arrow}
-                    xml={arrowXml}
-                    width="8"
-                    height="8"
-                  />
-
+                  <ChevronRightIcon  style={styles.arrow}/>
                   <TouchableOpacity onPress={handleCommunityNamePress}>
                     <Text style={styles.headerText}>{communityName}</Text>
                   </TouchableOpacity>
@@ -432,7 +425,7 @@ export default function PostList({
           </View>
         </View>
         <TouchableOpacity onPress={openModal} style={styles.threeDots}>
-          <SvgXml xml={threeDots(theme.colors.base)} width="20" height="16" />
+          <ThreeDotsIcon color={theme.colors.base} />
         </TouchableOpacity>
       </View>
       <View>
@@ -443,9 +436,10 @@ export default function PostList({
               textPost={textPost}
             />
           )}
-          {childrenPosts?.length > 0 && (
+        {childrenPosts?.length > 0 && (
             <MediaSection childrenPosts={childrenPosts} />
           )}
+       
         </View>
 
         {likeReaction === 0 && commentsCount === 0 ? (
@@ -476,13 +470,9 @@ export default function PostList({
             style={styles.likeBtn}
           >
             {isLike ? (
-              <SvgXml
-                xml={likedXml(theme.colors.primary)}
-                width="20"
-                height="16"
-              />
+              <LikedIcon color={theme.colors.primary} />
             ) : (
-              <SvgXml xml={likeXml} width="20" height="16" />
+              <LikeIcon />
             )}
 
             <Text style={isLike ? styles.likedText : styles.btnText}>Like</Text>
@@ -491,20 +481,20 @@ export default function PostList({
             onPress={() => onClickComment()}
             style={styles.commentBtn}
           >
-            <SvgXml xml={commentXml} width="20" height="16" />
+            <CommentIcon />
             <Text style={styles.btnText}>Comment</Text>
           </TouchableOpacity>
         </View>
       </View>
       {renderOptionModal()}
-      {editPostModalVisible && (
+      {/* {editPostModalVisible && (
         <EditPostModal
           visible={editPostModalVisible}
           onClose={closeEditPostModal}
           postDetail={postDetail}
           onFinishEdit={handleOnFinishEdit}
         />
-      )}
+      )} */}
     </View>
   );
 }

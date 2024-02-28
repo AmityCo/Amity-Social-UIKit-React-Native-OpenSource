@@ -8,9 +8,13 @@ import React, {
   useEffect,
 } from 'react';
 import { useStyles } from '../style';
-import { SvgXml } from 'react-native-svg';
+
 import { radioOff, radioOn } from '../../../svg/svg-xml-list';
 import PollBar from './PollBar';
+import RadioOnIcon from '../../../svg/RadioOnIcon';
+import { useTheme } from 'react-native-paper';
+import { MyMD3Theme } from '../../../providers/amity-ui-kit-provider';
+import RadioOffIcon from '../../../svg/RadioOffIcon';
 
 interface IPollOptionList {
   options: Amity.PollAnswer[];
@@ -29,6 +33,8 @@ const PollOptionList: FC<IPollOptionList> = ({
   totalVote,
   onSubmit,
 }) => {
+
+  const theme = useTheme() as MyMD3Theme;
   const styles = useStyles();
   const [options, setOptions] = useState(data.slice(0, 2) || []);
   const [selectedOption, setSelectedOption] = useState<string[]>([]);
@@ -96,7 +102,6 @@ const PollOptionList: FC<IPollOptionList> = ({
     <>
       {options.map((option) => {
         const selectedItem = selectedOption.includes(option.id);
-        const selectedIcon = selectedItem ? radioOn() : radioOff();
         const selectedOptionContainerStyle: ViewStyle =
           selectedItem && styles.selectedOptionContainer;
         const lengthPercentage = (option.voteCount / totalVote) * 100;
@@ -118,7 +123,7 @@ const PollOptionList: FC<IPollOptionList> = ({
           >
             <View style={styles.pollOptionContainerRow}>
               {!isPollClosed && !isAlreadyVoted && (
-                <SvgXml xml={selectedIcon} width="20" height="20" />
+                selectedItem ? <RadioOnIcon width={20} height={20} color={theme.colors.primary} /> : <RadioOffIcon width={20} height={20} />
               )}
               <Text style={styles.optionText}>{option.data}</Text>
             </View>

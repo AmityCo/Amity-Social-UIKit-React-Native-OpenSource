@@ -11,8 +11,6 @@ import {
   ScrollView,
   TextInput,
 } from 'react-native';
-import { SvgXml } from 'react-native-svg';
-import { closeIcon } from '../../svg/svg-xml-list';
 
 import { useStyles } from './styles';
 import type { IDisplayImage } from '../../screens/CreatePost';
@@ -28,6 +26,7 @@ import { amityPostsFormatter } from '../../util/postDataFormatter';
 import postDetailSlice from '../../redux/slices/postDetailSlice';
 import globalFeedSlice from '../../redux/slices/globalfeedSlice';
 import { useDispatch } from 'react-redux';
+import CloseIcon from '../../svg/CloseIcon';
 interface IModal {
   visible: boolean;
   userId?: string;
@@ -238,7 +237,7 @@ const EditPostModal = ({
     <Modal visible={visible} animationType="slide">
       <View style={styles.header}>
         <TouchableOpacity style={styles.closeButton} onPress={handleOnClose}>
-          <SvgXml xml={closeIcon(theme.colors.base)} width="17" height="17" />
+          <CloseIcon color={theme.colors.base} />
         </TouchableOpacity>
         <View style={styles.headerTextContainer}>
           <Text style={styles.headerText}>Edit Post</Text>

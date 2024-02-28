@@ -9,8 +9,6 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useStyles } from './styles';
-import { SvgXml } from 'react-native-svg';
-import { circleCloseIcon, searchIcon } from '../../svg/svg-xml-list';
 import { useNavigation } from '@react-navigation/native';
 import CustomTab from '../../components/CustomTab';
 import {
@@ -22,6 +20,8 @@ import SearchItem from '../../components/SearchItem';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import { TabName } from '../../enum/tabNameState';
+import CircleCloseIcon from '../../svg/CircleCloseIcon';
+import { SearchIcon } from '../../svg/SearchIcon';
 
 enum searchTypeEnum {
   user = 'user',
@@ -148,11 +148,7 @@ export default function CommunitySearch() {
       <View style={styles.headerWrap}>
         <View style={styles.inputWrap}>
           <TouchableOpacity onPress={() => searchAccounts(searchTerm)}>
-            <SvgXml
-              xml={searchIcon(theme.colors.base)}
-              width="20"
-              height="20"
-            />
+            <SearchIcon width={20} height={20} color={theme.colors.base}/>
           </TouchableOpacity>
           <TextInput
             style={styles.input}
@@ -160,7 +156,7 @@ export default function CommunitySearch() {
             onChangeText={handleChange}
           />
           <TouchableOpacity onPress={clearButton}>
-            <SvgXml xml={circleCloseIcon} width="20" height="20" />
+            <CircleCloseIcon width={20} height={20}/>
           </TouchableOpacity>
         </View>
 

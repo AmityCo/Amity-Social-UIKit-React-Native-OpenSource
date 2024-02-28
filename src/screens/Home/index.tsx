@@ -22,6 +22,8 @@ import { useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import uiSlice from '../../redux/slices/uiSlice';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { SearchIcon } from '../../svg/SearchIcon';
+import { PlusIcon } from '../../svg/PlusIcon';
 LogBox.ignoreAllLogs(true);
 export default function Home() {
   const styles = useStyles();
@@ -47,15 +49,11 @@ export default function Home() {
             onPress={onClickAddCommunity}
             style={styles.btnWrap}
           >
-            <SvgXml xml={plusIcon(theme.colors.base)} width="25" height="25" />
+            <PlusIcon color={theme.colors.base} />
           </TouchableOpacity>
         ) : (
           <TouchableOpacity onPress={onClickSearch} style={styles.btnWrap}>
-            <SvgXml
-              xml={searchIcon(theme.colors.base)}
-              width="25"
-              height="25"
-            />
+            <SearchIcon color={theme.colors.base} />
           </TouchableOpacity>
         ),
       headerTitle: 'Community',
@@ -71,7 +69,7 @@ export default function Home() {
   };
 
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       <CustomTab
         tabName={
           excludes.includes(ComponentID.StoryTab)
@@ -81,7 +79,7 @@ export default function Home() {
         onTabChange={setActiveTab}
       />
       {activeTab === TabName.NewsFeed ? (
-        <View>
+        <View style={{ flex: 1 }}>
           <GlobalFeed />
           <FloatingButton onPress={openModal} />
         </View>

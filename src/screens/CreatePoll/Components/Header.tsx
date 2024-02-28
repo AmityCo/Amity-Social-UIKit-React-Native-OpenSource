@@ -6,6 +6,7 @@ import { SvgXml } from 'react-native-svg';
 import { closeIcon } from '../../../svg/svg-xml-list';
 import type { MyMD3Theme } from '../../../providers/amity-ui-kit-provider';
 import { useTheme } from 'react-native-paper';
+import CloseIcon from '../../../svg/CloseIcon';
 
 interface IHeader {
   targetName: string;
@@ -27,7 +28,7 @@ const Header: FC<IHeader> = ({
     <SafeAreaView style={styles.barContainer} edges={['top']}>
       <View style={styles.header}>
         <TouchableOpacity style={styles.closeButton} onPress={goBack}>
-          <SvgXml xml={closeIcon(theme.colors.base)} width="17" height="17" />
+          <CloseIcon width={17} height={17} color={theme.colors.base} />
         </TouchableOpacity>
         <View style={styles.headerTextContainer}>
           <Text style={styles.headerText}>{targetName}</Text>

@@ -5,7 +5,6 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import { SvgXml } from 'react-native-svg';
 import { useStyles } from './styles';
 import useAuth from '../../hooks/useAuth';
 import { IVideoPost, MediaUri } from '../Social/PostList';
@@ -13,8 +12,8 @@ import { getPostById } from '../../providers/Social/feed-sdk';
 import { useSelector } from 'react-redux';
 import ImageView from '../../components/react-native-image-viewing/dist';
 import { RootState } from '../../redux/store';
-import { playBtn } from '../../svg/svg-xml-list';
 import PollSection from '../PollSection/PollSection';
+import PlayIcon from '../../svg/PlayIcon';
 
 interface IMediaSection {
   childrenPosts: string[];
@@ -239,7 +238,7 @@ const MediaSection: React.FC<IMediaSection> = ({ childrenPosts }) => {
   function renderPlayButton() {
     return (
       <View style={styles.playButton}>
-        <SvgXml xml={playBtn} width="50" height="50" />
+        <PlayIcon/>
       </View>
     );
   }
@@ -251,7 +250,7 @@ const MediaSection: React.FC<IMediaSection> = ({ childrenPosts }) => {
       ) : (
         renderMediaPosts()
       )}
-      <ImageView
+      {/* <ImageView
         images={
           imagePostsFullSize.length > 0
             ? imagePostsFullSize
@@ -262,7 +261,7 @@ const MediaSection: React.FC<IMediaSection> = ({ childrenPosts }) => {
         onRequestClose={() => setIsVisibleFullImage(false)}
         isVideoButton={videoPosts.length > 0 ? true : false}
         videoPosts={videoPosts}
-      />
+      /> */}
     </View>
   );
 };

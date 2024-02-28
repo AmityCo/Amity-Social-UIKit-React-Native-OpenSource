@@ -16,8 +16,7 @@ import {
   TouchableOpacity,
   Platform,
 } from 'react-native';
-import { SvgXml } from 'react-native-svg';
-import { playBtn } from '../../../svg/svg-xml-list';
+import PlayIcon from '../../../svg/PlayIcon'
 import ImageItem from './components/ImageItem/ImageItem';
 import ImageDefaultHeader from './components/ImageDefaultHeader';
 import StatusBarManager from './components/StatusBarManager';
@@ -171,7 +170,7 @@ if (Platform.OS === 'ios') {
               style={styles.playButton}
               onPress={playVideoFullScreen}
               >
-                  <SvgXml xml={playBtn} width="50" height="50" />
+                  <PlayIcon width={50} height={50}/>
               </TouchableOpacity>
               )}
             </View>

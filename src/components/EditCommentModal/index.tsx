@@ -9,8 +9,6 @@ import {
   ScrollView,
   TextInput,
 } from 'react-native';
-import { SvgXml } from 'react-native-svg';
-import { closeIcon } from '../../svg/svg-xml-list';
 
 import { useStyles } from './styles';
 
@@ -18,6 +16,7 @@ import type { IComment } from '../Social/CommentList';
 import { editComment } from '../../providers/Social/comment-sdk';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
+import CloseIcon from '../../svg/CloseIcon';
 
 interface IModal {
   visible: boolean;
@@ -49,12 +48,11 @@ const EditCommentModal = ({
       }
     }
   };
-
   return (
     <Modal visible={visible} animationType="slide">
       <View style={styles.header}>
         <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-          <SvgXml xml={closeIcon(theme.colors.base)} width="17" height="17" />
+          <CloseIcon color={theme.colors.base} />
         </TouchableOpacity>
         <View style={styles.headerTextContainer}>
           <Text style={styles.headerText}>Edit Comment</Text>

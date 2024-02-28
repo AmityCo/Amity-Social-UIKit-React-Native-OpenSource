@@ -16,6 +16,7 @@ import {
 } from '../../../svg/svg-xml-list';
 import useConfig from '../../../hooks/useConfig';
 import { ElementID } from '../../../util/enumUIKitID';
+import CommunityIcon from '../../../svg/CommunityIcon';
 
 const StoryCircleListItem = ({
   item,
@@ -79,11 +80,11 @@ const StoryCircleListItem = ({
               style={isCommunityStory ? styles.communityAvatar : styles.avatar}
             />
           ) : (
-            <SvgXml
-              style={isCommunityStory ? styles.communityAvatar : styles.avatar}
-              width={isCommunityStory ? 40 : 56}
-              height={isCommunityStory ? 40 : 56}
-              xml={communityIcon}
+   
+            <CommunityIcon
+            style={isCommunityStory ? styles.communityAvatar : styles.avatar}
+            width={isCommunityStory ? 40 : 56}
+            height={isCommunityStory ? 40 : 56}
             />
           )}
           <SvgXml

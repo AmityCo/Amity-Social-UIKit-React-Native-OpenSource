@@ -12,14 +12,6 @@ import {
   Alert,
 } from 'react-native';
 import { useStyles } from './styles';
-import { SvgXml } from 'react-native-svg';
-import {
-  expandIcon,
-  likedXml,
-  likeXml,
-  personXml,
-  threeDots,
-} from '../../../svg/svg-xml-list';
 
 import type { UserInterface } from '../../../types/user.interface';
 
@@ -40,6 +32,11 @@ import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../../providers/amity-ui-kit-provider';
 import { IMentionPosition } from '../../../screens/CreatePost';
 import { useNavigation } from '@react-navigation/native';
+import PersonIcon from '../../../svg/PersonIcon';
+import { LikedIcon } from '../../../svg/LikedIcon';
+import { LikeIcon } from '../../../svg/LikeIcon';
+import { ThreeDotsIcon } from '../../../svg/ThreeDotsIcon';
+import ExpandIcon from '../../../svg/ExpandIcon';
 
 export interface IComment {
   commentId: string;
@@ -296,7 +293,7 @@ export default function ReplyCommentList({
           />
         ) : (
           <View style={styles.avatar}>
-            <SvgXml xml={personXml} width="20" height="16" />
+          <PersonIcon width={20} height={16} />
           </View>
         )}
         <View style={styles.rightSection}>
@@ -325,13 +322,9 @@ export default function ReplyCommentList({
               style={styles.likeBtn}
             >
               {isLike ? (
-                <SvgXml
-                  xml={likedXml(theme.colors.primary)}
-                  width="20"
-                  height="16"
-                />
+                           <LikedIcon color={theme.colors.primary} width={20} height={16} />
               ) : (
-                <SvgXml xml={likeXml} width="20" height="16" />
+                <LikeIcon width={20} height={16} />
               )}
 
               <Text style={isLike ? styles.likedText : styles.btnText}>
@@ -340,17 +333,13 @@ export default function ReplyCommentList({
             </TouchableOpacity>
 
             <TouchableOpacity onPress={openModal} style={styles.threeDots}>
-              <SvgXml
-                xml={threeDots(theme.colors.base)}
-                width="20"
-                height="16"
-              />
+            <ThreeDotsIcon color={theme.colors.base}/>
             </TouchableOpacity>
           </View>
           <View>
             {childrenComment.length > 0 && (
               <Pressable style={styles.viewMoreReplyBtn}>
-                <SvgXml xml={expandIcon} />
+               <ExpandIcon/>
                 <Text style={styles.viewMoreText}>
                   View {childrenNumber} replies
                 </Text>

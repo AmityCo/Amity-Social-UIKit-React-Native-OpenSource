@@ -1,9 +1,8 @@
 import { Image, Text, TouchableOpacity } from 'react-native';
 import React, { memo } from 'react';
 import useFile from '../../../hooks/useFile';
-import { SvgXml } from 'react-native-svg';
-import { categoryIcon } from '../../../svg/svg-xml-list';
 import { useStyle } from '../styles';
+import CategoryIcon from '../../../svg/CategoryIcon';
 
 const Categories = ({
   item,
@@ -27,7 +26,7 @@ const Categories = ({
           }}
         />
       ) : (
-        <SvgXml xml={categoryIcon} width={40} height={40} />
+        <CategoryIcon width={40} height={40}/>
       )}
 
       <Text style={styles.communityText}>{item.name}</Text>

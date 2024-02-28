@@ -35,6 +35,7 @@ import EditCommunity from '../screens/EditCommunity/EditCommunity';
 import VideoPlayerFull from '../screens/VideoPlayerFullScreen';
 import PostTypeChoiceModal from '../components/PostTypeChoiceModal/PostTypeChoiceModal';
 import CreatePoll from '../screens/CreatePoll/CreatePoll';
+import CloseIcon from '../svg/CloseIcon';
 
 export default function SocialNavigator() {
   const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -66,7 +67,7 @@ export default function SocialNavigator() {
           <Stack.Screen
             name="CategoryList"
             component={CategoryList}
-            options={({}) => ({
+            options={({ }) => ({
               title: 'Category',
             })}
           />
@@ -147,11 +148,7 @@ export default function SocialNavigator() {
                   }}
                   style={styles.btnWrap}
                 >
-                  <SvgXml
-                    xml={closeIcon(theme.colors.base)}
-                    width="15"
-                    height="15"
-                  />
+                  <CloseIcon  color={theme.colors.base} />
                 </TouchableOpacity>
               ),
             })}
@@ -161,20 +158,20 @@ export default function SocialNavigator() {
             component={CreatePost}
             options={{ headerShown: false }}
           />
-          <Stack.Screen
+          {/* <Stack.Screen
             name="CreatePoll"
             component={CreatePoll}
             options={{ headerShown: false }}
-          />
-          <Stack.Screen
+          /> */}
+          {/* <Stack.Screen
             name="UserProfile"
             component={UserProfile}
             options={{
               title: '',
               headerLeft: () => <BackButton />,
             }}
-          />
-          <Stack.Screen name="EditProfile" component={EditProfile} />
+          /> */}
+          {/* <Stack.Screen name="EditProfile" component={EditProfile} />
           <Stack.Screen
             name="EditCommunity"
             component={EditCommunity}
@@ -191,12 +188,12 @@ export default function SocialNavigator() {
           <Stack.Screen
             name="UserProfileSetting"
             component={UserProfileSetting}
-          />
-          <Stack.Screen
+          /> */}
+          {/* <Stack.Screen
             name="VideoPlayer"
             component={VideoPlayerFull}
             options={{ headerShown: false }}
-          />
+          /> */}
         </Stack.Navigator>
       )}
       <PostTypeChoiceModal />

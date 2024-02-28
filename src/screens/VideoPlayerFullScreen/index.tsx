@@ -21,6 +21,8 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import styles from './styles';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
+import CloseButton from '../../components/CloseButton';
+import CloseIcon from '../../svg/CloseIcon';
 
 const VideoPlayerFull = () => {
   const theme = useTheme() as MyMD3Theme;
@@ -81,7 +83,7 @@ const VideoPlayerFull = () => {
         }}
       />
       <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-        <SvgXml xml={closeIcon(theme.colors.backdrop)} width="16" height="16" />
+        <CloseIcon color={theme.colors.base} width={16} height={16}/>
       </TouchableOpacity>
       <View style={styles.loadingOverlay}>
         <ActivityIndicator animating={loading} color="#fff" size="large" />

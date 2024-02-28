@@ -55,6 +55,7 @@ import MentionPopup from '../../components/MentionPopup';
 import { IMentionPosition } from '../CreatePost';
 import { SvgXml } from 'react-native-svg';
 import { closeIcon } from '../../svg/svg-xml-list';
+import CloseIcon from '../../svg/CloseIcon';
 
 const PostDetail = () => {
   const theme = useTheme() as MyMD3Theme;
@@ -466,11 +467,7 @@ const PostDetail = () => {
           </Text>
           <TouchableOpacity>
             <TouchableOpacity onPress={onCloseReply}>
-              <SvgXml
-                style={styles.closeIcon}
-                xml={closeIcon(theme.colors.baseShade2)}
-                width={20}
-              />
+              <CloseIcon width={20} style={styles.closeIcon} color={theme.colors.baseShade2}/>
             </TouchableOpacity>
           </TouchableOpacity>
         </View>

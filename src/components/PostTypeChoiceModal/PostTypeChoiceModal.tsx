@@ -6,9 +6,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import React, { memo, useEffect, useRef, useState } from 'react';
-import { SvgXml } from 'react-native-svg';
 import CreatePostChooseTargetModal from '../CreatePostChooseTargetModal/CreatePostChooseTargetModal';
-import { pollIcon, postIconOutlined } from '../../svg/svg-xml-list';
 import { useStyles } from './style';
 import { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import { useTheme } from 'react-native-paper';
@@ -18,6 +16,8 @@ import { RootState } from '../../redux/store';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../routes/RouteParamList';
+import { PostIconOutlined } from '../../svg/PostIconOutlined';
+import { PollIcon } from '../../svg/PollIcon';
 
 const PostTypeChoiceModal = () => {
   const styles = useStyles();
@@ -105,18 +105,14 @@ const PostTypeChoiceModal = () => {
             onPress={() => onChooseType('post')}
             style={styles.modalRow}
           >
-            <SvgXml
-              xml={postIconOutlined(theme.colors.base)}
-              width="28"
-              height="28"
-            />
+            <PostIconOutlined color={theme.colors.base} />
             <Text style={styles.postText}>Post</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => onChooseType('poll')}
             style={styles.modalRow}
           >
-            <SvgXml xml={pollIcon(theme.colors.base)} width="28" height="28" />
+            <PollIcon color={theme.colors.base} />
             <Text style={styles.postText}>Poll</Text>
           </TouchableOpacity>
           <CreatePostChooseTargetModal

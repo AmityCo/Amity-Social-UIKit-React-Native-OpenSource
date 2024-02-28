@@ -7,6 +7,7 @@ import { SvgXml } from 'react-native-svg';
 import { photo, playBtn, video } from '../../../svg/svg-xml-list';
 import { useStyles } from '../styles';
 import ImageView from '../../../components/react-native-image-viewing/dist';
+import PlayIcon from '../../../svg/PlayIcon';
 
 interface IUserProfileGallery {
   userId: string;
@@ -32,7 +33,7 @@ const UserProfileGallery: FC<IUserProfileGallery> = ({ userId }) => {
           <Image source={{ uri: item.uri }} style={styles.thumbnail} />
           {item.dataType === 'video' && (
             <View style={styles.playButton}>
-              <SvgXml xml={playBtn} width="50" height="50" />
+              <PlayIcon width={50} height={50}/>
             </View>
           )}
         </TouchableOpacity>
@@ -78,14 +79,14 @@ const UserProfileGallery: FC<IUserProfileGallery> = ({ userId }) => {
         curerntTab={tabName}
       />
       {renderGallery()}
-      <ImageView
+      {/* <ImageView
         images={data}
         imageIndex={imageIndex}
         visible={showFullImage}
         onRequestClose={() => setShowFullImage(false)}
         isVideoButton={data[imageIndex]?.dataType === 'video'}
         videoPosts={videos}
-      />
+      /> */}
     </View>
   );
 };

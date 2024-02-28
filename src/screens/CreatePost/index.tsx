@@ -24,11 +24,8 @@ import {
   playVideoIcon,
 } from '../../svg/svg-xml-list';
 import { useStyles } from './styles';
-import ImagePicker, {
-  launchImageLibrary,
-  type Asset,
-  launchCamera,
-} from 'react-native-image-picker';
+
+import * as ImagePicker from 'expo-image-picker';
 import LoadingImage from '../../components/LoadingImage';
 import { createPostToFeed } from '../../providers/Social/feed-sdk';
 import LoadingVideo from '../../components/LoadingVideo';
@@ -39,6 +36,11 @@ import MentionPopup from '../../components/MentionPopup';
 import { CommunityRepository } from '@amityco/ts-sdk-react-native';
 import { checkCommunityPermission } from '../../providers/Social/communities-sdk';
 import useAuth from '../../hooks/useAuth';
+import CloseIcon from '../../svg/CloseIcon';
+import GalleryIcon from '../../svg/GalleryIcon';
+import PlayVideoIcon from '../../svg/PlayVideoIcon';
+import ArrowDownIcon from '../../svg/ArrowDownIcon';
+import CameraIcon from '../../svg/CameraIcon';
 
 export interface IDisplayImage {
   url: string;
@@ -209,37 +211,27 @@ const CreatePost = ({ route }: any) => {
   };
 
   const pickCamera = async () => {
-    // const permission = await ImagePicker();
+    const permission = await ImagePicker.requestCameraPermissionsAsync();
+    if (permission.granted) {
+      let result: ImagePicker.ImagePickerResult =
+        await ImagePicker.launchCameraAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.All,
+          allowsEditing: false,
+          aspect: [4, 3],
+        });
 
-    const result: ImagePicker.ImagePickerResponse = await launchCamera({
-      mediaType: 'mixed',
-      quality: 1,
-      presentationStyle: 'fullScreen',
-      videoQuality: 'high',
-    });
-
-    if (
-      result.assets &&
-      result.assets.length > 0 &&
-      result.assets[0] !== null &&
-      result.assets[0]
-    ) {
-      if (result.assets[0].type?.includes('image')) {
-        const imagesArr: string[] = [...imageMultipleUri];
-        imagesArr.push(result.assets[0].uri as string);
+      if (
+        result.assets &&
+        result.assets.length > 0 &&
+        result.assets[0] !== null &&
+        result.assets[0]
+      ) {
+        const imagesArr = [...imageMultipleUri];
+        imagesArr.push(result.assets[0].uri);
         setImageMultipleUri(imagesArr);
-      } else {
-        const selectedVideos: Asset[] = result.assets;
-        const imageUriArr: string[] = selectedVideos.map(
-          (item: Asset) => item.uri
-        ) as string[];
-        const videosArr: string[] = [...videoMultipleUri];
-        const totalVideos: string[] = videosArr.concat(imageUriArr);
-        setVideoMultipleUri(totalVideos);
       }
     }
   };
-
   useEffect(() => {
     if (imageMultipleUri.length > 0 && displayImages.length === 0) {
       const imagesObject: IDisplayImage[] = imageMultipleUri.map(
@@ -318,32 +310,32 @@ const CreatePost = ({ route }: any) => {
   }, [videoMultipleUri]);
 
   const pickImage = async () => {
-    const result: ImagePicker.ImagePickerResponse = await launchImageLibrary({
-      mediaType: 'photo',
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: false,
       quality: 1,
-      selectionLimit: 10,
+      allowsMultipleSelection: true,
     });
-    if (!result.didCancel && result.assets && result.assets.length > 0) {
-      const selectedImages: Asset[] = result.assets;
-      const imageUriArr: string[] = selectedImages.map(
-        (item: Asset) => item.uri
-      ) as string[];
+
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+      const selectedImages = result.assets;
+      const imageUriArr: string[] = selectedImages.map((item) => item.uri);
       const imagesArr = [...imageMultipleUri];
       const totalImages = imagesArr.concat(imageUriArr);
       setImageMultipleUri(totalImages);
     }
   };
   const pickVideo = async () => {
-    const result: ImagePicker.ImagePickerResponse = await launchImageLibrary({
-      mediaType: 'video',
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+      allowsEditing: false,
       quality: 1,
-      selectionLimit: 10,
+      allowsMultipleSelection: true,
     });
-    if (!result.didCancel && result.assets && result.assets.length > 0) {
-      const selectedVideos: Asset[] = result.assets;
-      const imageUriArr: string[] = selectedVideos.map(
-        (item: Asset) => item.uri
-      ) as string[];
+
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+      const selectedVideos = result.assets;
+      const imageUriArr: string[] = selectedVideos.map((item) => item.uri);
       const videosArr = [...videoMultipleUri];
       const totalVideos = videosArr.concat(imageUriArr);
       setVideoMultipleUri(totalVideos);
@@ -495,7 +487,8 @@ const CreatePost = ({ route }: any) => {
       <SafeAreaView style={styles.barContainer} edges={['top']}>
         <View style={styles.header}>
           <TouchableOpacity style={styles.closeButton} onPress={goBack}>
-            <SvgXml xml={closeIcon(theme.colors.base)} width="17" height="17" />
+
+            <CloseIcon width={17} height={17} color={theme.colors.base} />
           </TouchableOpacity>
           <View style={styles.headerTextContainer}>
             <Text style={styles.headerText}>{targetName}</Text>
@@ -566,7 +559,7 @@ const CreatePost = ({ route }: any) => {
                 numColumns={3}
               />
             )}
-            {displayVideos.length > 0 && (
+            {/* {displayVideos.length > 0 && (
               <FlatList
                 data={displayVideos}
                 renderItem={({ item, index }) => (
@@ -582,7 +575,7 @@ const CreatePost = ({ route }: any) => {
                 )}
                 numColumns={3}
               />
-            )}
+            )} */}
           </View>
         </ScrollView>
         {isShowMention && (
@@ -598,7 +591,7 @@ const CreatePost = ({ route }: any) => {
             onPress={pickCamera}
           >
             <View style={styles.iconWrap}>
-              <SvgXml xml={cameraIcon} width="27" height="27" />
+              <CameraIcon/>
             </View>
           </TouchableOpacity>
           <TouchableOpacity
@@ -606,7 +599,7 @@ const CreatePost = ({ route }: any) => {
             onPress={pickImage}
           >
             <View style={styles.iconWrap}>
-              <SvgXml xml={galleryIcon} width="27" height="27" />
+              <GalleryIcon/>
             </View>
           </TouchableOpacity>
           <TouchableOpacity
@@ -615,11 +608,12 @@ const CreatePost = ({ route }: any) => {
             style={displayImages.length > 0 ? styles.disabled : []}
           >
             <View style={styles.iconWrap}>
-              <SvgXml xml={playVideoIcon} width="27" height="27" />
+              <PlayVideoIcon/>
             </View>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => Keyboard.dismiss()}>
-            <SvgXml xml={arrowDown(theme.colors.base)} width="20" height="20" />
+            <ArrowDownIcon color={theme.colors.base}/>
+
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>

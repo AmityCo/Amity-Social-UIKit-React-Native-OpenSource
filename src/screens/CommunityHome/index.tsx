@@ -26,8 +26,6 @@ import CustomTab from '../../components/CustomTab';
 import { useStyles } from './styles';
 import Feed from '../Feed';
 import useAuth from '../../hooks/useAuth';
-import { SvgXml } from 'react-native-svg';
-import { editIcon, plusIcon, primaryDot } from '../../svg/svg-xml-list';
 import { useTheme } from 'react-native-paper';
 import { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import { IPost } from '../../components/Social/PostList';
@@ -41,6 +39,9 @@ import useFile from '../../hooks/useFile';
 import { TabName } from '../../enum/tabNameState';
 import uiSlice from '../../redux/slices/uiSlice';
 import { PostTargetType } from '../../enum/postTargetType';
+import { PlusIcon } from '../../svg/PlusIcon';
+import PrimaryDot from '../../svg/PrimaryDotIcon';
+import EditIcon from '../../svg/EditIcon';
 
 export type FeedRefType = {
   handleLoadMore: () => void;
@@ -215,7 +216,7 @@ export default function CommunityHome({ route }: any) {
           style={styles.joinCommunityButton}
           onPress={onJoinCommunityTap}
         >
-          <SvgXml xml={plusIcon('#FFF')} width={24} />
+          <PlusIcon color='#FFF' width={24} height={24} />
           <Text style={styles.joinCommunityText}>Join</Text>
         </TouchableOpacity>
       </View>
@@ -238,15 +239,15 @@ export default function CommunityHome({ route }: any) {
         <View style={styles.pendingPostWrap}>
           <View style={styles.pendingPostArea}>
             <View style={styles.pendingRow}>
-              <SvgXml xml={primaryDot(theme.colors.primary)} />
+              <PrimaryDot color={theme.colors.primary} />
               <Text style={styles.pendingText}>Pending posts</Text>
             </View>
 
             <Text style={styles.pendingDescriptionText}>
               {isUserHasPermission
                 ? (pendingPosts.length > 30 && 'More than ') +
-                  pendingPosts.length +
-                  ' posts need approval'
+                pendingPosts.length +
+                ' posts need approval'
                 : 'Your posts are pending for review'}
             </Text>
           </View>
@@ -288,8 +289,8 @@ export default function CommunityHome({ route }: any) {
             source={
               avatarUrl
                 ? {
-                    uri: avatarUrl,
-                  }
+                  uri: avatarUrl,
+                }
                 : require('../../../assets/icon/Placeholder.png')
             }
           />
@@ -330,7 +331,7 @@ export default function CommunityHome({ route }: any) {
             style={styles.editProfileButton}
             onPress={onEditProfileTap}
           >
-            <SvgXml width={24} height={20} xml={editIcon(theme.colors.base)} />
+            <EditIcon width={24} height={20} color={theme.colors.base} />
             <Text style={styles.editProfileText}>Edit Profile</Text>
           </TouchableOpacity>
         )}

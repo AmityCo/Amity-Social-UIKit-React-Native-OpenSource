@@ -13,15 +13,6 @@ import {
   FlatList,
 } from 'react-native';
 import { useStyles } from './styles';
-import { SvgXml } from 'react-native-svg';
-import {
-  expandIcon,
-  likedXml,
-  likeXml,
-  personXml,
-  replyIcon,
-  threeDots,
-} from '../../../svg/svg-xml-list';
 
 import type { UserInterface } from '../../../types/user.interface';
 
@@ -45,6 +36,12 @@ import { IMentionPosition } from '../../../screens/CreatePost';
 import { useNavigation } from '@react-navigation/native';
 import ReplyCommentList from '../ReplyCommentList';
 import { CommentRepository } from '@amityco/ts-sdk-react-native';
+import PersonIcon from '../../../svg/PersonIcon';
+import { LikedIcon } from '../../../svg/LikedIcon';
+import { LikeIcon } from '../../../svg/LikeIcon';
+import ReplyIcon from '../../../svg/ReplyIcon';
+import { ThreeDotsIcon } from '../../../svg/ThreeDotsIcon';
+import ExpandIcon from '../../../svg/ExpandIcon';
 
 export interface IComment {
   commentId: string;
@@ -390,7 +387,7 @@ const CommentList = ({
           />
         ) : (
           <View style={styles.avatar}>
-            <SvgXml xml={personXml} width="20" height="16" />
+            <PersonIcon width={20} height={16} />
           </View>
         )}
         <View style={styles.rightSection}>
@@ -419,13 +416,11 @@ const CommentList = ({
               style={styles.likeBtn}
             >
               {isLike ? (
-                <SvgXml
-                  xml={likedXml(theme.colors.primary)}
-                  width="20"
-                  height="16"
-                />
+                <LikedIcon color={theme.colors.primary} width={20} height={16} />
+
               ) : (
-                <SvgXml xml={likeXml} width="20" height="16" />
+
+                <LikeIcon width={20} height={16} />
               )}
 
               <Text style={isLike ? styles.likedText : styles.btnText}>
@@ -437,17 +432,14 @@ const CommentList = ({
               // onPress={() => addReactionToComment()}
               style={styles.likeBtn}
             >
-              <SvgXml xml={replyIcon} width="20" height="16" />
 
+              <ReplyIcon width={20} height={16} />
               <Text style={styles.btnText}>Reply</Text>
             </TouchableOpacity>
 
             <TouchableOpacity onPress={openModal} style={styles.threeDots}>
-              <SvgXml
-                xml={threeDots(theme.colors.base)}
-                width="20"
-                height="16"
-              />
+
+              <ThreeDotsIcon color={theme.colors.base}/>
             </TouchableOpacity>
           </View>
 
@@ -480,7 +472,7 @@ const CommentList = ({
               onPress={() => openReplyComment()}
               style={styles.viewMoreReplyBtn}
             >
-              <SvgXml xml={expandIcon} />
+              <ExpandIcon/>
               <Text style={styles.viewMoreText}>
                 View {childrenNumber} replies
               </Text>
@@ -492,7 +484,7 @@ const CommentList = ({
               onPress={() => onNextPage()}
               style={styles.viewMoreReplyBtn}
             >
-              <SvgXml xml={expandIcon} />
+               <ExpandIcon/>
               <Text style={styles.viewMoreText}>View more replies</Text>
             </TouchableOpacity>
           )}
@@ -510,7 +502,7 @@ const CommentList = ({
               styles.modalContent,
               modalStyle,
               user?.userId === (client as Amity.Client).userId &&
-                styles.twoOptions,
+              styles.twoOptions,
             ]}
           >
             {user?.userId === (client as Amity.Client).userId ? (

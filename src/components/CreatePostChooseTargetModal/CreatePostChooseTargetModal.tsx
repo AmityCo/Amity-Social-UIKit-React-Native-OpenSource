@@ -8,16 +8,15 @@ import {
   Image,
   ScrollView,
 } from 'react-native';
-import { SvgXml } from 'react-native-svg';
 import { getAmityUser } from '../../providers/user-provider';
 import type { UserInterface } from '../../types/user.interface';
-import { closeIcon } from '../../svg/svg-xml-list';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import useAuth from '../../hooks/useAuth';
 import { useStyles } from './styles';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
+import CloseIcon from '../../svg/CloseIcon';
 interface IModal {
   visible: boolean;
   userId?: string;
@@ -186,7 +185,7 @@ const CreatePostChooseTargetModal = ({
       <View style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-            <SvgXml xml={closeIcon(theme.colors.base)} width="17" height="17" />
+          <CloseIcon color={theme.colors.base} />
           </TouchableOpacity>
           <View style={styles.headerTextContainer}>
             <Text style={styles.headerText}>Post To</Text>

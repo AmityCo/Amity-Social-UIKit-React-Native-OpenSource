@@ -8,7 +8,6 @@ export const useStyle = () => {
     feedWrap: {
       backgroundColor: theme.colors.screenBackground,
       height: '100%',
-      paddingBottom: 50,
     },
   });
   return styles;

@@ -2,6 +2,7 @@ import * as React from 'react';
 
 
 import { AmityUiKitProvider, AmityUiKitSocial } from '@amityco/react-native-social-ui-kit';
+import { Text } from 'react-native';
 
 export default function App() {
 
@@ -14,6 +15,7 @@ export default function App() {
       apiEndpoint="https://api.sg.amity.co"
     >
       <AmityUiKitSocial />
+
     </AmityUiKitProvider>
   );
 }

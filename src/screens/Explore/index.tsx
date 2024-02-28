@@ -11,8 +11,7 @@ import { useStyles } from './styles';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import useAuth from '../../hooks/useAuth';
-import { SvgXml } from 'react-native-svg';
-import { communityIcon } from '../../svg/svg-xml-list';
+import CommunityIcon from '../../svg/CommunityIcon';
 
 export default function Explore() {
   const styles = useStyles();
@@ -87,8 +86,8 @@ export default function Explore() {
                 source={
                   category.avatarFileId
                     ? {
-                        uri: `https://api.${apiRegion}.amity.co/api/v3/files/${category.avatarFileId}/download`,
-                      }
+                      uri: `https://api.${apiRegion}.amity.co/api/v3/files/${category.avatarFileId}/download`,
+                    }
                     : require('../../../assets/icon/Placeholder.png')
                 }
               />
@@ -124,12 +123,11 @@ export default function Explore() {
                   }}
                 />
               ) : (
-                <SvgXml
-                  xml={communityIcon}
-                  style={styles.avatar}
-                  width={40}
-                  height={40}
-                />
+
+                <View style={styles.avatar}>
+                  <CommunityIcon width={40} height={40} />
+                </View>
+
               )}
 
               <Text style={styles.name}>{community.displayName}</Text>
@@ -161,18 +159,16 @@ export default function Explore() {
                   source={
                     community.avatarFileId
                       ? {
-                          uri: `https://api.${apiRegion}.amity.co/api/v3/files/${community.avatarFileId}/download`,
-                        }
+                        uri: `https://api.${apiRegion}.amity.co/api/v3/files/${community.avatarFileId}/download`,
+                      }
                       : require('../../../assets/icon/Placeholder.png')
                   }
                 />
               ) : (
-                <SvgXml
-                  xml={communityIcon}
-                  style={styles.avatar}
-                  width={40}
-                  height={40}
-                />
+                <View style={styles.avatar}>
+                  <CommunityIcon width={40} height={40} />
+                </View>
+
               )}
 
               <View style={styles.trendingTextContainer}>

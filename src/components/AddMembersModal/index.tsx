@@ -10,15 +10,17 @@ import {
   type ListRenderItemInfo,
   TextInput,
 } from 'react-native';
-import { SvgXml } from 'react-native-svg';
+
 import { useStyle } from './styles';
-import { circleCloseIcon, closeIcon, searchIcon } from '../../svg/svg-xml-list';
 import type { UserInterface } from '../../types/user.interface';
 import UserItem from '../UserItem';
 import SectionHeader from '../ListSectionHeader';
 import SelectedUserHorizontal from '../SelectedUserHorizontal';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
+import CloseIcon from '../../svg/CloseIcon';
+import { SearchIcon } from '../../svg/SearchIcon';
+import CircleCloseIcon from '../../svg/CircleCloseIcon';
 interface IModal {
   visible: boolean;
   userId?: string;
@@ -173,7 +175,7 @@ const AddMembersModal = ({
       <View style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity style={styles.closeButton} onPress={handleOnClose}>
-            <SvgXml xml={closeIcon(theme.colors.base)} width="17" height="17" />
+            <CloseIcon color={theme.colors.base} />
           </TouchableOpacity>
           <View style={styles.headerTextContainer}>
             <Text style={styles.headerText}>Select Member</Text>
@@ -195,11 +197,8 @@ const AddMembersModal = ({
         </View>
         <View style={styles.inputWrap}>
           <TouchableOpacity onPress={() => queryAccounts(searchTerm)}>
-            <SvgXml
-              xml={searchIcon(theme.colors.base)}
-              width="20"
-              height="20"
-            />
+
+            <SearchIcon width={20} height={20} color={theme.colors.base} />
           </TouchableOpacity>
           <TextInput
             style={styles.input}
@@ -207,7 +206,7 @@ const AddMembersModal = ({
             onChangeText={handleChange}
           />
           <TouchableOpacity onPress={clearButton}>
-            <SvgXml xml={circleCloseIcon} width="20" height="20" />
+            <CircleCloseIcon width={20} height={20} />
           </TouchableOpacity>
         </View>
         {selectedUserList.length > 0 ? (

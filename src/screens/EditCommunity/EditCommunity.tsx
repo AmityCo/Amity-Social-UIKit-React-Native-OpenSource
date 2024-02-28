@@ -32,6 +32,7 @@ import { getAvatarURL } from '../../util/apiUtil';
 import { updateCommunity } from '../../providers/Social/communities-sdk';
 import { PrivacyState } from '../../enum/privacyState';
 import { useForm, Controller } from 'react-hook-form';
+import CloseIcon from '../../svg/CloseIcon';
 
 const EditCommunity = ({ navigation, route }) => {
   const styles = useStyles();
@@ -207,9 +208,8 @@ const EditCommunity = ({ navigation, route }) => {
               </Text>
               <Text style={styles.inputLengthMeasure}>
                 {watch('community_name')
-                  ? `${
-                      watch('community_name').length
-                    } / ${MAX_COMMUNITY_NAME_LENGTH}`
+                  ? `${watch('community_name').length
+                  } / ${MAX_COMMUNITY_NAME_LENGTH}`
                   : `0/ ${MAX_COMMUNITY_NAME_LENGTH}`}
               </Text>
             </View>
@@ -240,9 +240,8 @@ const EditCommunity = ({ navigation, route }) => {
               <Text style={styles.inputTitle}>About</Text>
               <Text style={styles.inputLengthMeasure}>
                 {watch('community_description')
-                  ? `${
-                      watch('community_description').length
-                    } / ${MAX_ABOUT_TEXT_LENGTH}`
+                  ? `${watch('community_description').length
+                  } / ${MAX_ABOUT_TEXT_LENGTH}`
                   : `0/ ${MAX_ABOUT_TEXT_LENGTH}`}
               </Text>
             </View>
@@ -358,11 +357,11 @@ const EditCommunity = ({ navigation, route }) => {
                               source={
                                 item.avatarFileId
                                   ? {
-                                      uri: getAvatarURL(
-                                        apiRegion,
-                                        item.avatarFileId
-                                      ),
-                                    }
+                                    uri: getAvatarURL(
+                                      apiRegion,
+                                      item.avatarFileId
+                                    ),
+                                  }
                                   : require('../../../assets/icon/Placeholder.png')
                               }
                             />
@@ -372,11 +371,7 @@ const EditCommunity = ({ navigation, route }) => {
                         <TouchableOpacity
                           onPress={() => onDeleteUserPressed(item)}
                         >
-                          <SvgXml
-                            xml={closeIcon(theme.colors.base)}
-                            width={12}
-                            height={12}
-                          />
+                          <CloseIcon width={12} height={12} color={theme.colors.base} />
                         </TouchableOpacity>
                       </View>
                     )}
