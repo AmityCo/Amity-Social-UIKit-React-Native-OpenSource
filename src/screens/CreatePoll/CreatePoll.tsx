@@ -209,7 +209,7 @@ const CreatePoll = ({ navigation, route }) => {
               mentionsPosition={mentionPosition}
               setMentionsPosition={setMentionPosition}
               maxLength={MAX_POLL_QUESRION_LENGTH}
-              multiline={true}
+              multiline
             />
           </View>
         </View>
