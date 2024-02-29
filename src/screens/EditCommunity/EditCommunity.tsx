@@ -30,6 +30,7 @@ import PrivateIcon from '../../svg/PrivateIcon';
 import PublicIcon from '../../svg/PublicIcon';
 import { PlusIcon } from '../../svg/PlusIcon';
 import ArrowOutlinedIcon from '../../svg/ArrowOutlinedIcon';
+import { AvatarIcon } from '../../svg/AvatarIcon';
 
 const EditCommunity = ({ navigation, route }) => {
   const styles = useStyles();
@@ -345,19 +346,19 @@ const EditCommunity = ({ navigation, route }) => {
                       <View style={styles.userItemWrap}>
                         <View style={styles.avatarRow}>
                           <View style={styles.avatarImageContainer}>
+
                             <Image
-                              style={styles.avatarImage}
+                              style={styles.avatar}
                               source={
-                                item.avatarFileId
-                                  ? {
-                                    uri: getAvatarURL(
-                                      apiRegion,
-                                      item.avatarFileId
-                                    ),
-                                  }
-                                  : require('../../../assets/icon/Placeholder.png')
+                                {
+                                  uri: item.avatarFileId && getAvatarURL(
+                                    apiRegion,
+                                    item.avatarFileId
+                                  ),
+                                }
+
                               }
-                            />
+                            /> : <View style={styles.avatar}> <AvatarIcon /></View>
                           </View>
                           <Text>{displayName(item.displayName)}</Text>
                         </View>

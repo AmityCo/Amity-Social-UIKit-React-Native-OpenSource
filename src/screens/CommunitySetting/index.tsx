@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Image,
   SectionList,
   Alert,
 } from 'react-native';
@@ -12,6 +11,7 @@ import { CommunityRepository } from '@amityco/ts-sdk-react-native';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import ArrowOutlinedIcon from '../../svg/ArrowOutlinedIcon';
+import CommunityIcon from '../../svg/CommunityIcon';
 
 interface ChatDetailProps {
   navigation: any;
@@ -82,7 +82,7 @@ export const CommunitySetting: React.FC<ChatDetailProps> = ({
       data: [
         {
           name: 'Members',
-          leftIcon: require('../../../assets/icon/groupMember.png'),
+          leftIcon: <CommunityIcon color={theme.colors.base}/>,
           callBack: handleMembersPress,
           rightIcon: <ArrowOutlinedIcon width={24} color={theme.colors.base}/>,
           type: SettingType.basicInfo,
@@ -115,7 +115,7 @@ export const CommunitySetting: React.FC<ChatDetailProps> = ({
       return (
         <TouchableOpacity style={styles.rowContainer} onPress={item.callBack}>
           <View style={styles.iconContainer}>
-            <Image source={item.leftIcon} style={styles.groupIcon} />
+            {item.leftIcon}
           </View>
           <Text style={styles.rowText}>{item.name}</Text>
           {item.rightIcon}

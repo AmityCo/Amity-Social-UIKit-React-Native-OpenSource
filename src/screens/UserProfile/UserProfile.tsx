@@ -32,6 +32,8 @@ import UserProfileGallery from './Components/UserProfileGallery';
 import EditIcon from '../../svg/EditIcon';
 import BlockOrUnblockIcon from '../../svg/BlockOrUnBlockIcon';
 import { ThreeDotsIcon } from '../../svg/ThreeDotsIcon';
+import { PlusIcon } from '../../svg/PlusIcon';
+import { AvatarIcon } from '../../svg/AvatarIcon';
 
 export default function UserProfile({ route }: any) {
   const theme = useTheme() as MyMD3Theme;
@@ -149,10 +151,7 @@ export default function UserProfile({ route }: any) {
   const followButton = () => {
     return (
       <TouchableOpacity style={styles.followButton} onPress={onFollowTap}>
-        <Image
-          source={require('../../../assets/icon/followPlus.png')}
-          style={styles.followIcon}
-        />
+        <PlusIcon  style={styles.followIcon} color='#FFFFF'/>
         <Text style={styles.followText}>Follow</Text>
       </TouchableOpacity>
     );
@@ -220,18 +219,15 @@ export default function UserProfile({ route }: any) {
       >
         <View style={styles.profileContainer}>
           <View style={styles.userDetail}>
-            <Image
-              style={styles.avatar}
-              source={
-                user?.avatarFileId || user?.avatarCustomUrl
-                  ? {
-                    uri: user.avatarFileId
-                      ? avatarFileURL(user.avatarFileId)
-                      : user.avatarCustomUrl,
-                  }
-                  : require('../../../assets/icon/Placeholder.png')
-              }
-            />
+          <Image
+          style={styles.avatar}
+          source={
+            {
+              uri: user.avatarFileId && avatarFileURL(user.avatarFileId!),
+            }
+
+          }
+        /> : <View style={styles.avatar}> <AvatarIcon /></View>
             <View style={styles.userInfo}>
               <Text style={styles.title}>{user?.displayName}</Text>
               <View style={styles.horizontalText}>

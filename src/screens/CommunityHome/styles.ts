@@ -11,6 +11,13 @@ export const useStyles = () => {
       // alignItems: 'center',
       // justifyContent: 'center',
     },
+    avatar: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      marginBottom: 10,
+      backgroundColor: '#D9E5FC',
+    },
     joinContainer: {
       flex: 0.2,
       justifyContent: 'center',

@@ -5,6 +5,7 @@ import RoundCheckbox from '../RoundCheckbox/index';
 import type { UserInterface } from '../../types/user.interface';
 import useAuth from '../../hooks/useAuth';
 import { ThreeDotsIcon } from '../../svg/ThreeDotsIcon';
+import { AvatarIcon } from '../../svg/AvatarIcon';
 
 export default function UserItem({
   user,
@@ -49,13 +50,12 @@ export default function UserItem({
         <Image
           style={styles.avatar}
           source={
-            user.avatarFileId
-              ? {
-                uri: user.avatarFileId && avatarFileURL(user.avatarFileId!),
-              }
-              : require('../../../assets/icon/Placeholder.png')
+            {
+              uri: user.avatarFileId && avatarFileURL(user.avatarFileId!),
+            }
+
           }
-        />
+        /> : <View style={styles.avatar}> <AvatarIcon /></View>
         <Text style={styles.itemText}>{displayName()}</Text>
       </View>
       {!showThreeDot ? (

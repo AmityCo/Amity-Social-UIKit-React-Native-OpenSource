@@ -11,6 +11,7 @@ import {
 import { useStyles } from './styles';
 import CloseButton from '../../components/BackButton';
 import useAuth from '../../hooks/useAuth';
+import { AvatarIcon } from '../../svg/AvatarIcon';
 
 export default function CategoryList({ navigation }: any) {
   const { apiRegion } = useAuth();
@@ -62,6 +63,9 @@ export default function CategoryList({ navigation }: any) {
       navigation.navigate('CommunityList', { categoryId, categoryName });
     }, 100);
   };
+  const avatarFileURL = (fileId: string) => {
+    return `https://api.${apiRegion}.amity.co/api/v3/files/${fileId}/download?size=medium`;
+  };
   const renderCategory = ({ item }: { item: Amity.Category }) => {
     return (
       <TouchableOpacity
@@ -71,13 +75,12 @@ export default function CategoryList({ navigation }: any) {
         <Image
           style={styles.avatar}
           source={
-            item.avatarFileId
-              ? {
-                  uri: `https://api.${apiRegion}.amity.co/api/v3/files/${item.avatarFileId}/download`,
-                }
-              : require('../../../assets/icon/Placeholder.png')
+            {
+              uri: item.avatarFileId && avatarFileURL(item.avatarFileId!),
+            }
+
           }
-        />
+        /> : <View style={styles.avatar}> <AvatarIcon /></View>
         <Text style={styles.categoryText}>{item.name}</Text>
       </TouchableOpacity>
     );

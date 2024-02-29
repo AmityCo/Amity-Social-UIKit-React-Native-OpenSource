@@ -22,6 +22,7 @@ call_lefthook()
   elif test -f "$dir/node_modules/@evilmartians/lefthook-installer/bin/lefthook_${osArch}_${cpuArch}/lefthook"
   then
     "$dir/node_modules/@evilmartians/lefthook-installer/bin/lefthook_${osArch}_${cpuArch}/lefthook" "$@"
+  
   elif bundle exec lefthook -h >/dev/null 2>&1
   then
     bundle exec lefthook "$@"

@@ -1,5 +1,5 @@
 import React, { useState, useLayoutEffect } from 'react';
-import { View, TouchableOpacity, Image } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import { useStyles } from './styles';
 import type { UserInterface } from '../../types/user.interface';
 import AddMembersModal from '../../components/AddMembersModal';
@@ -8,6 +8,7 @@ import MemberActionModal from './Components/MemberActionModal';
 import CustomTab from '../../components/CustomTab';
 import { TabName } from '../../enum/tabNameState';
 import CommunityMembersTab from './Components/CommunityMembersTab';
+import { PlusIcon } from '../../svg/PlusIcon';
 
 export default function CommunityMemberDetail({ navigation, route }: any) {
   const styles = useStyles();
@@ -27,10 +28,7 @@ export default function CommunityMemberDetail({ navigation, route }: any) {
             setAddMembersModal(true);
           }}
         >
-          <Image
-            source={require('../../../assets/icon/plus.png')}
-            style={styles.dotIcon}
-          />
+          <PlusIcon style={styles.dotIcon}/>
         </TouchableOpacity>
       ),
     });

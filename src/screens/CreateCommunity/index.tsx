@@ -36,6 +36,7 @@ import ArrowOutlinedIcon from '../../svg/ArrowOutlinedIcon';
 import PublicIcon from '../../svg/PublicIcon';
 import PrivateIcon from '../../svg/PrivateIcon';
 import { PlusIcon } from '../../svg/PlusIcon';
+import { AvatarIcon } from '../../svg/AvatarIcon';
 
 export default function CreateCommunity() {
   const styles = useStyles();
@@ -324,13 +325,14 @@ export default function CreateCommunity() {
                         <View style={styles.avatarRow}>
                           <View style={styles.avatarImageContainer}>
                             <Image
-                              style={styles.avatarImage}
+                              style={styles.avatar}
                               source={
-                                item.avatarFileId
-                                  ? { uri: avatarFileURL(item.avatarFileId) }
-                                  : require('../../../assets/icon/Placeholder.png')
+                                {
+                                  uri: item.avatarFileId && avatarFileURL(item.avatarFileId!),
+                                }
+
                               }
-                            />
+                            /> : <View style={styles.avatar}> <AvatarIcon /></View>
                           </View>
                           <Text>{displayName(item.displayName)}</Text>
                         </View>

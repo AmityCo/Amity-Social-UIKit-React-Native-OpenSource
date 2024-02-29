@@ -17,6 +17,7 @@ import { useStyles } from './styles';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import CloseIcon from '../../svg/CloseIcon';
+import { AvatarIcon } from '../../svg/AvatarIcon';
 interface IModal {
   visible: boolean;
   userId?: string;
@@ -96,13 +97,12 @@ const CreatePostChooseTargetModal = ({
         <Image
           style={styles.avatar}
           source={
-            myUser
-              ? {
-                  uri: `https://api.${apiRegion}.amity.co/api/v3/files/${myUser.avatarFileId}/download`,
-                }
-              : require('./../../../assets/icon/Placeholder.png')
+            {
+              uri: myUser.avatarFileId && avatarFileURL(myUser.avatarFileId!),
+            }
+
           }
-        />
+        /> : <View style={styles.avatar}> <AvatarIcon /></View>
         <Text style={styles.communityText}>My Timeline</Text>
       </TouchableOpacity>
     );
@@ -134,6 +134,11 @@ const CreatePostChooseTargetModal = ({
       needApprovalOnPostCreation: needApprovalOnPostCreation,
     });
   };
+
+  const avatarFileURL = (fileId: string) => {
+    return `https://api.${apiRegion}.amity.co/api/v3/files/${fileId}/download?size=medium`;
+  };
+
   const renderCommunity = ({ item }: { item: Amity.Community }) => {
     return (
       <TouchableOpacity
@@ -152,13 +157,12 @@ const CreatePostChooseTargetModal = ({
         <Image
           style={styles.avatar}
           source={
-            item.avatarFileId
-              ? {
-                  uri: `https://api.${apiRegion}.amity.co/api/v3/files/${item.avatarFileId}/download`,
-                }
-              : require('./../../../assets/icon/Placeholder.png')
+            {
+              uri: item.avatarFileId && avatarFileURL(item.avatarFileId!),
+            }
+
           }
-        />
+        /> : <View style={styles.avatar}> <AvatarIcon /></View>
         <Text style={styles.communityText}>{item.displayName}</Text>
       </TouchableOpacity>
     );
@@ -185,7 +189,7 @@ const CreatePostChooseTargetModal = ({
       <View style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-          <CloseIcon color={theme.colors.base} />
+            <CloseIcon color={theme.colors.base} />
           </TouchableOpacity>
           <View style={styles.headerTextContainer}>
             <Text style={styles.headerText}>Post To</Text>

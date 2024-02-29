@@ -12,6 +12,8 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import useAuth from '../../hooks/useAuth';
 import CommunityIcon from '../../svg/CommunityIcon';
+import { AvatarIcon } from '../../svg/AvatarIcon';
+import ChevronLeftIcon from '../../svg/ChevronLeftcon';
 
 export default function Explore() {
   const styles = useStyles();
@@ -67,7 +69,9 @@ export default function Explore() {
     },
     [navigation]
   );
-
+  const avatarFileURL = (fileId: string) => {
+    return `https://api.${apiRegion}.amity.co/api/v3/files/${fileId}/download?size=medium`;
+  };
   const renderCategoryList = useCallback(() => {
     const truncatedCategoryList = categoryList.slice(0, 8);
     return (
@@ -81,16 +85,17 @@ export default function Explore() {
                 handleCategoryClick(category.categoryId, category.name)
               }
             >
+
               <Image
                 style={styles.avatar}
                 source={
-                  category.avatarFileId
-                    ? {
-                      uri: `https://api.${apiRegion}.amity.co/api/v3/files/${category.avatarFileId}/download`,
-                    }
-                    : require('../../../assets/icon/Placeholder.png')
+                  {
+                    uri: category.avatarFileId && avatarFileURL(category.avatarFileId!),
+                  }
+
                 }
-              />
+              /> : <View style={styles.avatar}> <AvatarIcon /></View>
+
               <Text style={styles.columnText}>{category.name}</Text>
             </TouchableOpacity>
           );
@@ -157,11 +162,10 @@ export default function Explore() {
                 <Image
                   style={styles.avatar}
                   source={
-                    community.avatarFileId
-                      ? {
-                        uri: `https://api.${apiRegion}.amity.co/api/v3/files/${community.avatarFileId}/download`,
-                      }
-                      : require('../../../assets/icon/Placeholder.png')
+                    {
+                      uri: community.avatarFileId && avatarFileURL(community.avatarFileId!),
+                    }
+
                   }
                 />
               ) : (
@@ -192,10 +196,7 @@ export default function Explore() {
         <View style={styles.titleContainer}>
           <Text style={styles.titleText}>Categories</Text>
           <TouchableOpacity onPress={handleCategoryListClick}>
-            <Image
-              source={require('../../../assets/icon/arrowRight.png')}
-              style={styles.arrowIcon}
-            />
+            <ChevronLeftIcon style={styles.arrowIcon} />
           </TouchableOpacity>
         </View>
         {renderCategoryList()}
