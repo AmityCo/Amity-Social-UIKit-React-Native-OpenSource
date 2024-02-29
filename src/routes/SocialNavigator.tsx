@@ -25,17 +25,16 @@ import CreateCommunity from '../screens/CreateCommunity';
 import PendingPosts from '../screens/PendingPosts';
 import type { MyMD3Theme } from '../providers/amity-ui-kit-provider';
 import { useTheme } from 'react-native-paper';
-import { Image, TouchableOpacity } from 'react-native';
-import { SvgXml } from 'react-native-svg';
-import { closeIcon } from '../svg/svg-xml-list';
+import { TouchableOpacity } from 'react-native';
 import { useStyles } from '../routes/style';
 import BackButton from '../components/BackButton';
 import CloseButton from '../components/CloseButton';
 import EditCommunity from '../screens/EditCommunity/EditCommunity';
-import VideoPlayerFull from '../screens/VideoPlayerFullScreen';
+// import VideoPlayerFull from '../screens/VideoPlayerFullScreen';
 import PostTypeChoiceModal from '../components/PostTypeChoiceModal/PostTypeChoiceModal';
 import CreatePoll from '../screens/CreatePoll/CreatePoll';
 import CloseIcon from '../svg/CloseIcon';
+import { ThreeDotsIcon } from '../svg/ThreeDotsIcon';
 
 export default function SocialNavigator() {
   const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -93,10 +92,7 @@ export default function SocialNavigator() {
                     });
                   }}
                 >
-                  <Image
-                    source={require('../../assets/icon/threeDot.png')}
-                    style={styles.dotIcon}
-                  />
+                  <ThreeDotsIcon style={styles.dotIcon}/>
                 </TouchableOpacity>
               ),
             })}
@@ -158,20 +154,20 @@ export default function SocialNavigator() {
             component={CreatePost}
             options={{ headerShown: false }}
           />
-          {/* <Stack.Screen
+          <Stack.Screen
             name="CreatePoll"
             component={CreatePoll}
             options={{ headerShown: false }}
-          /> */}
-          {/* <Stack.Screen
+          />
+          <Stack.Screen
             name="UserProfile"
             component={UserProfile}
             options={{
               title: '',
               headerLeft: () => <BackButton />,
             }}
-          /> */}
-          {/* <Stack.Screen name="EditProfile" component={EditProfile} />
+          />
+          <Stack.Screen name="EditProfile" component={EditProfile} />
           <Stack.Screen
             name="EditCommunity"
             component={EditCommunity}
@@ -188,7 +184,7 @@ export default function SocialNavigator() {
           <Stack.Screen
             name="UserProfileSetting"
             component={UserProfileSetting}
-          /> */}
+          />
           {/* <Stack.Screen
             name="VideoPlayer"
             component={VideoPlayerFull}

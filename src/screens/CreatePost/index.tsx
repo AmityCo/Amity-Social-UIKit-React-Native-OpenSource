@@ -14,15 +14,8 @@ import {
   Keyboard,
   Alert,
 } from 'react-native';
-import { SvgXml } from 'react-native-svg';
+
 import { SafeAreaView } from 'react-native-safe-area-context';
-import {
-  arrowDown,
-  cameraIcon,
-  closeIcon,
-  galleryIcon,
-  playVideoIcon,
-} from '../../svg/svg-xml-list';
 import { useStyles } from './styles';
 
 import * as ImagePicker from 'expo-image-picker';
@@ -559,7 +552,7 @@ const CreatePost = ({ route }: any) => {
                 numColumns={3}
               />
             )}
-            {/* {displayVideos.length > 0 && (
+            {displayVideos.length > 0 && (
               <FlatList
                 data={displayVideos}
                 renderItem={({ item, index }) => (
@@ -575,7 +568,7 @@ const CreatePost = ({ route }: any) => {
                 )}
                 numColumns={3}
               />
-            )} */}
+            )}
           </View>
         </ScrollView>
         {isShowMention && (

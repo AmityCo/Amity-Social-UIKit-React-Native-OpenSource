@@ -1,6 +1,6 @@
 {
   "name": "@amityco/react-native-social-ui-kit",
-  "version": "0.1.0",
+  "version": "0.1.7",
   "description": "Social UIKit",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -13,6 +13,7 @@
     "android",
     "ios",
     "cpp",
+    "assets/**/*",
     "*.podspec",
     "!ios/build",
     "!android/build",
@@ -23,7 +24,7 @@
     "!**/__tests__",
     "!**/__fixtures__",
     "!**/__mocks__",
-    "!**/.*"
+    "uikit.config.json"
   ],
   "scripts": {
     "example": "yarn workspace @amityco/react-native-social-ui-kit-example",

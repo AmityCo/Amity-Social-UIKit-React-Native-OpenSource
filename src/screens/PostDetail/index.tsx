@@ -53,8 +53,6 @@ import { RootState } from '../../redux/store';
 import { ISearchItem } from '../../components/SearchItem';
 import MentionPopup from '../../components/MentionPopup';
 import { IMentionPosition } from '../CreatePost';
-import { SvgXml } from 'react-native-svg';
-import { closeIcon } from '../../svg/svg-xml-list';
 import CloseIcon from '../../svg/CloseIcon';
 
 const PostDetail = () => {

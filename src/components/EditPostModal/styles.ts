@@ -91,6 +91,7 @@ export const useStyles = () => {
       fontSize: 15,
       marginHorizontal: 3,
       color: theme.colors.base,
+      height: 120
       // Additional styles if needed
     },
 

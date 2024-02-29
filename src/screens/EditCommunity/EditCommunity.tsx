@@ -10,14 +10,7 @@ import {
   Pressable,
   FlatList,
 } from 'react-native';
-import { SvgXml } from 'react-native-svg';
-import {
-  arrowOutlined,
-  closeIcon,
-  plusIcon,
-  privateIcon,
-  publicIcon,
-} from '../../svg/svg-xml-list';
+
 import { useStyles } from './styles';
 import ChooseCategoryModal from '../../components/ChooseCategoryModal';
 import { RadioButton } from 'react-native-radio-buttons-group';
@@ -33,6 +26,10 @@ import { updateCommunity } from '../../providers/Social/communities-sdk';
 import { PrivacyState } from '../../enum/privacyState';
 import { useForm, Controller } from 'react-hook-form';
 import CloseIcon from '../../svg/CloseIcon';
+import PrivateIcon from '../../svg/PrivateIcon';
+import PublicIcon from '../../svg/PublicIcon';
+import { PlusIcon } from '../../svg/PlusIcon';
+import ArrowOutlinedIcon from '../../svg/ArrowOutlinedIcon';
 
 const EditCommunity = ({ navigation, route }) => {
   const styles = useStyles();
@@ -279,12 +276,7 @@ const EditCommunity = ({ navigation, route }) => {
               >
                 {categoryName.length > 0 ? categoryName : 'Select Category'}
               </Text>
-              <SvgXml
-                style={styles.arrowIcon}
-                xml={arrowOutlined(theme.colors.base)}
-                width={15}
-                height={15}
-              />
+              <ArrowOutlinedIcon width={15} height={15} color={theme.colors.base} />
             </Pressable>
           </View>
           <View style={styles.radioGroup}>
@@ -293,7 +285,7 @@ const EditCommunity = ({ navigation, route }) => {
               style={styles.listItem}
             >
               <View style={styles.avatar}>
-                <SvgXml width={20} height={20} xml={publicIcon} />
+                <PublicIcon width={20} height={20} />
               </View>
 
               <View style={styles.optionDescription}>
@@ -317,7 +309,8 @@ const EditCommunity = ({ navigation, route }) => {
               style={styles.listItem}
             >
               <View style={styles.avatar}>
-                <SvgXml width={24} height={24} xml={privateIcon()} />
+                <PrivateIcon width={24} height={24} />
+
               </View>
 
               <View style={styles.optionDescription}>
@@ -385,12 +378,7 @@ const EditCommunity = ({ navigation, route }) => {
                   style={styles.addIcon}
                 >
                   <View style={styles.avatar}>
-                    <SvgXml
-                      style={styles.arrowIcon}
-                      xml={plusIcon(theme.colors.base)}
-                      width={24}
-                      height={24}
-                    />
+                    <PlusIcon style={styles.arrowIcon} width={24} height={24} color={theme.colors.base} />
                   </View>
                 </Pressable>
               </View>

@@ -2,8 +2,6 @@ import { Text, TouchableOpacity, View } from 'react-native';
 import React, { FC, memo } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useStyles } from '../styles';
-import { SvgXml } from 'react-native-svg';
-import { closeIcon } from '../../../svg/svg-xml-list';
 import type { MyMD3Theme } from '../../../providers/amity-ui-kit-provider';
 import { useTheme } from 'react-native-paper';
 import CloseIcon from '../../../svg/CloseIcon';

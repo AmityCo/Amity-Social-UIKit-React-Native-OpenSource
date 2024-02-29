@@ -27,7 +27,6 @@ import { getCommunityById } from '../../../providers/Social/communities-sdk';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import useAuth from '../../../hooks/useAuth';
-import EditPostModal from '../../../components/EditPostModal';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../../providers/amity-ui-kit-provider';
 import MediaSection from '../../../components/MediaSection';
@@ -45,7 +44,7 @@ import { LikedIcon } from '../../../svg/LikedIcon';
 import { LikeIcon } from '../../../svg/LikeIcon';
 import CommentIcon from '../../../svg/CommentIcon';
 import { ChevronRightIcon } from '../../../svg/ChevronRightIcon';
-import RadioOffIcon from '../../../svg/RadioOffIcon';
+import EditPostModal from '../../EditPostModal';
 
 export interface IPost {
   postId: string;
@@ -487,14 +486,14 @@ export default function PostList({
         </View>
       </View>
       {renderOptionModal()}
-      {/* {editPostModalVisible && (
+      {editPostModalVisible && (
         <EditPostModal
           visible={editPostModalVisible}
           onClose={closeEditPostModal}
           postDetail={postDetail}
           onFinishEdit={handleOnFinishEdit}
         />
-      )} */}
+      )}
     </View>
   );
 }

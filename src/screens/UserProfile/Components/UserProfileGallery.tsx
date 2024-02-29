@@ -3,11 +3,11 @@ import React, { FC, memo, useCallback, useState } from 'react';
 import { useGallery } from '../../../../src/hooks/useGallery';
 import GalleryTab from './GalleryTab';
 import { TabName } from '../../../enum/tabNameState';
-import { SvgXml } from 'react-native-svg';
-import { photo, playBtn, video } from '../../../svg/svg-xml-list';
 import { useStyles } from '../styles';
 import ImageView from '../../../components/react-native-image-viewing/dist';
 import PlayIcon from '../../../svg/PlayIcon';
+import PhotoIcon from '../../../svg/PhotoIcon';
+import VideoIcon from '../../../svg/VideoIcon';
 
 interface IUserProfileGallery {
   userId: string;
@@ -33,7 +33,7 @@ const UserProfileGallery: FC<IUserProfileGallery> = ({ userId }) => {
           <Image source={{ uri: item.uri }} style={styles.thumbnail} />
           {item.dataType === 'video' && (
             <View style={styles.playButton}>
-              <PlayIcon width={50} height={50}/>
+              <PlayIcon width={50} height={50} />
             </View>
           )}
         </TouchableOpacity>
@@ -44,10 +44,10 @@ const UserProfileGallery: FC<IUserProfileGallery> = ({ userId }) => {
 
   const renderGallery = useCallback(() => {
     if (!data || data?.length === 0) {
-      const icon = tabName === TabName.Photos ? photo() : video();
+      const icon = tabName === TabName.Photos ? <PhotoIcon width={50} height={50} /> : <VideoIcon width={50} height={50} />;
       return (
         <View style={styles.emptyContentContainer}>
-          <SvgXml xml={icon} width={50} height={50} />
+          {icon}
           <Text style={styles.emptyContentText}>No {tabName} yet</Text>
         </View>
       );
@@ -79,14 +79,14 @@ const UserProfileGallery: FC<IUserProfileGallery> = ({ userId }) => {
         curerntTab={tabName}
       />
       {renderGallery()}
-      {/* <ImageView
+      <ImageView
         images={data}
         imageIndex={imageIndex}
         visible={showFullImage}
         onRequestClose={() => setShowFullImage(false)}
         isVideoButton={data[imageIndex]?.dataType === 'video'}
         videoPosts={videos}
-      /> */}
+      />
     </View>
   );
 };

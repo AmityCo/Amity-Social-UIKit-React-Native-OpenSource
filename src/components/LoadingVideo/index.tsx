@@ -8,7 +8,7 @@ import {
 } from '../../providers/file-provider';
 import { createStyles } from './styles';
 import * as VideoThumbnails from 'expo-video-thumbnails';
-import Video from 'react-native-video';
+//  import { Video } from 'expo-av';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTheme } from 'react-native-paper';
@@ -53,7 +53,7 @@ const LoadingVideo = ({
   const styles = createStyles();
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [playingUri, setPlayingUri] = useState<string>('');
-  const [isPause, setIsPause] = useState<boolean>(true);
+  // const [isPause, setIsPause] = useState<boolean>(true);
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const videoPlayerRef = useRef(null);
 
@@ -65,10 +65,10 @@ const LoadingVideo = ({
       navigation.navigate('VideoPlayer', { source: source });
     }
   };
-  const onClosePlayer = () => {
-    setIsPlaying(false);
-    setPlayingUri('');
-  };
+  // const onClosePlayer = () => {
+  //   setIsPlaying(false);
+  //   setPlayingUri('');
+  // };
 
   useEffect(() => {
     if (videoPlayerRef && isPlaying) {
@@ -137,7 +137,7 @@ const LoadingVideo = ({
   }, [fileId, isUploaded, source]);
 
   const handleOnPlay = () => {
-    setIsPause(false);
+    // setIsPause(false);
     playVideoFullScreen(source);
     onPlay && onPlay(source);
   };
@@ -161,7 +161,7 @@ const LoadingVideo = ({
         <View style={styles.image} />
       )}
 
-      {source ? (
+      {/* {source ? (
         <Video
           style={styles.thumbnail}
           source={{ uri: playingUri }}
@@ -171,7 +171,7 @@ const LoadingVideo = ({
         />
       ) : (
         <View style={styles.image} />
-      )}
+      )} */}
 
       {loading && (
         <View style={styles.overlay}>

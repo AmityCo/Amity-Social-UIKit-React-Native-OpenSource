@@ -3,18 +3,15 @@ import { View, Text, TouchableOpacity, SectionList } from 'react-native';
 import { UserRepository, createReport } from '@amityco/ts-sdk-react-native';
 import CloseButton from '../../components/BackButton';
 import { useStyles } from './styles';
-import {
-  arrowOutlined,
-  blockOrUnblock,
-  editIcon,
-  report,
-  unfollow,
-} from '../../svg/svg-xml-list';
-import { SvgXml } from 'react-native-svg';
 import { LoadingOverlay } from '../../components/LoadingOverlay';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../../routes/RouteParamList';
+import ReportIcon from '../../svg/ReportIcon';
+import BlockOrUnblockIcon from '../../svg/BlockOrUnBlockIcon';
+import ArrowOutlinedIcon from '../../svg/ArrowOutlinedIcon';
+import EditIcon from '../../svg/EditIcon';
+import UnfollowIcon from '../../svg/UnfollowIcon';
 
 export default function UserProfileSetting({
   navigation,
@@ -78,13 +75,13 @@ export default function UserProfileSetting({
         data: [
           {
             type: 'manage',
-            leftIcon: report,
+            leftIcon: <ReportIcon width={20} height={20} />,
             label: 'Report user',
             callBack: handleReportUserPress,
           },
           {
             type: 'manage',
-            leftIcon: blockOrUnblock,
+            leftIcon: <BlockOrUnblockIcon width={20} height={20} />,
             label: isBlocked ? 'Unblock user' : 'Block user',
             callBack: isBlocked ? handleUnblockUser : handleBlockUser,
           },
@@ -94,7 +91,7 @@ export default function UserProfileSetting({
         userSettingData.map((setting) => {
           setting.data.unshift({
             type: 'manage',
-            leftIcon: unfollow,
+            leftIcon: <UnfollowIcon/>,
             label: 'Unfollow',
             callBack: handleUnfollowPress,
           });
@@ -109,8 +106,8 @@ export default function UserProfileSetting({
       data: [
         {
           label: 'Edit Profile',
-          leftIcon: editIcon,
-          rightIcon: arrowOutlined,
+          leftIcon: <EditIcon />,
+          rightIcon: <ArrowOutlinedIcon />,
           callBack: onProfileEditPress,
         },
       ],
@@ -136,11 +133,12 @@ export default function UserProfileSetting({
           onPress={item.callBack}
         >
           <View style={styles.iconContainer}>
-            <SvgXml xml={item.leftIcon()} width="20" height="20" />
+            {item.leftIcon}
           </View>
           <Text style={styles.rowText}>{item.label}</Text>
           {item.rightIcon && (
-            <SvgXml xml={item.rightIcon()} width="20" height="20" />
+            item.rightIcon
+
           )}
         </TouchableOpacity>
       );

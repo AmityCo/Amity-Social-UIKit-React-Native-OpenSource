@@ -9,9 +9,9 @@ import {
   Alert,
   ActivityIndicator,
   ViewStyle,
+  Pressable,
 } from 'react-native';
-import { SvgXml } from 'react-native-svg';
-import { circleCloseIcon, plusIcon } from '../../svg/svg-xml-list';
+
 import { useStyles } from './styles';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import { useTheme } from 'react-native-paper';
@@ -22,6 +22,8 @@ import { checkCommunityPermission } from '../../providers/Social/communities-sdk
 import useAuth from '../../hooks/useAuth';
 import MentionInput from '../../components/MentionInput/MentionInput';
 import { ISearchItem } from '../../components/SearchItem';
+import { PlusIcon } from '../../svg/PlusIcon';
+import CircleCloseIcon from '../../svg/CircleCloseIcon';
 
 const CreatePoll = ({ navigation, route }) => {
   const theme = useTheme() as MyMD3Theme;
@@ -234,12 +236,9 @@ const CreatePoll = ({ navigation, route }) => {
                       style={styles.fillSpace}
                       onChangeText={(text) => onChangeOptionText(text, index)}
                     />
-                    <SvgXml
-                      xml={circleCloseIcon}
-                      width="20"
-                      height="20"
-                      onPress={() => onPressRemoveOption(index)}
-                    />
+                    <Pressable  onPress={() => onPressRemoveOption(index)}>
+                      <CircleCloseIcon width={20} height={20} />
+                    </Pressable>
                   </View>
                 </View>
                 {onReachMaxChar && (
@@ -255,11 +254,7 @@ const CreatePoll = ({ navigation, route }) => {
               style={styles.addOptionBtn}
               onPress={onPressAddOption}
             >
-              <SvgXml
-                xml={plusIcon(theme.colors.base)}
-                width="20"
-                height="20"
-              />
+              <PlusIcon width={20} height={20} color={theme.colors.base} />
               <Text style={styles.addOptionText}>Add option</Text>
             </TouchableOpacity>
           )}

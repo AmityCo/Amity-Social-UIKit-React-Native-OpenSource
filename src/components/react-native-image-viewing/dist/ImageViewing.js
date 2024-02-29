@@ -17,13 +17,14 @@ import {
   Platform,
 } from 'react-native';
 import PlayIcon from '../../../svg/PlayIcon'
-import ImageItem from './components/ImageItem/ImageItem';
+import ImageItem from './components/ImageItem/ImageItem.ios';
 import ImageDefaultHeader from './components/ImageDefaultHeader';
 import StatusBarManager from './components/StatusBarManager';
 import useAnimatedComponents from './hooks/useAnimatedComponents';
 import useImageIndexChange from './hooks/useImageIndexChange';
 import useRequestClose from './hooks/useRequestClose';
-import Video from 'react-native-video';
+// import Video from 'react-native-video';
+ import { Video, ResizeMode } from 'expo-av';
 import useAuth from '../../../hooks/useAuth';
 import { useNavigation } from '@react-navigation/native';
 

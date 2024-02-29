@@ -4,6 +4,7 @@ import { useStyles } from './styles';
 import RoundCheckbox from '../RoundCheckbox/index';
 import type { UserInterface } from '../../types/user.interface';
 import useAuth from '../../hooks/useAuth';
+import { ThreeDotsIcon } from '../../svg/ThreeDotsIcon';
 
 export default function UserItem({
   user,
@@ -50,8 +51,8 @@ export default function UserItem({
           source={
             user.avatarFileId
               ? {
-                  uri: user.avatarFileId && avatarFileURL(user.avatarFileId!),
-                }
+                uri: user.avatarFileId && avatarFileURL(user.avatarFileId!),
+              }
               : require('../../../assets/icon/Placeholder.png')
           }
         />
@@ -67,10 +68,8 @@ export default function UserItem({
             }
           }}
         >
-          <Image
-            source={require('../../../assets/icon/threeDot.png')}
-            style={styles.dotIcon}
-          />
+
+          <ThreeDotsIcon style={styles.dotIcon} />
         </TouchableOpacity>
       )}
     </TouchableOpacity>

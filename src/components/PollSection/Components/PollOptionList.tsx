@@ -9,7 +9,6 @@ import React, {
 } from 'react';
 import { useStyles } from '../style';
 
-import { radioOff, radioOn } from '../../../svg/svg-xml-list';
 import PollBar from './PollBar';
 import RadioOnIcon from '../../../svg/RadioOnIcon';
 import { useTheme } from 'react-native-paper';

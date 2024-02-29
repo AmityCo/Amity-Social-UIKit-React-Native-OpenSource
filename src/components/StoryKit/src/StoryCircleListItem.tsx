@@ -7,16 +7,12 @@ import { IUserStory, StoryCircleListItemProps } from './interfaces';
 
 import { useTheme } from 'react-native-paper';
 import { MyMD3Theme } from '../../../providers/amity-ui-kit-provider';
-import { SvgXml } from 'react-native-svg';
-import {
-  communityIcon,
-  officialIcon,
-  privateIcon,
-  storyRing,
-} from '../../../svg/svg-xml-list';
 import useConfig from '../../../hooks/useConfig';
 import { ElementID } from '../../../util/enumUIKitID';
 import CommunityIcon from '../../../svg/CommunityIcon';
+import OfficialIcon from '../../../svg/OfficialIcon';
+import PrivateIcon from '../../../svg/PrivateIcon';
+import StoryRing from '../../../svg/StoryRing';
 
 const StoryCircleListItem = ({
   item,
@@ -80,41 +76,32 @@ const StoryCircleListItem = ({
               style={isCommunityStory ? styles.communityAvatar : styles.avatar}
             />
           ) : (
-   
+
             <CommunityIcon
-            style={isCommunityStory ? styles.communityAvatar : styles.avatar}
-            width={isCommunityStory ? 40 : 56}
-            height={isCommunityStory ? 40 : 56}
+              style={isCommunityStory ? styles.communityAvatar : styles.avatar}
+              width={isCommunityStory ? 40 : 56}
+              height={isCommunityStory ? 40 : 56}
             />
           )}
-          <SvgXml
-            style={styles.storyRing}
+          <StoryRing
+            colorOne={item?.stories?.length > 0 ?
+              storyRingColor[0] : '#EBECEF'}
+            colorTwo={item?.stories?.length > 0
+              ? storyRingColor.length > 1
+                ? storyRingColor[1]
+                : storyRingColor[0]
+              : '#EBECEF'}
             width={isCommunityStory ? 48 : 64}
             height={isCommunityStory ? 48 : 64}
-            xml={storyRing(
-              item?.stories?.length > 0 ? storyRingColor[0] : '#EBECEF',
-              item?.stories?.length > 0
-                ? storyRingColor.length > 1
-                  ? storyRingColor[1]
-                  : storyRingColor[0]
-                : '#EBECEF'
-            )}
           />
           {item.isOfficial && !isCommunityStory && (
-            <SvgXml
-              style={styles.officialIcon}
-              xml={officialIcon(theme.colors.primary)}
-            />
+            <OfficialIcon color={theme.colors.primary} style={styles.officialIcon} />
           )}
         </View>
 
         <View style={styles.textRow}>
           {!item.isPublic && (
-            <SvgXml
-              width={17}
-              height={17}
-              xml={privateIcon(theme.colors.base)}
-            />
+            <PrivateIcon width={17} height={17} color={theme.colors.base} />
           )}
           <Text numberOfLines={1} ellipsizeMode="tail" style={styles.itemText}>
             {isCommunityStory ? 'Story' : item.user_name}

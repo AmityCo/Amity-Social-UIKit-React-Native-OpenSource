@@ -21,8 +21,6 @@ import type { FeedRefType } from '../CommunityHome';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import useAuth from '../../hooks/useAuth';
-import { SvgXml } from 'react-native-svg';
-import { blockOrUnblock, editIcon } from '../../svg/svg-xml-list';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import { useTheme } from 'react-native-paper';
 import FloatingButton from '../../components/FloatingButton';
@@ -31,6 +29,9 @@ import { useDispatch } from 'react-redux';
 import uiSlice from '../../redux/slices/uiSlice';
 import { PostTargetType } from '../../enum/postTargetType';
 import UserProfileGallery from './Components/UserProfileGallery';
+import EditIcon from '../../svg/EditIcon';
+import BlockOrUnblockIcon from '../../svg/BlockOrUnBlockIcon';
+import { ThreeDotsIcon } from '../../svg/ThreeDotsIcon';
 
 export default function UserProfile({ route }: any) {
   const theme = useTheme() as MyMD3Theme;
@@ -84,10 +85,8 @@ export default function UserProfile({ route }: any) {
             });
           }}
         >
-          <Image
-            source={require('../../../assets/icon/threeDot.png')}
-            style={styles.dotIcon}
-          />
+          <ThreeDotsIcon style={styles.dotIcon} />
+
         </TouchableOpacity>
       ),
     });
@@ -142,7 +141,7 @@ export default function UserProfile({ route }: any) {
         style={styles.editProfileButton}
         onPress={onEditProfileTap}
       >
-        <SvgXml width={24} height={20} xml={editIcon(theme.colors.base)} />
+        <EditIcon width={24} height={20} color={theme.colors.base} />
         <Text style={styles.editProfileText}>Edit Profile</Text>
       </TouchableOpacity>
     );
@@ -164,11 +163,7 @@ export default function UserProfile({ route }: any) {
         style={styles.editProfileButton}
         onPress={onUnblockUser}
       >
-        <SvgXml
-          width={24}
-          height={20}
-          xml={blockOrUnblock(theme.colors.base)}
-        />
+        <BlockOrUnblockIcon width={24} height={20} color={theme.colors.base} />
         <Text style={styles.editProfileText}>Unblock user</Text>
       </TouchableOpacity>
     );
@@ -230,10 +225,10 @@ export default function UserProfile({ route }: any) {
               source={
                 user?.avatarFileId || user?.avatarCustomUrl
                   ? {
-                      uri: user.avatarFileId
-                        ? avatarFileURL(user.avatarFileId)
-                        : user.avatarCustomUrl,
-                    }
+                    uri: user.avatarFileId
+                      ? avatarFileURL(user.avatarFileId)
+                      : user.avatarCustomUrl,
+                  }
                   : require('../../../assets/icon/Placeholder.png')
               }
             />

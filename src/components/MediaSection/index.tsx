@@ -250,7 +250,7 @@ const MediaSection: React.FC<IMediaSection> = ({ childrenPosts }) => {
       ) : (
         renderMediaPosts()
       )}
-      {/* <ImageView
+      <ImageView
         images={
           imagePostsFullSize.length > 0
             ? imagePostsFullSize
@@ -261,7 +261,7 @@ const MediaSection: React.FC<IMediaSection> = ({ childrenPosts }) => {
         onRequestClose={() => setIsVisibleFullImage(false)}
         isVideoButton={videoPosts.length > 0 ? true : false}
         videoPosts={videoPosts}
-      /> */}
+      />
     </View>
   );
 };

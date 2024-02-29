@@ -27,7 +27,7 @@ interface CustomColors {
   baseShade2?: string;
   baseShade3?: string;
   screenBackground?: string;
-  storiesRing: { colorOne: string; colorTwo: string };
+  storiesRing?: { colorOne?: string; colorTwo?: string };
 }
 export interface MyMD3Theme extends MD3Theme {
   colors: MD3Theme['colors'] & CustomColors;
