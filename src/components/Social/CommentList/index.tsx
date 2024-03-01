@@ -478,6 +478,7 @@ const CommentList = ({
               commentDetail={
                 previewReplyCommentList[previewReplyCommentList.length - 1]
               }
+              onDelete={onDelete}
             />
           )}
           {isOpenReply && (
@@ -487,6 +488,7 @@ const CommentList = ({
                 <ReplyCommentList
                   commentId={item.commentId}
                   commentDetail={item}
+                  onDelete={onDelete}
                 />
               )}
               keyExtractor={(item, index) => item.commentId + index}

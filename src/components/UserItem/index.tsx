@@ -43,7 +43,11 @@ export default function UserItem({
   };
 
   return (
-    <TouchableOpacity style={styles.listItem} onPress={handleToggle}>
+    <TouchableOpacity
+      style={styles.listItem}
+      disabled={!onPress}
+      onPress={handleToggle}
+    >
       <View style={styles.leftContainer}>
         <Image
           style={styles.avatar}
@@ -61,6 +65,7 @@ export default function UserItem({
         <RoundCheckbox isChecked={isCheckmark ?? false} />
       ) : (
         <TouchableOpacity
+          style={styles.threeDotsContainerStyle}
           onPress={() => {
             if (onThreeDotTap) {
               onThreeDotTap(user);

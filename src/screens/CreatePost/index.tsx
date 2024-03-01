@@ -127,40 +127,34 @@ const CreatePost = ({ route }: any) => {
         mentionUserIds.length > 0 ? mentionUserIds : [],
         mentionsPosition
       );
-      if (targetType === 'community') {
-        if (
-          (community?.postSetting === 'ADMIN_REVIEW_POST_REQUIRED' ||
-            (community as Record<string, any>).needApprovalOnPostCreation) &&
-          response
-        ) {
-          const res = await checkCommunityPermission(
-            community.communityId,
-            client as Amity.Client,
-            apiRegion
-          );
-
-          if (
-            res.permissions.length > 0 &&
-            res.permissions.includes('Post/ManagePosts')
-          ) {
-            goBack();
-          } else {
-            Alert.alert(
-              'Post submitted',
-              'Your post has been submitted to the pending list. It will be reviewed by community moderator',
-              [
-                {
-                  text: 'OK',
-                  onPress: () => goBack(),
-                },
-              ],
-              { cancelable: false }
-            );
-          }
-        }
-      } else {
-        goBack();
-      }
+      if (targetType !== 'community') return goBack();
+      if (
+        !response ||
+        community.postSetting !== 'ADMIN_REVIEW_POST_REQUIRED' ||
+        !(community as Record<string, any>).needApprovalOnPostCreation
+      )
+        return goBack();
+      const res = await checkCommunityPermission(
+        community.communityId,
+        client as Amity.Client,
+        apiRegion
+      );
+      if (
+        res.permissions.length > 0 &&
+        res.permissions.includes('Post/ManagePosts')
+      )
+        return goBack();
+      Alert.alert(
+        'Post submitted',
+        'Your post has been submitted to the pending list. It will be reviewed by community moderator',
+        [
+          {
+            text: 'OK',
+            onPress: () => goBack(),
+          },
+        ],
+        { cancelable: false }
+      );
     }
   };
 

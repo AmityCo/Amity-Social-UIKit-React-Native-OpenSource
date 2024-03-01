@@ -1,11 +1,14 @@
 import { Dimensions, StyleSheet } from 'react-native';
 
+const { height, width } = Dimensions.get('window');
+
 export const createStyles = () => {
   return StyleSheet.create({
     container: {
       flex: 1,
-      maxWidth: Dimensions.get('window').height / 4,
-      height: Dimensions.get('window').height / 3,
+      width: '100%',
+      minWidth: width * 0.25,
+      height: height / 6,
       margin: 3,
     },
     image: {
@@ -18,13 +21,13 @@ export const createStyles = () => {
     },
     thumbnail: {
       flex: 1,
-      width: '100%',
-      height: '100%',
+      width: width,
+      height: height,
       borderRadius: 5,
     },
     overlay: {
       position: 'absolute',
-      top: '27%',
+      top: '50%',
       left: '50%',
       transform: [{ translateX: -25 }, { translateY: -25 }],
     },
@@ -50,7 +53,7 @@ export const createStyles = () => {
       height: 100,
       borderRadius: 50,
       position: 'absolute',
-      top: '27%',
+      top: '50%',
       left: '50%',
       transform: [{ translateX: -25 }, { translateY: -25 }],
       zIndex: 1,

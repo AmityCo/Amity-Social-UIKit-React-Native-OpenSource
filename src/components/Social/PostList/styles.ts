@@ -17,6 +17,13 @@ export const useStyles = () => {
       flexDirection: 'row',
       justifyContent: 'space-between',
     },
+    communityNameContainer: {
+      flex: 1,
+      flexDirection: 'row',
+    },
+    fillSpace: {
+      flex: 1,
+    },
     headerText: {
       fontWeight: '600',
       fontSize: 15,
@@ -25,7 +32,7 @@ export const useStyles = () => {
     user: {
       paddingVertical: 8,
       flexDirection: 'row',
-      maxWidth: 300,
+      flex: 1,
     },
 
     headerTextTime: {
@@ -99,10 +106,11 @@ export const useStyles = () => {
     },
     headerRow: {
       flexDirection: 'row',
-      alignItems: 'center',
+      flex: 1,
     },
     arrow: {
       marginHorizontal: 4,
+      marginTop: 8,
     },
     imageLargePost: {
       height: 350,
