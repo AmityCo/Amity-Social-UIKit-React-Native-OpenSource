@@ -13,6 +13,7 @@ export interface ISearchItem {
   displayName: string;
   categoryIds?: string[];
   avatarFileId?: string;
+  id?: string;
 }
 export default function SearchItem({
   target,

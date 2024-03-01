@@ -23,7 +23,7 @@ export const useGallery = (userId: string) => {
       },
       async ({ data, error, onNextPage, hasNextPage }) => {
         if (error) return null;
-        hasNextPage ? setGetNextPage(onNextPage) : setGetNextPage(null);
+        hasNextPage ? setGetNextPage(() => onNextPage) : setGetNextPage(null);
         const childredIds = data.flatMap((item) => item.children);
         const { data: postData } = await PostRepository.getPostByIds(
           childredIds
