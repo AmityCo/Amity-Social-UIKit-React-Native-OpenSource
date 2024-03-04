@@ -33,11 +33,11 @@ import { createPostToFeed } from '../../providers/Social/feed-sdk';
 import LoadingVideo from '../../components/LoadingVideo';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import { useTheme } from 'react-native-paper';
-import { ISearchItem } from '../../components/SearchItem';
 import { CommunityRepository } from '@amityco/ts-sdk-react-native';
 import { checkCommunityPermission } from '../../providers/Social/communities-sdk';
 import useAuth from '../../hooks/useAuth';
 import MentionInput from '../../components/MentionInput/MentionInput';
+import { TSearchItem } from '../../hooks/useSearch';
 
 export interface IDisplayImage {
   url: string;
@@ -64,7 +64,7 @@ const CreatePost = ({ route }: any) => {
   const [displayImages, setDisplayImages] = useState<IDisplayImage[]>([]);
   const [displayVideos, setDisplayVideos] = useState<IDisplayImage[]>([]);
   const [isScrollEnabled, setIsScrollEnabled] = useState(true);
-  const [mentionNames, setMentionNames] = useState<ISearchItem[]>([]);
+  const [mentionNames, setMentionNames] = useState<TSearchItem[]>([]);
   const [mentionsPosition, setMentionsPosition] = useState<IMentionPosition[]>(
     []
   );
@@ -88,7 +88,7 @@ const CreatePost = ({ route }: any) => {
     navigation.goBack();
   };
   const handleCreatePost = async () => {
-    const mentionUserIds: string[] = mentionNames.map((item) => item.id);
+    const mentionUserIds = mentionNames.map((item) => item.id) as string[];
     if (displayImages.length > 0) {
       const fileIdArr: (string | undefined)[] = displayImages.map(
         (item) => item.fileId
@@ -130,7 +130,7 @@ const CreatePost = ({ route }: any) => {
       if (targetType !== 'community') return goBack();
       if (
         !response ||
-        community.postSetting !== 'ADMIN_REVIEW_POST_REQUIRED' ||
+        community?.postSetting !== 'ADMIN_REVIEW_POST_REQUIRED' ||
         !(community as Record<string, any>).needApprovalOnPostCreation
       )
         return goBack();
@@ -400,10 +400,13 @@ const CreatePost = ({ route }: any) => {
       </SafeAreaView>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.select({ ios: 100, android: 80 })}
         style={styles.AllInputWrap}
       >
-        <ScrollView style={styles.container} scrollEnabled={isScrollEnabled}>
+        <ScrollView
+          style={styles.container}
+          scrollEnabled={isScrollEnabled}
+          keyboardShouldPersistTaps="handled"
+        >
           <MentionInput
             onFocus={() => {
               setIsScrollEnabled(false);
