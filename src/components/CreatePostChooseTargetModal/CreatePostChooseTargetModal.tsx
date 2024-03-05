@@ -18,6 +18,7 @@ import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import CloseIcon from '../../svg/CloseIcon';
 import { AvatarIcon } from '../../svg/AvatarIcon';
+import CommunityIcon from '../../svg/CommunityIcon';
 interface IModal {
   visible: boolean;
   userId?: string;
@@ -50,7 +51,7 @@ const CreatePostChooseTargetModal = ({
       formattedUserObject = {
         userId: userObject.data.userId,
         displayName: userObject.data.displayName,
-        avatarFileId: userObject.data.avatarFileId,
+        avatarFileId: userObject.data?.avatarFileId,
       };
       setMyUser(formattedUserObject);
     }
@@ -94,15 +95,17 @@ const CreatePostChooseTargetModal = ({
         onPress={() => onSelectFeed(userId as string, 'My Timeline', 'user')}
         style={styles.rowContainerMyTimeLine}
       >
-        <Image
-          style={styles.avatar}
-          source={
-            {
-              uri: myUser.avatarFileId && avatarFileURL(myUser.avatarFileId!),
+        {myUser?.avatarFileId ?
+          <Image
+            style={styles.avatar}
+            source={
+              {
+                uri: myUser?.avatarFileId && avatarFileURL(myUser?.avatarFileId),
+              }
             }
+          /> : <View style={styles.avatar}> <AvatarIcon /></View>
+        }
 
-          }
-        /> : <View style={styles.avatar}> <AvatarIcon /></View>
         <Text style={styles.communityText}>My Timeline</Text>
       </TouchableOpacity>
     );
@@ -154,15 +157,18 @@ const CreatePostChooseTargetModal = ({
         }
         style={styles.rowContainer}
       >
-        <Image
-          style={styles.avatar}
-          source={
-            {
-              uri: item.avatarFileId && avatarFileURL(item.avatarFileId!),
-            }
+        {item?.avatarFileId ?
+          <Image
+            style={styles.avatar}
+            source={
+              {
+                uri: item?.avatarFileId && avatarFileURL(item?.avatarFileId),
+              }
 
-          }
-        /> : <View style={styles.avatar}> <AvatarIcon /></View>
+            }
+          /> : <View style={styles.avatar}> <CommunityIcon /></View>
+        }
+
         <Text style={styles.communityText}>{item.displayName}</Text>
       </TouchableOpacity>
     );

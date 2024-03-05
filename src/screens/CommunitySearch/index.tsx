@@ -7,7 +7,6 @@ import {
   LogBox,
   ScrollView,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useStyles } from './styles';
 import { useNavigation } from '@react-navigation/native';
 import CustomTab from '../../components/CustomTab';
@@ -144,7 +143,7 @@ export default function CommunitySearch() {
     }
   };
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.headerWrap}>
         <View style={styles.inputWrap}>
           <TouchableOpacity onPress={() => searchAccounts(searchTerm)}>
@@ -173,6 +172,6 @@ export default function CommunitySearch() {
           <SearchItem key={index} target={item} />
         ))}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }

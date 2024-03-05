@@ -28,7 +28,7 @@ export default function CommunityMemberDetail({ navigation, route }: any) {
             setAddMembersModal(true);
           }}
         >
-          <PlusIcon style={styles.dotIcon}/>
+          <PlusIcon style={styles.plusIcon}/>
         </TouchableOpacity>
       ),
     });

@@ -23,6 +23,9 @@ export const useStyles = () => {
       fontSize: 12,
       color: theme.colors.baseShade3,
     },
+    voteCount: {
+      color: theme.colors.baseShade1
+    },
     pollOptionContainer: {
       borderWidth: 1,
       borderColor: theme.colors.border,

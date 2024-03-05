@@ -229,20 +229,23 @@ export const EditProfile: React.FC<EditProfileProps> = ({
       />
       <View style={styles.avatarContainer}>
         <TouchableOpacity onPress={handleAvatarPress}>
-        <Image
-          style={styles.avatar}
-          source={
-            {
-              uri: imageUri && imageUri,
-            }
+          {
+            imageUri ? <Image
+              style={styles.avatar}
+              source={
+                {
+                  uri: imageUri && imageUri,
+                }
 
+              }
+            /> : <View style={styles.avatar}> <AvatarIcon /></View>
           }
-        /> : <View style={styles.avatar}> <AvatarIcon /></View>
+
         </TouchableOpacity>
         <View style={styles.cameraIconContainer}>
           <TouchableOpacity onPress={handleAvatarPress}>
             <View style={styles.cameraIcon}>
-              <CameraIcon  style={styles.imageIcon}/>
+              <CameraIcon style={styles.imageIcon} />
             </View>
           </TouchableOpacity>
         </View>

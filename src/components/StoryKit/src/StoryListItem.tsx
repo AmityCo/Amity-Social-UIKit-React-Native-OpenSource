@@ -11,7 +11,6 @@ import {
   ActivityIndicator,
   View,
   Platform,
-  SafeAreaView,
 } from 'react-native';
 import GestureRecognizer from 'react-native-swipe-gestures';
 
@@ -220,7 +219,7 @@ export const StoryListItem = ({
       config={config}
       style={[styles.container, storyContainerStyle]}
     >
-      <SafeAreaView>
+      <View>
         <View style={styles.backgroundContainer}>
           {content[current].story_type === 'video' ? (
             <Video
@@ -248,7 +247,7 @@ export const StoryListItem = ({
             </View>
           )}
         </View>
-      </SafeAreaView>
+      </View>
       <View style={styles.flexCol}>
         <View
           style={[styles.animationBarContainer, animationBarContainerStyle]}

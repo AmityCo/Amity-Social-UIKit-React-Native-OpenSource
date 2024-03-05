@@ -28,6 +28,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { SearchIcon } from '../../svg/SearchIcon';
 import { PlusIcon } from '../../svg/PlusIcon';
 import CircleCloseIcon from '../../svg/CircleCloseIcon';
+import CloseIcon from '../../svg/CloseIcon';
 
 export default function AllMyCommunity() {
   const theme = useTheme() as MyMD3Theme;
@@ -98,7 +99,7 @@ export default function AllMyCommunity() {
 
   const headerRight = useCallback(
     () => (
-      <TouchableOpacity onPress={onClickCreateCommunity}>
+      <TouchableOpacity style={styles.btnWrap} onPress={onClickCreateCommunity}>
         <PlusIcon color={theme.colors.base} width={25} height={25}/>
       </TouchableOpacity>
     ),
@@ -107,8 +108,19 @@ export default function AllMyCommunity() {
 
   useEffect(() => {
     navigation.setOptions({
+      headerLeft: () => (
+        <TouchableOpacity
+          onPress={() => {
+            navigation.goBack();
+          }}
+          style={styles.btnWrap}
+        >
+          <CloseIcon  color={theme.colors.base} />
+        </TouchableOpacity>
+      ),
       headerRight: () => headerRight(),
       headerTitle: 'My Community',
+
     });
     return () => {
       debouncedResults.cancel();

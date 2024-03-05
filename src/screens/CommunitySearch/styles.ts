@@ -19,7 +19,7 @@ export const useStyles = () => {
       marginHorizontal: 16,
       backgroundColor: theme.colors.secondary,
       paddingHorizontal: 10,
-      paddingVertical: Platform.OS === 'ios' ? 10 : 0,
+      paddingVertical: Platform.OS === 'android' ? 0 : 8,
       borderRadius: 4,
       flexDirection: 'row',
       justifyContent: 'space-between',

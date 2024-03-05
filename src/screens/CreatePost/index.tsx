@@ -15,7 +15,6 @@ import {
   Alert,
 } from 'react-native';
 
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useStyles } from './styles';
 
 import * as ImagePicker from 'expo-image-picker';
@@ -477,7 +476,7 @@ const CreatePost = ({ route }: any) => {
 
   return (
     <View style={styles.AllInputWrap}>
-      <SafeAreaView style={styles.barContainer} edges={['top']}>
+      <View style={styles.barContainer}>
         <View style={styles.header}>
           <TouchableOpacity style={styles.closeButton} onPress={goBack}>
 
@@ -509,7 +508,7 @@ const CreatePost = ({ route }: any) => {
             </Text>
           </TouchableOpacity>
         </View>
-      </SafeAreaView>
+      </View>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.select({ ios: 100, android: 80 })}

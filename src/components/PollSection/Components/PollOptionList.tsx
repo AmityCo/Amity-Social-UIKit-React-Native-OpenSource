@@ -129,7 +129,7 @@ const PollOptionList: FC<IPollOptionList> = ({
             {(isPollClosed || isAlreadyVoted) && (
               <>
                 <PollBar myVote={option.isVotedByUser} length={length} />
-                <Text>{option.voteCount} votes</Text>
+                <Text style={styles.voteCount}>{option.voteCount} votes</Text>
               </>
             )}
           </TouchableOpacity>

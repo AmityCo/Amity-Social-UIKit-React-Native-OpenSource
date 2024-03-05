@@ -23,7 +23,7 @@ export const useStyles = () => {
       backgroundColor: theme.colors.secondary,
       color: theme.colors.base,
       paddingHorizontal: 10,
-      paddingVertical: Platform.OS === 'ios' ? 10 : 0,
+      paddingVertical: Platform.OS === 'android' ? 0 : 8,
       borderRadius: 4,
       flexDirection: 'row',
       justifyContent: 'space-between',
@@ -47,6 +47,8 @@ export const useStyles = () => {
     },
     btnWrap: {
       padding: 10,
+      marginHorizontal: 8,
+
     },
   });
 

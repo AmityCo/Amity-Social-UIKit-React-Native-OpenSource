@@ -82,11 +82,11 @@ export default function Home() {
           <FloatingButton onPress={openModal} />
         </View>
       ) : activeTab === TabName.Explore ? (
-        <View>
+        <View style={{ flex: 1 }}>
           <Explore />
         </View>
       ) : (
-        <View>
+        <View style={{ flex: 1 }}>
           <AllMyCommunity />
         </View>
       )}

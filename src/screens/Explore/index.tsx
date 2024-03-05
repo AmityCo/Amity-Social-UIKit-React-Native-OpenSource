@@ -12,8 +12,8 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import useAuth from '../../hooks/useAuth';
 import CommunityIcon from '../../svg/CommunityIcon';
-import { AvatarIcon } from '../../svg/AvatarIcon';
 import ChevronLeftIcon from '../../svg/ChevronLeftcon';
+import CategoryIcon from '../../svg/CategoryIcon';
 
 export default function Explore() {
   const styles = useStyles();
@@ -85,16 +85,19 @@ export default function Explore() {
                 handleCategoryClick(category.categoryId, category.name)
               }
             >
+              {
+                category?.avatarFileId ?
+                  <Image
+                    style={styles.avatar}
+                    source={
+                      {
+                        uri: category.avatarFileId && avatarFileURL(category.avatarFileId!),
+                      }
 
-              <Image
-                style={styles.avatar}
-                source={
-                  {
-                    uri: category.avatarFileId && avatarFileURL(category.avatarFileId!),
-                  }
+                    }
+                  /> : <View style={styles.avatar}> <CategoryIcon /></View>
+              }
 
-                }
-              /> : <View style={styles.avatar}> <AvatarIcon /></View>
 
               <Text style={styles.columnText}>{category.name}</Text>
             </TouchableOpacity>

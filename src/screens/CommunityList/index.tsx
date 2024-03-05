@@ -12,7 +12,7 @@ import {
 import { useStyles } from './styles';
 import CloseButton from '../../components/BackButton';
 import useAuth from '../../hooks/useAuth';
-import { AvatarIcon } from '../../svg/AvatarIcon';
+import CommunityIcon from '../../svg/CommunityIcon';
 
 export default function CommunityList({ navigation, route }: any) {
   const { apiRegion } = useAuth();
@@ -87,15 +87,19 @@ export default function CommunityList({ navigation, route }: any) {
           })
         }
       >
-        <Image
-          style={styles.avatar}
-          source={
-            {
-              uri: item.avatarFileId && avatarFileURL(item.avatarFileId!),
-            }
+        {
+          item.avatarFileId ?
+            <Image
+              style={styles.avatar}
+              source={
+                {
+                  uri: item.avatarFileId && avatarFileURL(item.avatarFileId!),
+                }
 
-          }
-        /> : <View style={styles.avatar}> <AvatarIcon /></View>
+              }
+            /> : <View style={styles.avatar}> <CommunityIcon /></View>
+        }
+
         <Text style={styles.categoryText}>{item.displayName}</Text>
       </TouchableOpacity>
     );

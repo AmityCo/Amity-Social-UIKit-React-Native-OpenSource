@@ -55,6 +55,11 @@ export const useStyles = () => {
       width: '100%',
       height: '100%',
     },
+    emptyImage: {
+      width: '100%',
+      height: '100%',
+      backgroundColor: '#898E9E'
+    },
     darkOverlay: {
       ...StyleSheet.absoluteFillObject,
       backgroundColor: 'rgba(0, 0, 0, 0.0)', // Adjust the alpha value for darkness
@@ -118,7 +123,7 @@ export const useStyles = () => {
     },
     textComponent: {
       fontSize: 16,
-      paddingTop: 15,
+      paddingVertical: 15,
       paddingHorizontal: 20,
       color: theme.colors.base,
     },

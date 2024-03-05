@@ -1,7 +1,7 @@
 import React from 'react';
 import { Svg, Rect, Path } from 'react-native-svg';
 
-const CategoryIcon = ({ color = 'white', width = 40, height = 40, style }: { color?: string, width?: number, height?: number, style?: any }) => (
+const CategoryIcon = ({ color = '#D9E5FC', width = 40, height = 40, style }: { color?: string, width?: number, height?: number, style?: any }) => (
   <Svg width={width} height={height} viewBox="0 0 40 40" fill="none" style={style}>
     <Rect width="40" height="40" rx="20" fill={color} />
     <Path

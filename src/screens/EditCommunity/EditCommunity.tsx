@@ -181,6 +181,9 @@ const EditCommunity = ({ navigation, route }) => {
     const removedUser = selectedUserList.filter((item) => item !== user);
     setSelectedUserList(removedUser);
   };
+  const avatarFileURL = (fileId: string) => {
+    return `https://api.${apiRegion}.amity.co/api/v3/files/${fileId}/download?size=medium`;
+  };
 
   return (
     <ScrollView
@@ -347,18 +350,19 @@ const EditCommunity = ({ navigation, route }) => {
                         <View style={styles.avatarRow}>
                           <View style={styles.avatarImageContainer}>
 
-                            <Image
-                              style={styles.avatar}
-                              source={
-                                {
-                                  uri: item.avatarFileId && getAvatarURL(
-                                    apiRegion,
-                                    item.avatarFileId
-                                  ),
-                                }
+                            {
+                              item?.avatarFileId ?
+                                <Image
+                                  style={styles.avatar}
+                                  source={
+                                    {
+                                      uri: item.avatarFileId && avatarFileURL(item.avatarFileId),
+                                    }
 
-                              }
-                            /> : <View style={styles.avatar}> <AvatarIcon /></View>
+                                  }
+                                /> : <View style={styles.avatar}> <AvatarIcon /></View>
+                            }
+
                           </View>
                           <Text>{displayName(item.displayName)}</Text>
                         </View>

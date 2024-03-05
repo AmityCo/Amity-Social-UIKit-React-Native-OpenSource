@@ -1,6 +1,6 @@
 import { PostRepository } from '@amityco/ts-sdk-react-native';
 import { useCallback, useEffect, useState } from 'react';
-import { getPostById } from '../../src/providers/Social/feed-sdk';
+import { getPostById } from '../providers/Social/feed-sdk';
 import useAuth from './useAuth';
 
 export const useGallery = (userId: string) => {

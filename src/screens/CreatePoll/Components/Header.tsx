@@ -1,6 +1,5 @@
 import { Text, TouchableOpacity, View } from 'react-native';
 import React, { FC, memo } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useStyles } from '../styles';
 import type { MyMD3Theme } from '../../../providers/amity-ui-kit-provider';
 import { useTheme } from 'react-native-paper';
@@ -23,7 +22,7 @@ const Header: FC<IHeader> = ({
   const theme = useTheme() as MyMD3Theme;
 
   return (
-    <SafeAreaView style={styles.barContainer} edges={['top']}>
+    <View style={styles.barContainer}>
       <View style={styles.header}>
         <TouchableOpacity style={styles.closeButton} onPress={goBack}>
           <CloseIcon width={17} height={17} color={theme.colors.base} />
@@ -37,7 +36,7 @@ const Header: FC<IHeader> = ({
           </Text>
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

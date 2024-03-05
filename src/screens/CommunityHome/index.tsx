@@ -42,7 +42,7 @@ import { PostTargetType } from '../../enum/postTargetType';
 import { PlusIcon } from '../../svg/PlusIcon';
 import PrimaryDot from '../../svg/PrimaryDotIcon';
 import EditIcon from '../../svg/EditIcon';
-import { AvatarIcon } from '../../svg/AvatarIcon';
+
 
 export type FeedRefType = {
   handleLoadMore: () => void;
@@ -285,15 +285,16 @@ export default function CommunityHome({ route }: any) {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.imageContainer}>
+
         <Image
-          style={styles.avatar}
+          style={styles.emptyImage}
           source={
             {
               uri: avatarUrl,
             }
 
           }
-        /> : <View style={styles.avatar}> <AvatarIcon /></View>
+        /> 
           <View style={styles.darkOverlay} />
           <View style={styles.overlay}>
             <Text style={styles.overlayCommunityText}>

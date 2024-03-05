@@ -132,22 +132,6 @@ export default function SocialNavigator() {
           <Stack.Screen
             name="AllMyCommunity"
             component={AllMyCommunity}
-            options={({
-              navigation,
-            }: {
-              navigation: NativeStackNavigationProp<any>;
-            }) => ({
-              headerLeft: () => (
-                <TouchableOpacity
-                  onPress={() => {
-                    navigation.goBack();
-                  }}
-                  style={styles.btnWrap}
-                >
-                  <CloseIcon  color={theme.colors.base} />
-                </TouchableOpacity>
-              ),
-            })}
           />
           <Stack.Screen
             name="CreatePost"

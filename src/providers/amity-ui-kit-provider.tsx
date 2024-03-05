@@ -40,7 +40,7 @@ export default function AmityUiKitProvider({
   apiEndpoint,
   children,
   theme,
-  darkMode = false,
+  darkMode = true,
   authToken,
 }: IAmityUIkitProvider) {
   const customizedTheme: MyMD3Theme = {
@@ -67,16 +67,16 @@ export default function AmityUiKitProvider({
     ...DefaultTheme,
     colors: {
       ...DefaultTheme.colors,
-      primary: '#1054DE', // Primary color for main elements
-      secondary: '#636878', // Secondary color UI elements e.g comment bubble, input bar
-      background: '#1E1E1E', // Background color for the overall theme
-      border: '#EBECEF', // Border color for elements
-      base: '#FFFFFF', // Base color for main text, Title, input text
-      baseShade1: '#EBECEF', // Base color for Sub Text, Sub Title, TimeStamp Text
-      baseShade2: '#EBECEF', // Base color for comments, like text
-      baseShade3: '#EBECEF', // Base color for placeHolder
-      screenBackground: '#000000',
-      storiesRing: { colorOne: '#339AF9', colorTwo: '#78FA58' },
+      primary: theme?.primary ?? '#1054DE',      // Primary color for main elements
+      secondary: theme?.secondary ?? '#292B32',    // Secondary color UI elements e.g comment bubble, input bar 
+      background: theme?.background ?? '#191919',   // Background color for the overall theme
+      border: theme?.border ?? '#292B32',       // Border color for elements
+      base: theme?.base ?? '#FFFFFF',         // Base color for main text, Title, input text 
+      baseShade1: theme?.baseShade1 ?? '#EBECEF',   // Base color for Sub Text, Sub Title, TimeStamp Text
+      baseShade2: theme?.baseShade2 ?? '#EBECEF',   // Base color for comments, like text
+      baseShade3: theme?.baseShade3 ?? '#EBECEF',   // Base color for placeHolder
+      screenBackground: theme?.screenBackground ?? '#000000',
+      storiesRing: { colorOne: theme?.storiesRing?.colorOne ?? '#339AF9', colorTwo: theme?.storiesRing?.colorTwo ?? '#78FA58' },
     },
   };
 

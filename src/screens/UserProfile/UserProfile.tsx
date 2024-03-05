@@ -151,7 +151,7 @@ export default function UserProfile({ route }: any) {
   const followButton = () => {
     return (
       <TouchableOpacity style={styles.followButton} onPress={onFollowTap}>
-        <PlusIcon  style={styles.followIcon} color='#FFFFF'/>
+        <PlusIcon style={styles.followIcon} color='#FFFFF' />
         <Text style={styles.followText}>Follow</Text>
       </TouchableOpacity>
     );
@@ -219,15 +219,16 @@ export default function UserProfile({ route }: any) {
       >
         <View style={styles.profileContainer}>
           <View style={styles.userDetail}>
-          <Image
-          style={styles.avatar}
-          source={
-            {
-              uri: user.avatarFileId && avatarFileURL(user.avatarFileId!),
-            }
+            {user?.avatarFileId ? <Image
+              style={styles.avatar}
+              source={
+                {
+                  uri: user?.avatarFileId && avatarFileURL(user.avatarFileId),
+                }
 
-          }
-        /> : <View style={styles.avatar}> <AvatarIcon /></View>
+              }
+            /> : <View style={styles.avatar}> <AvatarIcon /></View>}
+
             <View style={styles.userInfo}>
               <Text style={styles.title}>{user?.displayName}</Text>
               <View style={styles.horizontalText}>

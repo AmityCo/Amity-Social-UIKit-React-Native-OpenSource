@@ -59,6 +59,7 @@ export const useStyles = () => {
     },
     btnWrap: {
       padding: 5,
+      marginRight: 8
     },
   });
 

@@ -324,15 +324,19 @@ export default function CreateCommunity() {
                       <View style={styles.userItemWrap}>
                         <View style={styles.avatarRow}>
                           <View style={styles.avatarImageContainer}>
-                            <Image
-                              style={styles.avatar}
-                              source={
-                                {
-                                  uri: item.avatarFileId && avatarFileURL(item.avatarFileId!),
-                                }
+                            {
+                              item?.avatarFileId ?
+                                <Image
+                                  style={styles.avatar}
+                                  source={
+                                    {
+                                      uri: item?.avatarFileId && avatarFileURL(item.avatarFileId),
+                                    }
 
-                              }
-                            /> : <View style={styles.avatar}> <AvatarIcon /></View>
+                                  }
+                                /> : <View style={styles.avatar}> <AvatarIcon /></View>
+                            }
+
                           </View>
                           <Text>{displayName(item.displayName)}</Text>
                         </View>
