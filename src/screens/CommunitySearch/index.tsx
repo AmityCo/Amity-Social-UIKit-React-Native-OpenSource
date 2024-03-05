@@ -58,11 +58,9 @@ export default function CommunitySearch() {
     setSearchTerm(text);
   };
   useEffect(() => {
-    if (searchTerm.length > 0 && searchType === 'community') {
-      searchCommunities(searchTerm);
-    } else if (searchTerm.length > 0 && searchType === 'user') {
-      searchAccounts(searchTerm);
-    }
+    if (searchTerm.length <= 1) return setSearchList([]);
+    if (searchType === 'community') return searchCommunities(searchTerm);
+    if (searchType === 'user') return searchAccounts(searchTerm);
   }, [searchTerm, searchType]);
 
   const searchCommunities = (text: string) => {
@@ -131,16 +129,13 @@ export default function CommunitySearch() {
     navigation.goBack();
   };
   const handleTabChange = (tabName: TabName) => {
+    if (searchTerm.length <= 1) return setSearchList([]);
     if (tabName === TabName.Communities) {
       setSearchType(searchTypeEnum.community);
-      if (searchTerm.length > 0) {
-        searchCommunities(searchTerm);
-      }
+      searchCommunities(searchTerm);
     } else if (tabName === TabName.Accounts) {
       setSearchType(searchTypeEnum.user);
-      if (searchTerm.length > 0) {
-        searchAccounts(searchTerm);
-      }
+      searchAccounts(searchTerm);
     }
   };
   return (
@@ -172,11 +167,15 @@ export default function CommunitySearch() {
         tabName={[TabName.Communities, TabName.Accounts]}
         onTabChange={handleTabChange}
       />
-      <ScrollView contentContainerStyle={styles.searchScrollList}>
-        {searchList.map((item, index) => (
-          <SearchItem key={index} target={item} />
-        ))}
-      </ScrollView>
+      {searchList && searchList.length > 0 ? (
+        <ScrollView contentContainerStyle={styles.searchScrollList}>
+          {searchList.map((item, index) => (
+            <SearchItem key={index} target={item} />
+          ))}
+        </ScrollView>
+      ) : (
+        <Text style={styles.notFoundText}>No result found</Text>
+      )}
     </SafeAreaView>
   );
 }

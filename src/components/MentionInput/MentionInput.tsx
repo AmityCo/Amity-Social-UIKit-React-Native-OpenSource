@@ -1,21 +1,21 @@
 import { View, TextInputProps, FlatList } from 'react-native';
 import React, { FC, memo, useCallback, useState } from 'react';
 import { useStyles } from './styles';
-import SearchItem, { ISearchItem } from '../SearchItem';
+import SearchItem from '../SearchItem';
 import { IMentionPosition } from '../../screens/CreatePost';
 import {
   MentionSuggestionsProps,
   MentionInput as MentionTextInput,
   replaceMentionValues,
 } from 'react-native-controlled-mentions';
-import useSearch from '../../hooks/useSearch';
+import useSearch, { TSearchItem } from '../../hooks/useSearch';
 
 interface IMentionInput extends TextInputProps {
   setInputMessage: (inputMessage: string) => void;
   mentionsPosition: IMentionPosition[];
   setMentionsPosition: (mentionsPosition: IMentionPosition[]) => void;
-  mentionUsers: ISearchItem[];
-  setMentionUsers: (mentionUsers: ISearchItem[]) => void;
+  mentionUsers: TSearchItem[];
+  setMentionUsers: (mentionUsers: TSearchItem[]) => void;
 }
 
 const MentionInput: FC<IMentionInput> = ({
@@ -30,13 +30,13 @@ const MentionInput: FC<IMentionInput> = ({
   const [cursorIndex, setCursorIndex] = useState(0);
   const [currentSearchUserName, setCurrentSearchUserName] = useState('');
   const { searchResult, getNextPage } = useSearch(currentSearchUserName);
-  const [value, setValue] = useState<string>();
+  const [value, setValue] = useState<string>('');
   const handleSelectionChange = (event) => {
     setCursorIndex(event.nativeEvent.selection.start);
   };
 
   const onSelectUserMention = useCallback(
-    (user: ISearchItem) => {
+    (user: TSearchItem) => {
       const position: IMentionPosition = {
         type: 'user',
         length: user.displayName.length + 1,
@@ -71,17 +71,18 @@ const MentionInput: FC<IMentionInput> = ({
 
   const renderSuggestions: FC<MentionSuggestionsProps> = useCallback(
     ({ keyword, onSuggestionPress }) => {
-      setCurrentSearchUserName(keyword);
+      setCurrentSearchUserName(keyword || '');
       if (keyword == null || !searchResult || searchResult?.length === 0) {
         return null;
       }
       return (
         <View style={styles.mentionListContainer}>
           <FlatList
+            keyboardShouldPersistTaps="handled"
             onEndReached={() => getNextPage && getNextPage()}
             nestedScrollEnabled={true}
             data={searchResult}
-            renderItem={({ item }) => {
+            renderItem={({ item }: { item: TSearchItem }) => {
               return (
                 <SearchItem
                   target={item}

@@ -31,6 +31,10 @@ export const useStyles = () => {
       width: 16,
       height: 12,
     },
+    threeDotsContainerStyle: {
+      paddingLeft: 10,
+      paddingVertical: 5,
+    },
   });
   return styles;
 };

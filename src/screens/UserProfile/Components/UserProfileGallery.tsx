@@ -1,6 +1,6 @@
 import { FlatList, Text, View, TouchableOpacity, Image } from 'react-native';
 import React, { FC, memo, useCallback, useState } from 'react';
-import { useGallery } from '../../../../src/hooks/useGallery';
+import { useGallery } from '../../../hooks/useGallery';
 import GalleryTab from './GalleryTab';
 import { TabName } from '../../../enum/tabNameState';
 import { SvgXml } from 'react-native-svg';
