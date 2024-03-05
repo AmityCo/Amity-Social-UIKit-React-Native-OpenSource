@@ -1,12 +1,12 @@
 import { PostRepository } from '@amityco/ts-sdk-react-native';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
 import useAuth from './useAuth';
 
 export const useGallery = (userId: string) => {
   const { apiRegion } = useAuth();
+  const onNextPageRef = useRef<(() => void) | undefined | null>(null);
   const [images, setImages] = useState([]);
   const [videos, setVideos] = useState([]);
-  const [getNextPage, setGetNextPage] = useState<() => void | null>(null);
   const getFile = useCallback(
     (fileId: string): string => {
       return `https://api.${apiRegion}.amity.co/api/v3/files/${fileId}/download?size=medium`;
@@ -23,7 +23,9 @@ export const useGallery = (userId: string) => {
       },
       async ({ data, error, onNextPage, hasNextPage }) => {
         if (error) return null;
-        hasNextPage ? setGetNextPage(() => onNextPage) : setGetNextPage(null);
+        hasNextPage
+          ? (onNextPageRef.current = onNextPage)
+          : (onNextPageRef.current = null);
         const childredIds = data.flatMap((item) => item.children);
         const { data: postData } = await PostRepository.getPostByIds(
           childredIds
@@ -63,6 +65,6 @@ export const useGallery = (userId: string) => {
   return {
     images,
     videos,
-    getNextPage,
+    getNextPage: onNextPageRef.current,
   };
 };
