@@ -86,10 +86,7 @@ export default function CommunityHome({ route }: any) {
       if (targetType === 'community') {
         disposers.push(
           subscribeTopic(
-            getCommunityTopic(communityData?.data, SubscriptionLevels.POST),
-            () => {
-              // use callback to handle errors with event subscription
-            }
+            getCommunityTopic(communityData?.data, SubscriptionLevels.POST)
           )
         );
         isSubscribed.current = true;
@@ -147,7 +144,6 @@ export default function CommunityHome({ route }: any) {
     try {
       const unsubscribe = CommunityRepository.getCommunity(
         communityId,
-        // setCommunityData
         (community) => {
           setCommunityData(community);
           setPostSetting(community?.data?.postSetting);
@@ -259,6 +255,7 @@ export default function CommunityHome({ route }: any) {
       openPostTypeChoiceModal({
         userId: (client as Amity.Client).userId as string,
         targetId: communityId,
+        isPublic: communityData?.data.isPublic,
         targetName: communityName,
         targetType: PostTargetType.community,
         postSetting: postSetting,

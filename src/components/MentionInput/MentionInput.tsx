@@ -16,6 +16,8 @@ interface IMentionInput extends TextInputProps {
   setMentionsPosition: (mentionsPosition: IMentionPosition[]) => void;
   mentionUsers: TSearchItem[];
   setMentionUsers: (mentionUsers: TSearchItem[]) => void;
+  isBottomMentionSuggestionsRender: boolean;
+  privateCommunityId: string;
 }
 
 const MentionInput: FC<IMentionInput> = ({
@@ -24,12 +26,17 @@ const MentionInput: FC<IMentionInput> = ({
   setMentionsPosition,
   mentionUsers,
   setMentionUsers,
+  isBottomMentionSuggestionsRender,
+  privateCommunityId,
   ...rest
 }) => {
   const styles = useStyles();
   const [cursorIndex, setCursorIndex] = useState(0);
   const [currentSearchUserName, setCurrentSearchUserName] = useState('');
-  const { searchResult, getNextPage } = useSearch(currentSearchUserName);
+  const { searchResult, getNextPage } = useSearch(
+    currentSearchUserName,
+    privateCommunityId
+  );
   const [value, setValue] = useState<string>('');
   const handleSelectionChange = (event) => {
     setCursorIndex(event.nativeEvent.selection.start);
@@ -78,6 +85,7 @@ const MentionInput: FC<IMentionInput> = ({
       return (
         <View style={styles.mentionListContainer}>
           <FlatList
+            showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
             onEndReached={() => getNextPage && getNextPage()}
             nestedScrollEnabled={true}
@@ -114,7 +122,7 @@ const MentionInput: FC<IMentionInput> = ({
       onSelectionChange={handleSelectionChange}
       partTypes={[
         {
-          isBottomMentionSuggestionsRender: true,
+          isBottomMentionSuggestionsRender,
           trigger: '@',
           renderSuggestions,
           textStyle: styles.mentionText,

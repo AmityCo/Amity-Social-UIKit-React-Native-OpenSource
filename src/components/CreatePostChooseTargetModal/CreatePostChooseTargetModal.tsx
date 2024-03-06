@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { getAmityUser } from '../../providers/user-provider';
-import type { UserInterface } from 'src/types/user.interface';
+import type { UserInterface } from '../../types/user.interface';
 import { closeIcon } from '../../svg/svg-xml-list';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -112,6 +112,7 @@ const CreatePostChooseTargetModal = ({
     targetId: string,
     targetName: string,
     targetType: string,
+    isPublic?: boolean,
     postSetting?: ValueOf<
       Readonly<{
         ONLY_ADMIN_CAN_POST: 'ONLY_ADMIN_CAN_POST';
@@ -132,6 +133,7 @@ const CreatePostChooseTargetModal = ({
       targetName: targetName,
       targetType: targetType,
       postSetting: postSetting,
+      isPublic: isPublic,
       needApprovalOnPostCreation: needApprovalOnPostCreation,
     });
   };
@@ -144,6 +146,7 @@ const CreatePostChooseTargetModal = ({
             item.communityId,
             item.displayName,
             'community',
+            item.isPublic,
             item.postSetting,
             (item as Record<string, any>).needApprovalOnPostCreation
           )

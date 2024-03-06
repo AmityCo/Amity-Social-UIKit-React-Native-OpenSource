@@ -31,7 +31,7 @@ export const useStyles = () => {
       paddingHorizontal: 15,
       paddingBottom: 25,
       paddingTop: 10,
-      alignItems: 'center',
+      alignItems: 'flex-end',
       borderTopWidth: 1,
       borderTopColor: theme.colors.border,
     },

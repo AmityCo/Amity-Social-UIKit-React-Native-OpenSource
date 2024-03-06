@@ -63,6 +63,7 @@ export default function CommunityMemberDetail({ navigation, route }: any) {
         communityId={communityId}
         onThreeDotTap={onThreeDotTap}
         setMember={setMember}
+        shouldRefresh={!actionModalVisible && !addMembersModal}
       />
       <AddMembersModal
         onSelect={onSelectMember}

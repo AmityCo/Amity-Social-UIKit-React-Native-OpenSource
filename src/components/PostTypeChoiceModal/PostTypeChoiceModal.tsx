@@ -34,6 +34,7 @@ const PostTypeChoiceModal = () => {
     targetType,
     postSetting,
     needApprovalOnPostCreation,
+    isPublic,
   } = useSelector((state: RootState) => state.ui);
   const [postType, setPostType] = useState<string>();
   const [createPostModalVisible, setCreatePostModalVisible] = useState(false);
@@ -48,6 +49,7 @@ const PostTypeChoiceModal = () => {
         targetType,
         postSetting,
         needApprovalOnPostCreation,
+        isPublic,
       });
       closeCreatePostModal();
     } else {
