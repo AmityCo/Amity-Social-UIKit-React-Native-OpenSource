@@ -92,7 +92,7 @@ export default function PostList({
   const [likeReaction, setLikeReaction] = useState<number>(0);
   const [communityName, setCommunityName] = useState('');
   const [textPost, setTextPost] = useState<string>('');
-
+  const [privateCommunityId, setPrivateCommunityId] = useState(null);
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [isReportByMe, setIsReportByMe] = useState<boolean>(false);
@@ -234,8 +234,11 @@ export default function PostList({
   ]);
 
   async function getCommunityInfo(id: string) {
-    const { data: community } = await getCommunityById(id);
+    const { data: community }: { data: Amity.LiveObject<Amity.Community> } =
+      await getCommunityById(id);
     setCommunityName(community.data.displayName);
+    !community.data.isPublic &&
+      setPrivateCommunityId(community.data.communityId);
   }
 
   function onClickComment() {
@@ -504,6 +507,7 @@ export default function PostList({
       {renderOptionModal()}
       {editPostModalVisible && (
         <EditPostModal
+          privateCommunityId={privateCommunityId}
           visible={editPostModalVisible}
           onClose={closeEditPostModal}
           postDetail={{ ...postDetail, data: { ...data, text: textPost } }}

@@ -61,7 +61,7 @@ const PostDetail = () => {
   const [inputMessage, setInputMessage] = useState('');
   const [communityObject, setCommunityObject] = useState<Amity.Community>();
   const privateCommunityId =
-    !communityObject.isPublic && communityObject.communityId;
+    !communityObject?.isPublic && communityObject?.communityId;
   const [userObject, setUserObject] = useState<Amity.User>();
 
   const flatListRef = useRef(null);
