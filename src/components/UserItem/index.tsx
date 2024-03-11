@@ -14,8 +14,8 @@ export default function UserItem({
   hideMenu,
 }: {
   user: UserInterface;
-  isCheckmark?: boolean | undefined;
-  showThreeDot?: boolean | undefined;
+  isCheckmark?: boolean;
+  showThreeDot?: boolean;
   onPress?: (user: UserInterface) => void;
   onThreeDotTap?: (user: UserInterface) => void;
   hideMenu?: boolean;

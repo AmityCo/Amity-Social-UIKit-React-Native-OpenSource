@@ -166,7 +166,6 @@ export async function editPost(
   mentionees: string[],
   mentionPosition: IMentionPosition[]
 ): Promise<Amity.Post<any>> {
-  console.log('GG', mentionees);
   let postParam = {
     mentionees:
       mentionees.length > 0
@@ -176,7 +175,6 @@ export async function editPost(
         : [],
     metadata: { mentioned: mentionPosition },
   };
-  console.log(postParam);
   if (postType === 'text') {
     const newPostParam = {
       data: {

@@ -80,7 +80,6 @@ const CommunityMembersTab: React.FC<ICommunityMembersTab> = ({
   );
 
   const renderMember = ({ item }: { item: Amity.Membership<'community'> }) => {
-    console.log(item.roles);
     if ((item as Record<string, any>).user) {
       const isOwner = item.roles.includes('channel-moderator');
       const userObject: UserInterface = {
