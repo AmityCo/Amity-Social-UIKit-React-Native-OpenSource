@@ -79,8 +79,9 @@ const CommunityMembersTab: React.FC<ICommunityMembersTab> = ({
     }, [getCommunityMemberList, shouldRefresh])
   );
 
-  const renderMember = ({ item }: { item: Amity.Member<'community'> }) => {
+  const renderMember = ({ item }: { item: Amity.Membership<'community'> }) => {
     if ((item as Record<string, any>).user) {
+      const isOwner = item.roles.includes('channel-moderator');
       const userObject: UserInterface = {
         userId: item.userId,
         displayName: (item as Record<string, any>).user.displayName,
@@ -91,6 +92,7 @@ const CommunityMembersTab: React.FC<ICommunityMembersTab> = ({
           user={userObject}
           showThreeDot={true}
           onThreeDotTap={onThreeDotTap}
+          hideMenu={isOwner}
         />
       );
     }
