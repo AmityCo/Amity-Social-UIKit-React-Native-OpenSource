@@ -25,7 +25,7 @@ const initialState: UIState = {
   targetName: '',
   postSetting: null,
   needApprovalOnPostCreation: true,
-  isPublic: true,
+  isPublic: false,
 };
 
 const uiSlice = createSlice({
@@ -68,7 +68,7 @@ const uiSlice = createSlice({
       state.targetName = '';
       state.postSetting = null;
       state.needApprovalOnPostCreation = true;
-      state.isPublic = true;
+      state.isPublic = false;
     },
   },
 });
