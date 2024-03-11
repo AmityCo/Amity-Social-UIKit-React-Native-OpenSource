@@ -21,7 +21,7 @@ import { PollRepository, PostRepository } from '@amityco/ts-sdk-react-native';
 import { checkCommunityPermission } from '../../providers/Social/communities-sdk';
 import useAuth from '../../hooks/useAuth';
 import MentionInput from '../../components/MentionInput/MentionInput';
-import { ISearchItem } from '../../components/SearchItem';
+import { TSearchItem } from '../../hooks/useSearch';
 
 const CreatePoll = ({ navigation, route }) => {
   const theme = useTheme() as MyMD3Theme;
@@ -33,7 +33,7 @@ const CreatePoll = ({ navigation, route }) => {
     Pick<Amity.PollAnswer, 'data' | 'dataType'>[]
   >([]);
   const [optionQuestion, setOptionQuestion] = useState('');
-  const [mentionUsers, setMentionUsers] = useState<ISearchItem[]>([]);
+  const [mentionUsers, setMentionUsers] = useState<TSearchItem[]>([]);
   const [mentionPosition, setMentionPosition] = useState([]);
   const [isScrollEnabled, setIsScrollEnabled] = useState(true);
   const [timeFrame, setTimeFrame] = useState<{ key: number; label: string }>(
@@ -45,7 +45,10 @@ const CreatePoll = ({ navigation, route }) => {
     targetName,
     postSetting,
     needApprovalOnPostCreation,
+    isPublic,
   } = route.params;
+  const privateCommunityId =
+    targetType === 'community' && !isPublic && targetId;
   const MAX_POLL_QUESRION_LENGTH = 500;
   const MAX_POLL_ANSWER_LENGTH = 200;
   const MAX_OPTIONS = 10;
@@ -179,6 +182,7 @@ const CreatePoll = ({ navigation, route }) => {
       <ScrollView
         scrollEnabled={isScrollEnabled}
         contentContainerStyle={styles.scrollContainer}
+        keyboardShouldPersistTaps="handled"
       >
         {loading && (
           <ActivityIndicator animating={loading} color={'black'} size="large" />
@@ -195,6 +199,8 @@ const CreatePoll = ({ navigation, route }) => {
           </View>
           <View style={styles.mentionInputContainer}>
             <MentionInput
+              privateCommunityId={privateCommunityId}
+              isBottomMentionSuggestionsRender={true}
               onFocus={() => {
                 setIsScrollEnabled(false);
               }}

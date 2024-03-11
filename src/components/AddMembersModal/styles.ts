@@ -91,6 +91,7 @@ export const useStyle = () => {
     input: {
       flex: 1,
       marginHorizontal: 6,
+      paddingVertical: 10,
     },
     cancelBtn: {
       marginRight: 16,

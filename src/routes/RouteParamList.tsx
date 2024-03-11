@@ -23,6 +23,7 @@ export type RootStackParamList = {
     targetId: string;
     targetName: string;
     targetType: string;
+    isPublic?: boolean;
     postSetting?: ValueOf<
       Readonly<{
         ONLY_ADMIN_CAN_POST: 'ONLY_ADMIN_CAN_POST';
@@ -36,6 +37,7 @@ export type RootStackParamList = {
     targetId: string;
     targetName: string;
     targetType: string;
+    isPublic?: boolean;
     postSetting?: ValueOf<
       Readonly<{
         ONLY_ADMIN_CAN_POST: 'ONLY_ADMIN_CAN_POST';

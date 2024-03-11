@@ -72,7 +72,7 @@ const CreatePost = ({ route }: any) => {
   const [communityObject, setCommunityObject] =
     useState<Amity.LiveObject<Amity.Community>>();
   const { data: community } = communityObject ?? {};
-
+  const privateCommunityId = !community?.isPublic && community?.communityId;
   const { client, apiRegion } = useAuth();
 
   const getCommunityDetail = useCallback(() => {
@@ -408,6 +408,7 @@ const CreatePost = ({ route }: any) => {
           keyboardShouldPersistTaps="handled"
         >
           <MentionInput
+            privateCommunityId={privateCommunityId}
             onFocus={() => {
               setIsScrollEnabled(false);
             }}
@@ -422,6 +423,7 @@ const CreatePost = ({ route }: any) => {
             setMentionsPosition={setMentionsPosition}
             mentionUsers={mentionNames}
             setMentionUsers={setMentionNames}
+            isBottomMentionSuggestionsRender={true}
           />
           <View style={styles.imageContainer}>
             {displayImages.length > 0 && (

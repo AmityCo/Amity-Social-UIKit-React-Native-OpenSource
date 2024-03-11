@@ -11,7 +11,7 @@ export const useStyles = () => {
       width: '100%',
       maxHeight: 150,
       top: 0,
-      backgroundColor: theme.colors.background,
+      backgroundColor: 'transparent',
       borderWidth: 1,
       borderColor: theme.colors.border,
       borderRadius: 5,
