@@ -27,9 +27,7 @@ const useSearch = (
         },
         ({ data, error, hasNextPage, onNextPage }) => {
           if (error) return null;
-          hasNextPage
-            ? (onNextPageRef.current = onNextPage)
-            : (onNextPageRef.current = null);
+          onNextPageRef.current = hasNextPage ? onNextPage : null;
           const mappedSearchData = data.map((item) => {
             return {
               ...item.user,

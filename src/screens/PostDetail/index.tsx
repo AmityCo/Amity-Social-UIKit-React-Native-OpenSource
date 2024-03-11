@@ -282,10 +282,6 @@ const PostDetail = () => {
     }
   };
 
-  const onPostChange = (post: IPost) => {
-    console.log('post:', post);
-  };
-
   const handleClickReply = (user: UserInterface, commentId: string) => {
     setReplyUserName(user.displayName);
     setReplyCommentId(commentId);
@@ -305,7 +301,7 @@ const PostDetail = () => {
     >
       <ScrollView onScroll={handleScroll} style={styles.container}>
         <PostList
-          onChange={onPostChange}
+          onChange={() => {}}
           postDetail={currentPostdetail as IPost}
           isGlobalfeed={isFromGlobalfeed}
         />
