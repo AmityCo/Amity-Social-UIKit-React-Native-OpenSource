@@ -63,7 +63,8 @@ const PostDetail = () => {
   const privateCommunityId =
     !communityObject?.isPublic && communityObject?.communityId;
   const [userObject, setUserObject] = useState<Amity.User>();
-
+  const [initialInputText, setInitialInputText] = useState('');
+  const [resetValue, setResetValue] = useState(false);
   const flatListRef = useRef(null);
   let isSubscribed = false;
   const disposers: Amity.Unsubscriber[] = [];
@@ -265,11 +266,12 @@ const PostDetail = () => {
         mentionsPosition
       );
     }
-
+    setInitialInputText('');
     setInputMessage('');
     setMentionNames([]);
     setMentionsPosition([]);
     onCloseReply();
+    setResetValue(true);
   };
   const onDeleteComment = async (commentId: string) => {
     const isDeleted = await deleteCommentById(commentId);
@@ -344,6 +346,8 @@ const PostDetail = () => {
       <View style={styles.InputWrap}>
         <View style={styles.inputContainer}>
           <MentionInput
+            resetValue={resetValue}
+            initialValue={initialInputText}
             privateCommunityId={privateCommunityId}
             multiline
             placeholder="Say something nice..."

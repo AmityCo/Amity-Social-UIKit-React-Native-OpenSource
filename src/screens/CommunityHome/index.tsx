@@ -41,6 +41,7 @@ import useFile from '../../hooks/useFile';
 import { TabName } from '../../enum/tabNameState';
 import uiSlice from '../../redux/slices/uiSlice';
 import { PostTargetType } from '../../enum/postTargetType';
+import { useStory } from '../../hooks/useStory';
 
 export type FeedRefType = {
   handleLoadMore: () => void;
@@ -57,6 +58,11 @@ export default function CommunityHome({ route }: any) {
     communityId: string;
     communityName: string;
   };
+  const { stories } = useStory({
+    targetId: communityId,
+    targetType: 'community',
+  });
+  console.log('GG', JSON.stringify(stories[0], null, 2));
   const [isJoin, setIsJoin] = useState(true);
   const [communityData, setCommunityData] =
     useState<Amity.LiveObject<Amity.Community>>();
@@ -104,7 +110,6 @@ export default function CommunityHome({ route }: any) {
       },
       async ({ data: posts }) => {
         const pendingPost = await amityPostsFormatter(posts);
-
         setPendingPosts(pendingPost);
         subscribePostTopic('community');
         setIsShowPendingArea(true);
@@ -331,8 +336,8 @@ export default function CommunityHome({ route }: any) {
             <Text style={styles.editProfileText}>Edit Profile</Text>
           </TouchableOpacity>
         )}
-        {isJoin === false ? joinCommunityButton() : <View />}
-        {isJoin && isShowPendingArea ? pendingPostArea() : <View />}
+        {isJoin === false && joinCommunityButton()}
+        {isJoin && isShowPendingArea && pendingPostArea()}
         <CustomTab
           tabName={[TabName.Timeline, TabName.Gallery]}
           onTabChange={handleTab}
