@@ -33,7 +33,6 @@ import EditCommunity from '../screens/EditCommunity/EditCommunity';
 // import VideoPlayerFull from '../screens/VideoPlayerFullScreen';
 import PostTypeChoiceModal from '../components/PostTypeChoiceModal/PostTypeChoiceModal';
 import CreatePoll from '../screens/CreatePoll/CreatePoll';
-import CloseIcon from '../svg/CloseIcon';
 import { ThreeDotsIcon } from '../svg/ThreeDotsIcon';
 
 export default function SocialNavigator() {

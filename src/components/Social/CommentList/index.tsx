@@ -416,11 +416,11 @@ const CommentList = ({
               style={styles.likeBtn}
             >
               {isLike ? (
-                <LikedIcon color={theme.colors.primary} width={20} height={16} />
+                <LikedIcon  color={theme.colors.primary} width={20} height={16} />
 
               ) : (
 
-                <LikeIcon width={20} height={16} />
+                <LikeIcon color={theme.colors.baseShade2} width={20} height={16} />
               )}
 
               <Text style={isLike ? styles.likedText : styles.btnText}>
@@ -433,13 +433,13 @@ const CommentList = ({
               style={styles.likeBtn}
             >
 
-              <ReplyIcon width={20} height={16} />
+              <ReplyIcon color={theme.colors.baseShade2} width={20} height={16} />
               <Text style={styles.btnText}>Reply</Text>
             </TouchableOpacity>
 
             <TouchableOpacity onPress={openModal} style={styles.threeDots}>
 
-              <ThreeDotsIcon color={theme.colors.base}/>
+              <ThreeDotsIcon color={theme.colors.baseShade2}/>
             </TouchableOpacity>
           </View>
 

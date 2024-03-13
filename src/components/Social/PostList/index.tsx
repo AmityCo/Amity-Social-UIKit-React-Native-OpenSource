@@ -424,7 +424,7 @@ export default function PostList({
           </View>
         </View>
         <TouchableOpacity onPress={openModal} style={styles.threeDots}>
-          <ThreeDotsIcon color={theme.colors.base} />
+          <ThreeDotsIcon color={theme.colors.baseShade2} />
         </TouchableOpacity>
       </View>
       <View>
@@ -471,7 +471,7 @@ export default function PostList({
             {isLike ? (
               <LikedIcon color={theme.colors.primary} />
             ) : (
-              <LikeIcon />
+              <LikeIcon color={theme.colors.baseShade2}/>
             )}
 
             <Text style={isLike ? styles.likedText : styles.btnText}>Like</Text>
@@ -480,7 +480,7 @@ export default function PostList({
             onPress={() => onClickComment()}
             style={styles.commentBtn}
           >
-            <CommentIcon />
+            <CommentIcon color={theme.colors.baseShade2}/>
             <Text style={styles.btnText}>Comment</Text>
           </TouchableOpacity>
         </View>

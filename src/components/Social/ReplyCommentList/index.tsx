@@ -324,7 +324,7 @@ export default function ReplyCommentList({
               {isLike ? (
                            <LikedIcon color={theme.colors.primary} width={20} height={16} />
               ) : (
-                <LikeIcon width={20} height={16} />
+                <LikeIcon color={theme.colors.baseShade2} width={20} height={16} />
               )}
 
               <Text style={isLike ? styles.likedText : styles.btnText}>

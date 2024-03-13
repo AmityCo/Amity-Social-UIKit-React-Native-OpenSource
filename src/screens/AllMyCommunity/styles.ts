@@ -11,6 +11,7 @@ export const useStyles = () => {
     container: {
       backgroundColor: theme.colors.background,
       paddingBottom: excludes.includes(ComponentID.StoryTab) ? 0 : 250,
+      height: '100%'
     },
     headerWrap: {
       flexDirection: 'row',
