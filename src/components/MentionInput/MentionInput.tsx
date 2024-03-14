@@ -1,5 +1,5 @@
 import { View, TextInputProps, FlatList } from 'react-native';
-import React, { FC, memo, useCallback, useState } from 'react';
+import React, { FC, memo, useCallback, useEffect, useState } from 'react';
 import { useStyles } from './styles';
 import SearchItem from '../SearchItem';
 import { IMentionPosition } from '../../screens/CreatePost';
@@ -18,9 +18,12 @@ interface IMentionInput extends TextInputProps {
   setMentionUsers: (mentionUsers: TSearchItem[]) => void;
   isBottomMentionSuggestionsRender: boolean;
   privateCommunityId: string;
+  initialValue?: string;
+  resetValue?: boolean;
 }
 
 const MentionInput: FC<IMentionInput> = ({
+  initialValue = '',
   setInputMessage,
   mentionsPosition,
   setMentionsPosition,
@@ -28,6 +31,7 @@ const MentionInput: FC<IMentionInput> = ({
   setMentionUsers,
   isBottomMentionSuggestionsRender,
   privateCommunityId,
+  resetValue,
   ...rest
 }) => {
   const styles = useStyles();
@@ -37,7 +41,8 @@ const MentionInput: FC<IMentionInput> = ({
     currentSearchUserName,
     privateCommunityId
   );
-  const [value, setValue] = useState<string>('');
+  const [value, setValue] = useState<string>(initialValue);
+
   const handleSelectionChange = (event) => {
     setCursorIndex(event.nativeEvent.selection.start);
   };
@@ -75,6 +80,12 @@ const MentionInput: FC<IMentionInput> = ({
     },
     [setInputMessage]
   );
+  useEffect(() => {
+    if (resetValue) {
+      onChangeInput('');
+    }
+    onChangeInput(initialValue);
+  }, [initialValue, onChangeInput, resetValue]);
 
   const renderSuggestions: FC<MentionSuggestionsProps> = useCallback(
     ({ keyword, onSuggestionPress }) => {

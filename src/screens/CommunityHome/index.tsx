@@ -57,6 +57,7 @@ export default function CommunityHome({ route }: any) {
     communityId: string;
     communityName: string;
   };
+
   const [isJoin, setIsJoin] = useState(true);
   const [communityData, setCommunityData] =
     useState<Amity.LiveObject<Amity.Community>>();
@@ -104,7 +105,6 @@ export default function CommunityHome({ route }: any) {
       },
       async ({ data: posts }) => {
         const pendingPost = await amityPostsFormatter(posts);
-
         setPendingPosts(pendingPost);
         subscribePostTopic('community');
         setIsShowPendingArea(true);
@@ -331,8 +331,8 @@ export default function CommunityHome({ route }: any) {
             <Text style={styles.editProfileText}>Edit Profile</Text>
           </TouchableOpacity>
         )}
-        {isJoin === false ? joinCommunityButton() : <View />}
-        {isJoin && isShowPendingArea ? pendingPostArea() : <View />}
+        {isJoin === false && joinCommunityButton()}
+        {isJoin && isShowPendingArea && pendingPostArea()}
         <CustomTab
           tabName={[TabName.Timeline, TabName.Gallery]}
           onTabChange={handleTab}

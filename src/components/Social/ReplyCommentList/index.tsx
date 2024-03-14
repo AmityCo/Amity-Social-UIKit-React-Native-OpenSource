@@ -39,7 +39,7 @@ import EditCommentModal from '../../../components/EditCommentModal';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../../providers/amity-ui-kit-provider';
 import { IMentionPosition } from '../../../screens/CreatePost';
-import { useNavigation } from '@react-navigation/native';
+import RenderTextWithMention from '../PostList/Components/RenderTextWithMention';
 
 export interface IComment {
   commentId: string;
@@ -100,7 +100,6 @@ export default function ReplyCommentList({
   const [commentMentionPosition, setCommentMentionPosition] = useState<
     IMentionPosition[]
   >([]);
-  const navigation = useNavigation<any>();
 
   useEffect(() => {
     if (mentionPosition) {
@@ -239,51 +238,7 @@ export default function ReplyCommentList({
   const onCloseEditCommentModal = () => {
     setEditCommentModal(false);
   };
-  const RenderTextWithMention = () => {
-    if (commentMentionPosition.length === 0) {
-      return <Text style={styles.inputText}>{textComment}</Text>;
-    }
-    const mentionClick = (userId: string) => {
-      navigation.navigate('UserProfile', {
-        userId: userId,
-      });
-    };
-    let currentPosition = 0;
-    const result: (string | JSX.Element)[][] = commentMentionPosition.map(
-      ({ index, length, userId }, i) => {
-        // Add non-highlighted text before the mention
-        const nonHighlightedText = textComment.slice(currentPosition, index);
 
-        // Add highlighted text
-        const highlightedText = (
-          <Text
-            onPress={() => mentionClick(userId)}
-            key={`highlighted-${i}`}
-            style={styles.mentionText}
-          >
-            {textComment.slice(index, index + length)}
-          </Text>
-        );
-
-        // Update currentPosition for the next iteration
-        currentPosition = index + length;
-
-        // Return an array of non-highlighted and highlighted text
-        return [nonHighlightedText, highlightedText];
-      }
-    );
-
-    // Add any remaining non-highlighted text after the mentions
-    const remainingText = textComment.slice(currentPosition);
-    result.push([
-      <Text key="nonHighlighted-last" style={styles.inputText}>
-        {remainingText}
-      </Text>,
-    ]);
-
-    // Flatten the array and render
-    return <Text style={styles.inputText}>{result.flat()}</Text>;
-  };
   return (
     <View key={commentId} style={styles.replyCommentWrap}>
       <View style={styles.replyHeaderSection}>
@@ -316,7 +271,12 @@ export default function ReplyCommentList({
             )}
           </View>
           <View style={styles.commentBubble}>
-            {textComment && <RenderTextWithMention />}
+            {textComment && (
+              <RenderTextWithMention
+                textPost={textComment}
+                mentionPositionArr={commentMentionPosition}
+              />
+            )}
             {/* <Text style={styles.commentText}>{textComment}</Text> */}
           </View>
           <View style={styles.actionSection}>
