@@ -7,9 +7,7 @@ export const useStyles = () => {
   const styles = StyleSheet.create({
     container: {
       backgroundColor: theme.colors.background,
-      paddingVertical: 16,
-      borderBottomColor: theme.colors.border,
-      borderBottomWidth: 1,
+      flexDirection: 'row',
     },
     title: {
       fontSize: 17,
