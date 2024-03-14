@@ -17,6 +17,9 @@ export interface IUserStory<T = Record<string, any>> {
   seen?: boolean;
   isOfficial?: boolean;
   isPublic?: boolean;
+  creatorName?: string;
+  createdAt?: string;
+  items?: Amity.StoryItem;
 }
 
 export interface IUserStoryItem<T = Record<string, any>> {
@@ -32,6 +35,12 @@ export interface IUserStoryItem<T = Record<string, any>> {
   customProps?: T;
   /** FOR INTERNAL USE ONLY */
   finish?: number;
+  createdAt?: string;
+  creatorName?: string;
+  items?: Amity.StoryItem;
+  reactionCounts?: number;
+  comments?: string[];
+  viewer?: number;
 }
 
 /** User with one story representing the current story on screen */

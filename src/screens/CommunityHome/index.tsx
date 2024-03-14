@@ -41,7 +41,7 @@ import useFile from '../../hooks/useFile';
 import { TabName } from '../../enum/tabNameState';
 import uiSlice from '../../redux/slices/uiSlice';
 import { PostTargetType } from '../../enum/postTargetType';
-import { useStory } from '../../hooks/useStory';
+import CommunityStories from '../../components/CommunityStories';
 
 export type FeedRefType = {
   handleLoadMore: () => void;
@@ -58,11 +58,7 @@ export default function CommunityHome({ route }: any) {
     communityId: string;
     communityName: string;
   };
-  const { stories } = useStory({
-    targetId: communityId,
-    targetType: 'community',
-  });
-  console.log('GG', JSON.stringify(stories[0], null, 2));
+
   const [isJoin, setIsJoin] = useState(true);
   const [communityData, setCommunityData] =
     useState<Amity.LiveObject<Amity.Community>>();
@@ -338,6 +334,7 @@ export default function CommunityHome({ route }: any) {
         )}
         {isJoin === false && joinCommunityButton()}
         {isJoin && isShowPendingArea && pendingPostArea()}
+        <CommunityStories communityId={communityId} />
         <CustomTab
           tabName={[TabName.Timeline, TabName.Gallery]}
           onTabChange={handleTab}
