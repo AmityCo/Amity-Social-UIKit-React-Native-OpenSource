@@ -9,6 +9,10 @@ import ContentLoader, { Circle } from 'react-content-loader/native';
 interface ICommunityStories {
   communityId: string;
 }
+
+type TAmityStory = Amity.Story & {
+  creator: Amity.User;
+};
 export default function CommunityStories({ communityId }: ICommunityStories) {
   const styles = useStyles();
   const { apiRegion } = useAuth();
@@ -18,7 +22,7 @@ export default function CommunityStories({ communityId }: ICommunityStories) {
   });
   const [communityStories, setCommunityStories] = useState([]);
   const getStory = useCallback(() => {
-    const storyData = stories.map((item: Amity.Story) => {
+    const storyData = stories.map((item: TAmityStory) => {
       return {
         story_id: item.storyId,
         story_image: `https://api.${apiRegion}.amity.co/api/v3/files/${item?.data?.fileId}/download?size=full`,
@@ -27,7 +31,7 @@ export default function CommunityStories({ communityId }: ICommunityStories) {
         story_type: item.dataType,
         story_video: `https://api.${apiRegion}.amity.co/api/v3/files/${item?.data?.videoFileId?.original}/download`,
         story_page: 0,
-        creatorName: item.creator?.displayName ?? '',
+        creatorName: item?.creator?.displayName ?? '',
         createdAt: item.createdAt,
         items: item.items,
         reactionCounts: item.reactionsCount,
