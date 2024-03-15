@@ -11,22 +11,17 @@ import {
 import useAuth from '../../hooks/useAuth';
 import PostList from '../../components/Social/PostList';
 import { useStyle } from './styles';
-import MyCommunity from '../../components/MyCommunity';
-
 import { amityPostsFormatter } from '../../util/postDataFormatter';
 import { useDispatch, useSelector } from 'react-redux';
 import globalFeedSlice from '../../redux/slices/globalfeedSlice';
 import { RootState } from '../../redux/store';
-import useConfig from '../../hooks/useConfig';
-
-import { ComponentID } from '../../util/enumUIKitID';
 import { useFocusEffect } from '@react-navigation/native';
 import { RefreshControl } from 'react-native';
+import MyStories from '../../components/MyStories';
 
 export default function GlobalFeed() {
   const { postList } = useSelector((state: RootState) => state.globalFeed);
   const [refreshing, setRefreshing] = useState(false);
-  const { excludes } = useConfig();
   const { updateGlobalFeed, deleteByPostId, clearFeed } =
     globalFeedSlice.actions;
   const dispatch = useDispatch();
@@ -106,9 +101,7 @@ export default function GlobalFeed() {
             />
           }
           extraData={postList}
-          ListHeaderComponent={
-            excludes.includes(ComponentID.StoryTab) && <MyCommunity />
-          }
+          ListHeaderComponent={<MyStories />}
         />
       </View>
     </View>

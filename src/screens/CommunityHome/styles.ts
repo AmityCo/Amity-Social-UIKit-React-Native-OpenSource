@@ -163,6 +163,12 @@ export const useStyles = () => {
       fontWeight: '600',
       color: theme.colors.base,
     },
+    storyAvatar: {
+      width: 50,
+      height: 50,
+      borderRadius: 50,
+      marginLeft: 12,
+    },
   });
 
   return styles;

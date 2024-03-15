@@ -41,6 +41,7 @@ import useFile from '../../hooks/useFile';
 import { TabName } from '../../enum/tabNameState';
 import uiSlice from '../../redux/slices/uiSlice';
 import { PostTargetType } from '../../enum/postTargetType';
+import CommunityStories from '../../components/CommunityStories';
 
 export type FeedRefType = {
   handleLoadMore: () => void;
@@ -333,6 +334,7 @@ export default function CommunityHome({ route }: any) {
         )}
         {isJoin === false && joinCommunityButton()}
         {isJoin && isShowPendingArea && pendingPostArea()}
+        <CommunityStories communityId={communityId} />
         <CustomTab
           tabName={[TabName.Timeline, TabName.Gallery]}
           onTabChange={handleTab}

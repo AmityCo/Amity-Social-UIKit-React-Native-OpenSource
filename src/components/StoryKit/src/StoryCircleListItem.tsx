@@ -180,7 +180,6 @@ export const useStyles = () => {
     },
     itemContainer: {
       alignItems: 'center',
-      marginRight: 16,
       width: 68,
     },
     avatar: {

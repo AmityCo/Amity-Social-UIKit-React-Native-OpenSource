@@ -23,7 +23,6 @@ const StoryCircleListView = ({
       keyExtractor={(_item, index) => index.toString()}
       data={data}
       horizontal
-      style={styles.paddingLeft}
       showsVerticalScrollIndicator={false}
       showsHorizontalScrollIndicator={false}
       ListFooterComponent={<View style={styles.footer} />}
@@ -51,9 +50,6 @@ const StoryCircleListView = ({
 };
 
 const styles = StyleSheet.create({
-  paddingLeft: {
-    paddingLeft: 12,
-  },
   footer: {
     flex: 1,
     width: 8,
