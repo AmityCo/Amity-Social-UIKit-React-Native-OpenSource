@@ -5,6 +5,7 @@ import useAuth from '../../hooks/useAuth';
 import InstaStory from '../StoryKit';
 import { useStory } from '../../hooks/useStory';
 import ContentLoader, { Circle } from 'react-content-loader/native';
+import { useFocusEffect } from '@react-navigation/native';
 
 interface ICommunityStories {
   communityId: string;
@@ -16,10 +17,17 @@ type TAmityStory = Amity.Story & {
 export default function CommunityStories({ communityId }: ICommunityStories) {
   const styles = useStyles();
   const { apiRegion } = useAuth();
-  const { stories, loading } = useStory({
-    targetId: communityId,
-    targetType: 'community',
-  });
+  const { getStories, stories, loading } = useStory();
+
+  useFocusEffect(
+    useCallback(() => {
+      getStories({
+        targetId: communityId,
+        targetType: 'community',
+      });
+    }, [communityId, getStories])
+  );
+
   const [communityStories, setCommunityStories] = useState([]);
   const getStory = useCallback(() => {
     const storyData = stories.map((item: TAmityStory) => {
@@ -37,6 +45,7 @@ export default function CommunityStories({ communityId }: ICommunityStories) {
         reactionCounts: item.reactionsCount,
         comments: item.comments,
         viewer: item.impression,
+        myReactions: item.myReactions,
       };
     });
     if (storyData.length > 0) {

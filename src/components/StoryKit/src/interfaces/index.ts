@@ -9,7 +9,7 @@ import {
 export type NextOrPrevious = 'next' | 'previous';
 
 export interface IUserStory<T = Record<string, any>> {
-  user_id: number;
+  user_id: string;
   user_image: string | undefined;
   user_name: string;
   stories: IUserStoryItem<T>[];
@@ -23,7 +23,7 @@ export interface IUserStory<T = Record<string, any>> {
 }
 
 export interface IUserStoryItem<T = Record<string, any>> {
-  story_id: number;
+  story_id: string;
   story_image?: string | undefined;
   story_video?: string | undefined;
   story_type: string;
@@ -41,6 +41,7 @@ export interface IUserStoryItem<T = Record<string, any>> {
   reactionCounts?: number;
   comments?: string[];
   viewer?: number;
+  myReactions?: string[];
 }
 
 /** User with one story representing the current story on screen */
@@ -122,7 +123,7 @@ export interface StoryListItemProps {
   index: number;
   key: number;
   /** ID of the user - IUserStory.user_id */
-  userId: number;
+  userId: string;
   /** Name of the user - IUserStory.user_name */
   profileName: string;
   /** Profile picture of the user - IUserStory.user_image */
