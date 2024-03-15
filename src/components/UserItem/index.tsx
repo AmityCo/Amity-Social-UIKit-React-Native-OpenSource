@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 import { useStyles } from './styles';
 import RoundCheckbox from '../RoundCheckbox/index';
@@ -11,12 +11,14 @@ export default function UserItem({
   showThreeDot,
   onPress,
   onThreeDotTap,
+  hideMenu,
 }: {
   user: UserInterface;
-  isCheckmark?: boolean | undefined;
-  showThreeDot?: boolean | undefined;
+  isCheckmark?: boolean;
+  showThreeDot?: boolean;
   onPress?: (user: UserInterface) => void;
   onThreeDotTap?: (user: UserInterface) => void;
+  hideMenu?: boolean;
 }) {
   const styles = useStyles();
   const { apiRegion } = useAuth();
@@ -42,8 +44,41 @@ export default function UserItem({
     return `https://api.${apiRegion}.amity.co/api/v3/files/${fileId}/download?size=medium`;
   };
 
+  const renderMenu = useCallback(() => {
+    if (hideMenu) return null;
+    if (showThreeDot)
+      return (
+        <TouchableOpacity
+          style={styles.threeDotsContainerStyle}
+          onPress={() => {
+            if (onThreeDotTap) {
+              onThreeDotTap(user);
+            }
+          }}
+        >
+          <Image
+            source={require('../../../assets/icon/threeDot.png')}
+            style={styles.dotIcon}
+          />
+        </TouchableOpacity>
+      );
+    return <RoundCheckbox isChecked={isCheckmark ?? false} />;
+  }, [
+    hideMenu,
+    isCheckmark,
+    onThreeDotTap,
+    showThreeDot,
+    styles.dotIcon,
+    styles.threeDotsContainerStyle,
+    user,
+  ]);
+
   return (
-    <TouchableOpacity style={styles.listItem} onPress={handleToggle}>
+    <TouchableOpacity
+      style={styles.listItem}
+      disabled={!onPress}
+      onPress={handleToggle}
+    >
       <View style={styles.leftContainer}>
         <Image
           style={styles.avatar}
@@ -57,22 +92,7 @@ export default function UserItem({
         />
         <Text style={styles.itemText}>{displayName()}</Text>
       </View>
-      {!showThreeDot ? (
-        <RoundCheckbox isChecked={isCheckmark ?? false} />
-      ) : (
-        <TouchableOpacity
-          onPress={() => {
-            if (onThreeDotTap) {
-              onThreeDotTap(user);
-            }
-          }}
-        >
-          <Image
-            source={require('../../../assets/icon/threeDot.png')}
-            style={styles.dotIcon}
-          />
-        </TouchableOpacity>
-      )}
+      {renderMenu()}
     </TouchableOpacity>
   );
 }

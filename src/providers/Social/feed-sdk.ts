@@ -162,15 +162,26 @@ export async function createPostToFeed(
 export async function editPost(
   postId: string,
   content: { text: string; fileIds: string[] },
-  postType: string
+  postType: string,
+  mentionees: string[],
+  mentionPosition: IMentionPosition[]
 ): Promise<Amity.Post<any>> {
-  let postParam = {};
+  let postParam = {
+    mentionees:
+      mentionees.length > 0
+        ? ([
+            { type: 'user', userIds: mentionees },
+          ] as Amity.MentionType['user'][])
+        : [],
+    metadata: { mentioned: mentionPosition },
+  };
   if (postType === 'text') {
     const newPostParam = {
       data: {
         text: content.text,
         attachments: [],
       },
+      ...postParam,
     };
     postParam = newPostParam;
   } else if (postType === 'image') {
@@ -183,6 +194,7 @@ export async function editPost(
         text: content.text,
       },
       attachments: formattedFileIds,
+      ...postParam,
     };
     postParam = newPostParam;
   } else if (postType === 'video') {
@@ -195,6 +207,7 @@ export async function editPost(
         text: content.text,
       },
       attachments: formattedFileIds,
+      ...postParam,
     };
     postParam = newPostParam;
   }

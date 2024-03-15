@@ -38,11 +38,49 @@ export const CommunitySetting: React.FC<ChatDetailProps> = ({
     });
   };
 
-  const handleLeaveCommunityPress = async () => {
-    const hasLeft = await CommunityRepository.leaveCommunity(communityId);
-    if (hasLeft) {
-      navigation.goBack();
+  const onLeaveCommunity = async () => {
+    try {
+      await CommunityRepository.leaveCommunity(communityId);
+      navigation.navigate('Home');
+    } catch (error) {
+      if (
+        error instanceof Error &&
+        error.message.includes(
+          "Can't leave the community because you are the only active moderator in this community"
+        )
+      ) {
+        Alert.alert(
+          'Unable to leave community',
+          'You are the only moderator in this group. To leave community, nominate other members to moderator role'
+        );
+        console.error(
+          "Error: Can't leave the community due to being the only active moderator"
+        );
+      } else {
+        Alert.alert(
+          'Unable to leave community',
+          'Something went wrong. Please try again later'
+        );
+      }
     }
+  };
+
+  const handleLeaveCommunityPress = async () => {
+    Alert.alert(
+      'Leave community?',
+      "Leaving community, you'll give up your moderator status and no longer be able to post and interact in this community",
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Leave',
+          onPress: onLeaveCommunity,
+          style: 'destructive',
+        },
+      ]
+    );
   };
 
   const onCloseCommunity = async () => {
@@ -63,9 +101,6 @@ export const CommunitySetting: React.FC<ChatDetailProps> = ({
       [
         {
           text: 'Cancel',
-          onPress: () => {
-            console.log('Cancel');
-          },
           style: 'cancel',
         },
         {

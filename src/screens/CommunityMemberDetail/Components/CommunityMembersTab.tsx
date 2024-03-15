@@ -1,16 +1,23 @@
-import { ActivityIndicator, FlatList, View } from 'react-native';
-import React, { memo, useEffect, useRef, useState } from 'react';
+import {
+  ActivityIndicator,
+  FlatList,
+  RefreshControl,
+  View,
+} from 'react-native';
+import React, { memo, useCallback, useRef, useState } from 'react';
 import { CommunityRepository } from '@amityco/ts-sdk-react-native';
 import { UserInterface } from '../../../types/user.interface';
 import UserItem from '../../../components/UserItem';
 import { useStyles } from '../styles';
 import { TabName } from '../../../enum/tabNameState';
+import { useFocusEffect } from '@react-navigation/native';
 
 interface ICommunityMembersTab {
   activeTab: string;
   communityId: string;
   onThreeDotTap: (user: UserInterface) => void;
   setMember: (user: UserInterface[]) => void;
+  shouldRefresh: boolean;
 }
 
 const CommunityMembersTab: React.FC<ICommunityMembersTab> = ({
@@ -18,30 +25,39 @@ const CommunityMembersTab: React.FC<ICommunityMembersTab> = ({
   communityId,
   onThreeDotTap,
   setMember,
+  shouldRefresh,
 }) => {
-  const [memberList, setMemberList] = useState<Amity.Member<'community'>[]>([]);
+  const [memberList, setMemberList] = useState<Amity.Membership<'community'>[]>(
+    []
+  );
   const [loading, setLoading] = useState(false);
-  const [hasNextPage, setHasNextPage] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const onNextPageRef = useRef<(() => void) | null>(null);
-  const isFetchingRef = useRef(false);
   const flatListRef = useRef(null);
   const styles = useStyles();
-
-  useEffect(() => {
+  const members = memberList.filter((member) => {
+    if (member.communityMembership === 'none') return null;
+    if (activeTab === TabName.Moderators) {
+      return member.roles.includes('community-moderator');
+    }
+    return member;
+  });
+  const getCommunityMemberList = useCallback(() => {
+    setRefreshing(true);
+    setMemberList([]);
     const option: { communityId: string; limit: number; roles?: string[] } = {
       communityId,
       limit: 10,
     };
-    option.roles =
-      activeTab === TabName.Moderators ? ['community-moderator'] : undefined;
 
-    const unsubscribeMember = CommunityRepository.Membership.getMembers(
+    const unsubscribe = CommunityRepository.Membership.getMembers(
       option,
-      ({ data: members, onNextPage, hasNextPage, loading: fetching }) => {
+      ({ data, onNextPage, hasNextPage, loading: fetching, error }) => {
         setLoading(fetching);
+        if (error) return setRefreshing(false);
         if (!fetching) {
-          setMemberList([...members]);
-          const userArray: UserInterface[] = members.map((member) => {
+          setMemberList([...data]);
+          const userArray: UserInterface[] = data.map((member) => {
             return {
               userId: member.user.userId,
               displayName: member.user.displayName,
@@ -49,17 +65,23 @@ const CommunityMembersTab: React.FC<ICommunityMembersTab> = ({
             };
           });
           setMember(userArray);
-          setHasNextPage(hasNextPage);
-          onNextPageRef.current = onNextPage;
-          isFetchingRef.current = false;
+          onNextPageRef.current = hasNextPage ? onNextPage : null;
+          setRefreshing(false);
         }
       }
     );
-    return () => unsubscribeMember();
-  }, [communityId, activeTab, setMember]);
+    return unsubscribe();
+  }, [communityId, setMember]);
 
-  const renderMember = ({ item }: { item: Amity.Member<'community'> }) => {
+  useFocusEffect(
+    useCallback(() => {
+      shouldRefresh && getCommunityMemberList();
+    }, [getCommunityMemberList, shouldRefresh])
+  );
+
+  const renderMember = ({ item }: { item: Amity.Membership<'community'> }) => {
     if ((item as Record<string, any>).user) {
+      const isOwner = item.roles.includes('channel-moderator');
       const userObject: UserInterface = {
         userId: item.userId,
         displayName: (item as Record<string, any>).user.displayName,
@@ -70,6 +92,7 @@ const CommunityMembersTab: React.FC<ICommunityMembersTab> = ({
           user={userObject}
           showThreeDot={true}
           onThreeDotTap={onThreeDotTap}
+          hideMenu={isOwner}
         />
       );
     }
@@ -86,14 +109,24 @@ const CommunityMembersTab: React.FC<ICommunityMembersTab> = ({
   };
 
   const handleLoadMore = () => {
-    if (hasNextPage) {
-      onNextPageRef.current && onNextPageRef.current();
-    }
+    onNextPageRef?.current && onNextPageRef.current();
+  };
+
+  const onRefresh = () => {
+    getCommunityMemberList();
   };
 
   return (
     <FlatList
-      data={memberList}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          colors={['lightblue']}
+          tintColor="lightblue"
+        />
+      }
+      data={members}
       renderItem={renderMember}
       keyExtractor={(item) => item.userId.toString()}
       ListFooterComponent={renderFooter}

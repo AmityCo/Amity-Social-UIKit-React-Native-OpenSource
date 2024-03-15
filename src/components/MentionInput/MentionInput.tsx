@@ -1,42 +1,54 @@
 import { View, TextInputProps, FlatList } from 'react-native';
-import React, { FC, memo, useCallback, useState } from 'react';
+import React, { FC, memo, useCallback, useEffect, useState } from 'react';
 import { useStyles } from './styles';
-import SearchItem, { ISearchItem } from '../SearchItem';
+import SearchItem from '../SearchItem';
 import { IMentionPosition } from '../../screens/CreatePost';
 import {
   MentionSuggestionsProps,
   MentionInput as MentionTextInput,
   replaceMentionValues,
 } from 'react-native-controlled-mentions';
-import useSearch from '../../hooks/useSearch';
+import useSearch, { TSearchItem } from '../../hooks/useSearch';
 
 interface IMentionInput extends TextInputProps {
   setInputMessage: (inputMessage: string) => void;
   mentionsPosition: IMentionPosition[];
   setMentionsPosition: (mentionsPosition: IMentionPosition[]) => void;
-  mentionUsers: ISearchItem[];
-  setMentionUsers: (mentionUsers: ISearchItem[]) => void;
+  mentionUsers: TSearchItem[];
+  setMentionUsers: (mentionUsers: TSearchItem[]) => void;
+  isBottomMentionSuggestionsRender: boolean;
+  privateCommunityId: string;
+  initialValue?: string;
+  resetValue?: boolean;
 }
 
 const MentionInput: FC<IMentionInput> = ({
+  initialValue = '',
   setInputMessage,
   mentionsPosition,
   setMentionsPosition,
   mentionUsers,
   setMentionUsers,
+  isBottomMentionSuggestionsRender,
+  privateCommunityId,
+  resetValue,
   ...rest
 }) => {
   const styles = useStyles();
   const [cursorIndex, setCursorIndex] = useState(0);
   const [currentSearchUserName, setCurrentSearchUserName] = useState('');
-  const { searchResult, getNextPage } = useSearch(currentSearchUserName);
-  const [value, setValue] = useState<string>();
+  const { searchResult, getNextPage } = useSearch(
+    currentSearchUserName,
+    privateCommunityId
+  );
+  const [value, setValue] = useState<string>(initialValue);
+
   const handleSelectionChange = (event) => {
     setCursorIndex(event.nativeEvent.selection.start);
   };
 
   const onSelectUserMention = useCallback(
-    (user: ISearchItem) => {
+    (user: TSearchItem) => {
       const position: IMentionPosition = {
         type: 'user',
         length: user.displayName.length + 1,
@@ -68,20 +80,28 @@ const MentionInput: FC<IMentionInput> = ({
     },
     [setInputMessage]
   );
+  useEffect(() => {
+    if (resetValue) {
+      onChangeInput('');
+    }
+    onChangeInput(initialValue);
+  }, [initialValue, onChangeInput, resetValue]);
 
   const renderSuggestions: FC<MentionSuggestionsProps> = useCallback(
     ({ keyword, onSuggestionPress }) => {
-      setCurrentSearchUserName(keyword);
+      setCurrentSearchUserName(keyword || '');
       if (keyword == null || !searchResult || searchResult?.length === 0) {
         return null;
       }
       return (
         <View style={styles.mentionListContainer}>
           <FlatList
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
             onEndReached={() => getNextPage && getNextPage()}
             nestedScrollEnabled={true}
             data={searchResult}
-            renderItem={({ item }) => {
+            renderItem={({ item }: { item: TSearchItem }) => {
               return (
                 <SearchItem
                   target={item}
@@ -113,7 +133,7 @@ const MentionInput: FC<IMentionInput> = ({
       onSelectionChange={handleSelectionChange}
       partTypes={[
         {
-          isBottomMentionSuggestionsRender: true,
+          isBottomMentionSuggestionsRender,
           trigger: '@',
           renderSuggestions,
           textStyle: styles.mentionText,

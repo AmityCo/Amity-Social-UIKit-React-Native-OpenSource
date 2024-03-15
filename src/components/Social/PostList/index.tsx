@@ -92,7 +92,7 @@ export default function PostList({
   const [likeReaction, setLikeReaction] = useState<number>(0);
   const [communityName, setCommunityName] = useState('');
   const [textPost, setTextPost] = useState<string>('');
-
+  const [privateCommunityId, setPrivateCommunityId] = useState(null);
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [isReportByMe, setIsReportByMe] = useState<boolean>(false);
@@ -234,8 +234,11 @@ export default function PostList({
   ]);
 
   async function getCommunityInfo(id: string) {
-    const { data: community } = await getCommunityById(id);
+    const { data: community }: { data: Amity.LiveObject<Amity.Community> } =
+      await getCommunityById(id);
     setCommunityName(community.data.displayName);
+    !community.data.isPublic &&
+      setPrivateCommunityId(community.data.communityId);
   }
 
   function onClickComment() {
@@ -291,14 +294,14 @@ export default function PostList({
     if (isReportByMe) {
       const unReportPost = await unReportTargetById('post', postId);
       if (unReportPost) {
-        Alert.alert('Undo Report sent', '', []);
+        Alert.alert('Undo Report sent');
       }
       setIsVisible(false);
       setIsReportByMe(false);
     } else {
       const reportPost = await reportTargetById('post', postId);
       if (reportPost) {
-        Alert.alert('Report sent', '', []);
+        Alert.alert('Report sent');
       }
       setIsVisible(false);
       setIsReportByMe(true);
@@ -404,14 +407,14 @@ export default function PostList({
             </View>
           )}
 
-          <View>
+          <View style={styles.fillSpace}>
             <View style={styles.headerRow}>
               <TouchableOpacity onPress={handleDisplayNamePress}>
                 <Text style={styles.headerText}>{user?.displayName}</Text>
               </TouchableOpacity>
 
               {communityName && (
-                <>
+                <View style={styles.communityNameContainer}>
                   <SvgXml
                     style={styles.arrow}
                     xml={arrowXml}
@@ -420,9 +423,15 @@ export default function PostList({
                   />
 
                   <TouchableOpacity onPress={handleCommunityNamePress}>
-                    <Text style={styles.headerText}>{communityName}</Text>
+                    <Text
+                      ellipsizeMode="tail"
+                      numberOfLines={3}
+                      style={styles.headerText}
+                    >
+                      {communityName}
+                    </Text>
                   </TouchableOpacity>
-                </>
+                </View>
               )}
             </View>
             <View style={styles.timeRow}>
@@ -498,9 +507,10 @@ export default function PostList({
       {renderOptionModal()}
       {editPostModalVisible && (
         <EditPostModal
+          privateCommunityId={privateCommunityId}
           visible={editPostModalVisible}
           onClose={closeEditPostModal}
-          postDetail={postDetail}
+          postDetail={{ ...postDetail, data: { ...data, text: textPost } }}
           onFinishEdit={handleOnFinishEdit}
         />
       )}

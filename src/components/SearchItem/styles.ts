@@ -11,7 +11,7 @@ export const useStyles = () => {
       justifyContent: 'space-between',
       paddingVertical: 8,
       paddingHorizontal: 16,
-      backgroundColor: theme.colors.background,
+      backgroundColor: 'transparent',
     },
     avatar: {
       width: 40,

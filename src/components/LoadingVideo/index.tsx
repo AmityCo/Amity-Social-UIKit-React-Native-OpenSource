@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View, Image, TouchableOpacity, Platform } from 'react-native';
 import * as Progress from 'react-native-progress';
 import { SvgXml } from 'react-native-svg';
@@ -51,32 +51,22 @@ const LoadingVideo = ({
   const [isProcess, setIsProcess] = useState<boolean>(false);
   const [thumbNailImage, setThumbNailImage] = useState(thumbNail ?? '');
   const styles = createStyles();
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [playingUri, setPlayingUri] = useState<string>('');
   const [isPause, setIsPause] = useState<boolean>(true);
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
-  const videoPlayerRef = useRef(null);
 
   const playVideoFullScreen = (fileUrl: string) => {
     if (Platform.OS === 'ios') {
-      setIsPlaying(true);
       setPlayingUri(fileUrl);
     } else {
+      setIsPause(true);
       navigation.navigate('VideoPlayer', { source: source });
     }
   };
   const onClosePlayer = () => {
-    setIsPlaying(false);
+    setIsPause(true);
     setPlayingUri('');
   };
-
-  useEffect(() => {
-    if (videoPlayerRef && isPlaying) {
-      (
-        videoPlayerRef as React.MutableRefObject<any>
-      ).current.presentFullscreenPlayer();
-    }
-  }, [isPlaying, playingUri]);
 
   const handleLoadEnd = () => {
     setLoading(false);
@@ -138,20 +128,29 @@ const LoadingVideo = ({
   }, [fileId, isUploaded, source]);
 
   const handleOnPlay = () => {
-    setIsPause(false);
+    setIsPause(!isPause);
     playVideoFullScreen(source);
     onPlay && onPlay(source);
   };
 
   return (
     <View style={styles.container}>
-      {!loading && (
+      {!loading && isPause && (
         <TouchableOpacity style={styles.playButton} onPress={handleOnPlay}>
           <SvgXml xml={playBtn} width="50" height="50" />
         </TouchableOpacity>
       )}
-      {thumbNailImage ? (
+      {playingUri && !isPause ? (
+        <Video
+          controls
+          style={styles.image}
+          source={{ uri: playingUri }}
+          onFullscreenPlayerWillDismiss={onClosePlayer}
+          paused={isPause}
+        />
+      ) : thumbNailImage ? (
         <Image
+          resizeMode="cover"
           source={{ uri: thumbNailImage }}
           style={[
             styles.image,
@@ -162,19 +161,7 @@ const LoadingVideo = ({
         <View style={styles.image} />
       )}
 
-      {source ? (
-        <Video
-          style={styles.thumbnail}
-          source={{ uri: playingUri }}
-          onFullscreenPlayerWillDismiss={onClosePlayer}
-          ref={videoPlayerRef}
-          paused={isPause}
-        />
-      ) : (
-        <View style={styles.image} />
-      )}
-
-      {loading && (
+      {loading ? (
         <View style={styles.overlay}>
           {isProcess ? (
             <Progress.CircleSnail size={60} borderColor="transparent" />
@@ -187,18 +174,11 @@ const LoadingVideo = ({
             />
           )}
         </View>
-      )}
-      {!loading && (
+      ) : (
         <TouchableOpacity style={styles.closeButton} onPress={handleDelete}>
           <SvgXml xml={closeIcon(theme.colors.base)} width="12" height="12" />
         </TouchableOpacity>
       )}
-      {/* <Video
-        source={{ uri: playingUri }}
-        onFullscreenPlayerWillDismiss={onClosePlayer}
-        ref={videoPlayerRef}
-        fullscreen={true}
-      /> */}
     </View>
   );
 };

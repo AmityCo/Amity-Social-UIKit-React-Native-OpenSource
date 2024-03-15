@@ -5,7 +5,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  TextInput,
   KeyboardAvoidingView,
   Platform,
   Keyboard,
@@ -17,7 +16,6 @@ import {
 
 import type { RootStackParamList } from '../../routes/RouteParamList';
 import PostList, { IPost } from '../../components/Social/PostList';
-
 import { useStyles } from './styles';
 import type { IComment } from '../../components/Social/CommentList';
 import type { UserInterface } from '../../types/user.interface';
@@ -39,16 +37,15 @@ import {
   createReplyComment,
   deleteCommentById,
 } from '../../providers/Social/comment-sdk';
-
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import { useTheme } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
-import { ISearchItem } from '../../components/SearchItem';
-import MentionPopup from '../../components/MentionPopup';
 import { IMentionPosition } from '../CreatePost';
 import { SvgXml } from 'react-native-svg';
 import { closeIcon } from '../../svg/svg-xml-list';
+import MentionInput from '../../components/MentionInput/MentionInput';
+import { TSearchItem } from '../../hooks/useSearch';
 
 const PostDetail = () => {
   const theme = useTheme() as MyMD3Theme;
@@ -63,8 +60,11 @@ const PostDetail = () => {
   const { data: comments, hasNextPage, onNextPage } = commentCollection ?? {};
   const [inputMessage, setInputMessage] = useState('');
   const [communityObject, setCommunityObject] = useState<Amity.Community>();
+  const privateCommunityId =
+    !communityObject?.isPublic && communityObject?.communityId;
   const [userObject, setUserObject] = useState<Amity.User>();
-
+  const [initialInputText, setInitialInputText] = useState('');
+  const [resetValue, setResetValue] = useState(false);
   const flatListRef = useRef(null);
   let isSubscribed = false;
   const disposers: Amity.Unsubscriber[] = [];
@@ -83,11 +83,7 @@ const PostDetail = () => {
     (state: RootState) => state.feed
   );
 
-  const [isShowMention, setIsShowMention] = useState<boolean>(false);
-  const [mentionNames, setMentionNames] = useState<ISearchItem[]>([]);
-  const [currentSearchUserName, setCurrentSearchUserName] =
-    useState<string>('');
-  const [cursorIndex, setCursorIndex] = useState<number>(0);
+  const [mentionNames, setMentionNames] = useState<TSearchItem[]>([]);
   const [mentionsPosition, setMentionsPosition] = useState<IMentionPosition[]>(
     []
   );
@@ -259,22 +255,23 @@ const PostDetail = () => {
         inputMessage,
         postId,
         replyCommentId,
-        mentionNames?.map((item) => item.targetId),
+        mentionNames?.map((item) => item.id),
         mentionsPosition
       );
     } else {
       await createComment(
         inputMessage,
         postId,
-        mentionNames?.map((item) => item.targetId),
+        mentionNames?.map((item) => item.id),
         mentionsPosition
       );
     }
-
+    setInitialInputText('');
     setInputMessage('');
     setMentionNames([]);
     setMentionsPosition([]);
     onCloseReply();
+    setResetValue(true);
   };
   const onDeleteComment = async (commentId: string) => {
     const isDeleted = await deleteCommentById(commentId);
@@ -285,111 +282,6 @@ const PostDetail = () => {
       );
       setCommentList(updatedCommentList);
     }
-  };
-
-  const onPostChange = (post: IPost) => {
-    console.log('post:', post);
-  };
-
-  const handleSelectionChange = (event) => {
-    setCursorIndex(event.nativeEvent.selection.start);
-  };
-
-  const onSelectUserMention = (user: ISearchItem) => {
-    const textAfterCursor: string = inputMessage.substring(
-      cursorIndex,
-      inputMessage.length + 1
-    );
-    const newTextAfterReplacement =
-      inputMessage.slice(0, cursorIndex - currentSearchUserName.length) +
-      user.displayName +
-      inputMessage.slice(cursorIndex, inputMessage.length);
-    const newInputMessage = newTextAfterReplacement + textAfterCursor;
-    const position: IMentionPosition = {
-      type: 'user',
-      length: user.displayName.length + 1,
-      index: cursorIndex - 1 - currentSearchUserName.length,
-      userId: user.targetId,
-      displayName: user.displayName,
-    };
-
-    setInputMessage(newInputMessage);
-    setMentionNames((prev) => [...prev, user]);
-    setMentionsPosition((prev) => [...prev, position]);
-    setCurrentSearchUserName('');
-  };
-  useEffect(() => {
-    checkMention(inputMessage);
-  }, [inputMessage]);
-
-  const checkMention = (inputString: string) => {
-    // Check if "@" is at the first letter
-    const startsWithAt = /^@/.test(inputString);
-
-    // Check if "@" is inside the sentence without any letter before "@"
-    const insideWithoutLetterBefore = /[^a-zA-Z]@/.test(inputString);
-
-    const atSigns = inputString.match(/@/g);
-    const atSignsNumber = atSigns ? atSigns.length : 0;
-    if (
-      (startsWithAt || insideWithoutLetterBefore) &&
-      atSignsNumber > mentionNames.length
-    ) {
-      setIsShowMention(true);
-    } else {
-      setIsShowMention(false);
-    }
-  };
-  useEffect(() => {
-    if (isShowMention) {
-      const substringBeforeCursor = inputMessage.substring(0, cursorIndex);
-      const lastAtsIndex = substringBeforeCursor.lastIndexOf('@');
-      if (lastAtsIndex !== -1) {
-        const searchText: string = inputMessage.substring(
-          lastAtsIndex + 1,
-          cursorIndex + 1
-        );
-        setCurrentSearchUserName(searchText);
-      }
-    }
-  }, [cursorIndex]);
-
-  const RenderTextWithMention = () => {
-    if (mentionsPosition.length === 0) {
-      return <Text style={styles.inputText}>{inputMessage}</Text>;
-    }
-
-    let currentPosition = 0;
-    const result: (string | JSX.Element)[][] = mentionsPosition.map(
-      ({ index, length }, i) => {
-        // Add non-highlighted text before the mention
-        const nonHighlightedText = inputMessage.slice(currentPosition, index);
-
-        // Add highlighted text
-        const highlightedText = (
-          <Text key={`highlighted-${i}`} style={styles.mentionText}>
-            {inputMessage.slice(index, index + length)}
-          </Text>
-        );
-
-        // Update currentPosition for the next iteration
-        currentPosition = index + length;
-
-        // Return an array of non-highlighted and highlighted text
-        return [nonHighlightedText, highlightedText];
-      }
-    );
-
-    // Add any remaining non-highlighted text after the mentions
-    const remainingText = inputMessage.slice(currentPosition);
-    result.push([
-      <Text key="nonHighlighted-last" style={styles.inputText}>
-        {remainingText}
-      </Text>,
-    ]);
-
-    // Flatten the array and render
-    return <Text style={styles.inputText}>{result.flat()}</Text>;
   };
 
   const handleClickReply = (user: UserInterface, commentId: string) => {
@@ -411,7 +303,7 @@ const PostDetail = () => {
     >
       <ScrollView onScroll={handleScroll} style={styles.container}>
         <PostList
-          onChange={onPostChange}
+          onChange={() => {}}
           postDetail={currentPostdetail as IPost}
           isGlobalfeed={isFromGlobalfeed}
         />
@@ -433,12 +325,6 @@ const PostDetail = () => {
           />
         </View>
       </ScrollView>
-      {isShowMention && (
-        <MentionPopup
-          userName={currentSearchUserName}
-          onSelectMention={onSelectUserMention}
-        />
-      )}
       {replyUserName.length > 0 && (
         <View style={styles.replyLabelWrap}>
           <Text style={styles.replyLabel}>
@@ -459,25 +345,20 @@ const PostDetail = () => {
 
       <View style={styles.InputWrap}>
         <View style={styles.inputContainer}>
-          <TextInput
+          <MentionInput
+            resetValue={resetValue}
+            initialValue={initialInputText}
+            privateCommunityId={privateCommunityId}
             multiline
             placeholder="Say something nice..."
-            style={
-              mentionNames.length > 0
-                ? [styles.textInput, styles.transparentText]
-                : styles.textInput
-            }
-            value={inputMessage}
-            onChangeText={(text) => setInputMessage(text)}
             placeholderTextColor={theme.colors.baseShade3}
-            onSelectionChange={handleSelectionChange}
+            mentionUsers={mentionNames}
+            setInputMessage={setInputMessage}
+            setMentionUsers={setMentionNames}
+            mentionsPosition={mentionsPosition}
+            setMentionsPosition={setMentionsPosition}
+            isBottomMentionSuggestionsRender={false}
           />
-          {mentionNames.length > 0 && (
-            <View style={styles.overlay}>
-              {/* {renderTextWithMention()} */}
-              <RenderTextWithMention />
-            </View>
-          )}
         </View>
 
         <TouchableOpacity
