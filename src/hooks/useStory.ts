@@ -54,7 +54,7 @@ export const useStory = () => {
           await ReactionRepository.addReaction('story', targetId, reactionName);
         }
       } catch (error) {
-        Alert.alert('Error on react');
+        Alert.alert('Error on reaction', error);
       }
     },
     []
