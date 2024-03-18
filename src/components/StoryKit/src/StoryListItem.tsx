@@ -13,7 +13,6 @@ import {
   Alert,
 } from 'react-native';
 import GestureRecognizer from 'react-native-swipe-gestures';
-
 import { usePrevious, isNullOrWhitespace } from './helpers';
 import {
   IUserStoryItem,
@@ -27,10 +26,13 @@ import {
   seenIcon,
   storyCommentIcon,
   storyHyperLinkIcon,
+  storyLikeIcon,
   storyLikedIcon,
 } from '../../../svg/svg-xml-list';
 import { useStyles } from './styles';
 import { useTimeDifference } from '../../../hooks/useTimeDifference';
+import { useStory } from '../../../hooks/useStory';
+import { StoryRepository } from '@amityco/ts-sdk-react-native';
 export const StoryListItem = ({
   index,
   key,
@@ -73,14 +75,29 @@ export const StoryListItem = ({
   const creatorName = content[current].creatorName ?? '';
   const viewer = content[current].viewer ?? 0;
   const comments = content[current].comments ?? [];
-  const reactionCount = content[current].reactionCounts ?? 0;
+  const storyId = content[current].story_id;
+  const [totalReaction, setTotalReaction] = useState(0);
+  const [isLiked, setIsLiked] = useState<boolean>(false);
+  const { handleReaction } = useStory();
   const prevCurrentPage = usePrevious(currentPage);
   useFocusEffect(
     React.useCallback(() => {
+      const unsubscribe = StoryRepository.getStoryByStoryId(
+        storyId,
+        ({ error, loading, data }) => {
+          if (error) return;
+          if (!loading) {
+            const myReaction = data.myReactions ?? [];
+            setIsLiked(myReaction.length > 0);
+            setTotalReaction(data.reactionsCount);
+          }
+        }
+      );
       return () => {
         setPressed(true);
+        unsubscribe();
       };
-    }, [])
+    }, [storyId])
   );
 
   useEffect(() => {
@@ -229,6 +246,16 @@ export const StoryListItem = ({
   const handleLoadVideo = (data: OnLoadData) => {
     setStoryDuration(data.duration * 1000);
   };
+  const onPressReaction = useCallback(() => {
+    handleReaction({
+      targetId: storyId,
+      reactionName: 'like',
+      isLiked,
+    });
+    setTotalReaction((prev) => (isLiked ? prev - 1 : prev + 1));
+    setIsLiked((prev) => !prev);
+  }, [storyId, isLiked]);
+
   return (
     <GestureRecognizer
       key={key}
@@ -393,9 +420,16 @@ export const StoryListItem = ({
               <SvgXml xml={storyCommentIcon()} width="25" height="25" />
               <Text style={styles.seen}>{comments.length}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.iconContainer}>
-              <SvgXml xml={storyLikedIcon} width="25" height="25" />
-              <Text style={styles.seen}>{reactionCount}</Text>
+            <TouchableOpacity
+              style={styles.iconContainer}
+              onPress={onPressReaction}
+            >
+              <SvgXml
+                xml={isLiked ? storyLikedIcon : storyLikeIcon}
+                width="25"
+                height="25"
+              />
+              <Text style={styles.seen}>{totalReaction}</Text>
             </TouchableOpacity>
           </View>
         </View>
