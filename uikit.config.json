@@ -66,15 +66,15 @@
     },
     "story_page/*/story_comment_button": {
       "comment_icon": "comment.png",
-      "background_color": "#1234DD"
+      "background_color": "#2b2b2b"
     },
     "story_page/*/story_reaction_button": {
       "reaction_icon": "like.png",
-      "background_color": "#1243EE"
+      "background_color": "#2b2b2b"
     },
     "story_page/*/create_new_story_button": {
       "create_new_story_icon": "plus.png",
-      "background_color": "#1243EE"
+      "background_color": "#ffffff"
     },
     "story_page/*/speaker_button": {
       "mute_icon": "mute.png",

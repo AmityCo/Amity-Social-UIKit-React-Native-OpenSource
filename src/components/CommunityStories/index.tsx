@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { useStyles } from './styles';
 import useAuth from '../../hooks/useAuth';
-import InstaStory from '../StoryKit';
+import InstaStory from '../../v4/component/StoryKit';
 import { useStory } from '../../hooks/useStory';
 import ContentLoader, { Circle } from 'react-content-loader/native';
 import { useFocusEffect } from '@react-navigation/native';
