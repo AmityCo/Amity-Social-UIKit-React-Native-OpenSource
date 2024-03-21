@@ -84,9 +84,13 @@
     "react-native-image-picker": "^7.0.0",
     "react-native-safe-area-context": "^4.7.2",
     "react-native-svg": "^14.1.0",
+    "react-native-vision-camera": "^3.9.1",
     "release-it": "^15.0.0",
     "turbo": "^1.10.7",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "@react-navigation/native": "^6.1.17",
+    "@react-navigation/native-stack": "^6.9.26",
+    "@react-navigation/stack": "^6.3.29"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": "eslint --cache --fix",
@@ -104,7 +108,11 @@
     "react-native-safe-area-context": "*",
     "react-native-screens": "*",
     "react-native-svg": "*",
-    "react-native-video": "*"
+    "react-native-video": "*",
+    "react-native-vision-camera": "*",
+    "@react-navigation/native": "*",
+    "@react-navigation/native-stack": "*",
+    "@react-navigation/stack": "*"
   },
   "engines": {
     "node": ">= 16.0.0"
@@ -184,10 +192,7 @@
     ]
   },
   "dependencies": {
-    "@amityco/ts-sdk-react-native": "^6.19.0",
-    "@react-navigation/native": "6.1.6",
-    "@react-navigation/native-stack": "6.9.10",
-    "@react-navigation/stack": "6.3.16",
+    "@amityco/ts-sdk-react-native": "@amityco/ts-sdk-react-native@6.18.1-a203325.0",
     "@reduxjs/toolkit": "^1.9.7",
     "@types/react-dom": "^18.2.15",
     "@types/react-native-video": "^5.0.18",

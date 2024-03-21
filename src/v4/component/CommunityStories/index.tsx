@@ -5,12 +5,14 @@ import useAuth from '../../../hooks/useAuth';
 import InstaStory from '../../../v4/component/StoryKit';
 import { useStory } from '../../hook/useStory';
 import ContentLoader, { Circle } from 'react-content-loader/native';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { SvgXml } from 'react-native-svg';
 import {
   storyCircleCreatePlusIcon,
   storyRing,
 } from '../../../svg/svg-xml-list';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../../routes/RouteParamList';
 
 interface ICommunityStories {
   communityId: string;
@@ -26,6 +28,8 @@ export default function CommunityStories({
   displayName,
   avatarFileId,
 }: ICommunityStories) {
+  const navigation =
+    useNavigation() as NativeStackNavigationProp<RootStackParamList>;
   const styles = useStyles();
   const { apiRegion } = useAuth();
   const { getStories, stories, loading } = useStory();
@@ -69,7 +73,7 @@ export default function CommunityStories({
       const mappedStories = [
         {
           user_id: communityId,
-          user_image: `https://api.${apiRegion}.amity.co/api/v3/files/${avatarFileId}/download?size=full`,
+          user_image: `https://api.${apiRegion}.amity.co/api/v3/files/${avatarFileId}/download?size=small`,
           user_name: displayName,
           stories: storyData ?? [],
           isOfficial: true,
@@ -85,6 +89,13 @@ export default function CommunityStories({
   useEffect(() => {
     formatStory();
   }, [formatStory]);
+
+  const onPress = useCallback(() => {
+    navigation.navigate('Camera', {
+      communityId,
+      communityName: displayName,
+    });
+  }, [communityId, displayName, navigation]);
 
   return (
     <View style={styles.container}>
@@ -117,10 +128,10 @@ export default function CommunityStories({
           }
         />
       ) : (
-        <TouchableOpacity style={styles.avatarContainer}>
+        <TouchableOpacity style={styles.avatarContainer} onPress={onPress}>
           <Image
             source={{
-              uri: `https://api.${apiRegion}.amity.co/api/v3/files/${avatarFileId}/download?size=full`,
+              uri: `https://api.${apiRegion}.amity.co/api/v3/files/${avatarFileId}/download?size=small`,
             }}
             style={styles.communityAvatar}
           />

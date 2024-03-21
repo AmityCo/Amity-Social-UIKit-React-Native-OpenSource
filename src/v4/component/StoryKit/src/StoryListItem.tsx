@@ -34,6 +34,9 @@ import { useTimeDifference } from '../../../../hooks/useTimeDifference';
 import { useStory } from '../../../hook/useStory';
 import { ElementID } from '../../../enum/enumUIKitID';
 import useConfig from '../../../hook/useConfig';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../../../routes/RouteParamList';
 export const StoryListItem = ({
   index,
   key,
@@ -94,7 +97,8 @@ export const StoryListItem = ({
   const storyId = content[current].story_id;
   const reactionCounts = content[current].reactionCounts;
   const myReactions = content[current].myReactions;
-
+  const navigation =
+    useNavigation() as NativeStackNavigationProp<RootStackParamList>;
   const [totalReaction, setTotalReaction] = useState(reactionCounts);
   const [isLiked, setIsLiked] = useState<boolean>(myReactions?.length > 0);
 
@@ -247,6 +251,14 @@ export const StoryListItem = ({
     }
   }, [storyHyperLink?.url]);
 
+  const onPressAvatar = useCallback(() => {
+    onClosePress();
+    navigation.navigate('Camera', {
+      communityId: userId,
+      communityName: profileName,
+    });
+  }, []);
+
   React.useEffect(() => {
     if (onStorySeen && currentPage === index) {
       onStorySeen({
@@ -292,6 +304,7 @@ export const StoryListItem = ({
                 content[current].story_page !== currentPage ? true : pressed
               }
               onLoad={handleLoadVideo}
+              muted={false}
             />
           ) : (
             <Image
@@ -344,7 +357,7 @@ export const StoryListItem = ({
         </View>
         <View style={[styles.userContainer, storyUserContainerStyle]}>
           <View style={styles.flexRowCenter}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={onPressAvatar} hitSlop={10}>
               <Image
                 style={[styles.avatarImage, storyAvatarImageStyle]}
                 source={{ uri: profileImage }}

@@ -1,12 +1,244 @@
-import { Text, View } from 'react-native';
-import React from 'react';
+import {
+  Alert,
+  View,
+  Pressable,
+  Text,
+  SafeAreaView,
+  TouchableOpacity,
+} from 'react-native';
+import React, { useCallback, useState, useRef, useEffect } from 'react';
+import { useCameraDevice, Camera } from 'react-native-vision-camera';
+import { useStyles } from './styles';
+import { useRequestPermission } from '../../hook/useCamera';
+import { SvgXml } from 'react-native-svg';
+import {
+  closeIcon,
+  flashOff,
+  flashOn,
+  storyGallery,
+  switchCamera,
+} from '../../../svg/svg-xml-list';
+import ImagePicker, { launchImageLibrary } from 'react-native-image-picker';
+import * as Progress from 'react-native-progress';
+import { msToString } from '../../../util/timeUtil';
 
-const CameraPage = () => {
+enum ACTIVE_SWITCH {
+  camera = 'camera',
+  video = 'video',
+}
+
+const CameraScreen = ({ navigation, route }) => {
+  const styles = useStyles();
+  const communityData = route.params;
+  useRequestPermission();
+  const backCamera = useCameraDevice('back');
+  const frontCamera = useCameraDevice('front');
+  const cameraRef = useRef<Camera>(null);
+  const timerRef = useRef(null);
+  const [activeSwitch, setActiveSwitch] = useState<ACTIVE_SWITCH>(
+    ACTIVE_SWITCH.camera
+  );
+  const isCamera = activeSwitch === ACTIVE_SWITCH.camera;
+  const isVideo = activeSwitch === ACTIVE_SWITCH.video;
+  const [flashOnState, setFlashOnState] = useState(false);
+  const [isBackCamera, setIsBackCamera] = useState(true);
+  const [isRecording, setIsRecording] = useState(false);
+  const activeSwitchColor = { backgroundColor: '#ffffff' };
+  const [totalTime, setTotalTime] = useState(0);
+  const [timer, setTimer] = useState('');
+  const TIMER_LIMIT = 60000;
+  const timerBgColor = (isRecording || totalTime > 0) && {
+    backgroundColor: '#FF305A',
+  };
+
+  const onStopRecord = useCallback(() => {
+    setIsRecording(false);
+    clearInterval(timerRef.current);
+    cameraRef.current.stopRecording();
+  }, []);
+
+  useEffect(() => {
+    if (totalTime === TIMER_LIMIT) return onStopRecord();
+    if (!isRecording) return clearInterval(timerRef.current);
+    timerRef.current = setInterval(
+      () => setTotalTime((prev) => prev + 100),
+      100
+    );
+
+    return () => clearInterval(timerRef.current);
+  }, [isRecording, onStopRecord, totalTime]);
+
+  useEffect(() => {
+    if (totalTime % 1000 === 0) {
+      const timerString = msToString(totalTime);
+      setTimer(timerString);
+    }
+  }, [totalTime]);
+
+  const onPressCamera = useCallback(() => {
+    setActiveSwitch(ACTIVE_SWITCH.camera);
+  }, []);
+  const onPressVideo = useCallback(() => {
+    setActiveSwitch(ACTIVE_SWITCH.video);
+  }, []);
+
+  const onFinishCapture = useCallback(
+    (cameraData: Object, type: 'photo' | 'video') => {
+      setTotalTime(0);
+      navigation.navigate('CameraPreview', {
+        type: type,
+        data: { ...cameraData, ...communityData },
+      });
+    },
+    [communityData, navigation]
+  );
+
+  const onPressCameraCapture = useCallback(async () => {
+    const photo = await cameraRef.current.takePhoto({
+      qualityPrioritization: 'speed',
+      flash: flashOnState ? 'on' : 'off',
+      enableShutterSound: false,
+    });
+    onFinishCapture(photo, 'photo');
+  }, [flashOnState, onFinishCapture]);
+
+  const onStartRecord = useCallback(() => {
+    setIsRecording(true);
+    cameraRef.current.startRecording({
+      onRecordingFinished: (video) => onFinishCapture(video, 'video'),
+      onRecordingError: (error) =>
+        Alert.alert('Video Record Error', error.message),
+      fileType: 'mp4',
+      flash: flashOnState ? 'on' : 'off',
+    });
+  }, [flashOnState, onFinishCapture]);
+
+  const renderCaptureBtn = useCallback(() => {
+    if (isCamera) {
+      return (
+        <Pressable
+          style={styles.cameraCaptureBtn}
+          onPress={onPressCameraCapture}
+        >
+          <View style={styles.cameraCaptureBtnFill} />
+        </Pressable>
+      );
+    }
+    return (
+      <Pressable
+        style={styles.videoCaptureBtn}
+        onLongPress={onStartRecord}
+        onPressOut={onStopRecord}
+      >
+        <Progress.Circle
+          size={65}
+          progress={totalTime / TIMER_LIMIT}
+          borderColor="transparent"
+        />
+      </Pressable>
+    );
+  }, [
+    isCamera,
+    onPressCameraCapture,
+    onStartRecord,
+    onStopRecord,
+    styles,
+    totalTime,
+  ]);
+
+  const onPressBack = useCallback(() => {
+    navigation.goBack();
+  }, [navigation]);
+
+  const onPressFlash = useCallback(() => {
+    setFlashOnState((prev) => !prev);
+  }, []);
+
+  const onPressSwitch = useCallback(() => {
+    setIsBackCamera((prev) => !prev);
+  }, []);
+
+  const onPressGallery = useCallback(async () => {
+    const type = isCamera ? 'photo' : 'video';
+    const result: ImagePicker.ImagePickerResponse = await launchImageLibrary({
+      mediaType: type,
+      quality: 1,
+      selectionLimit: 1,
+    });
+    if (!result.didCancel && result.assets && result.assets.length > 0) {
+      const data = { ...result.assets[0], path: result.assets[0].uri };
+      if (data) {
+        onFinishCapture(data, type);
+      } else {
+        Alert.alert('Error on media selection');
+      }
+    }
+  }, [isCamera, onFinishCapture]);
+
+  if (!frontCamera && !backCamera) {
+    Alert.alert('Camera Error', 'Cannot open camera', [
+      {
+        text: 'Go Back',
+        onPress: () => {
+          navigation.goBack();
+        },
+      },
+    ]);
+    return null;
+  }
+
   return (
-    <View>
-      <Text>CameraPage</Text>
-    </View>
+    <SafeAreaView style={styles.wrapper}>
+      <View style={styles.cameraContainer}>
+        <Camera
+          ref={cameraRef}
+          style={styles.camera}
+          device={isBackCamera ? backCamera : frontCamera}
+          isActive={true}
+          video={isVideo}
+          photo={isCamera}
+          audio={true}
+        >
+          {renderCaptureBtn()}
+          {isVideo && (
+            <View style={[styles.timer, timerBgColor]}>
+              <Text style={styles.timerTxt}>{timer}</Text>
+            </View>
+          )}
+          <TouchableOpacity style={styles.backBtn} onPress={onPressBack}>
+            <SvgXml xml={closeIcon('#fff')} width={10} height={10} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.flashIcon} onPress={onPressFlash}>
+            <SvgXml
+              xml={flashOnState ? flashOn() : flashOff()}
+              width={24}
+              height={24}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.switchCamera} onPress={onPressSwitch}>
+            <SvgXml xml={switchCamera()} width={32} height={32} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.gallery} onPress={onPressGallery}>
+            <SvgXml xml={storyGallery()} width={32} height={32} />
+          </TouchableOpacity>
+        </Camera>
+      </View>
+      <View style={styles.switchContainer}>
+        <Pressable
+          style={[styles.switch, isCamera && activeSwitchColor]}
+          onPress={onPressCamera}
+        >
+          <Text style={styles.switchTxt}>Photo</Text>
+        </Pressable>
+        <Pressable
+          style={[styles.switch, isVideo && activeSwitchColor]}
+          onPress={onPressVideo}
+        >
+          <Text style={styles.switchTxt}>Video</Text>
+        </Pressable>
+      </View>
+    </SafeAreaView>
   );
 };
 
-export default CameraPage;
+export default CameraScreen;
