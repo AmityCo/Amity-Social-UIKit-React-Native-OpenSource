@@ -1,5 +1,5 @@
 PODS:
-  - amity-react-native-social-ui-kit (0.1.2):
+  - amity-react-native-social-ui-kit (0.1.4):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
   - boost (1.76.0)
@@ -714,7 +714,7 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
-  amity-react-native-social-ui-kit: ed565decf466c06e2f42c6ce35fab19a801dfd0e
+  amity-react-native-social-ui-kit: 42a3987bc7de4cde1fe305a53d303bf0f923b80b
   boost: 57d2868c099736d80fcd648bf211b4431e51a558
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
   DoubleConversion: 5189b271737e1565bdce30deb4a08d647e3f5f54
