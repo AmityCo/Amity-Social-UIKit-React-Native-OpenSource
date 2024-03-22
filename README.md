@@ -70,28 +70,26 @@ Then, inside another project, Copy tgz file to your application folder where you
 
 ```sh
 1. yarn add ./amity-react-native-social-ui-kit-x.x.x.tgz
-2. yarn add react-native-safe-area-context \react-native-image-picker \@react-native-async-storage/async-storage \react-native-svg \react-native-screens \react-native-video@^6.0.0-beta.5 \react-native-create-thumbnail \@react-native-community/netinfo
+2. yarn add react-native-safe-area-context \react-native-image-picker \@react-native-async-storage/async-storage \react-native-svg \react-native-screens \react-native-video@^6.0.0-beta.5 \react-native-create-thumbnail \@react-native-community/netinfo \@@react-navigation/native \@react-navigation/native-stack \@react-navigation/stack
 ```
 
 ### iOS Configuration
 
-In Pod file, add these lines under your target,  
+In Pod file, add these lines under your target,
 
 ```
   pod 'SPTPersistentCache', :modular_headers => true
   pod 'DVAssetLoaderDelegate', :modular_headers => true
   $RNVideoUseVideoCaching = true  
 ```
+
 <img width="610" alt="Update Pod File" src="https://github.com/AmityCo/Amity-Social-UIKit-React-Native-CLI-OpenSource/assets/155952277/40117769-4dee-4506-8b4c-703769fa7f2a">
 
-
-
-In XCode, 
+In XCode,
 
 Set `Minimum Deployments  at least iOS 12.0`
 
 <img width="833" alt="Minimum Deployments  at least iOS 12.0" src="https://github.com/AmityCo/Amity-Social-UIKit-React-Native-CLI-OpenSource/assets/155952277/eb87497c-52ce-4e91-a3ad-f46077724378">
-
 
 ```sh
 npx pod-install
@@ -102,10 +100,9 @@ npx pod-install
 
 Build project gradle with your Android Studio
 
-In android/build.gradle,  add kotlinVersion above 1.7.0 in buildscript > ext  
+In android/build.gradle,  add kotlinVersion above 1.7.0 in buildscript > ext
 
 <img width="545" alt="add kotlinVersion above 1.7.0" src="https://github.com/AmityCo/Amity-Social-UIKit-React-Native-CLI-OpenSource/assets/155952277/1a8618fa-6da3-4a37-8bb8-442119e0b536">
-
 
 ### Add Camera permission (only iOS)
 
