@@ -453,7 +453,7 @@ export default function PostList({
         <View style={styles.bodySection}>
           {textPost && (
             <RenderTextWithMention
-              mentionPositionArr={mentionPositionArr}
+              mentionPositionArr={[...mentionPositionArr]}
               textPost={textPost}
             />
           )}
