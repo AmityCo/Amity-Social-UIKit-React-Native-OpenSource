@@ -5,7 +5,6 @@ import {
   Text,
   TouchableOpacity,
   Image,
-  TouchableWithoutFeedback,
   Modal,
   Pressable,
   Animated,
@@ -453,7 +452,7 @@ export default function PostList({
         <View style={styles.bodySection}>
           {textPost && (
             <RenderTextWithMention
-              mentionPositionArr={mentionPositionArr}
+              mentionPositionArr={[...mentionPositionArr]}
               textPost={textPost}
             />
           )}
@@ -465,10 +464,10 @@ export default function PostList({
         {likeReaction === 0 && commentsCount === 0 ? (
           ''
         ) : (
-          <TouchableWithoutFeedback onPress={onClickReactions}>
+          <View>
             <View style={styles.countSection}>
               {likeReaction ? (
-                <Text style={styles.likeCountText}>
+                <Text style={styles.likeCountText} onPress={onClickReactions}>
                   {likeReaction} {renderLikeText(likeReaction)}
                 </Text>
               ) : (
@@ -481,7 +480,7 @@ export default function PostList({
                 </Text>
               )}
             </View>
-          </TouchableWithoutFeedback>
+          </View>
         )}
 
         <View style={styles.actionSection}>
