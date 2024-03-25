@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useCallback, useEffect, useState } from 'react';
 import {
   TouchableOpacity,
   View,
@@ -21,7 +21,7 @@ import type { IPost, IVideoPost } from '../Social/PostList';
 import useAuth from '../../hooks/useAuth';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
-import { PostRepository } from '@amityco/ts-sdk-react-native';
+import { PostRepository, UserRepository } from '@amityco/ts-sdk-react-native';
 import { amityPostsFormatter } from '../../util/postDataFormatter';
 import postDetailSlice from '../../redux/slices/postDetailSlice';
 import globalFeedSlice from '../../redux/slices/globalfeedSlice';
@@ -67,19 +67,113 @@ const EditPostModal = ({
   const [videoPosts, setVideoPosts] = useState<IVideoPost[]>([]);
 
   const [childrenPostArr, setChildrenPostArr] = useState<string[]>([]);
+  const [initialText, setInitialText] = useState('');
   const { updateByPostId } = globalFeedSlice.actions;
   const { updatePostDetail } = postDetailSlice.actions;
   const dispatch = useDispatch();
 
+  const parsePostText = useCallback(
+    (text: string, mentionUsersArr: TSearchItem[]) => {
+      const parsedText = text.replace(/@([\w\s-]+)/g, (_, username) => {
+        const mentionee = mentionUsersArr.find(
+          (user) => user.displayName === username
+        );
+        const mentioneeId = mentionee ? mentionee.userId : ''; // Get userId from mentionUsers array based on userName
+        return `@[${username}](${mentioneeId})`;
+      });
+      return parsedText;
+    },
+    []
+  );
+
+  const getMentionPositions = useCallback(
+    (text: string, mentioneeIds: string[]) => {
+      let index = 0;
+      let mentions = [];
+      let match;
+      const mentionRegex = /@([\w-]+)/g;
+
+      while ((match = mentionRegex.exec(text)) !== null) {
+        let username = match[1];
+        let mentioneeId = mentioneeIds[index++];
+        let startIdx = match.index;
+        let mention = {
+          type: 'user',
+          displayName: username,
+          index: startIdx,
+          length: match[0].length,
+          userId: mentioneeId,
+        };
+        mentions.push(mention);
+      }
+      return mentions;
+    },
+    []
+  );
+
+  const getMentionUsers = useCallback(async (mentionIds: string[]) => {
+    const { data } = await UserRepository.getUserByIds(mentionIds);
+    const users = data.map((user) => {
+      return {
+        ...user,
+        name: user.displayName,
+        id: user.userId,
+      };
+    }) as TSearchItem[];
+
+    setMentionUsers(users);
+    const parsedText = parsePostText(postDetail?.data?.text ?? '', users);
+    setInitialText(parsedText);
+    return users;
+  }, []);
+
+  const getPostInfo = useCallback(
+    async (postArray: string[]) => {
+      try {
+        const response = await Promise.all(
+          postArray.map(async (id: string) => {
+            const { data: post } = await getPostById(id);
+            return { dataType: post.dataType, data: post.data };
+          })
+        );
+
+        response.forEach((item) => {
+          if (item.dataType === 'image') {
+            setImagePosts((prev) => [
+              ...prev,
+              `https://api.${apiRegion}.amity.co/api/v3/files/${item?.data.fileId}/download?size=medium`,
+            ]);
+          } else if (item.dataType === 'video') {
+            setVideoPosts((prev) => [...prev, item.data]);
+          }
+        });
+      } catch (error) {
+        console.log('error: ', error);
+      }
+    },
+    [apiRegion]
+  );
+
   useEffect(() => {
     if (childrenPostArr.length > 0) {
-      getPostInfo();
+      getPostInfo(childrenPostArr);
     }
-  }, [childrenPostArr]);
+  }, [childrenPostArr, getPostInfo]);
 
   useEffect(() => {
     getPost(postDetail.postId);
   }, [postDetail.postId, visible]);
+
+  useEffect(() => {
+    if (postDetail?.mentionees.length > 0) {
+      const mentionPositions = getMentionPositions(
+        postDetail?.data?.text ?? '',
+        postDetail.mentionees ?? []
+      );
+      getMentionUsers(postDetail.mentionees ?? []);
+      setMentionPosition(mentionPositions);
+    }
+  }, [postDetail]);
 
   const getPost = (postId: string) => {
     const unsubscribePost = PostRepository.getPost(postId, async ({ data }) => {
@@ -89,30 +183,6 @@ const EditPostModal = ({
   };
   const handleOnClose = () => {
     onClose && onClose();
-  };
-
-  const getPostInfo = async () => {
-    try {
-      const response = await Promise.all(
-        childrenPostArr.map(async (id: string) => {
-          const { data: post } = await getPostById(id);
-          return { dataType: post.dataType, data: post.data };
-        })
-      );
-
-      response.forEach((item) => {
-        if (item.dataType === 'image') {
-          setImagePosts((prev) => [
-            ...prev,
-            `https://api.${apiRegion}.amity.co/api/v3/files/${item?.data.fileId}/download?size=medium`,
-          ]);
-        } else if (item.dataType === 'video') {
-          setVideoPosts((prev) => [...prev, item.data]);
-        }
-      });
-    } catch (error) {
-      console.log('error: ', error);
-    }
   };
 
   const handleEditPost = async () => {
@@ -283,6 +353,7 @@ const EditPostModal = ({
                 setMentionsPosition={setMentionPosition}
                 multiline
                 privateCommunityId={privateCommunityId}
+                initialValue={initialText}
               />
               <View style={styles.imageContainer}>
                 {displayImages.length > 0 && (
