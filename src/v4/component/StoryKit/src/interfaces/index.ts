@@ -20,6 +20,7 @@ export interface IUserStory<T = Record<string, any>> {
   creatorName?: string;
   createdAt?: string;
   items?: Amity.StoryItem;
+  isOwnder?: boolean;
 }
 
 export interface IUserStoryItem<T = Record<string, any>> {
@@ -44,6 +45,7 @@ export interface IUserStoryItem<T = Record<string, any>> {
   myReactions?: string[];
   markAsSeen?: () => void;
   markLinkAsClicked?: () => void;
+  isOwner?: boolean;
 }
 
 /** User with one story representing the current story on screen */

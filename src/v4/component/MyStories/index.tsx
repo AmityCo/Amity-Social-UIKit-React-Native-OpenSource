@@ -15,9 +15,14 @@ export interface IStoryItems {
   hasStories: boolean;
 }
 
+type TAmityStory = Amity.Story & {
+  creator: Amity.User;
+};
+
 export default function MyStories() {
   const styles = useStyles();
-  const { apiRegion } = useAuth();
+  const { apiRegion, client } = useAuth();
+  const userId = (client as Amity.Client).userId;
   const [globalStoriesItems, setGlobalStoriesItems] = useState<
     IUserStory<Record<string, any>>[]
   >([]);
@@ -64,7 +69,8 @@ export default function MyStories() {
         const displayName = community.displayName;
         const isSeen = items.every((item) => item.isSeen);
 
-        const storyData = items.map((item) => {
+        const storyData = items.map((item: TAmityStory) => {
+          const isOwner = item.creator.userId === userId;
           return {
             story_id: item.storyId,
             story_image: item?.imageData?.fileUrl,
@@ -82,6 +88,7 @@ export default function MyStories() {
             myReactions: item.myReactions,
             markAsSeen: item.analytics.markAsSeen,
             markLinkAsClicked: item.analytics.markLinkAsClicked,
+            isOwner: isOwner,
           };
         });
 
@@ -96,7 +103,7 @@ export default function MyStories() {
         };
       });
     setGlobalStoriesItems([...mappedGlobalStories]);
-  }, [apiRegion, globalStories]);
+  }, [apiRegion, globalStories, userId]);
 
   return (
     <View style={styles.container}>

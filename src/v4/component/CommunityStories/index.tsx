@@ -31,7 +31,8 @@ export default function CommunityStories({
   const navigation =
     useNavigation() as NativeStackNavigationProp<RootStackParamList>;
   const styles = useStyles();
-  const { apiRegion } = useAuth();
+  const { apiRegion, client } = useAuth();
+  const userId = (client as Amity.Client).userId;
   const { getStories, stories, loading } = useStory();
   useFocusEffect(
     useCallback(() => {
@@ -50,6 +51,7 @@ export default function CommunityStories({
   const formatStory = useCallback(() => {
     const isSeen = stories.every((story) => story.isSeen);
     const storyData = stories?.map((item: TAmityStory) => {
+      const isOwner = item.creator.userId === userId;
       return {
         story_id: item.storyId,
         story_image: `https://api.${apiRegion}.amity.co/api/v3/files/${item?.data?.fileId}/download?size=full`,
@@ -67,6 +69,7 @@ export default function CommunityStories({
         myReactions: item.myReactions,
         markAsSeen: item.analytics.markAsSeen,
         markLinkAsClicked: item.analytics.markLinkAsClicked,
+        isOwner: isOwner,
       };
     });
     if (storyData.length > 0) {
@@ -84,7 +87,7 @@ export default function CommunityStories({
 
       setCommunityStories(mappedStories);
     }
-  }, [apiRegion, avatarFileId, communityId, displayName, stories]);
+  }, [apiRegion, avatarFileId, communityId, displayName, stories, userId]);
 
   useEffect(() => {
     formatStory();
@@ -94,8 +97,9 @@ export default function CommunityStories({
     navigation.navigate('Camera', {
       communityId,
       communityName: displayName,
+      communityAvatar: `https://api.${apiRegion}.amity.co/api/v3/files/${avatarFileId}/download?size=small`,
     });
-  }, [communityId, displayName, navigation]);
+  }, [apiRegion, avatarFileId, communityId, displayName, navigation]);
 
   return (
     <View style={styles.container}>

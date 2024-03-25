@@ -105,6 +105,9 @@ export const useStyles = () => {
     whiteText: {
       color: 'white',
     },
+    threeDotsMenu: {
+      marginRight: 16,
+    },
     swipeText: {
       color: 'white',
       marginTop: 5,
@@ -160,6 +163,17 @@ export const useStyles = () => {
       position: 'absolute',
       left: 25,
       top: 25,
+    },
+    deleteBottomSheet: {
+      flexDirection: 'row',
+      justifyContent: 'flex-start',
+      alignItems: 'center',
+      paddingHorizontal: 16,
+      marginVertical: 8,
+    },
+    deleteStoryTxt: {
+      color: theme.colors.base,
+      fontSize: 14,
     },
   });
 

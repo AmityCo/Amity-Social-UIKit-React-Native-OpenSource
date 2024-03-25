@@ -17,12 +17,13 @@ export const useStyles = () => {
     },
     camera: {
       width: '100%',
-      flex: 1,
+      height: '100%',
       borderRadius: 20,
       overflow: 'hidden',
       alignItems: 'center',
       justifyContent: 'flex-end',
       paddingBottom: 10,
+      position: 'absolute',
     },
     timer: {
       position: 'absolute',
@@ -67,6 +68,9 @@ export const useStyles = () => {
       borderWidth: 2,
       borderColor: 'white',
       padding: 5,
+      alignSelf: 'center',
+      bottom: 10,
+      position: 'absolute',
     },
     cameraCaptureBtnFill: {
       flex: 1,
@@ -83,6 +87,9 @@ export const useStyles = () => {
       backgroundColor: theme.colors.error,
       justifyContent: 'center',
       alignItems: 'center',
+      alignSelf: 'center',
+      bottom: 10,
+      position: 'absolute',
     },
     switchContainer: {
       marginVertical: 20,

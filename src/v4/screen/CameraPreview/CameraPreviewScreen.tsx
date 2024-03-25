@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback } from 'react';
 import Video from 'react-native-video';
 import { leftLongArrow, rightLongArrow } from '../../../svg/svg-xml-list';
 import { SvgXml } from 'react-native-svg';
@@ -15,18 +15,7 @@ import { StoryRepository } from '@amityco/ts-sdk-react-native';
 
 const CameraPreviewScreen = ({ navigation, route }) => {
   const { type, data } = route.params;
-  const [blobData, setBlobData] = useState<Blob>(null);
   const styles = useStyles();
-
-  useEffect(() => {
-    (async () => {
-      if (data.path) {
-        const name = data.path.split('/').pop();
-        const image = { ...data, uri: data.path, name: name };
-        setBlobData(image);
-      }
-    })();
-  }, [data]);
 
   const onPressBack = useCallback(() => {
     Alert.alert(
@@ -47,7 +36,7 @@ const CameraPreviewScreen = ({ navigation, route }) => {
 
   const onPressShareStory = useCallback(async () => {
     const formData = new FormData();
-    formData.append('files', blobData);
+    formData.append('files', data);
     try {
       if (type === 'photo') {
         StoryRepository.createImageStory(
@@ -55,41 +44,36 @@ const CameraPreviewScreen = ({ navigation, route }) => {
           data.communityId,
           formData
         );
-        navigation.navigate('CommunityHome', {
-          communityId: data.communityId,
-          communityName: data.communityName,
-        });
       } else {
         StoryRepository.createVideoStory(
           'community',
           data.communityId,
           formData
         );
-        navigation.navigate('CommunityHome', {
-          communityId: data.communityId,
-          communityName: data.communityName,
-        });
       }
+      navigation.navigate('CommunityHome', {
+        communityId: data.communityId,
+        communityName: data.communityName,
+      });
     } catch (error) {
       Alert.alert('Create Story fail', error.message);
     }
-  }, [blobData, data, navigation, type]);
+  }, [data, navigation, type]);
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.imageContainer}>
         {type === 'photo' ? (
           <Image
-            source={{ uri: data.path }}
+            source={{ uri: data.uri }}
             resizeMode="contain"
             style={styles.image}
           />
         ) : (
           <Video
-            source={{ uri: data.path }}
+            source={{ uri: data.uri }}
             resizeMode="cover"
             style={styles.image}
-            repeat
           />
         )}
       </View>

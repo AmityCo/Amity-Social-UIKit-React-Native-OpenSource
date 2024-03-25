@@ -1,4 +1,4 @@
-import { StyleSheet, useWindowDimensions } from 'react-native';
+import { StyleSheet, useWindowDimensions, Platform } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
 
@@ -13,7 +13,7 @@ export const useStyles = () => {
     },
     backBtn: {
       position: 'absolute',
-      top: 56,
+      top: Platform.select({ ios: 56, android: 28 }),
       left: 24,
     },
     avatar: {
