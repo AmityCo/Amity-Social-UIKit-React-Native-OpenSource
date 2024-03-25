@@ -70,7 +70,7 @@ Then, inside another project, Copy tgz file to your application folder where you
 
 ```sh
 1. yarn add ./amity-react-native-social-ui-kit-x.x.x.tgz
-2. yarn add react-native-safe-area-context \react-native-image-picker \@react-native-async-storage/async-storage \react-native-svg \react-native-screens \react-native-video@^6.0.0-beta.5 \react-native-create-thumbnail \@react-native-community/netinfo \@@react-navigation/native \@react-navigation/native-stack \@react-navigation/stack
+2. yarn add react-native-safe-area-context \react-native-image-picker \@react-native-async-storage/async-storage \react-native-svg \react-native-gesture-handler \react-native-screens \"react-native-video@^6.0.0-beta.5" \react-native-create-thumbnail \@react-native-community/netinfo \@react-navigation/native \@react-navigation/native-stack \@react-navigation/stack \react-native-vision-camera
 ```
 
 ### iOS Configuration
@@ -104,7 +104,7 @@ In android/build.gradle,  add kotlinVersion above 1.7.0 in buildscript > ext
 
 <img width="545" alt="add kotlinVersion above 1.7.0" src="https://github.com/AmityCo/Amity-Social-UIKit-React-Native-CLI-OpenSource/assets/155952277/1a8618fa-6da3-4a37-8bb8-442119e0b536">
 
-### Add Camera permission (only iOS)
+### Add Camera permission (iOS)
 
 Add following permissions to `info.plist` file (ios/{YourAppName}/Info.plist)
 
@@ -118,6 +118,12 @@ Add following permissions to `info.plist` file (ios/{YourAppName}/Info.plist)
  <key>NSPhotoLibraryUsageDescription</key>
  <string>App needs access to the gallery to select photos.</string>
 ```
+
+### Add Camera permission (Android)
+
+Add following permissions to `AndroidManifest.xml` file (android/app/src/main/AndroidManifest.xml)
+ <uses-permission android:name="android.permission.CAMERA" /> 
+ <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
 ### Usage
 
