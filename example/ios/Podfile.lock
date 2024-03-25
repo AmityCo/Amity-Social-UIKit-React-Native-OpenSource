@@ -1,5 +1,5 @@
 PODS:
-  - amity-react-native-social-ui-kit (0.1.3):
+  - amity-react-native-social-ui-kit (0.1.4):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
   - boost (1.76.0)
