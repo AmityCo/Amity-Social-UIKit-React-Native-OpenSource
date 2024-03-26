@@ -1,8 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Image, TouchableOpacity, View } from 'react-native';
 import { useStyles } from './styles';
-import useAuth from '../../../hooks/useAuth';
-import InstaStory from '../../../v4/component/StoryKit';
+import AmityStory from '../../../v4/component/StoryKit';
 import { useStory } from '../../hook/useStory';
 import ContentLoader, { Circle } from 'react-content-loader/native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
@@ -13,6 +12,9 @@ import {
 } from '../../../svg/svg-xml-list';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../../routes/RouteParamList';
+import { useFile } from '../../hook/useFile';
+import useAuth from '../../../hooks/useAuth';
+import { ImageSizeState } from '../../enum/imageSizeState';
 
 interface ICommunityStories {
   communityId: string;
@@ -31,9 +33,20 @@ export default function CommunityStories({
   const navigation =
     useNavigation() as NativeStackNavigationProp<RootStackParamList>;
   const styles = useStyles();
-  const { apiRegion, client } = useAuth();
+  const { client } = useAuth();
   const userId = (client as Amity.Client).userId;
   const { getStories, stories, loading } = useStory();
+  const { getImage } = useFile();
+  const [avatarUrl, setAvatarUrl] = useState(undefined);
+
+  useEffect(() => {
+    const gg = getImage({
+      fileId: avatarFileId,
+      imageSize: ImageSizeState.small,
+    });
+    setAvatarUrl(gg);
+  }, [avatarFileId, getImage]);
+
   useFocusEffect(
     useCallback(() => {
       getStories({
@@ -48,35 +61,39 @@ export default function CommunityStories({
   );
 
   const [communityStories, setCommunityStories] = useState([]);
-  const formatStory = useCallback(() => {
+  const formatStory = useCallback(async () => {
     const isSeen = stories.every((story) => story.isSeen);
-    const storyData = stories?.map((item: TAmityStory) => {
-      const isOwner = item.creator.userId === userId;
-      return {
-        story_id: item.storyId,
-        story_image: `https://api.${apiRegion}.amity.co/api/v3/files/${item?.data?.fileId}/download?size=full`,
-        swipeText: '',
-        onPress: () => console.log('story 1 swiped'),
-        story_type: item.dataType,
-        story_video: `https://api.${apiRegion}.amity.co/api/v3/files/${item?.data?.videoFileId?.original}/download`,
-        story_page: 0,
-        creatorName: item?.creator?.displayName ?? '',
-        createdAt: item.createdAt,
-        items: item.items,
-        reactionCounts: item.reactionsCount,
-        comments: item.comments,
-        viewer: item.impression,
-        myReactions: item.myReactions,
-        markAsSeen: item.analytics.markAsSeen,
-        markLinkAsClicked: item.analytics.markLinkAsClicked,
-        isOwner: isOwner,
-      };
-    });
+    const storyData = await Promise.all(
+      stories?.map(async (item: TAmityStory) => {
+        const isOwner = item.creator.userId === userId;
+        return {
+          story_id: item.storyId,
+          story_image: item?.imageData?.fileUrl,
+          swipeText: '',
+          story_type: item.dataType,
+          story_video: item?.videoData?.fileUrl,
+          story_page: 0,
+          creatorName: item?.creator?.displayName ?? '',
+          createdAt: item.createdAt,
+          items: item.items,
+          reactionCounts: item.reactionsCount,
+          comments: item.comments,
+          viewer: item.impression,
+          myReactions: item.myReactions,
+          markAsSeen: item.analytics.markAsSeen,
+          markLinkAsClicked: item.analytics.markLinkAsClicked,
+          isOwner: isOwner,
+        };
+      })
+    );
     if (storyData.length > 0) {
       const mappedStories = [
         {
           user_id: communityId,
-          user_image: `https://api.${apiRegion}.amity.co/api/v3/files/${avatarFileId}/download?size=small`,
+          user_image: await getImage({
+            fileId: avatarFileId,
+            imageSize: ImageSizeState.small,
+          }),
           user_name: displayName,
           stories: storyData ?? [],
           isOfficial: true,
@@ -87,7 +104,7 @@ export default function CommunityStories({
 
       setCommunityStories(mappedStories);
     }
-  }, [apiRegion, avatarFileId, communityId, displayName, stories, userId]);
+  }, [avatarFileId, communityId, displayName, getImage, stories, userId]);
 
   useEffect(() => {
     formatStory();
@@ -97,9 +114,9 @@ export default function CommunityStories({
     navigation.navigate('Camera', {
       communityId,
       communityName: displayName,
-      communityAvatar: `https://api.${apiRegion}.amity.co/api/v3/files/${avatarFileId}/download?size=small`,
+      communityAvatar: avatarUrl,
     });
-  }, [apiRegion, avatarFileId, communityId, displayName, navigation]);
+  }, [avatarUrl, communityId, displayName, navigation]);
 
   return (
     <View style={styles.container}>
@@ -115,7 +132,7 @@ export default function CommunityStories({
           <Circle cx="25" cy="25" r="25" />
         </ContentLoader>
       ) : communityStories.length > 0 ? (
-        <InstaStory
+        <AmityStory
           data={communityStories}
           duration={7}
           isCommunityStory
@@ -135,7 +152,7 @@ export default function CommunityStories({
         <TouchableOpacity style={styles.avatarContainer} onPress={onPress}>
           <Image
             source={{
-              uri: `https://api.${apiRegion}.amity.co/api/v3/files/${avatarFileId}/download?size=small`,
+              uri: avatarUrl,
             }}
             style={styles.communityAvatar}
           />

@@ -133,14 +133,14 @@ export const StoryListItem = ({
     }
 
     let data = [...content];
-    data.map((x, i) => {
+    data.map((storyItem, index) => {
       if (isPrevious) {
-        x.finish = 1;
-        if (i === content.length - 1) {
-          x.finish = 0;
+        storyItem.finish = 1;
+        if (index === content.length - 1) {
+          storyItem.finish = 0;
         }
       } else {
-        x.finish = 0;
+        storyItem.finish = 0;
       }
     });
     setContent(data);

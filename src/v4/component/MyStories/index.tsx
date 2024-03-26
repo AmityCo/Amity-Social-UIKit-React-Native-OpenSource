@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { useStyles } from './styles';
-import { useStory } from '../../hook/useStory';
-import useAuth from '../../../hooks/useAuth';
+import { useGlobalStory } from '../../hook/useGlobalStory';
 import ContentLoader, { Circle } from 'react-content-loader/native';
-import InstaStory, { IUserStory } from '../StoryKit';
+import AmityStory, { IUserStory } from '../StoryKit';
+import { useFile } from '../../hook/useFile';
+import useAuth from '../../../hooks/useAuth';
+import { ImageSizeState } from '../../enum/imageSizeState';
 
 export interface IStoryItems {
   communityId: string;
@@ -15,14 +17,11 @@ export interface IStoryItems {
   hasStories: boolean;
 }
 
-type TAmityStory = Amity.Story & {
-  creator: Amity.User;
-};
-
 export default function MyStories() {
   const styles = useStyles();
-  const { apiRegion, client } = useAuth();
+  const { client } = useAuth();
   const userId = (client as Amity.Client).userId;
+  const { getImage } = useFile();
   const [globalStoriesItems, setGlobalStoriesItems] = useState<
     IUserStory<Record<string, any>>[]
   >([]);
@@ -32,7 +31,7 @@ export default function MyStories() {
     getGlobalStories,
     globalStories,
     loading,
-  } = useStory();
+  } = useGlobalStory();
 
   useEffect(() => {
     getGlobalStoryTargets();
@@ -49,6 +48,59 @@ export default function MyStories() {
     });
   }, [getGlobalStories, globalStoryTargets]);
 
+  const formatStory = useCallback(
+    async (categorizedStory: Amity.Story | Object) => {
+      const mappedGlobalStories: IUserStory<Record<string, any>>[] =
+        await Promise.all(
+          Object.entries(categorizedStory).map(async ([communityId, items]) => {
+            const { community } = items[0];
+            const avatarFileId = community.avatarFileId;
+            const displayName = community.displayName;
+            const isSeen = items.every((item) => item.isSeen);
+
+            const storyData = await Promise.all(
+              items.map((item, index: number) => {
+                const isOwner = item.creator.userId === userId;
+                return {
+                  story_id: item.storyId,
+                  story_image: item?.imageData?.fileUrl,
+                  swipeText: '',
+                  story_type: item.dataType,
+                  story_video: item?.videoData?.fileUrl,
+                  story_page: index,
+                  creatorName: item?.creator?.displayName ?? '',
+                  createdAt: item.createdAt,
+                  items: item.items,
+                  reactionCounts: item.reactionsCount,
+                  comments: item.comments,
+                  viewer: item.impression,
+                  myReactions: item.myReactions,
+                  markAsSeen: item.analytics.markAsSeen,
+                  markLinkAsClicked: item.analytics.markLinkAsClicked,
+                  isOwner: isOwner,
+                };
+              })
+            );
+
+            return {
+              user_id: communityId,
+              user_image: await getImage({
+                fileId: avatarFileId,
+                imageSize: ImageSizeState.small,
+              }),
+              user_name: displayName,
+              stories: storyData,
+              isOfficial: community.isOfficial,
+              isPublic: community.isPublic,
+              seen: isSeen,
+            };
+          })
+        );
+      setGlobalStoriesItems([...mappedGlobalStories]);
+    },
+    [getImage, userId]
+  );
+
   useEffect(() => {
     const groupedByCommunity: Amity.Story | Object = globalStories.reduce(
       (acc, item) => {
@@ -62,52 +114,12 @@ export default function MyStories() {
       },
       {}
     );
-    const mappedGlobalStories: IUserStory<Record<string, any>>[] =
-      Object.entries(groupedByCommunity).map(([communityId, items]) => {
-        const { community } = items[0];
-        const avatarFileId = community.avatarFileId;
-        const displayName = community.displayName;
-        const isSeen = items.every((item) => item.isSeen);
+    formatStory(groupedByCommunity);
+  }, [formatStory, globalStories]);
 
-        const storyData = items.map((item: TAmityStory) => {
-          const isOwner = item.creator.userId === userId;
-          return {
-            story_id: item.storyId,
-            story_image: item?.imageData?.fileUrl,
-            swipeText: '',
-            onPress: () => console.log('story 1 swiped'),
-            story_type: item.dataType,
-            story_video: item?.videoData?.fileUrl,
-            story_page: 0,
-            creatorName: item?.creator?.displayName ?? '',
-            createdAt: item.createdAt,
-            items: item.items,
-            reactionCounts: item.reactionsCount,
-            comments: item.comments,
-            viewer: item.impression,
-            myReactions: item.myReactions,
-            markAsSeen: item.analytics.markAsSeen,
-            markLinkAsClicked: item.analytics.markLinkAsClicked,
-            isOwner: isOwner,
-          };
-        });
-
-        return {
-          user_id: communityId,
-          user_image: `https://api.${apiRegion}.amity.co/api/v3/files/${avatarFileId}/download?size=full`,
-          user_name: displayName,
-          stories: storyData,
-          isOfficial: community.isOfficial,
-          isPublic: community.isPublic,
-          seen: isSeen,
-        };
-      });
-    setGlobalStoriesItems([...mappedGlobalStories]);
-  }, [apiRegion, globalStories, userId]);
-
-  return (
-    <View style={styles.container}>
-      {loading ? (
+  if (loading) {
+    return (
+      <View style={styles.container}>
         <ContentLoader
           height={70}
           speed={1}
@@ -118,13 +130,19 @@ export default function MyStories() {
         >
           <Circle cx="25" cy="25" r="25" />
         </ContentLoader>
-      ) : globalStoriesItems?.length > 0 ? (
-        <InstaStory
+      </View>
+    );
+  }
+  if (globalStoriesItems?.length > 0) {
+    return (
+      <View style={styles.container}>
+        <AmityStory
           data={globalStoriesItems}
-          duration={15}
+          duration={7}
           onStorySeen={({ story }) => story.markAsSeen()}
         />
-      ) : null}
-    </View>
-  );
+      </View>
+    );
+  }
+  return null;
 }

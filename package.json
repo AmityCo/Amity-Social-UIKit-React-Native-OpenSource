@@ -195,7 +195,7 @@
   },
   "dependencies": {
     "@devvie/bottom-sheet": "^0.3.0",
-    "@amityco/ts-sdk-react-native": "^6.19.0",
+    "@amityco/ts-sdk-react-native": "^6.20.0",
     "@react-navigation/native": "6.1.6",
     "@react-navigation/native-stack": "6.9.10",
     "@react-navigation/stack": "6.3.16",
