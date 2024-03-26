@@ -165,7 +165,7 @@ const EditPostModal = ({
   }, [postDetail.postId, visible]);
 
   useEffect(() => {
-    if (postDetail?.mentionees.length > 0) {
+    if (postDetail?.mentionees?.length > 0) {
       const mentionPositions = getMentionPositions(
         postDetail?.data?.text ?? '',
         postDetail.mentionees ?? []
