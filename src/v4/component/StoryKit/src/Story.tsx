@@ -112,15 +112,15 @@ export const Story = ({
   }
 
   const renderStoryList = () =>
-    selectedData.map((x, i) => {
+    selectedData.map((storyData, index) => {
       return (
         <StoryListItem
           duration={duration * 1000}
-          key={i}
-          userId={x.user_id}
-          profileName={x.user_name}
-          profileImage={x.user_image}
-          stories={x.stories}
+          key={index}
+          userId={storyData.user_id}
+          profileName={storyData.user_name}
+          profileImage={storyData.user_image}
+          stories={storyData.stories}
           currentPage={currentPage}
           onFinish={onStoryFinish}
           swipeText={swipeText}
@@ -130,10 +130,10 @@ export const Story = ({
           onClosePress={() => {
             setIsModalOpen(false);
             if (onClose) {
-              onClose(x);
+              onClose(storyData);
             }
           }}
-          index={i}
+          index={index}
           onStorySeen={onStorySeen}
           unloadedAnimationBarStyle={unloadedAnimationBarStyle}
           animationBarContainerStyle={animationBarContainerStyle}

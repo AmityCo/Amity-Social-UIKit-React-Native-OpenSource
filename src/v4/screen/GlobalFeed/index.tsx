@@ -1,7 +1,5 @@
 import React, { useCallback, useRef, useState } from 'react';
 
-// import { useTranslation } from 'react-i18next';
-
 import { FlatList, View } from 'react-native';
 import {
   deletePostById,

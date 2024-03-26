@@ -1,8 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-// import { useTranslation } from 'react-i18next';
-
 import { View, TouchableOpacity, LogBox } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { plusIcon, searchIcon } from '../../../svg/svg-xml-list';

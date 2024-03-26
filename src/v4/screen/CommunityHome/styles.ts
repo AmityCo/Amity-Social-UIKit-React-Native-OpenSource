@@ -8,8 +8,6 @@ export const useStyles = () => {
     container: {
       flex: 1,
       backgroundColor: theme.colors.background,
-      // alignItems: 'center',
-      // justifyContent: 'center',
     },
     joinContainer: {
       flex: 0.2,
@@ -18,10 +16,6 @@ export const useStyles = () => {
       marginVertical: 16,
     },
     joinCommunityButton: {
-      // flex: 1,
-      // backgroundColor: 'white',
-      // borderWidth: 1,
-      // borderColor: '#A5A9B5',
       backgroundColor: theme.colors.primary,
       width: '90%',
       padding: 8,
@@ -50,7 +44,7 @@ export const useStyles = () => {
     },
     darkOverlay: {
       ...StyleSheet.absoluteFillObject,
-      backgroundColor: 'rgba(0, 0, 0, 0.0)', // Adjust the alpha value for darkness
+      backgroundColor: 'rgba(0, 0, 0, 0.0)',
     },
     overlay: {
       position: 'absolute',

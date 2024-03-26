@@ -5,8 +5,6 @@ import React, {
   useState,
 } from 'react';
 
-// import { useTranslation } from 'react-i18next';
-
 import { FlatList, RefreshControl, View } from 'react-native';
 import PostList from '../../../components/Social/PostList';
 import { useStyles } from './styles';

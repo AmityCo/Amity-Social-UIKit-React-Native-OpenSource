@@ -44,7 +44,6 @@ android.iml
 # Cocoapods
 #
 example/ios/Pods
-example/Gemfile.lock
 
 # Ruby
 example/vendor/

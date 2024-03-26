@@ -2,6 +2,6 @@ import Story from './src/Story';
 
 export * from './src/interfaces';
 
-export const InstaStory = Story;
+export const AmityStory = Story;
 
-export default InstaStory;
+export default AmityStory;

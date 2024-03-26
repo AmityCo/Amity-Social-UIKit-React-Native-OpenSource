@@ -87,7 +87,7 @@ export const StoryListItem = ({
   const [currentSeek, setCurrentSeek] = useState(0);
   const progress = useRef(new Animated.Value(0)).current;
   const timeDifference = useTimeDifference(content[current].createdAt, true);
-  const storyHyperLink = content[current]?.items[0]?.data || undefined;
+  const storyHyperLink = content[current]?.items[0]?.data ?? undefined;
   const creatorName = content[current].creatorName ?? '';
   const viewer = content[current].viewer ?? 0;
   const comments = content[current].comments ?? [];
@@ -123,14 +123,14 @@ export const StoryListItem = ({
     }
 
     let data = [...content];
-    data.map((x, i) => {
+    data.map((storyItem, index) => {
       if (isPrevious) {
-        x.finish = 1;
-        if (i === content.length - 1) {
-          x.finish = 0;
+        storyItem.finish = 1;
+        if (index === content.length - 1) {
+          storyItem.finish = 0;
         }
       } else {
-        x.finish = 0;
+        storyItem.finish = 0;
       }
     });
     setContent(data);
