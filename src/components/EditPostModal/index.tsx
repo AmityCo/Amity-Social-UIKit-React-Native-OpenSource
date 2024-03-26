@@ -172,6 +172,8 @@ const EditPostModal = ({
       );
       getMentionUsers(postDetail.mentionees ?? []);
       setMentionPosition(mentionPositions);
+    } else {
+      setInitialText(postDetail?.data?.text ?? '');
     }
   }, [postDetail]);
 
