@@ -22,7 +22,7 @@ interface IMentionInput extends TextInputProps {
   resetValue?: boolean;
 }
 
-const MentionInput: FC<IMentionInput> = ({
+const AmityMentionInput: FC<IMentionInput> = ({
   initialValue = '',
   setInputMessage,
   mentionsPosition,
@@ -143,4 +143,4 @@ const MentionInput: FC<IMentionInput> = ({
   );
 };
 
-export default memo(MentionInput);
+export default memo(AmityMentionInput);

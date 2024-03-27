@@ -11,6 +11,7 @@ import {
   View,
   SafeAreaView,
   Alert,
+  KeyboardAvoidingView,
 } from 'react-native';
 import GestureRecognizer from 'react-native-swipe-gestures';
 import { usePrevious, isNullOrWhitespace } from './helpers';
@@ -38,8 +39,9 @@ import useConfig from '../../../hook/useConfig';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../../../routes/RouteParamList';
-import BottomSheet from '@devvie/bottom-sheet';
+import BottomSheet, { BottomSheetMethods } from '@devvie/bottom-sheet';
 import { StoryRepository } from '@amityco/ts-sdk-react-native';
+import CommentList from '../../Social/CommentList/CommentList';
 
 export const StoryListItem = ({
   index,
@@ -93,7 +95,7 @@ export const StoryListItem = ({
   const [storyDuration, setStoryDuration] = useState(duration);
   const [currentSeek, setCurrentSeek] = useState(0);
   const progress = useRef(new Animated.Value(0)).current;
-  const sheetRef = useRef(null);
+  const sheetRef = useRef<BottomSheetMethods>(null);
   const timeDifference = useTimeDifference(content[current]?.createdAt, true);
   const storyHyperLink = content[current]?.items[0]?.data || undefined;
   const creatorName = content[current]?.creatorName ?? '';
@@ -107,7 +109,7 @@ export const StoryListItem = ({
     useNavigation() as NativeStackNavigationProp<RootStackParamList>;
   const [totalReaction, setTotalReaction] = useState(reactionCounts);
   const [isLiked, setIsLiked] = useState<boolean>(myReactions?.length > 0);
-
+  const [openCommentSheet, setOpenCommentSheet] = useState(false);
   const { handleReaction } = useStory();
   const prevCurrentPage = usePrevious(currentPage);
 
@@ -267,6 +269,13 @@ export const StoryListItem = ({
 
   const onPressMenu = useCallback(() => {
     progress.stopAnimation(() => setPressed(true));
+    setOpenCommentSheet(false);
+    sheetRef.current?.open();
+  }, []);
+
+  const onPressComment = useCallback(() => {
+    progress.stopAnimation(() => setPressed(true));
+    setOpenCommentSheet(true);
     sheetRef.current?.open();
   }, []);
 
@@ -531,6 +540,7 @@ export const StoryListItem = ({
                   styles.iconContainer,
                   { backgroundColor: storyCommentBgColor },
                 ]}
+                onPress={onPressComment}
               >
                 <SvgXml xml={storyCommentIcon()} width="25" height="25" />
                 <Text style={styles.seen}>{comments.length}</Text>
@@ -555,18 +565,40 @@ export const StoryListItem = ({
           </View>
         )}
       </GestureRecognizer>
-      <BottomSheet
-        ref={sheetRef}
-        onClose={onCloseBottomSheet}
-        closeOnDragDown
-        height={120}
-      >
-        <View style={styles.deleteBottomSheet}>
-          <TouchableOpacity onPress={onPressDelete}>
-            <Text style={styles.deleteStoryTxt}>Delete story</Text>
-          </TouchableOpacity>
-        </View>
-      </BottomSheet>
+
+      {openCommentSheet ? (
+        <BottomSheet
+          style={styles.bottomSheet}
+          ref={sheetRef}
+          onClose={onCloseBottomSheet}
+          disableKeyboardHandling
+          height={'90%'}
+          closeOnDragDown
+        >
+          <KeyboardAvoidingView
+            behavior="padding"
+            keyboardVerticalOffset={180}
+            style={styles.commentBottomSheet}
+          >
+            <Text style={styles.commentTitle}>Comments</Text>
+            <View style={styles.horizontalSperator} />
+            <CommentList postId={storyId} postType="story" />
+          </KeyboardAvoidingView>
+        </BottomSheet>
+      ) : (
+        <BottomSheet
+          ref={sheetRef}
+          onClose={onCloseBottomSheet}
+          closeOnDragDown
+          height={120}
+        >
+          <View style={styles.deleteBottomSheet}>
+            <TouchableOpacity onPress={onPressDelete}>
+              <Text style={styles.deleteStoryTxt}>Delete story</Text>
+            </TouchableOpacity>
+          </View>
+        </BottomSheet>
+      )}
     </>
   );
 };

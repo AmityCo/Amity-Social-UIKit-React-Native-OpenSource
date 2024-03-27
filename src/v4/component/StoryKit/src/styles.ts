@@ -164,12 +164,31 @@ export const useStyles = () => {
       left: 25,
       top: 25,
     },
+    bottomSheet: {
+      backgroundColor: theme.colors.background,
+      paddingBottom: '25%',
+    },
     deleteBottomSheet: {
       flexDirection: 'row',
       justifyContent: 'flex-start',
       alignItems: 'center',
       paddingHorizontal: 16,
       marginVertical: 8,
+    },
+    commentBottomSheet: {
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    commentTitle: {
+      fontSize: 17,
+      fontWeight: 'bold',
+      color: theme.colors.base,
+    },
+    horizontalSperator: {
+      width: '100%',
+      backgroundColor: theme.colors.border,
+      height: 2,
+      marginVertical: 10,
     },
     deleteStoryTxt: {
       color: theme.colors.base,

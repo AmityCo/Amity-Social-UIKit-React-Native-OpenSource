@@ -40,11 +40,13 @@ export default function CommunityStories({
   const [avatarUrl, setAvatarUrl] = useState(undefined);
 
   useEffect(() => {
-    const gg = getImage({
-      fileId: avatarFileId,
-      imageSize: ImageSizeState.small,
-    });
-    setAvatarUrl(gg);
+    (async () => {
+      const avatarImage = await getImage({
+        fileId: avatarFileId,
+        imageSize: ImageSizeState.small,
+      });
+      setAvatarUrl(avatarImage);
+    })();
   }, [avatarFileId, getImage]);
 
   useFocusEffect(

@@ -36,7 +36,7 @@ import { useTheme } from 'react-native-paper';
 import { CommunityRepository } from '@amityco/ts-sdk-react-native';
 import { checkCommunityPermission } from '../../providers/Social/communities-sdk';
 import useAuth from '../../hooks/useAuth';
-import MentionInput from '../../components/MentionInput/MentionInput';
+import AmityMentionInput from '../../components/MentionInput/AmityMentionInput';
 import { TSearchItem } from '../../hooks/useSearch';
 
 export interface IDisplayImage {
@@ -407,7 +407,7 @@ const CreatePost = ({ route }: any) => {
           scrollEnabled={isScrollEnabled}
           keyboardShouldPersistTaps="handled"
         >
-          <MentionInput
+          <AmityMentionInput
             privateCommunityId={privateCommunityId}
             onFocus={() => {
               setIsScrollEnabled(false);

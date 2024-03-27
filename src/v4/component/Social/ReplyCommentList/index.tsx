@@ -10,44 +10,37 @@ import {
   Modal,
   Animated,
   Alert,
-  FlatList,
 } from 'react-native';
 import { useStyles } from './styles';
 import { SvgXml } from 'react-native-svg';
 import {
   expandIcon,
-  likeCircle,
   likedXml,
   likeXml,
   personXml,
-  replyIcon,
   threeDots,
-} from '../../../svg/svg-xml-list';
+} from '../../../../svg/svg-xml-list';
 
-import type { UserInterface } from '../../../types/user.interface';
+import type { UserInterface } from '../../../../types';
 
 import {
   addCommentReaction,
   removeCommentReaction,
-} from '../../../providers/Social/comment-sdk';
+} from '../../../../providers/Social/comment-sdk';
 
-import { getAmityUser } from '../../../providers/user-provider';
 import { Pressable } from 'react-native';
-import useAuth from '../../../hooks/useAuth';
+import useAuth from '../../../../hooks/useAuth';
 import {
   isReportTarget,
   reportTargetById,
   unReportTargetById,
-} from '../../../providers/Social/feed-sdk';
-import EditCommentModal from '../../../components/EditCommentModal';
+} from '../../../../providers/Social/feed-sdk';
+import EditCommentModal from '../../../../components/EditCommentModal';
 import { useTheme } from 'react-native-paper';
-import type { MyMD3Theme } from '../../../providers/amity-ui-kit-provider';
-import { IMentionPosition } from '../../../screens/CreatePost';
-import { useNavigation } from '@react-navigation/native';
-import ReplyCommentList from '../ReplyCommentList';
-import { CommentRepository } from '@amityco/ts-sdk-react-native';
-import { useTimeDifference } from '../../../hooks/useTimeDifference';
-import RenderTextWithMention from '../PostList/Components/RenderTextWithMention';
+import type { MyMD3Theme } from '../../../../providers/amity-ui-kit-provider';
+import { IMentionPosition } from '../../../../screens/CreatePost';
+import RenderTextWithMention from '../../../../components/Social/PostList/Components/RenderTextWithMention';
+
 export interface IComment {
   commentId: string;
   data: Record<string, any>;
@@ -64,23 +57,19 @@ export interface IComment {
   mentionPosition?: IMentionPosition[];
   childrenNumber: number;
 }
-export interface ICommentList {
+export interface IReplyCommentList {
+  commentId: string;
   commentDetail: IComment;
-  isReplyComment?: boolean;
-  onDelete: (commentId: string) => void;
-  onClickReply: (user: UserInterface, commentId: string) => void;
+  onDelete?: (commentId: string) => void;
 }
 
-const CommentList = ({
+export default function ReplyCommentList({
   commentDetail,
   onDelete,
-  onClickReply,
-}: ICommentList) => {
-  const theme = useTheme() as MyMD3Theme;
-  const styles = useStyles();
-
+  commentId,
+}: IReplyCommentList) {
   const {
-    commentId,
+    // commentId,
     data,
     user,
     createdAt,
@@ -90,42 +79,33 @@ const CommentList = ({
     editedAt,
     mentionPosition,
     childrenNumber,
-    referenceId,
-  } = commentDetail ?? {};
-  const timeDifference = useTimeDifference(createdAt);
+  } = commentDetail;
+  const theme = useTheme() as MyMD3Theme;
+  const styles = useStyles();
   const [isLike, setIsLike] = useState<boolean>(
     myReactions ? myReactions.includes('like') : false
   );
   const [likeReaction, setLikeReaction] = useState<number>(
-    reactions?.like ? reactions?.like : 0
+    reactions.like ? reactions.like : 0
   );
 
   const { client, apiRegion } = useAuth();
-  const [replyCommentList, setReplyCommentList] = useState<IComment[]>([]);
-  const [previewReplyCommentList, setPreviewReplyCommentList] = useState<
-    IComment[]
-  >([]);
-  const [replyCommentCollection, setReplyCommentCollection] =
-    useState<Amity.LiveCollection<Amity.InternalComment<any>>>();
 
-  const { onNextPage, hasNextPage } = replyCommentCollection ?? {};
-
-  const [isOpenReply, setIsOpenReply] = useState<boolean>(false);
-  const [textComment, setTextComment] = useState<string>(data?.text);
+  const [textComment, setTextComment] = useState<string>(data.text);
   const [isVisible, setIsVisible] = useState(false);
   const [isReportByMe, setIsReportByMe] = useState<boolean>(false);
   const [editCommentModal, setEditCommentModal] = useState<boolean>(false);
   const [isEditComment, setIsEditComment] = useState<boolean>(false);
   const slideAnimation = useRef(new Animated.Value(0)).current;
-  const navigation = useNavigation<any>();
+  const [commentMentionPosition, setCommentMentionPosition] = useState<
+    IMentionPosition[]
+  >([]);
 
   useEffect(() => {
-    getReplyComments();
-    setIsOpenReply(true);
-    return () => {
-      setIsOpenReply(false);
-    };
-  }, []);
+    if (mentionPosition) {
+      setCommentMentionPosition(mentionPosition);
+    }
+  }, [mentionPosition]);
 
   const openModal = () => {
     setIsVisible(true);
@@ -144,70 +124,47 @@ const CommentList = ({
       setIsReportByMe(true);
     }
   };
+  function getTimeDifference(timestamp: string): string {
+    // Convert the timestamp string to a Date object
+    const timestampDate = Date.parse(timestamp);
 
-  const formatReplyComments = async (
-    replyComments,
-    isPreviewReply: boolean = false
-  ) => {
-    if (isPreviewReply) {
-      setPreviewReplyCommentList([]);
-    } else {
-      setReplyCommentList([]);
-    }
+    // Get the current date and time
+    const currentDate = Date.now();
 
-    if (replyComments && replyComments.length > 0) {
-      const formattedCommentList = await Promise.all(
-        replyComments.map(async (item: Amity.InternalComment<any>) => {
-          const { userObject } = await getAmityUser(item.userId);
-          let formattedUserObject: UserInterface;
+    // Calculate the difference in milliseconds
+    const differenceMs = currentDate - timestampDate;
 
-          formattedUserObject = {
-            userId: userObject.data.userId,
-            displayName: userObject.data.displayName,
-            avatarFileId: userObject.data.avatarFileId,
-          };
+    const differenceYear = Math.floor(
+      differenceMs / (1000 * 60 * 60 * 24 * 365)
+    );
+    const differenceDay = Math.floor(differenceMs / (1000 * 60 * 60 * 24));
+    const differenceHour = Math.floor(differenceMs / (1000 * 60 * 60));
+    const differenceMinutes = Math.floor(differenceMs / (1000 * 60));
+    const differenceSec = Math.floor(differenceMs / 1000);
 
-          return {
-            commentId: item.commentId,
-            data: item.data as Record<string, any>,
-            dataType: item.dataType,
-            myReactions: item.myReactions as string[],
-            reactions: item.reactions as Record<string, number>,
-            user: formattedUserObject as UserInterface,
-            updatedAt: item.updatedAt,
-            editedAt: item.editedAt,
-            createdAt: item.createdAt,
-            childrenComment: item.children,
-            referenceId: item.referenceId,
-            mentionPosition: item?.metadata?.mentioned,
-          };
-        })
+    if (differenceSec < 60) {
+      return 'Just now';
+    } else if (differenceMinutes < 60) {
+      return (
+        differenceMinutes +
+        ` ${differenceMinutes === 1 ? 'min ago' : 'mins ago'}`
       );
-      if (isPreviewReply) {
-        setPreviewReplyCommentList([...formattedCommentList]);
-      } else {
-        setReplyCommentList([...formattedCommentList]);
-      }
+    } else if (differenceHour < 24) {
+      return (
+        differenceHour + ` ${differenceHour === 1 ? 'hour ago' : 'hours ago'}`
+      );
+    } else if (differenceDay < 365) {
+      return (
+        (differenceDay !== 1 ? differenceDay : '') +
+        ` ${differenceDay === 1 ? 'Yesterday' : 'days ago'}`
+      );
+    } else {
+      return (
+        differenceYear + ` ${differenceYear === 1 ? 'year ago' : 'years ago'}`
+      );
     }
-  };
-  const getReplyComments = async () => {
-    const getCommentsParams: Amity.CommentLiveCollection = {
-      referenceType: 'post',
-      referenceId: referenceId, // post ID
-      dataTypes: { values: ['text', 'image'], matchType: 'any' },
-      limit: 3,
-      parentId: commentId,
-    };
+  }
 
-    CommentRepository.getComments(getCommentsParams, (result) => {
-      setReplyCommentCollection(result);
-      formatReplyComments(result.data);
-    });
-  };
-  const openReplyComment = () => {
-    setIsOpenReply(true);
-    getReplyComments();
-  };
   useEffect(() => {
     checkIsReport();
   }, [childrenComment]);
@@ -223,7 +180,6 @@ const CommentList = ({
       await addCommentReaction(commentId, 'like');
     }
   };
-
   const deletePostObject = () => {
     Alert.alert(
       'Delete this post',
@@ -283,20 +239,9 @@ const CommentList = ({
     setEditCommentModal(false);
   };
 
-  const onHandleReply = () => {
-    onClickReply && onClickReply(user, commentId);
-  };
-
-  const onPressCommentReaction = () => {
-    navigation.navigate('ReactionList', {
-      referenceId: commentId,
-      referenceType: 'comment',
-    });
-  };
-
   return (
-    <View key={commentId} style={styles.commentWrap}>
-      <View style={styles.headerSection}>
+    <View key={commentId} style={styles.replyCommentWrap}>
+      <View style={styles.replyHeaderSection}>
         {user?.avatarFileId ? (
           <Image
             style={styles.avatar}
@@ -315,7 +260,9 @@ const CommentList = ({
           </View>
 
           <View style={styles.timeRow}>
-            <Text style={styles.headerTextTime}>{timeDifference}</Text>
+            <Text style={styles.headerTextTime}>
+              {getTimeDifference(createdAt)}
+            </Text>
             {(editedAt !== createdAt || isEditComment) && (
               <Text style={styles.dot}>·</Text>
             )}
@@ -326,8 +273,8 @@ const CommentList = ({
           <View style={styles.commentBubble}>
             {textComment && (
               <RenderTextWithMention
-                mentionPositionArr={mentionPosition}
                 textPost={textComment}
+                mentionPositionArr={commentMentionPosition}
               />
             )}
             {/* <Text style={styles.commentText}>{textComment}</Text> */}
@@ -348,26 +295,8 @@ const CommentList = ({
               )}
 
               <Text style={isLike ? styles.likedText : styles.btnText}>
-                {!isLike ? 'Like' : 'Liked'}
+                {!isLike && likeReaction === 0 ? 'Like' : likeReaction}
               </Text>
-            </TouchableOpacity>
-            {likeReaction > 0 && (
-              <TouchableOpacity
-                onPress={onPressCommentReaction}
-                style={styles.likeBtn}
-              >
-                <SvgXml xml={likeCircle} width="20" height="16" />
-                <Text style={styles.likedText}>{likeReaction}</Text>
-              </TouchableOpacity>
-            )}
-            <TouchableOpacity
-              onPress={onHandleReply}
-              // onPress={() => addReactionToComment()}
-              style={styles.likeBtn}
-            >
-              <SvgXml xml={replyIcon} width="20" height="16" />
-
-              <Text style={styles.btnText}>Reply</Text>
             </TouchableOpacity>
 
             <TouchableOpacity onPress={openModal} style={styles.threeDots}>
@@ -378,54 +307,26 @@ const CommentList = ({
               />
             </TouchableOpacity>
           </View>
-
-          {previewReplyCommentList.length > 0 && !isOpenReply && (
-            <ReplyCommentList
-              commentId={
-                previewReplyCommentList[previewReplyCommentList.length - 1]
-                  ?.commentId
-              }
-              commentDetail={
-                previewReplyCommentList[previewReplyCommentList.length - 1]
-              }
-              onDelete={onDelete}
-            />
-          )}
-          {isOpenReply && (
+          <View>
+            {childrenComment.length > 0 && (
+              <Pressable style={styles.viewMoreReplyBtn}>
+                <SvgXml xml={expandIcon} />
+                <Text style={styles.viewMoreText}>
+                  View {childrenNumber} replies
+                </Text>
+              </Pressable>
+            )}
+          </View>
+          {/* {commentList.length > 0 && (
             <FlatList
-              data={replyCommentList}
+              data={commentList}
               renderItem={({ item }) => (
-                <ReplyCommentList
-                  commentId={item.commentId}
-                  commentDetail={item}
-                  onDelete={onDelete}
-                />
+                <CommentList commentDetail={item} isReplyComment />
               )}
-              keyExtractor={(item, index) => item.commentId + index}
+              keyExtractor={(item) => item.commentId.toString()}
+              onEndReachedThreshold={0.8}
             />
-          )}
-
-          {childrenComment.length > 0 && !isOpenReply && (
-            <TouchableOpacity
-              onPress={() => openReplyComment()}
-              style={styles.viewMoreReplyBtn}
-            >
-              <SvgXml xml={expandIcon} />
-              <Text style={styles.viewMoreText}>
-                View {childrenNumber} replies
-              </Text>
-            </TouchableOpacity>
-          )}
-
-          {isOpenReply && hasNextPage && (
-            <TouchableOpacity
-              onPress={() => onNextPage()}
-              style={styles.viewMoreReplyBtn}
-            >
-              <SvgXml xml={expandIcon} />
-              <Text style={styles.viewMoreText}>View more replies</Text>
-            </TouchableOpacity>
-          )}
+          )} */}
         </View>
       </View>
       <Modal
@@ -479,5 +380,4 @@ const CommentList = ({
       />
     </View>
   );
-};
-export default CommentList;
+}

@@ -22,32 +22,31 @@ import {
   personXml,
   replyIcon,
   threeDots,
-} from '../../../svg/svg-xml-list';
+} from '../../../../svg/svg-xml-list';
 
-import type { UserInterface } from '../../../types/user.interface';
+import type { UserInterface, IMentionPosition } from '../../../../types';
 
 import {
   addCommentReaction,
   removeCommentReaction,
-} from '../../../providers/Social/comment-sdk';
+} from '../../../../providers/Social/comment-sdk';
 
-import { getAmityUser } from '../../../providers/user-provider';
+import { getAmityUser } from '../../../../providers/user-provider';
 import { Pressable } from 'react-native';
-import useAuth from '../../../hooks/useAuth';
+import useAuth from '../../../../hooks/useAuth';
 import {
   isReportTarget,
   reportTargetById,
   unReportTargetById,
-} from '../../../providers/Social/feed-sdk';
-import EditCommentModal from '../../../components/EditCommentModal';
+} from '../../../../providers/Social/feed-sdk';
+import EditCommentModal from '../../../../components/EditCommentModal';
 import { useTheme } from 'react-native-paper';
-import type { MyMD3Theme } from '../../../providers/amity-ui-kit-provider';
-import { IMentionPosition } from '../../../screens/CreatePost';
+import type { MyMD3Theme } from '../../../../providers/amity-ui-kit-provider';
 import { useNavigation } from '@react-navigation/native';
-import ReplyCommentList from '../ReplyCommentList';
+import ReplyCommentList from '../../../../components/Social/ReplyCommentList';
 import { CommentRepository } from '@amityco/ts-sdk-react-native';
-import { useTimeDifference } from '../../../hooks/useTimeDifference';
-import RenderTextWithMention from '../PostList/Components/RenderTextWithMention';
+import { useTimeDifference } from '../../../../hooks/useTimeDifference';
+import RenderTextWithMention from '../../../../components/Social/PostList/Components/RenderTextWithMention';
 export interface IComment {
   commentId: string;
   data: Record<string, any>;
@@ -69,12 +68,14 @@ export interface ICommentList {
   isReplyComment?: boolean;
   onDelete: (commentId: string) => void;
   onClickReply: (user: UserInterface, commentId: string) => void;
+  postType: Amity.CommentReferenceType;
 }
 
-const CommentList = ({
+const CommentListItem = ({
   commentDetail,
   onDelete,
   onClickReply,
+  postType,
 }: ICommentList) => {
   const theme = useTheme() as MyMD3Theme;
   const styles = useStyles();
@@ -192,7 +193,7 @@ const CommentList = ({
   };
   const getReplyComments = async () => {
     const getCommentsParams: Amity.CommentLiveCollection = {
-      referenceType: 'post',
+      referenceType: postType,
       referenceId: referenceId, // post ID
       dataTypes: { values: ['text', 'image'], matchType: 'any' },
       limit: 3,
@@ -480,4 +481,4 @@ const CommentList = ({
     </View>
   );
 };
-export default CommentList;
+export default CommentListItem;
