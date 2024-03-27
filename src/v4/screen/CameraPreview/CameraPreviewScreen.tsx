@@ -12,6 +12,7 @@ import { leftLongArrow, rightLongArrow } from '../../../svg/svg-xml-list';
 import { SvgXml } from 'react-native-svg';
 import { useStyles } from './styles';
 import { StoryRepository } from '@amityco/ts-sdk-react-native';
+import { StoryType } from '../../enum';
 
 const CameraPreviewScreen = ({ navigation, route }) => {
   const { type, data } = route.params;
@@ -38,7 +39,7 @@ const CameraPreviewScreen = ({ navigation, route }) => {
     const formData = new FormData();
     formData.append('files', data);
     try {
-      if (type === 'photo') {
+      if (type === StoryType.photo) {
         StoryRepository.createImageStory(
           'community',
           data.communityId,
@@ -63,7 +64,7 @@ const CameraPreviewScreen = ({ navigation, route }) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.imageContainer}>
-        {type === 'photo' ? (
+        {type === StoryType.photo ? (
           <Image
             source={{ uri: data.uri }}
             resizeMode="contain"

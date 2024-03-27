@@ -28,6 +28,7 @@ import {
 import ImagePicker, { launchImageLibrary } from 'react-native-image-picker';
 import * as Progress from 'react-native-progress';
 import { msToString } from '../../../util/timeUtil';
+import { StoryType } from '../../enum';
 
 enum ACTIVE_SWITCH {
   camera = 'camera',
@@ -37,7 +38,6 @@ enum ACTIVE_SWITCH {
 const CameraScreen = ({ navigation, route }) => {
   const styles = useStyles();
   const communityData = route.params;
-  console.log(communityData);
   useRequestPermission();
   const backCamera = useCameraDevice('back');
   const frontCamera = useCameraDevice('front');
@@ -100,7 +100,7 @@ const CameraScreen = ({ navigation, route }) => {
   }, []);
 
   const onFinishCapture = useCallback(
-    (cameraData: PhotoFile | VideoFile, type: 'photo' | 'video') => {
+    (cameraData: PhotoFile | VideoFile, type: StoryType) => {
       setTotalTime(0);
       const name = cameraData.path.split('/').pop();
       const uri = Platform.select({
@@ -122,13 +122,13 @@ const CameraScreen = ({ navigation, route }) => {
       flash: flashOnState ? 'on' : 'off',
       enableShutterSound: false,
     });
-    onFinishCapture(photo, 'photo');
+    onFinishCapture(photo, StoryType.photo);
   }, [flashOnState, onFinishCapture]);
 
   const onStartRecord = useCallback(() => {
     setIsRecording(true);
     cameraRef.current.startRecording({
-      onRecordingFinished: (video) => onFinishCapture(video, 'video'),
+      onRecordingFinished: (video) => onFinishCapture(video, StoryType.video),
       onRecordingError: (error) =>
         Alert.alert('Video Record Error', error.message),
       fileType: 'mp4',
@@ -182,7 +182,7 @@ const CameraScreen = ({ navigation, route }) => {
   }, [backCamera, frontCamera]);
 
   const onPressGallery = useCallback(async () => {
-    const type = isCamera ? 'photo' : 'video';
+    const type = isCamera ? StoryType.photo : StoryType.video;
     const result: ImagePicker.ImagePickerResponse = await launchImageLibrary({
       mediaType: type,
       quality: 1,
