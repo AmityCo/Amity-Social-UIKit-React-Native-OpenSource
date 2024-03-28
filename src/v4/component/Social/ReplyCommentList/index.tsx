@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useRef, useState } from 'react';
-// import { useTranslation } from 'react-i18next';
 
 import {
   View,
