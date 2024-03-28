@@ -29,6 +29,7 @@ import {
 
 import { Pressable } from 'react-native';
 import useAuth from '../../../../hooks/useAuth';
+import { useTimeDifference } from '../../../../hooks/useTimeDifference';
 import {
   isReportTarget,
   reportTargetById,
@@ -68,7 +69,6 @@ export default function ReplyCommentList({
   commentId,
 }: IReplyCommentList) {
   const {
-    // commentId,
     data,
     user,
     createdAt,
@@ -81,6 +81,7 @@ export default function ReplyCommentList({
   } = commentDetail;
   const theme = useTheme() as MyMD3Theme;
   const styles = useStyles();
+  const timeDifference = useTimeDifference(createdAt);
   const [isLike, setIsLike] = useState<boolean>(
     myReactions ? myReactions.includes('like') : false
   );
@@ -123,46 +124,6 @@ export default function ReplyCommentList({
       setIsReportByMe(true);
     }
   };
-  function getTimeDifference(timestamp: string): string {
-    // Convert the timestamp string to a Date object
-    const timestampDate = Date.parse(timestamp);
-
-    // Get the current date and time
-    const currentDate = Date.now();
-
-    // Calculate the difference in milliseconds
-    const differenceMs = currentDate - timestampDate;
-
-    const differenceYear = Math.floor(
-      differenceMs / (1000 * 60 * 60 * 24 * 365)
-    );
-    const differenceDay = Math.floor(differenceMs / (1000 * 60 * 60 * 24));
-    const differenceHour = Math.floor(differenceMs / (1000 * 60 * 60));
-    const differenceMinutes = Math.floor(differenceMs / (1000 * 60));
-    const differenceSec = Math.floor(differenceMs / 1000);
-
-    if (differenceSec < 60) {
-      return 'Just now';
-    } else if (differenceMinutes < 60) {
-      return (
-        differenceMinutes +
-        ` ${differenceMinutes === 1 ? 'min ago' : 'mins ago'}`
-      );
-    } else if (differenceHour < 24) {
-      return (
-        differenceHour + ` ${differenceHour === 1 ? 'hour ago' : 'hours ago'}`
-      );
-    } else if (differenceDay < 365) {
-      return (
-        (differenceDay !== 1 ? differenceDay : '') +
-        ` ${differenceDay === 1 ? 'Yesterday' : 'days ago'}`
-      );
-    } else {
-      return (
-        differenceYear + ` ${differenceYear === 1 ? 'year ago' : 'years ago'}`
-      );
-    }
-  }
 
   useEffect(() => {
     checkIsReport();
@@ -219,7 +180,7 @@ export default function ReplyCommentList({
       {
         translateY: slideAnimation.interpolate({
           inputRange: [0, 1],
-          outputRange: [600, 0], // Adjust this value to control the sliding distance
+          outputRange: [600, 0],
         }),
       },
     ],
@@ -259,9 +220,7 @@ export default function ReplyCommentList({
           </View>
 
           <View style={styles.timeRow}>
-            <Text style={styles.headerTextTime}>
-              {getTimeDifference(createdAt)}
-            </Text>
+            <Text style={styles.headerTextTime}>{timeDifference}</Text>
             {(editedAt !== createdAt || isEditComment) && (
               <Text style={styles.dot}>·</Text>
             )}
