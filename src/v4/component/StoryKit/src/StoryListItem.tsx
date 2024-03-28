@@ -100,9 +100,9 @@ export const StoryListItem = ({
   const storyHyperLink = content[current]?.items[0]?.data || undefined;
   const creatorName = content[current]?.creatorName ?? '';
   const viewer = content[current]?.viewer ?? 0;
-  const comments = content[current]?.comments ?? [];
   const storyId = content[current]?.story_id;
   const reactionCounts = content[current]?.reactionCounts;
+  const commentsCounts = content[current]?.commentsCounts;
   const myReactions = content[current]?.myReactions;
   const isOwner = content[current]?.isOwner;
   const navigation =
@@ -543,7 +543,7 @@ export const StoryListItem = ({
                 onPress={onPressComment}
               >
                 <SvgXml xml={storyCommentIcon()} width="25" height="25" />
-                <Text style={styles.seen}>{comments.length}</Text>
+                <Text style={styles.seen}>{commentsCounts}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[

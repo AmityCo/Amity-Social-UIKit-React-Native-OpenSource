@@ -79,8 +79,8 @@ export default function CommunityStories({
           createdAt: item.createdAt,
           items: item.items,
           reactionCounts: item.reactionsCount,
-          comments: item.comments,
-          viewer: item.impression,
+          commentsCounts: item.commentsCount,
+          viewer: item.reach,
           myReactions: item.myReactions,
           markAsSeen: item.analytics.markAsSeen,
           markLinkAsClicked: item.analytics.markLinkAsClicked,
@@ -109,8 +109,8 @@ export default function CommunityStories({
   }, [avatarFileId, communityId, displayName, getImage, stories, userId]);
 
   useEffect(() => {
-    formatStory();
-  }, [formatStory]);
+    stories.length > 0 && formatStory();
+  }, [formatStory, stories.length]);
 
   const onPress = useCallback(() => {
     navigation.navigate('Camera', {
