@@ -235,7 +235,6 @@ export default function ReplyCommentList({
                 mentionPositionArr={commentMentionPosition}
               />
             )}
-            {/* <Text style={styles.commentText}>{textComment}</Text> */}
           </View>
           <View style={styles.actionSection}>
             <TouchableOpacity
@@ -266,7 +265,7 @@ export default function ReplyCommentList({
             </TouchableOpacity>
           </View>
           <View>
-            {childrenComment.length > 0 && (
+            {childrenComment && childrenComment.length > 0 && (
               <Pressable style={styles.viewMoreReplyBtn}>
                 <SvgXml xml={expandIcon} />
                 <Text style={styles.viewMoreText}>
@@ -275,16 +274,6 @@ export default function ReplyCommentList({
               </Pressable>
             )}
           </View>
-          {/* {commentList.length > 0 && (
-            <FlatList
-              data={commentList}
-              renderItem={({ item }) => (
-                <CommentList commentDetail={item} isReplyComment />
-              )}
-              keyExtractor={(item) => item.commentId.toString()}
-              onEndReachedThreshold={0.8}
-            />
-          )} */}
         </View>
       </View>
       <Modal

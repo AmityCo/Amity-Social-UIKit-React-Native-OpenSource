@@ -330,7 +330,6 @@ const CommentListItem = ({
                 textPost={textComment}
               />
             )}
-            {/* <Text style={styles.commentText}>{textComment}</Text> */}
           </View>
           <View style={styles.actionSection}>
             <TouchableOpacity
@@ -360,11 +359,7 @@ const CommentListItem = ({
                 <Text style={styles.likedText}>{likeReaction}</Text>
               </TouchableOpacity>
             )}
-            <TouchableOpacity
-              onPress={onHandleReply}
-              // onPress={() => addReactionToComment()}
-              style={styles.likeBtn}
-            >
+            <TouchableOpacity onPress={onHandleReply} style={styles.likeBtn}>
               <SvgXml xml={replyIcon} width="20" height="16" />
 
               <Text style={styles.btnText}>Reply</Text>

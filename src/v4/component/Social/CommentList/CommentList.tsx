@@ -80,7 +80,7 @@ const CommentList: FC<ICommentListProp> = ({ postId, postType }) => {
       async ({ error, loading, data, hasNextPage, onNextPage }) => {
         if (error) return;
         if (!loading) {
-          await queryComment(data);
+          data && data.length > 0 && (await queryComment(data));
           onNextPageRef.current = hasNextPage ? onNextPage : null;
         }
       }
@@ -103,37 +103,35 @@ const CommentList: FC<ICommentListProp> = ({ postId, postType }) => {
   }, [inputMessage]);
 
   const queryComment = async (comments: Amity.InternalComment[]) => {
-    if (comments && comments.length > 0) {
-      const formattedCommentList = await Promise.all(
-        comments.map(async (item: Amity.Comment) => {
-          const { userObject } = await getAmityUser(item.userId);
-          let formattedUserObject: UserInterface;
+    const formattedCommentList = await Promise.all(
+      comments.map(async (item: Amity.Comment) => {
+        const { userObject } = await getAmityUser(item.userId);
+        let formattedUserObject: UserInterface;
 
-          formattedUserObject = {
-            userId: userObject.data.userId,
-            displayName: userObject.data.displayName,
-            avatarFileId: userObject.data.avatarFileId,
-          };
+        formattedUserObject = {
+          userId: userObject.data.userId,
+          displayName: userObject.data.displayName,
+          avatarFileId: userObject.data.avatarFileId,
+        };
 
-          return {
-            commentId: item.commentId,
-            data: item.data as Record<string, any>,
-            dataType: item.dataType || 'text',
-            myReactions: item.myReactions as string[],
-            reactions: item.reactions as Record<string, number>,
-            user: formattedUserObject as UserInterface,
-            updatedAt: item.updatedAt,
-            editedAt: item.editedAt,
-            createdAt: item.createdAt,
-            childrenComment: item.children,
-            childrenNumber: item.childrenNumber,
-            referenceId: item.referenceId,
-            mentionPosition: item?.metadata?.mentioned ?? [],
-          };
-        })
-      );
-      setCommentList([...formattedCommentList]);
-    }
+        return {
+          commentId: item.commentId,
+          data: item.data as Record<string, any>,
+          dataType: item.dataType || 'text',
+          myReactions: item.myReactions as string[],
+          reactions: item.reactions as Record<string, number>,
+          user: formattedUserObject as UserInterface,
+          updatedAt: item.updatedAt,
+          editedAt: item.editedAt,
+          createdAt: item.createdAt,
+          childrenComment: item.children,
+          childrenNumber: item.childrenNumber,
+          referenceId: item.referenceId,
+          mentionPosition: item?.metadata?.mentioned ?? [],
+        };
+      })
+    );
+    setCommentList([...formattedCommentList]);
   };
 
   const onDeleteComment = async (commentId: string) => {

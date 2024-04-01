@@ -503,20 +503,18 @@ export const StoryListItem = ({
             >
               <View style={styles.flex} />
             </TouchableWithoutFeedback>
-            {storyHyperLink && (
-              <TouchableOpacity
-                style={styles.hyperlinkContainer}
-                onPress={onPressHyperLink}
-              >
-                <SvgXml
-                  xml={storyHyperLinkIcon('blue')}
-                  width="25"
-                  height="25"
-                />
-                <Text>{storyHyperLink.customText}</Text>
-              </TouchableOpacity>
-            )}
           </View>
+          {storyHyperLink && (
+            <TouchableOpacity
+              style={styles.hyperlinkContainer}
+              onPress={onPressHyperLink}
+            >
+              <SvgXml xml={storyHyperLinkIcon('blue')} width="25" height="25" />
+              <Text style={styles.hyperlinkText}>
+                {storyHyperLink.customText}
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
         {typeof renderSwipeUpComponent === 'function' ? (
           renderSwipeUpComponent({
