@@ -13,7 +13,7 @@ export const useStyles = () => {
       top: 0,
       backgroundColor: 'transparent',
       borderWidth: 1,
-      borderColor: theme.colors.border,
+      borderColor: theme.colors.baseShade4,
       borderRadius: 5,
     },
     mentionContainer: {

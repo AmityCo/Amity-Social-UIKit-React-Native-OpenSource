@@ -123,7 +123,7 @@ export const useStyles = () => {
       borderRadius: 20,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: theme.colors.border,
+      backgroundColor: theme.colors.baseShade4,
       marginRight: 10,
     },
     focusedTab: {

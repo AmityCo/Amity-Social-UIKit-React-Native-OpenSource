@@ -1,24 +1,25 @@
 import React, { createContext, ReactNode } from 'react';
-import { IUIKitConfig } from '../types/config.interface';
-import config from '../../uikit.config.json';
+import { IConfigRaw, IUIKitConfig } from '~/v4/types/config.interface';
 
 interface IConfigProviderProps {
   children: ReactNode;
+  configs: IConfigRaw;
 }
 
 export const ConfigContext = createContext<IUIKitConfig>({
   globalTheme: {},
   excludes: [],
-  getConfig: () => ({}), // Assuming getConfig returns an object of type IConfig.
+  getConfig: () => ({}),
 });
 
-export const ConfigProvider = ({ children }: IConfigProviderProps) => {
-  const configFile = config;
+export const ConfigProvider = ({ children, configs }: IConfigProviderProps) => {
+  const configFile = configs;
   const getConfig = (id: string) => {
     const value = configFile.customizations[id];
     return value;
   };
-  const globalTheme = configFile.global_theme;
+
+  const globalTheme = configFile.theme;
   const excludes = configFile.excludes;
 
   return (

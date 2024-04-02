@@ -7,7 +7,7 @@ export const useStyles = () => {
   const styles = StyleSheet.create({
     barContainer: {
       backgroundColor: theme.colors.background,
-      borderBottomColor: theme.colors.border,
+      borderBottomColor: theme.colors.baseShade4,
       borderBottomWidth: 1,
     },
     header: {
@@ -57,7 +57,7 @@ export const useStyles = () => {
     },
     inputContainer: {
       margin: 16,
-      borderBottomColor: theme.colors.border,
+      borderBottomColor: theme.colors.baseShade4,
       borderBottomWidth: 1,
       paddingBottom: 20,
     },
@@ -112,7 +112,7 @@ export const useStyles = () => {
     },
     pollOptionContainer: {
       borderRadius: 5,
-      backgroundColor: theme.colors.border,
+      backgroundColor: theme.colors.baseShade4,
       paddingHorizontal: 10,
       paddingVertical: 5,
       marginVertical: 5,
@@ -141,7 +141,7 @@ export const useStyles = () => {
     scheduleOptionStyle: {
       borderBottomWidth: 0,
       marginVertical: 5,
-      backgroundColor: theme.colors.border,
+      backgroundColor: theme.colors.baseShade4,
       borderRadius: 2,
     },
     scheduleSectionStyle: {

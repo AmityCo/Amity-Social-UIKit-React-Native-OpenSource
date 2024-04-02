@@ -10,7 +10,7 @@ export const useStyles = () => {
       backgroundColor: theme.colors.background,
     },
     input: {
-      backgroundColor: theme.colors.secondary,
+      backgroundColor: theme.colors.baseShade4,
       borderRadius: 20,
       fontWeight: '400',
       width: '90%',
@@ -19,7 +19,7 @@ export const useStyles = () => {
       color: theme.colors.base,
     },
     AllInputWrap: {
-      backgroundColor: theme.colors.screenBackground,
+      backgroundColor: theme.colors.baseShade4,
       flex: 1,
       marginTop: -16,
     },
@@ -33,7 +33,7 @@ export const useStyles = () => {
       paddingTop: 10,
       alignItems: 'flex-end',
       borderTopWidth: 1,
-      borderTopColor: theme.colors.border,
+      borderTopColor: theme.colors.baseShade4,
     },
     postDisabledBtn: {
       color: '#A0BDF8',
@@ -49,14 +49,14 @@ export const useStyles = () => {
     commentItem: {
       padding: 16,
       borderBottomWidth: 1,
-      borderBottomColor: theme.colors.border,
+      borderBottomColor: theme.colors.baseShade4,
     },
     comment: {
       fontSize: 14,
     },
     commentListWrap: {
       borderTopWidth: 1,
-      borderTopColor: theme.colors.border,
+      borderTopColor: theme.colors.baseShade4,
     },
     textInput: {
       borderWidth: 0,
@@ -80,7 +80,7 @@ export const useStyles = () => {
       alignItems: 'flex-start',
       paddingVertical: 10,
       paddingHorizontal: 12,
-      backgroundColor: theme.colors.secondary,
+      backgroundColor: theme.colors.baseShade4,
       borderRadius: 20,
     },
     mentionText: {
@@ -100,11 +100,11 @@ export const useStyles = () => {
     },
     inputTextOverlayWrap: {
       flexDirection: 'row',
-      backgroundColor: theme.colors.secondary,
+      backgroundColor: theme.colors.baseShade4,
     },
     replyLabelWrap: {
       height: 40,
-      backgroundColor: theme.colors.secondary,
+      backgroundColor: theme.colors.baseShade4,
       paddingVertical: 10,
       justifyContent: 'space-between',
       flexDirection: 'row',
