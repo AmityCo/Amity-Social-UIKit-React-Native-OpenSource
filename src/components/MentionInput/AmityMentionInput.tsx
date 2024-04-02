@@ -127,6 +127,7 @@ const AmityMentionInput: FC<IMentionInput> = ({
   );
   return (
     <MentionTextInput
+      style={styles.inputText}
       {...rest}
       value={value}
       onChange={onChangeInput}
