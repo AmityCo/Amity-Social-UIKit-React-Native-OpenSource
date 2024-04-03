@@ -7,7 +7,7 @@ export const useStyles = () => {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: theme.colors.screenBackground,
+      backgroundColor: theme.colors.baseShade4,
     },
     categoryText: {
       marginLeft: 10,

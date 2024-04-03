@@ -16,7 +16,7 @@ export const useGlobalStory = () => {
 
   const getGlobalStoryTargets = useCallback(() => {
     const unsubscribe = StoryRepository.getGlobalStoryTargets(
-      { limit: 8, seenState: 'all' as Amity.StorySeenQuery },
+      { limit: 8, seenState: 'smart' as Amity.StorySeenQuery.SMART },
       ({ data, error, loading, hasNextPage, onNextPage }) => {
         if (error) return;
         setFetching(loading);

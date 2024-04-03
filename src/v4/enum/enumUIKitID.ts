@@ -34,3 +34,10 @@ export enum ElementID {
   CreateNewStoryBtnOnStoryTab = '*/story_tab_component/create_new_story_button',
   CloseBtnOnAllPage = '*/*/close_button',
 }
+
+export const DefaultConfigID = {
+  ...PageID,
+  ...ComponentID,
+  ...ElementID,
+};
+type DefaultConfigID = typeof DefaultConfigID;

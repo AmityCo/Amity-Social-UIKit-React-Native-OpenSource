@@ -72,8 +72,8 @@ export default function MyStories() {
                   createdAt: item.createdAt,
                   items: item.items,
                   reactionCounts: item.reactionsCount,
-                  comments: item.comments,
-                  viewer: item.impression,
+                  commentsCounts: item.commentsCount,
+                  viewer: item.reach,
                   myReactions: item.myReactions,
                   markAsSeen: item.analytics.markAsSeen,
                   markLinkAsClicked: item.analytics.markLinkAsClicked,
@@ -120,16 +120,22 @@ export default function MyStories() {
   if (loading) {
     return (
       <View style={styles.container}>
-        <ContentLoader
-          height={70}
-          speed={1}
-          width={100}
-          backgroundColor={'#d2d2d2'}
-          foregroundColor={'#eee'}
-          viewBox="-10 7 100 30"
-        >
-          <Circle cx="25" cy="25" r="25" />
-        </ContentLoader>
+        {Array.from({ length: 6 }, (_, index) => {
+          return (
+            <View style={{ padding: 10 }} key={index}>
+              <ContentLoader
+                height={70}
+                speed={1}
+                width={70}
+                backgroundColor={'#d2d2d2'}
+                foregroundColor={'#eee'}
+                viewBox="0 0 50 50"
+              >
+                <Circle cx="25" cy="25" r="25" />
+              </ContentLoader>
+            </View>
+          );
+        })}
       </View>
     );
   }

@@ -46,7 +46,8 @@ import { IMentionPosition } from '../../../screens/CreatePost';
 import { useNavigation } from '@react-navigation/native';
 import ReplyCommentList from '../ReplyCommentList';
 import { CommentRepository } from '@amityco/ts-sdk-react-native';
-
+import { useTimeDifference } from '../../../hooks/useTimeDifference';
+import RenderTextWithMention from '../PostList/Components/RenderTextWithMention';
 export interface IComment {
   commentId: string;
   data: Record<string, any>;
@@ -91,7 +92,7 @@ const CommentList = ({
     childrenNumber,
     referenceId,
   } = commentDetail ?? {};
-
+  const timeDifference = useTimeDifference(createdAt);
   const [isLike, setIsLike] = useState<boolean>(
     myReactions ? myReactions.includes('like') : false
   );
@@ -116,9 +117,6 @@ const CommentList = ({
   const [editCommentModal, setEditCommentModal] = useState<boolean>(false);
   const [isEditComment, setIsEditComment] = useState<boolean>(false);
   const slideAnimation = useRef(new Animated.Value(0)).current;
-  const [commentMentionPosition, setCommentMentionPosition] = useState<
-    IMentionPosition[]
-  >([]);
   const navigation = useNavigation<any>();
 
   useEffect(() => {
@@ -128,12 +126,6 @@ const CommentList = ({
       setIsOpenReply(false);
     };
   }, []);
-
-  useEffect(() => {
-    if (mentionPosition) {
-      setCommentMentionPosition(mentionPosition);
-    }
-  }, [mentionPosition]);
 
   const openModal = () => {
     setIsVisible(true);
@@ -152,46 +144,6 @@ const CommentList = ({
       setIsReportByMe(true);
     }
   };
-  function getTimeDifference(timestamp: string): string {
-    // Convert the timestamp string to a Date object
-    const timestampDate = Date.parse(timestamp);
-
-    // Get the current date and time
-    const currentDate = Date.now();
-
-    // Calculate the difference in milliseconds
-    const differenceMs = currentDate - timestampDate;
-
-    const differenceYear = Math.floor(
-      differenceMs / (1000 * 60 * 60 * 24 * 365)
-    );
-    const differenceDay = Math.floor(differenceMs / (1000 * 60 * 60 * 24));
-    const differenceHour = Math.floor(differenceMs / (1000 * 60 * 60));
-    const differenceMinutes = Math.floor(differenceMs / (1000 * 60));
-    const differenceSec = Math.floor(differenceMs / 1000);
-
-    if (differenceSec < 60) {
-      return 'Just now';
-    } else if (differenceMinutes < 60) {
-      return (
-        differenceMinutes +
-        ` ${differenceMinutes === 1 ? 'min ago' : 'mins ago'}`
-      );
-    } else if (differenceHour < 24) {
-      return (
-        differenceHour + ` ${differenceHour === 1 ? 'hour ago' : 'hours ago'}`
-      );
-    } else if (differenceDay < 365) {
-      return (
-        (differenceDay !== 1 ? differenceDay : '') +
-        ` ${differenceDay === 1 ? 'Yesterday' : 'days ago'}`
-      );
-    } else {
-      return (
-        differenceYear + ` ${differenceYear === 1 ? 'year ago' : 'years ago'}`
-      );
-    }
-  }
 
   const formatReplyComments = async (
     replyComments,
@@ -330,51 +282,6 @@ const CommentList = ({
   const onCloseEditCommentModal = () => {
     setEditCommentModal(false);
   };
-  const RenderTextWithMention = () => {
-    if (commentMentionPosition.length === 0) {
-      return <Text style={styles.inputText}>{textComment}</Text>;
-    }
-    const mentionClick = (userId: string) => {
-      navigation.navigate('UserProfile', {
-        userId: userId,
-      });
-    };
-    let currentPosition = 0;
-    const result: (string | JSX.Element)[][] = commentMentionPosition.map(
-      ({ index, length, userId }, i) => {
-        // Add non-highlighted text before the mention
-        const nonHighlightedText = textComment.slice(currentPosition, index);
-
-        // Add highlighted text
-        const highlightedText = (
-          <Text
-            onPress={() => mentionClick(userId)}
-            key={`highlighted-${i}`}
-            style={styles.mentionText}
-          >
-            {textComment.slice(index, index + length)}
-          </Text>
-        );
-
-        // Update currentPosition for the next iteration
-        currentPosition = index + length;
-
-        // Return an array of non-highlighted and highlighted text
-        return [nonHighlightedText, highlightedText];
-      }
-    );
-
-    // Add any remaining non-highlighted text after the mentions
-    const remainingText = textComment.slice(currentPosition);
-    result.push([
-      <Text key="nonHighlighted-last" style={styles.inputText}>
-        {remainingText}
-      </Text>,
-    ]);
-
-    // Flatten the array and render
-    return <Text style={styles.inputText}>{result.flat()}</Text>;
-  };
 
   const onHandleReply = () => {
     onClickReply && onClickReply(user, commentId);
@@ -408,9 +315,7 @@ const CommentList = ({
           </View>
 
           <View style={styles.timeRow}>
-            <Text style={styles.headerTextTime}>
-              {getTimeDifference(createdAt)}
-            </Text>
+            <Text style={styles.headerTextTime}>{timeDifference}</Text>
             {(editedAt !== createdAt || isEditComment) && (
               <Text style={styles.dot}>·</Text>
             )}
@@ -419,7 +324,12 @@ const CommentList = ({
             )}
           </View>
           <View style={styles.commentBubble}>
-            {textComment && <RenderTextWithMention />}
+            {textComment && (
+              <RenderTextWithMention
+                mentionPositionArr={mentionPosition}
+                textPost={textComment}
+              />
+            )}
             {/* <Text style={styles.commentText}>{textComment}</Text> */}
           </View>
           <View style={styles.actionSection}>

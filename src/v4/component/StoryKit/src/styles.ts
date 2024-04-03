@@ -147,13 +147,15 @@ export const useStyles = () => {
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: theme.colors.baseShade1,
-      borderRadius: 10,
-      paddingHorizontal: 10,
-      paddingVertical: 5,
-      position: 'absolute',
-      left: width * 0.5 - 75,
+      borderRadius: 50,
+      paddingHorizontal: 16,
+      paddingVertical: 4,
       bottom: 30,
       alignSelf: 'center',
+    },
+    hyperlinkText: {
+      marginLeft: 8,
+      color: theme.colors.base,
     },
     error: {
       textAlign: 'center',
@@ -164,12 +166,31 @@ export const useStyles = () => {
       left: 25,
       top: 25,
     },
+    bottomSheet: {
+      backgroundColor: theme.colors.background,
+      paddingBottom: '25%',
+    },
     deleteBottomSheet: {
       flexDirection: 'row',
       justifyContent: 'flex-start',
       alignItems: 'center',
       paddingHorizontal: 16,
       marginVertical: 8,
+    },
+    commentBottomSheet: {
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    commentTitle: {
+      fontSize: 17,
+      fontWeight: 'bold',
+      color: theme.colors.base,
+    },
+    horizontalSperator: {
+      width: '100%',
+      backgroundColor: theme.colors.baseShade4,
+      height: 2,
+      marginVertical: 10,
     },
     deleteStoryTxt: {
       color: theme.colors.base,
