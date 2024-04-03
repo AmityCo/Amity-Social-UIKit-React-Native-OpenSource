@@ -34,7 +34,7 @@ import {
 import { useStyles } from './styles';
 import { useTimeDifference } from '../../../../hooks/useTimeDifference';
 import { useStory } from '../../../hook/useStory';
-import { ElementID } from '../../../enum/enumUIKitID';
+import { ElementID, ComponentID, PageID } from '../../../enum/enumUIKitID';
 import useConfig from '../../../hook/useConfig';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -42,6 +42,7 @@ import { RootStackParamList } from '../../../../routes/RouteParamList';
 import BottomSheet, { BottomSheetMethods } from '@devvie/bottom-sheet';
 import { StoryRepository } from '@amityco/ts-sdk-react-native';
 import CommentList from '../../Social/CommentList/CommentList';
+import { useStoryPermission } from '../../../hook/useStoryPermission';
 
 export const StoryListItem = ({
   index,
@@ -67,20 +68,33 @@ export const StoryListItem = ({
   storyContainerStyle,
 }: StoryListItemProps) => {
   const styles = useStyles();
-  const { getConfig } = useConfig();
+  const hasStoryPermission = useStoryPermission(userId);
+  const { getUiKitConfig } = useConfig();
   const storyReactionBgColor =
-    getConfig(ElementID.StoryReactionBtnOnStoryPage)?.background_color ??
-    '#2b2b2b';
+    (getUiKitConfig({
+      element: ElementID.StoryRing,
+      component: ComponentID.WildCardComponent,
+      page: PageID.StoryPage,
+    })?.background_color as string) ?? '#2b2b2b';
   const storyCommentBgColor =
-    getConfig(ElementID.StoryCommentBtnOnStoryPage)?.background_color ??
-    '#2b2b2b';
+    (getUiKitConfig({
+      page: PageID.StoryPage,
+      component: ComponentID.WildCardComponent,
+      element: ElementID.StoryCommentBtn,
+    })?.background_color as string) ?? '#2b2b2b';
   const storyViewerBgColor =
-    getConfig(ElementID.StoryImpressionBtnOnStoryPage)?.background_color ??
-    '#2b2b2b';
+    (getUiKitConfig({
+      page: PageID.StoryPage,
+      component: ComponentID.WildCardComponent,
+      element: ElementID.StoryImpressionBtn,
+    })?.background_color as string) ?? '#2b2b2b';
 
   const storyPlusBgColor =
-    getConfig(ElementID.CreateNewStoryBtnOnStoryPage)?.background_color ??
-    '#ffffff';
+    (getUiKitConfig({
+      page: PageID.StoryPage,
+      component: ComponentID.WildCardComponent,
+      element: ElementID.StoryHyperLinkBtn,
+    })?.background_color as string) ?? '#ffffff';
 
   const [load, setLoad] = useState<boolean>(true);
   const [pressed, setPressed] = useState<boolean>(false);
@@ -104,7 +118,6 @@ export const StoryListItem = ({
   const reactionCounts = content[current]?.reactionCounts;
   const commentsCounts = content[current]?.commentsCounts;
   const myReactions = content[current]?.myReactions;
-  const isOwner = content[current]?.isOwner;
   const navigation =
     useNavigation() as NativeStackNavigationProp<RootStackParamList>;
   const [totalReaction, setTotalReaction] = useState(reactionCounts);
@@ -259,13 +272,15 @@ export const StoryListItem = ({
   }, [storyHyperLink?.url]);
 
   const onPressAvatar = useCallback(() => {
-    onClosePress();
-    navigation.navigate('Camera', {
-      communityId: userId,
-      communityName: profileName,
-      communityAvatar: profileImage,
-    });
-  }, []);
+    if (hasStoryPermission) {
+      onClosePress();
+      navigation.navigate('Camera', {
+        communityId: userId,
+        communityName: profileName,
+        communityAvatar: profileImage,
+      });
+    }
+  }, [hasStoryPermission]);
 
   const onPressMenu = useCallback(() => {
     progress.stopAnimation(() => setPressed(true));
@@ -411,12 +426,14 @@ export const StoryListItem = ({
                   style={[styles.avatarImage, storyAvatarImageStyle]}
                   source={{ uri: profileImage }}
                 />
-                <SvgXml
-                  height={12}
-                  width={12}
-                  style={styles.storyCreateIcon}
-                  xml={storyCircleCreatePlusIcon(storyPlusBgColor)}
-                />
+                {hasStoryPermission && (
+                  <SvgXml
+                    height={12}
+                    width={12}
+                    style={styles.storyCreateIcon}
+                    xml={storyCircleCreatePlusIcon(storyPlusBgColor)}
+                  />
+                )}
               </TouchableOpacity>
               {typeof renderTextComponent === 'function' ? (
                 renderTextComponent({
@@ -443,7 +460,7 @@ export const StoryListItem = ({
                 })
               ) : (
                 <View style={styles.menuCloseContaier}>
-                  {isOwner && (
+                  {hasStoryPermission && (
                     <TouchableOpacity
                       hitSlop={5}
                       style={styles.threeDotsMenu}

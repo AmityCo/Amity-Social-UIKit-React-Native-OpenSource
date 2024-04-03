@@ -1,4 +1,4 @@
-import { ComponentID, ElementID, PageID } from '../enum';
+import { DefaultConfigID } from '../enum';
 
 export interface IUIKitConfig {
   globalTheme: Record<string, any>;
@@ -44,7 +44,7 @@ export interface IConfigRaw {
   theme?: ITheme;
   excludes?: string[];
   customizations?: Record<
-    PageID | ComponentID | ElementID,
+    DefaultConfigID,
     {
       theme?: ITheme;
       title?: string;

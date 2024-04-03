@@ -1,10 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Image, TouchableOpacity, Text, StyleSheet } from 'react-native';
-
 import { usePrevious } from './helpers/StateHelpers';
 import { IUserStory, StoryCircleListItemProps } from './interfaces';
-
 import { useTheme } from 'react-native-paper';
 import { MyMD3Theme } from '../../../../providers/amity-ui-kit-provider';
 import { SvgXml } from 'react-native-svg';
@@ -15,8 +13,7 @@ import {
   storyCircleCreatePlusIcon,
   storyRing,
 } from '../../../../svg/svg-xml-list';
-import useConfig from '../../../../hooks/useConfig';
-import { ElementID } from '../../../../util/enumUIKitID';
+import useConfig from '../../../hook/useConfig';
 
 const StoryCircleListItem = ({
   item,
@@ -26,18 +23,16 @@ const StoryCircleListItem = ({
   const theme = useTheme() as MyMD3Theme;
   const styles = useStyles();
   const [, setIsPressed] = useState(item?.seen);
-
   const prevSeen = usePrevious(item?.seen);
-  const { getConfig } = useConfig();
-  const [storyRingColor, setStoryRingColor] = useState<string[]>([]);
+  const { getUiKitConfig } = useConfig();
+  const storyRingColor: string[] = item?.seen
+    ? ['#e2e2e2', '#e2e2e2']
+    : (getUiKitConfig({
+        page: 'story_page',
+        component: 'story_tab_component',
+        element: 'story_ring',
+      })?.progress_color as string[]) ?? ['#e2e2e2', '#e2e2e2'];
 
-  useLayoutEffect(() => {
-    const colorRings: string[] = item?.seen
-      ? ['#e2e2e2', '#e2e2e2']
-      : getConfig(ElementID.StoryRingOnStoryTab).progress_color;
-
-    setStoryRingColor(colorRings);
-  }, []);
   useEffect(() => {
     if (prevSeen !== item?.seen) {
       setIsPressed(item?.seen);
@@ -46,7 +41,6 @@ const StoryCircleListItem = ({
 
   const _handleItemPress = (item: IUserStory) => {
     if (handleStoryItemPress) handleStoryItemPress(item);
-
     setIsPressed(true);
   };
 

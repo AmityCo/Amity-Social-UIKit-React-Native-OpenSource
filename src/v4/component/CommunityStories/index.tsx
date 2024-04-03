@@ -15,6 +15,7 @@ import { RootStackParamList } from '../../../routes/RouteParamList';
 import { useFile } from '../../hook/useFile';
 import useAuth from '../../../hooks/useAuth';
 import { ImageSizeState } from '../../enum/imageSizeState';
+import { useStoryPermission } from '../../hook/useStoryPermission';
 
 interface ICommunityStories {
   communityId: string;
@@ -34,6 +35,7 @@ export default function CommunityStories({
     useNavigation() as NativeStackNavigationProp<RootStackParamList>;
   const styles = useStyles();
   const { client } = useAuth();
+  const hasStoryPermission = useStoryPermission(communityId);
   const userId = (client as Amity.Client).userId;
   const { getStories, stories, loading } = useStory();
   const { getImage } = useFile();
@@ -113,12 +115,13 @@ export default function CommunityStories({
   }, [formatStory, stories.length]);
 
   const onPress = useCallback(() => {
-    navigation.navigate('Camera', {
-      communityId,
-      communityName: displayName,
-      communityAvatar: avatarUrl,
-    });
-  }, [avatarUrl, communityId, displayName, navigation]);
+    hasStoryPermission &&
+      navigation.navigate('Camera', {
+        communityId,
+        communityName: displayName,
+        communityAvatar: avatarUrl,
+      });
+  }, [avatarUrl, communityId, displayName, hasStoryPermission, navigation]);
 
   return (
     <View style={styles.container}>
@@ -153,9 +156,13 @@ export default function CommunityStories({
       ) : (
         <TouchableOpacity style={styles.avatarContainer} onPress={onPress}>
           <Image
-            source={{
-              uri: avatarUrl,
-            }}
+            source={
+              avatarUrl
+                ? {
+                    uri: avatarUrl,
+                  }
+                : require('../../assets/icon/Placeholder.png')
+            }
             style={styles.communityAvatar}
           />
           <SvgXml
@@ -164,10 +171,12 @@ export default function CommunityStories({
             height={48}
             xml={storyRing('#EBECEF', '#EBECEF')}
           />
-          <SvgXml
-            style={styles.storyCreateIcon}
-            xml={storyCircleCreatePlusIcon()}
-          />
+          {hasStoryPermission && (
+            <SvgXml
+              style={styles.storyCreateIcon}
+              xml={storyCircleCreatePlusIcon()}
+            />
+          )}
         </TouchableOpacity>
       )}
     </View>
