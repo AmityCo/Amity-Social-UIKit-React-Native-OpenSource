@@ -44,7 +44,7 @@ import { RootState } from '../../redux/store';
 import { IMentionPosition } from '../CreatePost';
 import { SvgXml } from 'react-native-svg';
 import { closeIcon } from '../../svg/svg-xml-list';
-import MentionInput from '../../components/MentionInput/MentionInput';
+import AmityMentionInput from '../../components/MentionInput/AmityMentionInput';
 import { TSearchItem } from '../../hooks/useSearch';
 
 const PostDetail = () => {
@@ -256,14 +256,16 @@ const PostDetail = () => {
         postId,
         replyCommentId,
         mentionNames?.map((item) => item.id),
-        mentionsPosition
+        mentionsPosition,
+        'post'
       );
     } else {
       await createComment(
         inputMessage,
         postId,
         mentionNames?.map((item) => item.id),
-        mentionsPosition
+        mentionsPosition,
+        'post'
       );
     }
     setInitialInputText('');
@@ -345,7 +347,7 @@ const PostDetail = () => {
 
       <View style={styles.InputWrap}>
         <View style={styles.inputContainer}>
-          <MentionInput
+          <AmityMentionInput
             resetValue={resetValue}
             initialValue={initialInputText}
             privateCommunityId={privateCommunityId}

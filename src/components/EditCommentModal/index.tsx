@@ -42,7 +42,8 @@ const EditCommentModal = ({
     if (inputMessage) {
       const editedComment = await editComment(
         inputMessage,
-        commentDetail.commentId
+        commentDetail.commentId,
+        'post'
       );
       if (editedComment) {
         onFinishEdit && onFinishEdit(inputMessage);

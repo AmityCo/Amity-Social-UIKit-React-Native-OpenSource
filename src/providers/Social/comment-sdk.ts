@@ -56,7 +56,8 @@ export async function createComment(
   text: string,
   postId: string,
   mentionUserIds: string[],
-  mentionPosition: IMentionPosition[]
+  mentionPosition: IMentionPosition[],
+  referenceType: Amity.CommentReferenceType
 ): Promise<Amity.InternalComment> {
   const createCommentObject: Promise<Amity.InternalComment> = new Promise(
     async (resolve, reject) => {
@@ -66,7 +67,7 @@ export async function createComment(
             text: text,
           },
           referenceId: postId,
-          referenceType: 'post' as Amity.CommentReferenceType,
+          referenceType: referenceType as Amity.CommentReferenceType,
           mentionees: [
             { type: 'user', userIds: mentionUserIds },
           ] as Amity.UserMention[],
@@ -90,7 +91,8 @@ export async function createReplyComment(
   postId: string,
   parentId: string,
   mentionUserIds: string[],
-  mentionPosition: IMentionPosition[]
+  mentionPosition: IMentionPosition[],
+  referenceType: Amity.CommentReferenceType
 ): Promise<Amity.InternalComment> {
   const createCommentObject: Promise<Amity.InternalComment> = new Promise(
     async (resolve, reject) => {
@@ -100,7 +102,7 @@ export async function createReplyComment(
             text: text,
           },
           referenceId: postId,
-          referenceType: 'post' as Amity.CommentReferenceType,
+          referenceType: referenceType as Amity.CommentReferenceType,
           mentionees: [
             { type: 'user', userIds: mentionUserIds },
           ] as Amity.UserMention[],
@@ -121,7 +123,8 @@ export async function createReplyComment(
 }
 export async function editComment(
   text: string,
-  commentId: string
+  commentId: string,
+  referenceType: Amity.CommentReferenceType
 ): Promise<Amity.InternalComment> {
   const createCommentObject: Promise<Amity.InternalComment> = new Promise(
     async (resolve, reject) => {
@@ -130,7 +133,7 @@ export async function editComment(
           data: {
             text: text,
           },
-          referenceType: 'post' as Amity.CommentReferenceType,
+          referenceType: referenceType as Amity.CommentReferenceType,
         };
         const { data: comment } = await CommentRepository.updateComment(
           commentId,

@@ -10,10 +10,10 @@ import useAuth from '../hooks/useAuth';
 import Explore from '../screens/Explore';
 import CategoryList from '../screens/CategorytList';
 import CommunityList from '../screens/CommunityList';
-import CommunityHome from '../screens/CommunityHome/index';
+import CommunityHome from '../v4/screen/CommunityHome';
 import { CommunitySetting } from '../screens/CommunitySetting/index';
 import CommunityMemberDetail from '../screens/CommunityMemberDetail/CommunityMemberDetail';
-import Home from '../screens/Home';
+import Home from '../v4/screen/Home';
 import PostDetail from '../screens/PostDetail';
 import CreatePost from '../screens/CreatePost';
 import UserProfile from '../screens/UserProfile/UserProfile';
@@ -36,6 +36,8 @@ import VideoPlayerFull from '../screens/VideoPlayerFullScreen';
 import PostTypeChoiceModal from '../components/PostTypeChoiceModal/PostTypeChoiceModal';
 import CreatePoll from '../screens/CreatePoll/CreatePoll';
 import ReactionListScreen from '../screens/ReactionListScreen/ReactionListScreen';
+import CameraScreen from '../v4/screen/Camera/CameraScreen';
+import CameraPreviewScreen from '../v4/screen/CameraPreview/CameraPreviewScreen';
 
 export default function SocialNavigator() {
   const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -86,7 +88,13 @@ export default function SocialNavigator() {
                 params: { communityName, communityId, isModerator },
               },
             }: any) => ({
-              headerLeft: () => <BackButton />,
+              headerLeft: () => (
+                <BackButton
+                  onPress={() => {
+                    navigation.navigate(Home);
+                  }}
+                />
+              ),
               title: communityName,
               headerRight: () => (
                 <TouchableOpacity
@@ -211,6 +219,16 @@ export default function SocialNavigator() {
               title: 'Reactions',
               headerLeft: () => <BackButton />,
             }}
+          />
+          <Stack.Screen
+            name="Camera"
+            component={CameraScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="CameraPreview"
+            component={CameraPreviewScreen}
+            options={{ headerShown: false }}
           />
         </Stack.Navigator>
       )}

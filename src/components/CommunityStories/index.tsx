@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { useStyles } from './styles';
 import useAuth from '../../hooks/useAuth';
-import InstaStory from '../StoryKit';
+import AmityStory from '../../v4/component/StoryKit';
 import { useStory } from '../../hooks/useStory';
 import ContentLoader, { Circle } from 'react-content-loader/native';
 import { useFocusEffect } from '@react-navigation/native';
@@ -81,7 +81,7 @@ export default function CommunityStories({ communityId }: ICommunityStories) {
           <Circle cx="25" cy="25" r="25" />
         </ContentLoader>
       ) : communityStories.length > 0 ? (
-        <InstaStory data={communityStories} duration={7} isCommunityStory />
+        <AmityStory data={communityStories} duration={7} isCommunityStory />
       ) : null}
     </View>
   );

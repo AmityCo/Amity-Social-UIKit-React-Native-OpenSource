@@ -17,7 +17,7 @@ export const useStyles = () => {
     },
     inputWrap: {
       marginHorizontal: 16,
-      backgroundColor: theme.colors.secondary,
+      backgroundColor: theme.colors.baseShade4,
       paddingHorizontal: 10,
       paddingVertical: Platform.OS === 'ios' ? 10 : 0,
       borderRadius: 4,

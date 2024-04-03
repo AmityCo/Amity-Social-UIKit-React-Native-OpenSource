@@ -26,7 +26,7 @@ import { amityPostsFormatter } from '../../util/postDataFormatter';
 import postDetailSlice from '../../redux/slices/postDetailSlice';
 import globalFeedSlice from '../../redux/slices/globalfeedSlice';
 import { useDispatch } from 'react-redux';
-import MentionInput from '../MentionInput/MentionInput';
+import MentionInput from '../MentionInput/AmityMentionInput';
 import { TSearchItem } from 'src/hooks/useSearch';
 interface IModal {
   visible: boolean;
