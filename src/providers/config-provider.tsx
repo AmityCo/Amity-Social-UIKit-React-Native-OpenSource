@@ -55,7 +55,6 @@ export const ConfigProvider = ({ children, configs }: IConfigProviderProps) => {
   }: IUIKitConfigOptions) => {
     const correctIds = getCorrectIDs({ page, component, element });
     const correctConfig = getCorrectConfig(correctIds);
-    console.log(correctConfig);
     return correctConfig;
   };
 
