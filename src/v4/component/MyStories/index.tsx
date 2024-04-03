@@ -5,6 +5,7 @@ import { useGlobalStory } from '../../hook/useGlobalStory';
 import ContentLoader, { Circle } from 'react-content-loader/native';
 import AmityStory, { IUserStory } from '../StoryKit';
 import { useFile } from '../../hook/useFile';
+import useAuth from '../../../hooks/useAuth';
 import { ImageSizeState } from '../../enum/imageSizeState';
 
 export interface IStoryItems {
@@ -18,6 +19,8 @@ export interface IStoryItems {
 
 export default function MyStories() {
   const styles = useStyles();
+  const { client } = useAuth();
+  const userId = (client as Amity.Client).userId;
   const { getImage } = useFile();
   const [globalStoriesItems, setGlobalStoriesItems] = useState<
     IUserStory<Record<string, any>>[]
@@ -57,6 +60,7 @@ export default function MyStories() {
 
             const storyData = await Promise.all(
               items.map((item, index: number) => {
+                const isOwner = item.creator.userId === userId;
                 return {
                   story_id: item.storyId,
                   story_image: item?.imageData?.fileUrl,
@@ -68,11 +72,12 @@ export default function MyStories() {
                   createdAt: item.createdAt,
                   items: item.items,
                   reactionCounts: item.reactionsCount,
-                  comments: item.comments,
-                  viewer: item.impression,
+                  commentsCounts: item.commentsCount,
+                  viewer: item.reach,
                   myReactions: item.myReactions,
                   markAsSeen: item.analytics.markAsSeen,
                   markLinkAsClicked: item.analytics.markLinkAsClicked,
+                  isOwner: isOwner,
                 };
               })
             );
@@ -93,7 +98,7 @@ export default function MyStories() {
         );
       setGlobalStoriesItems([...mappedGlobalStories]);
     },
-    [getImage]
+    [getImage, userId]
   );
 
   useEffect(() => {
@@ -115,16 +120,22 @@ export default function MyStories() {
   if (loading) {
     return (
       <View style={styles.container}>
-        <ContentLoader
-          height={70}
-          speed={1}
-          width={100}
-          backgroundColor={'#d2d2d2'}
-          foregroundColor={'#eee'}
-          viewBox="-10 7 100 30"
-        >
-          <Circle cx="25" cy="25" r="25" />
-        </ContentLoader>
+        {Array.from({ length: 6 }, (_, index) => {
+          return (
+            <View style={{ padding: 10 }} key={index}>
+              <ContentLoader
+                height={70}
+                speed={1}
+                width={70}
+                backgroundColor={'#d2d2d2'}
+                foregroundColor={'#eee'}
+                viewBox="0 0 50 50"
+              >
+                <Circle cx="25" cy="25" r="25" />
+              </ContentLoader>
+            </View>
+          );
+        })}
       </View>
     );
   }

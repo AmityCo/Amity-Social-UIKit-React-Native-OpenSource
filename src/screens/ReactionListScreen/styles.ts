@@ -20,7 +20,7 @@ export const useStyles = () => {
     header: {
       width: '100%',
       borderBottomWidth: 1,
-      borderBottomColor: theme.colors.border,
+      borderBottomColor: theme.colors.baseShade4,
       paddingHorizontal: 20,
     },
     reactionCountContainer: {

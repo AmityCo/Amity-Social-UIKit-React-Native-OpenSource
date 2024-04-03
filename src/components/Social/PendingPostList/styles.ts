@@ -60,7 +60,7 @@ export const useStyles = () => {
       color: theme.colors.base,
     },
     actionSection: {
-      borderTopColor: theme.colors.border,
+      borderTopColor: theme.colors.baseShade4,
       borderTopWidth: 1,
       flexDirection: 'row',
       paddingVertical: 12,

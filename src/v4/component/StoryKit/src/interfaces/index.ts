@@ -44,6 +44,8 @@ export interface IUserStoryItem<T = Record<string, any>> {
   myReactions?: string[];
   markAsSeen?: () => void;
   markLinkAsClicked?: () => void;
+  isOwner?: boolean;
+  commentsCounts?: number;
 }
 
 /** User with one story representing the current story on screen */

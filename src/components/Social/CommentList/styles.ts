@@ -55,7 +55,7 @@ export const useStyles = () => {
     },
     commentBubble: {
       padding: 12,
-      backgroundColor: theme.colors.secondary,
+      backgroundColor: theme.colors.baseShade4,
       marginVertical: 8,
       borderRadius: 12,
       borderTopLeftRadius: 0,
@@ -65,7 +65,7 @@ export const useStyles = () => {
     viewMoreReplyBtn: {
       width: 155,
       borderRadius: 4,
-      backgroundColor: theme.colors.secondary,
+      backgroundColor: theme.colors.baseShade4,
       paddingVertical: 5,
       paddingHorizontal: 8,
       marginTop: 12,
