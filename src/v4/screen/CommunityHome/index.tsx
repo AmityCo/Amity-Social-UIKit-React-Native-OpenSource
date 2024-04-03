@@ -111,7 +111,6 @@ export default function CommunityHome({ route }: any) {
         const pendingPost = await amityPostsFormatter(posts);
         setPendingPosts(pendingPost);
         subscribePostTopic('community');
-        setIsShowPendingArea(true);
       }
     );
     disposers.push(unsubscribe);
@@ -151,9 +150,7 @@ export default function CommunityHome({ route }: any) {
         (community) => {
           setCommunityData(community);
           setPostSetting(community?.data?.postSetting);
-          if (
-            (community.data as Amity.RawCommunity).needApprovalOnPostCreation
-          ) {
+          if (community.data?.postSetting === 'ADMIN_REVIEW_POST_REQUIRED') {
             setPostSetting('ADMIN_REVIEW_POST_REQUIRED');
           }
           setIsJoin(community?.data.isJoined || false); // Set isJoin to communityData?.data.isJoined value

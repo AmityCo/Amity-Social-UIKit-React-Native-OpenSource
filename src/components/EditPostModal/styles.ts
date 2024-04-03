@@ -108,7 +108,7 @@ export const useStyles = () => {
       paddingTop: 15,
       alignItems: 'center',
       borderTopWidth: 1,
-      borderTopColor: theme.colors.border,
+      borderTopColor: theme.colors.baseShade4,
     },
     iconWrap: {
       backgroundColor: '#EBECEF',

@@ -20,7 +20,7 @@ export const useStyles = () => {
     },
     inputWrap: {
       marginHorizontal: 16,
-      backgroundColor: theme.colors.secondary,
+      backgroundColor: theme.colors.baseShade4,
       color: theme.colors.base,
       paddingHorizontal: 10,
       paddingVertical: Platform.OS === 'ios' ? 10 : 0,
@@ -34,7 +34,7 @@ export const useStyles = () => {
     input: {
       flex: 1,
       marginHorizontal: 6,
-      backgroundColor: theme.colors.secondary,
+      backgroundColor: theme.colors.baseShade4,
       color: theme.colors.base,
     },
     cancelBtn: {

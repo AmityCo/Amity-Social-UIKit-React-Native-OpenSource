@@ -122,9 +122,8 @@ export default function MyStories() {
       <View style={styles.container}>
         {Array.from({ length: 6 }, (_, index) => {
           return (
-            <View style={{ padding: 10 }}>
+            <View style={{ padding: 10 }} key={index}>
               <ContentLoader
-                key={index}
                 height={70}
                 speed={1}
                 width={70}

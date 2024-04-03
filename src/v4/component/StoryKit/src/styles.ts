@@ -188,7 +188,7 @@ export const useStyles = () => {
     },
     horizontalSperator: {
       width: '100%',
-      backgroundColor: theme.colors.border,
+      backgroundColor: theme.colors.baseShade4,
       height: 2,
       marginVertical: 10,
     },

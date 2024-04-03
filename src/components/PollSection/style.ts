@@ -25,7 +25,7 @@ export const useStyles = () => {
     },
     pollOptionContainer: {
       borderWidth: 1,
-      borderColor: theme.colors.border,
+      borderColor: theme.colors.baseShade4,
       borderRadius: 5,
       padding: 10,
       marginVertical: 5,
@@ -68,7 +68,7 @@ export const useStyles = () => {
       width: '100%',
       height: 10,
       borderRadius: 20,
-      backgroundColor: theme.colors.screenBackground,
+      backgroundColor: theme.colors.baseShade4,
       marginTop: 10,
     },
     innerBar: {

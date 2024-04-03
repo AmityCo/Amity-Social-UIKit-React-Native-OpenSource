@@ -7,7 +7,7 @@ export const useStyles = () => {
 
   const styles = StyleSheet.create({
     mentionContainer: {
-      borderTopColor: theme.colors.border,
+      borderTopColor: theme.colors.baseShade4,
       borderTopWidth: 1,
       paddingHorizontal: 0,
       maxHeight: 240,
