@@ -3,6 +3,7 @@ import {
   ReactionRepository,
 } from '@amityco/ts-sdk-react-native';
 import { IMentionPosition } from '../../screens/CreatePost';
+import { Alert } from 'react-native';
 
 export interface ICommentRes {
   data: Amity.Comment[];
@@ -78,6 +79,7 @@ export async function createComment(
         );
         resolve(comment);
       } catch (error) {
+        Alert.alert('', error.message);
         reject(error);
       }
     }
@@ -113,6 +115,7 @@ export async function createReplyComment(
         );
         resolve(comment);
       } catch (error) {
+        Alert.alert('', error.message);
         reject(error);
       }
     }
@@ -138,6 +141,7 @@ export async function editComment(
         );
         resolve(comment);
       } catch (error) {
+        Alert.alert('', error.message);
         reject(error);
       }
     }
@@ -153,6 +157,7 @@ export async function getCommentsDataByIds(
         const { data } = await CommentRepository.getCommentByIds(commentIds);
         resolve(data);
       } catch (error) {
+        Alert.alert('', error.message);
         reject(error);
       }
     }
@@ -171,6 +176,7 @@ export async function deleteCommentById(commentId: string): Promise<boolean> {
           resolve(true);
         }
       } catch (error) {
+        Alert.alert('', error.message);
         reject(error);
       }
     }

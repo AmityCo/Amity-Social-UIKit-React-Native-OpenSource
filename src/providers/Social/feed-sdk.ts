@@ -8,6 +8,7 @@ import {
   ReactionRepository,
 } from '@amityco/ts-sdk-react-native';
 import { IMentionPosition } from '../../screens/CreatePost';
+import { Alert } from 'react-native';
 
 export interface IGlobalFeedRes {
   data: Amity.Post<any>[];
@@ -152,6 +153,7 @@ export async function createPostToFeed(
         const { data: post } = await PostRepository.createPost(postParam);
         resolve(post);
       } catch (error) {
+        Alert.alert('', error.message);
         reject(error);
       }
     }
@@ -217,6 +219,7 @@ export async function editPost(
         const { data: post } = await PostRepository.editPost(postId, postParam);
         resolve(post);
       } catch (error) {
+        Alert.alert('', error.message);
         reject(error);
       }
     }
