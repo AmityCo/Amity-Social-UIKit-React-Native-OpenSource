@@ -79,7 +79,9 @@ export async function createComment(
         );
         resolve(comment);
       } catch (error) {
-        Alert.alert('', error.message);
+        if (error.message.includes('Text contain blocked word')) {
+          Alert.alert('', 'Text contain blocked word');
+        }
         reject(error);
       }
     }
@@ -115,7 +117,9 @@ export async function createReplyComment(
         );
         resolve(comment);
       } catch (error) {
-        Alert.alert('', error.message);
+        if (error.message.includes('Text contain blocked word')) {
+          Alert.alert('', 'Text contain blocked word');
+        }
         reject(error);
       }
     }
@@ -141,7 +145,9 @@ export async function editComment(
         );
         resolve(comment);
       } catch (error) {
-        Alert.alert('', error.message);
+        if (error.message.includes('Text contain blocked word')) {
+          Alert.alert('', 'Text contain blocked word');
+        }
         reject(error);
       }
     }
@@ -157,7 +163,9 @@ export async function getCommentsDataByIds(
         const { data } = await CommentRepository.getCommentByIds(commentIds);
         resolve(data);
       } catch (error) {
-        Alert.alert('', error.message);
+        if (error.message.includes('Text contain blocked word')) {
+          Alert.alert('', 'Text contain blocked word');
+        }
         reject(error);
       }
     }
@@ -176,7 +184,9 @@ export async function deleteCommentById(commentId: string): Promise<boolean> {
           resolve(true);
         }
       } catch (error) {
-        Alert.alert('', error.message);
+        if (error.message.includes('Text contain blocked word')) {
+          Alert.alert('', 'Text contain blocked word');
+        }
         reject(error);
       }
     }

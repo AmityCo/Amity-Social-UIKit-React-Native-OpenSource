@@ -128,7 +128,9 @@ const CreatePoll = ({ navigation, route }) => {
         { cancelable: false }
       );
     } catch (error) {
-      Alert.alert(error.message);
+      if (error.message.includes('Text contain blocked word')) {
+        Alert.alert('', 'Text contain blocked word');
+      }
     }
   }, [
     answerType,

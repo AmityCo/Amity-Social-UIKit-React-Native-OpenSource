@@ -153,7 +153,9 @@ export async function createPostToFeed(
         const { data: post } = await PostRepository.createPost(postParam);
         resolve(post);
       } catch (error) {
-        Alert.alert('', error.message);
+        if (error.message.includes('Text contain blocked word')) {
+          Alert.alert('', 'Text contain blocked word');
+        }
         reject(error);
       }
     }
@@ -219,7 +221,9 @@ export async function editPost(
         const { data: post } = await PostRepository.editPost(postId, postParam);
         resolve(post);
       } catch (error) {
-        Alert.alert('', error.message);
+        if (error.message.includes('Text contain blocked word')) {
+          Alert.alert('', 'Text contain blocked word');
+        }
         reject(error);
       }
     }
