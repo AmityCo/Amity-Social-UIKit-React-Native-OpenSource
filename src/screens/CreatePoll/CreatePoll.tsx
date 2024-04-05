@@ -22,6 +22,7 @@ import { checkCommunityPermission } from '../../providers/Social/communities-sdk
 import useAuth from '../../hooks/useAuth';
 import MentionInput from '../../components/MentionInput/MentionInput';
 import { TSearchItem } from '../../hooks/useSearch';
+import { text_contain_blocked_word } from '../../constants';
 
 const CreatePoll = ({ navigation, route }) => {
   const theme = useTheme() as MyMD3Theme;
@@ -128,8 +129,8 @@ const CreatePoll = ({ navigation, route }) => {
         { cancelable: false }
       );
     } catch (error) {
-      if (error.message.includes('Text contain blocked word')) {
-        Alert.alert('', 'Text contain blocked word');
+      if (error.message.includes(text_contain_blocked_word)) {
+        Alert.alert('', text_contain_blocked_word);
       }
     }
   }, [
