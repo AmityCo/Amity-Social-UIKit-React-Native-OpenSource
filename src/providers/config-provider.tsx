@@ -23,7 +23,7 @@ export const ConfigProvider = ({ children, configs }: IConfigProviderProps) => {
     return value;
   };
 
-  const getCorrectIDs = ({
+  const getPossibleIDs = ({
     page,
     component,
     element,
@@ -39,13 +39,12 @@ export const ConfigProvider = ({ children, configs }: IConfigProviderProps) => {
   };
 
   const getCorrectConfig = (
-    correctIds: string[]
-  ): Record<string, string | string[] | Record<string, string>> => {
-    for (let i = 0; i < correctIds.length; i++) {
-      const correctId = correctIds[i];
-      const correctConfig = configs.customizations[correctId];
-      if (correctConfig) return correctConfig;
-    }
+    possibleIDs: string[]
+  ): Record<string, string | string[] | Record<string, string>> | undefined => {
+    const correctId = possibleIDs.find((id) => !!configs.customizations[id]);
+    const correctConfig = configs.customizations[correctId];
+    if (correctConfig) return correctConfig;
+    return undefined;
   };
 
   const getUiKitConfig = ({
@@ -53,8 +52,8 @@ export const ConfigProvider = ({ children, configs }: IConfigProviderProps) => {
     component,
     element,
   }: IUIKitConfigOptions) => {
-    const correctIds = getCorrectIDs({ page, component, element });
-    const correctConfig = getCorrectConfig(correctIds);
+    const possibleIDs = getPossibleIDs({ page, component, element });
+    const correctConfig = getCorrectConfig(possibleIDs);
     return correctConfig;
   };
 

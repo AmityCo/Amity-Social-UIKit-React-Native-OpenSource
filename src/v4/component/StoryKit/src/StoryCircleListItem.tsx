@@ -15,7 +15,7 @@ import {
   storyCircleCreatePlusIcon,
   storyRing,
 } from '../../../../svg/svg-xml-list';
-import useConfig from '../../../../hooks/useConfig';
+import useConfig from '../../../hook/useConfig';
 import { ElementID } from '../../../../util/enumUIKitID';
 
 const StoryCircleListItem = ({
