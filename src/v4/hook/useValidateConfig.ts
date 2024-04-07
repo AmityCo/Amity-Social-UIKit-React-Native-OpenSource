@@ -1,7 +1,7 @@
 import { DefaultConfigID, PREFERRED_THEME, THEME_COLORS } from '../enum';
 import { IConfigRaw } from '../types/config.interface';
 
-const useValidateConfig = (config: IConfigRaw) => {
+const useValidateConfig = (config: IConfigRaw | undefined) => {
   if (!config) return false;
   if (!config.preferred_theme || !PREFERRED_THEME[config.preferred_theme]) {
     console.error(
@@ -19,8 +19,10 @@ const useValidateConfig = (config: IConfigRaw) => {
     return false;
   }
   if (
+    !config.theme ||
     !Object.keys(THEME_COLORS).every(
       (item) =>
+        config.theme &&
         Object.keys(config.theme.dark).includes(item) &&
         Object.keys(config.theme.light).includes(item)
     )
