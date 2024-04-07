@@ -279,6 +279,7 @@ export default function CommunityHome({ route }: any) {
         onScroll={handleScroll}
         scrollEventThrottle={20}
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
       >
         <View style={styles.imageContainer}>
           <Image

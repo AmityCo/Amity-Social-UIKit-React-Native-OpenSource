@@ -98,6 +98,7 @@ export default function GlobalFeed() {
               tintColor="lightblue"
             />
           }
+          keyboardShouldPersistTaps="handled"
           ListHeaderComponent={!refreshing && <MyStories />}
         />
       </View>
