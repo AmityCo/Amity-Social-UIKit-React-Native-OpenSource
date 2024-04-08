@@ -58,7 +58,7 @@ export default function Home() {
         ),
       headerTitle: 'Community',
     });
-  }, []);
+  }, [activeTab]);
 
   const openModal = () => {
     dispatch(
