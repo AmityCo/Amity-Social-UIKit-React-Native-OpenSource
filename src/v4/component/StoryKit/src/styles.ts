@@ -180,7 +180,7 @@ export const useStyles = () => {
       backgroundColor: theme.colors.background,
     },
     commentBottomSheet: {
-      paddingVertical: '10%',
+      paddingTop: '10%',
       justifyContent: 'center',
       alignItems: 'center',
       height: '100%',

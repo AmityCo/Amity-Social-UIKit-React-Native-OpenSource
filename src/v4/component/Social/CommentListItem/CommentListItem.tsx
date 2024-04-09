@@ -16,10 +16,7 @@ import { SvgXml } from 'react-native-svg';
 import {
   expandIcon,
   likeCircle,
-  likedXml,
-  likeXml,
   personXml,
-  replyIcon,
   threeDots,
 } from '../../../../svg/svg-xml-list';
 
@@ -92,7 +89,7 @@ const CommentListItem = ({
     childrenNumber,
     referenceId,
   } = commentDetail ?? {};
-  const timeDifference = useTimeDifference(createdAt);
+  const timeDifference = useTimeDifference(createdAt, true);
   const [isLike, setIsLike] = useState<boolean>(
     myReactions ? myReactions.includes('like') : false
   );
@@ -314,15 +311,6 @@ const CommentListItem = ({
             <Text style={styles.headerText}>{user?.displayName}</Text>
           </View>
 
-          <View style={styles.timeRow}>
-            <Text style={styles.headerTextTime}>{timeDifference}</Text>
-            {(editedAt !== createdAt || isEditComment) && (
-              <Text style={styles.dot}>·</Text>
-            )}
-            {(editedAt !== createdAt || isEditComment) && (
-              <Text style={styles.headerTextTime}>Edited</Text>
-            )}
-          </View>
           <View style={styles.commentBubble}>
             {textComment && (
               <RenderTextWithMention
@@ -332,46 +320,47 @@ const CommentListItem = ({
             )}
           </View>
           <View style={styles.actionSection}>
-            <TouchableOpacity
-              onPress={() => addReactionToComment()}
-              style={styles.likeBtn}
-            >
-              {isLike ? (
+            <View style={styles.rowContainer}>
+              <View style={styles.timeRow}>
+                <Text style={styles.headerTextTime}>{timeDifference}</Text>
+                {(editedAt !== createdAt || isEditComment) && (
+                  <Text style={styles.headerTextTime}> (edited)</Text>
+                )}
+              </View>
+              <TouchableOpacity
+                onPress={() => addReactionToComment()}
+                style={styles.likeBtn}
+              >
+                <Text style={isLike ? styles.likedText : styles.btnText}>
+                  {!isLike ? 'Like' : 'Liked'}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={onHandleReply} style={styles.likeBtn}>
+                <Text style={styles.btnText}>Reply</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={openModal} style={styles.threeDots}>
                 <SvgXml
-                  xml={likedXml(theme.colors.primary)}
+                  xml={threeDots(theme.colors.base)}
                   width="20"
                   height="16"
                 />
-              ) : (
-                <SvgXml xml={likeXml} width="20" height="16" />
-              )}
+              </TouchableOpacity>
+            </View>
 
-              <Text style={isLike ? styles.likedText : styles.btnText}>
-                {!isLike ? 'Like' : 'Liked'}
-              </Text>
-            </TouchableOpacity>
             {likeReaction > 0 && (
               <TouchableOpacity
                 onPress={onPressCommentReaction}
                 style={styles.likeBtn}
               >
-                <SvgXml xml={likeCircle} width="20" height="16" />
-                <Text style={styles.likedText}>{likeReaction}</Text>
+                <Text style={styles.btnText}>{likeReaction}</Text>
+                <SvgXml
+                  style={{ marginLeft: 4 }}
+                  xml={likeCircle}
+                  width="20"
+                  height="16"
+                />
               </TouchableOpacity>
             )}
-            <TouchableOpacity onPress={onHandleReply} style={styles.likeBtn}>
-              <SvgXml xml={replyIcon} width="20" height="16" />
-
-              <Text style={styles.btnText}>Reply</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity onPress={openModal} style={styles.threeDots}>
-              <SvgXml
-                xml={threeDots(theme.colors.base)}
-                width="20"
-                height="16"
-              />
-            </TouchableOpacity>
           </View>
 
           {previewReplyCommentList.length > 0 && !isOpenReply && (
