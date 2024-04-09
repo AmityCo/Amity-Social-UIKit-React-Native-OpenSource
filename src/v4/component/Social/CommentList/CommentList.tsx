@@ -62,7 +62,6 @@ const CommentList: FC<ICommentListProp> = ({ postId, postType }) => {
   const [replyUserName, setReplyUserName] = useState<string>('');
   const [replyCommentId, setReplyCommentId] = useState<string>('');
   const [inputMessage, setInputMessage] = useState('');
-  const [initialInputText, setInitialInputText] = useState('');
   const [resetValue, setResetValue] = useState(false);
   const [mentionNames, setMentionNames] = useState<TSearchItem[]>([]);
   const [mentionsPosition, setMentionsPosition] = useState<IMentionPosition[]>(
@@ -159,8 +158,8 @@ const CommentList: FC<ICommentListProp> = ({ postId, postType }) => {
     if (inputMessage.trim() === '') {
       return;
     }
-    Keyboard.dismiss();
     setInputMessage('');
+    Keyboard.dismiss();
     if (replyCommentId.length > 0) {
       try {
         await createReplyComment(
@@ -187,7 +186,6 @@ const CommentList: FC<ICommentListProp> = ({ postId, postType }) => {
         Alert.alert('Comment Error ', error.message);
       }
     }
-    setInitialInputText('');
     setInputMessage('');
     setMentionNames([]);
     setMentionsPosition([]);
@@ -226,7 +224,7 @@ const CommentList: FC<ICommentListProp> = ({ postId, postType }) => {
           <View style={styles.inputContainer}>
             <AmityMentionInput
               resetValue={resetValue}
-              initialValue={initialInputText}
+              initialValue=""
               privateCommunityId={null}
               multiline
               placeholder="Say something nice..."
@@ -260,7 +258,6 @@ const CommentList: FC<ICommentListProp> = ({ postId, postType }) => {
     );
   }, [
     handleSend,
-    initialInputText,
     inputMessage.length,
     mentionNames,
     mentionsPosition,

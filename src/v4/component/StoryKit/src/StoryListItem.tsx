@@ -599,11 +599,10 @@ export const StoryListItem = ({
           onClose={onCloseBottomSheet}
           disableKeyboardHandling
           height={'90%'}
-          closeOnDragDown
         >
           <KeyboardAvoidingView
             behavior="padding"
-            keyboardVerticalOffset={180}
+            keyboardVerticalOffset={140}
             style={styles.commentBottomSheet}
           >
             <Text style={styles.commentTitle}>Comments</Text>

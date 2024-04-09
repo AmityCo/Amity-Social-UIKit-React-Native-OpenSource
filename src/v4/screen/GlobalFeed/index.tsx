@@ -103,6 +103,7 @@ export default function GlobalFeed() {
             />
           }
           ListHeaderComponent={!refreshing && !isStoryExcluded && <MyStories />}
+          keyboardShouldPersistTaps="handled"
         />
       </View>
     </View>
