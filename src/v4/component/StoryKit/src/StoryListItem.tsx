@@ -313,7 +313,7 @@ export const StoryListItem = ({
       'Delete this story?',
       "This story will be permanently deleted. You'll no longer to see and find this story",
       [
-        { text: 'Cancel' },
+        { text: 'Cancel', onPress: () => sheetRef?.current?.close() },
         { text: 'Delete', style: 'destructive', onPress: deleteStory },
       ]
     );
