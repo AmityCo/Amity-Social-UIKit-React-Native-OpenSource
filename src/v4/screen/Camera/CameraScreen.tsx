@@ -42,7 +42,7 @@ const CameraScreen = ({ navigation, route }) => {
   const backCamera = useCameraDevice('back');
   const frontCamera = useCameraDevice('front');
   const cameraRef = useRef<Camera>(null);
-  const timerRef = useRef(null);
+  const timerRef = useRef<number | undefined | NodeJS.Timeout>(undefined);
   const [activeSwitch, setActiveSwitch] = useState<ACTIVE_SWITCH>(
     ACTIVE_SWITCH.camera
   );
@@ -70,19 +70,19 @@ const CameraScreen = ({ navigation, route }) => {
 
   const onStopRecord = useCallback(() => {
     setIsRecording(false);
-    clearInterval(timerRef.current);
-    cameraRef.current.stopRecording();
+    clearInterval(timerRef?.current);
+    cameraRef?.current?.stopRecording();
   }, []);
 
   useEffect(() => {
     if (totalTime === TIMER_LIMIT) return onStopRecord();
-    if (!isRecording) return clearInterval(timerRef.current);
+    if (!isRecording) return clearInterval(timerRef?.current);
     timerRef.current = setInterval(
       () => setTotalTime((prev) => prev + 100),
       100
     );
 
-    return () => clearInterval(timerRef.current);
+    return () => clearInterval(timerRef?.current);
   }, [isRecording, onStopRecord, totalTime]);
 
   useEffect(() => {
@@ -100,8 +100,10 @@ const CameraScreen = ({ navigation, route }) => {
   }, []);
 
   const onFinishCapture = useCallback(
-    (cameraData: PhotoFile | VideoFile, type: StoryType) => {
+    (cameraData: PhotoFile | VideoFile | undefined, type: StoryType) => {
       setTotalTime(0);
+      if (!cameraData)
+        return Alert.alert('Error', 'Error on camera, please try again');
       const name = cameraData.path.split('/').pop();
       const uri = Platform.select({
         ios: cameraData.path,
@@ -117,7 +119,7 @@ const CameraScreen = ({ navigation, route }) => {
   );
 
   const onPressCameraCapture = useCallback(async () => {
-    const photo = await cameraRef.current.takePhoto({
+    const photo = await cameraRef?.current?.takePhoto({
       qualityPrioritization: 'speed',
       flash: flashOnState ? 'on' : 'off',
       enableShutterSound: false,
@@ -127,7 +129,7 @@ const CameraScreen = ({ navigation, route }) => {
 
   const onStartRecord = useCallback(() => {
     setIsRecording(true);
-    cameraRef.current.startRecording({
+    cameraRef?.current?.startRecording({
       onRecordingFinished: (video) => onFinishCapture(video, StoryType.video),
       onRecordingError: (error) =>
         Alert.alert('Video Record Error', error.message),
@@ -218,6 +220,8 @@ const CameraScreen = ({ navigation, route }) => {
     ]);
     return null;
   }
+
+  if (!activeCamera) return null;
 
   return (
     <SafeAreaView style={styles.wrapper}>
