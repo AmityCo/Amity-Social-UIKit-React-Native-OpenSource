@@ -286,6 +286,12 @@ export const StoryListItem = ({
     setPressed(false);
   }, []);
 
+  const onClosedCommentSheet = useCallback(() => {
+    setOpenCommentSheet(false);
+    startAnimation();
+    setPressed(false);
+  }, []);
+
   const deleteStory = useCallback(async () => {
     try {
       await StoryRepository.softDeleteStory(storyId);
@@ -577,7 +583,7 @@ export const StoryListItem = ({
         <Modal
           style={styles.bottomSheet}
           isOpen={openCommentSheet}
-          onClosed={() => setOpenCommentSheet(false)}
+          onClosed={onClosedCommentSheet}
           position="bottom"
           swipeToClose
           swipeArea={250}
