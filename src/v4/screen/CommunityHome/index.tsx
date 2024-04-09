@@ -335,7 +335,7 @@ export default function CommunityHome({ route }: any) {
         )}
         {isJoin === false && joinCommunityButton()}
         {isJoin && isShowPendingArea && pendingPostArea()}
-        {!excludes.includes(`*/${ComponentID.StoryTab}/*`) && (
+        {!excludes.includes(ComponentID.StoryTab) && isJoin && (
           <CommunityStories
             communityId={communityId}
             displayName={communityData?.data.displayName ?? ''}
