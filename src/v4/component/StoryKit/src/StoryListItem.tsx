@@ -538,15 +538,19 @@ export const StoryListItem = ({
           })
         ) : (
           <View style={styles.footer}>
-            <TouchableOpacity
-              style={[
-                styles.seenContainer,
-                { backgroundColor: storyViewerBgColor },
-              ]}
-            >
-              <SvgXml xml={seenIcon()} width="25" height="25" />
-              <Text style={styles.seen}>{viewer}</Text>
-            </TouchableOpacity>
+            {hasStoryPermission ? (
+              <TouchableOpacity
+                style={[
+                  styles.seenContainer,
+                  { backgroundColor: storyViewerBgColor },
+                ]}
+              >
+                <SvgXml xml={seenIcon()} width="25" height="25" />
+                <Text style={styles.seen}>{viewer}</Text>
+              </TouchableOpacity>
+            ) : (
+              <View style={styles.seenContainer} />
+            )}
             <View style={styles.seenContainer}>
               <TouchableOpacity
                 style={[
