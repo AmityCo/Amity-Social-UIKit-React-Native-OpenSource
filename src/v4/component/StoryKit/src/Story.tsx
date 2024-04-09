@@ -143,6 +143,7 @@ export const Story = ({
           storyAvatarImageStyle={storyAvatarImageStyle}
           storyContainerStyle={storyContainerStyle}
           isCommunityStory={isCommunityStory}
+          isModerator={storyData.isModerator}
         />
       );
     });

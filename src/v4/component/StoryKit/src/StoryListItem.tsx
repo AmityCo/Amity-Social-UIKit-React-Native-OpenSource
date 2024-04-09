@@ -67,6 +67,7 @@ export const StoryListItem = ({
   storyImageStyle,
   storyAvatarImageStyle,
   storyContainerStyle,
+  isModerator,
 }: StoryListItemProps) => {
   const styles = useStyles();
   const hasStoryPermission = useStoryPermission(userId);
@@ -126,6 +127,7 @@ export const StoryListItem = ({
   const [openCommentSheet, setOpenCommentSheet] = useState(false);
   const { handleReaction } = useStory();
   const prevCurrentPage = usePrevious(currentPage);
+  const hasStoryImpressionPermission = isModerator || content[current].isOwner;
 
   useEffect(() => {
     const mappedStories = stories.map((x) => ({
@@ -538,7 +540,7 @@ export const StoryListItem = ({
           })
         ) : (
           <View style={styles.footer}>
-            {hasStoryPermission ? (
+            {hasStoryImpressionPermission ? (
               <TouchableOpacity
                 style={[
                   styles.seenContainer,

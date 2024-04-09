@@ -20,6 +20,7 @@ export interface IUserStory<T = Record<string, any>> {
   creatorName?: string;
   createdAt?: string;
   items?: Amity.StoryItem;
+  isModerator?: boolean;
 }
 
 export interface IUserStoryItem<T = Record<string, any>> {
@@ -182,6 +183,7 @@ export interface StoryListItemProps {
   /** Custom styles for the main story item container */
   storyContainerStyle?: ViewStyle;
   isCommunityStory?: boolean;
+  isModerator?: boolean;
 }
 
 export interface StoryProps {
