@@ -13,8 +13,6 @@ import CustomTab from '../../../components/CustomTab';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../../providers/amity-ui-kit-provider';
 import AllMyCommunity from '../../../screens/AllMyCommunity';
-import useConfig from '../../../hooks/useConfig';
-import { ComponentID } from '../../../util/enumUIKitID';
 import { TabName } from '../../../enum/tabNameState';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
@@ -27,7 +25,6 @@ export default function Home() {
   const theme = useTheme() as MyMD3Theme;
   const dispatch = useDispatch();
   const { openPostTypeChoiceModal } = uiSlice.actions;
-  const { excludes } = useConfig();
   const [activeTab, setActiveTab] = useState<string>(TabName.NewsFeed);
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
@@ -71,11 +68,7 @@ export default function Home() {
   return (
     <View>
       <CustomTab
-        tabName={
-          excludes.includes(ComponentID.StoryTab)
-            ? [TabName.NewsFeed, TabName.Explore]
-            : [TabName.NewsFeed, TabName.Explore, TabName.MyCommunities]
-        }
+        tabName={[TabName.NewsFeed, TabName.Explore, TabName.MyCommunities]}
         onTabChange={setActiveTab}
       />
       {activeTab === TabName.NewsFeed ? (
