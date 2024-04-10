@@ -44,7 +44,7 @@ export default function MyStories() {
     });
     getGlobalStories({
       targets: globalStoryTargetIds,
-      options: { sortBy: 'createdAt', orderBy: 'desc' },
+      options: { sortBy: 'createdAt', orderBy: 'asc' },
     });
   }, [getGlobalStories, globalStoryTargets]);
 
