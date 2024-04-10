@@ -126,7 +126,7 @@ export default function CommunityStories({
       });
   }, [avatarUrl, communityId, displayName, hasStoryPermission, navigation]);
 
-  const renderCommunityStory = useCallback(() => {
+  const renderCommunityStory = () => {
     if (loading) {
       return (
         <ContentLoader
@@ -188,19 +188,7 @@ export default function CommunityStories({
       );
     }
     return null;
-  }, [
-    avatarUrl,
-    communityId,
-    communityStories,
-    getStories,
-    hasStoryPermission,
-    loading,
-    onPress,
-    styles.avatarContainer,
-    styles.communityAvatar,
-    styles.storyCreateIcon,
-    styles.storyRing,
-  ]);
+  };
 
   return <View style={styles.container}>{renderCommunityStory()}</View>;
 }
