@@ -300,7 +300,7 @@ export const StoryListItem = ({
       'Delete this story?',
       "This story will be permanently deleted. You'll no longer to see and find this story",
       [
-        { text: 'Cancel' },
+        { text: 'Cancel', onPress: () => sheetRef?.current?.close() },
         { text: 'Delete', style: 'destructive', onPress: deleteStory },
       ]
     );
@@ -329,6 +329,15 @@ export const StoryListItem = ({
     setTotalReaction((prev) => (isLiked ? prev - 1 : prev + 1));
     setIsLiked((prev) => !prev);
   }, [storyId, isLiked]);
+
+  const onPressProfileName = useCallback(() => {
+    onClosePress();
+    navigation.navigate('CommunityHome', {
+      communityId: userId,
+      communityName: profileName,
+    });
+  }, [userId, profileName]);
+
   return (
     <>
       <View key={key} style={[styles.container, storyContainerStyle]}>
@@ -423,7 +432,9 @@ export const StoryListItem = ({
                 })
               ) : (
                 <View>
-                  <Text style={styles.avatarText}>{profileName}</Text>
+                  <Text onPress={onPressProfileName} style={styles.avatarText}>
+                    {profileName}
+                  </Text>
                   <View style={styles.flexRowCenter}>
                     <Text style={[styles.avatarSubText, { marginLeft: 10 }]}>
                       {timeDifference} .{' '}
@@ -566,7 +577,7 @@ export const StoryListItem = ({
         <Modal
           style={styles.bottomSheet}
           isOpen={openCommentSheet}
-          onClosed={() => setOpenCommentSheet(false)}
+          onClosed={onClosedCommentSheet}
           position="bottom"
           swipeToClose
           swipeArea={250}
