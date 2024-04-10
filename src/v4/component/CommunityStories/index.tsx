@@ -126,9 +126,9 @@ export default function CommunityStories({
       });
   }, [avatarUrl, communityId, displayName, hasStoryPermission, navigation]);
 
-  return (
-    <View style={styles.container}>
-      {loading ? (
+  const renderCommunityStory = useCallback(() => {
+    if (loading) {
+      return (
         <ContentLoader
           height={70}
           speed={1}
@@ -139,7 +139,10 @@ export default function CommunityStories({
         >
           <Circle cx="25" cy="25" r="25" />
         </ContentLoader>
-      ) : communityStories.length > 0 ? (
+      );
+    }
+    if (communityStories.length > 0) {
+      return (
         <AmityStory
           data={communityStories}
           duration={7}
@@ -156,7 +159,10 @@ export default function CommunityStories({
             })
           }
         />
-      ) : (
+      );
+    }
+    if (hasStoryPermission) {
+      return (
         <TouchableOpacity style={styles.avatarContainer} onPress={onPress}>
           <Image
             source={
@@ -174,14 +180,27 @@ export default function CommunityStories({
             height={48}
             xml={storyRing('#EBECEF', '#EBECEF')}
           />
-          {hasStoryPermission && (
-            <SvgXml
-              style={styles.storyCreateIcon}
-              xml={storyCircleCreatePlusIcon()}
-            />
-          )}
+          <SvgXml
+            style={styles.storyCreateIcon}
+            xml={storyCircleCreatePlusIcon()}
+          />
         </TouchableOpacity>
-      )}
-    </View>
-  );
+      );
+    }
+    return null;
+  }, [
+    avatarUrl,
+    communityId,
+    communityStories,
+    getStories,
+    hasStoryPermission,
+    loading,
+    onPress,
+    styles.avatarContainer,
+    styles.communityAvatar,
+    styles.storyCreateIcon,
+    styles.storyRing,
+  ]);
+
+  return <View style={styles.container}>{renderCommunityStory()}</View>;
 }
