@@ -12,8 +12,9 @@ import {
   SafeAreaView,
   Alert,
   KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
-import GestureRecognizer from 'react-native-swipe-gestures';
+import Modal from 'react-native-modalbox';
 import { usePrevious, isNullOrWhitespace } from './helpers';
 import {
   IUserStoryItem,
@@ -208,15 +209,6 @@ export const StoryListItem = ({
     }
   }
 
-  function onSwipeDown(_props?: any) {
-    onClosePress();
-  }
-
-  const config = {
-    velocityThreshold: 0.3,
-    directionalOffsetThreshold: 80,
-  };
-
   function next() {
     setCurrentSeek(0);
     // check if the next content is not empty
@@ -228,14 +220,12 @@ export const StoryListItem = ({
       setCurrent(current + 1);
       progress.setValue(0);
     } else {
-      // the next content is empty
       close('next');
     }
   }
 
   function previous() {
     setCurrentSeek(0);
-    // checking if the previous content is not empty
     setLoad(true);
     if (current - 1 >= 0) {
       let data = [...content];
@@ -244,7 +234,6 @@ export const StoryListItem = ({
       setCurrent(current - 1);
       progress.setValue(0);
     } else {
-      // the previous content is empty
       close('previous');
     }
   }
@@ -284,14 +273,12 @@ export const StoryListItem = ({
 
   const onPressMenu = useCallback(() => {
     progress.stopAnimation(() => setPressed(true));
-    setOpenCommentSheet(false);
     sheetRef.current?.open();
   }, []);
 
   const onPressComment = useCallback(() => {
     progress.stopAnimation(() => setPressed(true));
     setOpenCommentSheet(true);
-    sheetRef.current?.open();
   }, []);
 
   const onCloseBottomSheet = useCallback(() => {
@@ -353,13 +340,7 @@ export const StoryListItem = ({
 
   return (
     <>
-      <GestureRecognizer
-        key={key}
-        onSwipeUp={onSwipeUp}
-        onSwipeDown={onSwipeDown}
-        config={config}
-        style={[styles.container, storyContainerStyle]}
-      >
+      <View key={key} style={[styles.container, storyContainerStyle]}>
         <SafeAreaView>
           <View style={styles.backgroundContainer}>
             {content[current].story_type === 'video' ? (
@@ -590,40 +571,44 @@ export const StoryListItem = ({
             </View>
           </View>
         )}
-      </GestureRecognizer>
+      </View>
 
-      {openCommentSheet ? (
-        <BottomSheet
+      {openCommentSheet && (
+        <Modal
           style={styles.bottomSheet}
-          ref={sheetRef}
-          onClose={onCloseBottomSheet}
-          disableKeyboardHandling
-          height={'90%'}
+          isOpen={openCommentSheet}
+          onClosed={onClosedCommentSheet}
+          position="bottom"
+          swipeToClose
+          swipeArea={250}
+          backButtonClose
+          coverScreen={true}
         >
           <KeyboardAvoidingView
-            behavior="padding"
-            keyboardVerticalOffset={140}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             style={styles.commentBottomSheet}
           >
+            <View style={styles.handleBar} />
             <Text style={styles.commentTitle}>Comments</Text>
+
             <View style={styles.horizontalSperator} />
             <CommentList postId={storyId} postType="story" />
           </KeyboardAvoidingView>
-        </BottomSheet>
-      ) : (
-        <BottomSheet
-          ref={sheetRef}
-          onClose={onCloseBottomSheet}
-          closeOnDragDown
-          height={120}
-        >
-          <View style={styles.deleteBottomSheet}>
-            <TouchableOpacity onPress={onPressDelete}>
-              <Text style={styles.deleteStoryTxt}>Delete story</Text>
-            </TouchableOpacity>
-          </View>
-        </BottomSheet>
+        </Modal>
       )}
+      <BottomSheet
+        ref={sheetRef}
+        onClose={onCloseBottomSheet}
+        closeOnDragDown
+        height={120}
+        style={styles.deleteBottomSheet}
+      >
+        <View style={styles.deleteBottomSheet}>
+          <TouchableOpacity style={styles.deleteBtn} onPress={onPressDelete}>
+            <Text style={styles.deleteStoryTxt}>Delete story</Text>
+          </TouchableOpacity>
+        </View>
+      </BottomSheet>
     </>
   );
 };
