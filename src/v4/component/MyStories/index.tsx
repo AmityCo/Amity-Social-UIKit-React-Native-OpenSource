@@ -53,54 +53,56 @@ export default function MyStories() {
     async (categorizedStory: Amity.Story | Object) => {
       const mappedGlobalStories: IUserStory<Record<string, any>>[] =
         await Promise.all(
-          Object.entries(categorizedStory).map(async ([communityId, items]) => {
-            const { community } = items[0];
-            const avatarFileId = community.avatarFileId;
-            const displayName = community.displayName;
-            const isSeen = items.every((item) => item.isSeen);
-            const isModerator = await isCommunityModerator({
-              userId,
-              communityId,
-            });
+          Object.entries(categorizedStory).map(
+            async ([communityId, items], index: number) => {
+              const { community } = items[0];
+              const avatarFileId = community.avatarFileId;
+              const displayName = community.displayName;
+              const isSeen = items.every((item) => item.isSeen);
+              const isModerator = await isCommunityModerator({
+                userId,
+                communityId,
+              });
 
-            const storyData = await Promise.all(
-              items.map((item, index: number) => {
-                const isOwner = item.creator.userId === userId;
-                return {
-                  story_id: item.storyId,
-                  story_image: item?.imageData?.fileUrl,
-                  swipeText: '',
-                  story_type: item.dataType,
-                  story_video: item?.videoData?.fileUrl,
-                  story_page: index,
-                  creatorName: item?.creator?.displayName ?? '',
-                  createdAt: item.createdAt,
-                  items: item.items,
-                  reactionCounts: item.reactionsCount,
-                  commentsCounts: item.commentsCount,
-                  viewer: item.reach,
-                  myReactions: item.myReactions,
-                  markAsSeen: item.analytics.markAsSeen,
-                  markLinkAsClicked: item.analytics.markLinkAsClicked,
-                  isOwner: isOwner,
-                };
-              })
-            );
+              const storyData = await Promise.all(
+                items.map((item) => {
+                  const isOwner = item.creator.userId === userId;
+                  return {
+                    story_id: item.storyId,
+                    story_image: item?.imageData?.fileUrl,
+                    swipeText: '',
+                    story_type: item.dataType,
+                    story_video: item?.videoData?.fileUrl,
+                    story_page: index,
+                    creatorName: item?.creator?.displayName ?? '',
+                    createdAt: item.createdAt,
+                    items: item.items,
+                    reactionCounts: item.reactionsCount,
+                    commentsCounts: item.commentsCount,
+                    viewer: item.reach,
+                    myReactions: item.myReactions,
+                    markAsSeen: item.analytics.markAsSeen,
+                    markLinkAsClicked: item.analytics.markLinkAsClicked,
+                    isOwner: isOwner,
+                  };
+                })
+              );
 
-            return {
-              user_id: communityId,
-              user_image: await getImage({
-                fileId: avatarFileId,
-                imageSize: ImageSizeState.small,
-              }),
-              user_name: displayName,
-              stories: storyData,
-              isOfficial: community.isOfficial,
-              isPublic: community.isPublic,
-              seen: isSeen,
-              isModerator: isModerator,
-            };
-          })
+              return {
+                user_id: communityId,
+                user_image: await getImage({
+                  fileId: avatarFileId,
+                  imageSize: ImageSizeState.small,
+                }),
+                user_name: displayName,
+                stories: storyData,
+                isOfficial: community.isOfficial,
+                isPublic: community.isPublic,
+                seen: isSeen,
+                isModerator: isModerator,
+              };
+            }
+          )
         );
       setGlobalStoriesItems([...mappedGlobalStories]);
     },

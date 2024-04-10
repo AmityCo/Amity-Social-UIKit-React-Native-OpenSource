@@ -44,6 +44,7 @@ import BottomSheet, { BottomSheetMethods } from '@devvie/bottom-sheet';
 import { StoryRepository } from '@amityco/ts-sdk-react-native';
 import CommentList from '../../Social/CommentList/CommentList';
 import { useStoryPermission } from '../../../hook/useStoryPermission';
+import { useConfigImageUri } from '../../../hook/useConfigImageUri';
 
 export const StoryListItem = ({
   index,
@@ -127,7 +128,25 @@ export const StoryListItem = ({
   const [openCommentSheet, setOpenCommentSheet] = useState(false);
   const { handleReaction } = useStory();
   const prevCurrentPage = usePrevious(currentPage);
+  const [muted, setMuted] = useState(false);
   const hasStoryImpressionPermission = isModerator || content[current].isOwner;
+
+  const muteIcon = useConfigImageUri({
+    configPath: {
+      page: PageID.StoryPage,
+      component: ComponentID.WildCardComponent,
+      element: ElementID.SpeakerBtn,
+    },
+    configKey: 'mute_icon',
+  });
+  const unmuteIcon = useConfigImageUri({
+    configPath: {
+      page: PageID.StoryPage,
+      component: ComponentID.WildCardComponent,
+      element: ElementID.SpeakerBtn,
+    },
+    configKey: 'unmute_icon',
+  });
 
   useEffect(() => {
     const mappedStories = stories.map((x) => ({
@@ -363,7 +382,7 @@ export const StoryListItem = ({
                   content[current].story_page !== currentPage ? true : pressed
                 }
                 onLoad={handleLoadVideo}
-                muted={false}
+                muted={muted}
               />
             ) : (
               <Image
@@ -530,6 +549,17 @@ export const StoryListItem = ({
               <Text style={styles.hyperlinkText}>
                 {storyHyperLink.customText}
               </Text>
+            </TouchableOpacity>
+          )}
+          {content[current].story_type === 'video' && (
+            <TouchableOpacity
+              style={styles.muteBtn}
+              onPress={() => setMuted((prev) => !prev)}
+            >
+              <Image
+                source={muted ? muteIcon : unmuteIcon}
+                style={styles.muteIcon}
+              />
             </TouchableOpacity>
           )}
         </View>

@@ -52,7 +52,10 @@ const CameraScreen = ({ navigation, route }) => {
   const [activeCamera, setActiveCamera] = useState(backCamera);
   const [isRecording, setIsRecording] = useState(false);
   const format = Platform.select({
-    ios: undefined,
+    ios: useCameraFormat(activeCamera, [
+      { photoAspectRatio: 16 / 9 },
+      { videoAspectRatio: 16 / 9 },
+    ]),
     android: useCameraFormat(activeCamera, [
       { photoAspectRatio: 16 / 9 },
       { videoAspectRatio: 16 / 9 },
