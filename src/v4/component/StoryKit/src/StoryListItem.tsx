@@ -12,8 +12,9 @@ import {
   SafeAreaView,
   Alert,
   KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
-import GestureRecognizer from 'react-native-swipe-gestures';
+import Modal from 'react-native-modalbox';
 import { usePrevious, isNullOrWhitespace } from './helpers';
 import {
   IUserStoryItem,
@@ -34,7 +35,7 @@ import {
 import { useStyles } from './styles';
 import { useTimeDifference } from '../../../../hooks/useTimeDifference';
 import { useStory } from '../../../hook/useStory';
-import { ElementID } from '../../../enum/enumUIKitID';
+import { ElementID, ComponentID, PageID } from '../../../enum/enumUIKitID';
 import useConfig from '../../../hook/useConfig';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -42,6 +43,7 @@ import { RootStackParamList } from '../../../../routes/RouteParamList';
 import BottomSheet, { BottomSheetMethods } from '@devvie/bottom-sheet';
 import { StoryRepository } from '@amityco/ts-sdk-react-native';
 import CommentList from '../../Social/CommentList/CommentList';
+import { useStoryPermission } from '../../../hook/useStoryPermission';
 
 export const StoryListItem = ({
   index,
@@ -67,20 +69,33 @@ export const StoryListItem = ({
   storyContainerStyle,
 }: StoryListItemProps) => {
   const styles = useStyles();
-  const { getConfig } = useConfig();
+  const hasStoryPermission = useStoryPermission(userId);
+  const { getUiKitConfig } = useConfig();
   const storyReactionBgColor =
-    getConfig(ElementID.StoryReactionBtnOnStoryPage)?.background_color ??
-    '#2b2b2b';
+    (getUiKitConfig({
+      element: ElementID.StoryRing,
+      component: ComponentID.WildCardComponent,
+      page: PageID.StoryPage,
+    })?.background_color as string) ?? '#2b2b2b';
   const storyCommentBgColor =
-    getConfig(ElementID.StoryCommentBtnOnStoryPage)?.background_color ??
-    '#2b2b2b';
+    (getUiKitConfig({
+      page: PageID.StoryPage,
+      component: ComponentID.WildCardComponent,
+      element: ElementID.StoryCommentBtn,
+    })?.background_color as string) ?? '#2b2b2b';
   const storyViewerBgColor =
-    getConfig(ElementID.StoryImpressionBtnOnStoryPage)?.background_color ??
-    '#2b2b2b';
+    (getUiKitConfig({
+      page: PageID.StoryPage,
+      component: ComponentID.WildCardComponent,
+      element: ElementID.StoryImpressionBtn,
+    })?.background_color as string) ?? '#2b2b2b';
 
   const storyPlusBgColor =
-    getConfig(ElementID.CreateNewStoryBtnOnStoryPage)?.background_color ??
-    '#ffffff';
+    (getUiKitConfig({
+      page: PageID.StoryPage,
+      component: ComponentID.WildCardComponent,
+      element: ElementID.StoryHyperLinkBtn,
+    })?.background_color as string) ?? '#ffffff';
 
   const [load, setLoad] = useState<boolean>(true);
   const [pressed, setPressed] = useState<boolean>(false);
@@ -104,7 +119,6 @@ export const StoryListItem = ({
   const reactionCounts = content[current]?.reactionCounts;
   const commentsCounts = content[current]?.commentsCounts;
   const myReactions = content[current]?.myReactions;
-  const isOwner = content[current]?.isOwner;
   const navigation =
     useNavigation() as NativeStackNavigationProp<RootStackParamList>;
   const [totalReaction, setTotalReaction] = useState(reactionCounts);
@@ -195,15 +209,6 @@ export const StoryListItem = ({
     }
   }
 
-  function onSwipeDown(_props?: any) {
-    onClosePress();
-  }
-
-  const config = {
-    velocityThreshold: 0.3,
-    directionalOffsetThreshold: 80,
-  };
-
   function next() {
     setCurrentSeek(0);
     // check if the next content is not empty
@@ -215,14 +220,12 @@ export const StoryListItem = ({
       setCurrent(current + 1);
       progress.setValue(0);
     } else {
-      // the next content is empty
       close('next');
     }
   }
 
   function previous() {
     setCurrentSeek(0);
-    // checking if the previous content is not empty
     setLoad(true);
     if (current - 1 >= 0) {
       let data = [...content];
@@ -231,7 +234,6 @@ export const StoryListItem = ({
       setCurrent(current - 1);
       progress.setValue(0);
     } else {
-      // the previous content is empty
       close('previous');
     }
   }
@@ -259,24 +261,24 @@ export const StoryListItem = ({
   }, [storyHyperLink?.url]);
 
   const onPressAvatar = useCallback(() => {
-    onClosePress();
-    navigation.navigate('Camera', {
-      communityId: userId,
-      communityName: profileName,
-      communityAvatar: profileImage,
-    });
-  }, []);
+    if (hasStoryPermission) {
+      onClosePress();
+      navigation.navigate('Camera', {
+        communityId: userId,
+        communityName: profileName,
+        communityAvatar: profileImage,
+      });
+    }
+  }, [hasStoryPermission]);
 
   const onPressMenu = useCallback(() => {
     progress.stopAnimation(() => setPressed(true));
-    setOpenCommentSheet(false);
     sheetRef.current?.open();
   }, []);
 
   const onPressComment = useCallback(() => {
     progress.stopAnimation(() => setPressed(true));
     setOpenCommentSheet(true);
-    sheetRef.current?.open();
   }, []);
 
   const onCloseBottomSheet = useCallback(() => {
@@ -298,7 +300,7 @@ export const StoryListItem = ({
       'Delete this story?',
       "This story will be permanently deleted. You'll no longer to see and find this story",
       [
-        { text: 'Cancel' },
+        { text: 'Cancel', onPress: () => sheetRef?.current?.close() },
         { text: 'Delete', style: 'destructive', onPress: deleteStory },
       ]
     );
@@ -327,15 +329,18 @@ export const StoryListItem = ({
     setTotalReaction((prev) => (isLiked ? prev - 1 : prev + 1));
     setIsLiked((prev) => !prev);
   }, [storyId, isLiked]);
+
+  const onPressProfileName = useCallback(() => {
+    onClosePress();
+    navigation.navigate('CommunityHome', {
+      communityId: userId,
+      communityName: profileName,
+    });
+  }, [userId, profileName]);
+
   return (
     <>
-      <GestureRecognizer
-        key={key}
-        onSwipeUp={onSwipeUp}
-        onSwipeDown={onSwipeDown}
-        config={config}
-        style={[styles.container, storyContainerStyle]}
-      >
+      <View key={key} style={[styles.container, storyContainerStyle]}>
         <SafeAreaView>
           <View style={styles.backgroundContainer}>
             {content[current].story_type === 'video' ? (
@@ -411,12 +416,14 @@ export const StoryListItem = ({
                   style={[styles.avatarImage, storyAvatarImageStyle]}
                   source={{ uri: profileImage }}
                 />
-                <SvgXml
-                  height={12}
-                  width={12}
-                  style={styles.storyCreateIcon}
-                  xml={storyCircleCreatePlusIcon(storyPlusBgColor)}
-                />
+                {hasStoryPermission && (
+                  <SvgXml
+                    height={12}
+                    width={12}
+                    style={styles.storyCreateIcon}
+                    xml={storyCircleCreatePlusIcon(storyPlusBgColor)}
+                  />
+                )}
               </TouchableOpacity>
               {typeof renderTextComponent === 'function' ? (
                 renderTextComponent({
@@ -425,7 +432,9 @@ export const StoryListItem = ({
                 })
               ) : (
                 <View>
-                  <Text style={styles.avatarText}>{profileName}</Text>
+                  <Text onPress={onPressProfileName} style={styles.avatarText}>
+                    {profileName}
+                  </Text>
                   <View style={styles.flexRowCenter}>
                     <Text style={[styles.avatarSubText, { marginLeft: 10 }]}>
                       {timeDifference} .{' '}
@@ -443,7 +452,7 @@ export const StoryListItem = ({
                 })
               ) : (
                 <View style={styles.menuCloseContaier}>
-                  {isOwner && (
+                  {hasStoryPermission && (
                     <TouchableOpacity
                       hitSlop={5}
                       style={styles.threeDotsMenu}
@@ -562,41 +571,44 @@ export const StoryListItem = ({
             </View>
           </View>
         )}
-      </GestureRecognizer>
+      </View>
 
-      {openCommentSheet ? (
-        <BottomSheet
+      {openCommentSheet && (
+        <Modal
           style={styles.bottomSheet}
-          ref={sheetRef}
-          onClose={onCloseBottomSheet}
-          disableKeyboardHandling
-          height={'90%'}
-          closeOnDragDown
+          isOpen={openCommentSheet}
+          onClosed={onClosedCommentSheet}
+          position="bottom"
+          swipeToClose
+          swipeArea={250}
+          backButtonClose
+          coverScreen={true}
         >
           <KeyboardAvoidingView
-            behavior="padding"
-            keyboardVerticalOffset={180}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             style={styles.commentBottomSheet}
           >
+            <View style={styles.handleBar} />
             <Text style={styles.commentTitle}>Comments</Text>
+
             <View style={styles.horizontalSperator} />
             <CommentList postId={storyId} postType="story" />
           </KeyboardAvoidingView>
-        </BottomSheet>
-      ) : (
-        <BottomSheet
-          ref={sheetRef}
-          onClose={onCloseBottomSheet}
-          closeOnDragDown
-          height={120}
-        >
-          <View style={styles.deleteBottomSheet}>
-            <TouchableOpacity onPress={onPressDelete}>
-              <Text style={styles.deleteStoryTxt}>Delete story</Text>
-            </TouchableOpacity>
-          </View>
-        </BottomSheet>
+        </Modal>
       )}
+      <BottomSheet
+        ref={sheetRef}
+        onClose={onCloseBottomSheet}
+        closeOnDragDown
+        height={120}
+        style={styles.deleteBottomSheet}
+      >
+        <View style={styles.deleteBottomSheet}>
+          <TouchableOpacity style={styles.deleteBtn} onPress={onPressDelete}>
+            <Text style={styles.deleteStoryTxt}>Delete story</Text>
+          </TouchableOpacity>
+        </View>
+      </BottomSheet>
     </>
   );
 };

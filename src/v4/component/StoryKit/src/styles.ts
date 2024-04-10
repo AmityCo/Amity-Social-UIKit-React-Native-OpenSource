@@ -28,15 +28,12 @@ export const useStyles = () => {
     },
     image: {
       width: width,
-      height: height - 50,
+      height: width * (16 / 9),
       resizeMode: 'cover',
     },
     backgroundContainer: {
-      position: 'absolute',
-      top: 0,
-      bottom: 0,
-      left: 0,
-      right: 0,
+      width: '100%',
+      flex: 1,
     },
     spinnerContainer: {
       zIndex: -100,
@@ -167,19 +164,33 @@ export const useStyles = () => {
       top: 25,
     },
     bottomSheet: {
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
       backgroundColor: theme.colors.background,
-      paddingBottom: '25%',
+      width: width,
+      height: 0.95 * height,
     },
     deleteBottomSheet: {
-      flexDirection: 'row',
-      justifyContent: 'flex-start',
-      alignItems: 'center',
       paddingHorizontal: 16,
       marginVertical: 8,
+      backgroundColor: theme.colors.background,
+    },
+    deleteBtn: {
+      flexDirection: 'row',
+      backgroundColor: theme.colors.background,
     },
     commentBottomSheet: {
+      paddingVertical: '10%',
       justifyContent: 'center',
       alignItems: 'center',
+      height: '100%',
+    },
+    handleBar: {
+      width: 0.25 * width,
+      backgroundColor: theme.colors.baseShade4,
+      height: 5,
+      marginVertical: 10,
+      borderRadius: 10,
     },
     commentTitle: {
       fontSize: 17,
