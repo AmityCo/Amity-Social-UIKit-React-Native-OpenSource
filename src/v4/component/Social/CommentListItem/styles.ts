@@ -84,28 +84,33 @@ export const useStyles = () => {
     },
     likeBtn: {
       flexDirection: 'row',
-      paddingTop: 4,
-      marginRight: 15,
+      marginRight: 8,
       alignItems: 'center',
     },
     actionSection: {
+      flex: 1,
       flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    rowContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
     },
     likedText: {
       color: theme.colors.primary,
-      fontSize: 15,
+      fontSize: 14,
       fontWeight: '600',
       marginLeft: 1,
     },
     btnText: {
       color: theme.colors.baseShade2,
-      fontSize: 15,
+      fontSize: 14,
       fontWeight: '600',
-      marginHorizontal: 4,
     },
     threeDots: {
-      padding: 5,
       opacity: 0.5,
+      marginLeft: 5,
     },
     modalContainer: {
       flex: 1,
@@ -136,6 +141,7 @@ export const useStyles = () => {
     timeRow: {
       flexDirection: 'row',
       alignItems: 'center',
+      marginRight: 8,
     },
     dot: {
       color: theme.colors.baseShade1,

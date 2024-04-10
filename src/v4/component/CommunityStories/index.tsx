@@ -16,6 +16,7 @@ import { useFile } from '../../hook/useFile';
 import useAuth from '../../../hooks/useAuth';
 import { ImageSizeState } from '../../enum/imageSizeState';
 import { useStoryPermission } from '../../hook/useStoryPermission';
+import { isCommunityModerator } from '../../../util/permission';
 
 interface ICommunityStories {
   communityId: string;
@@ -91,6 +92,7 @@ export default function CommunityStories({
       })
     );
     if (storyData.length > 0) {
+      const isModerator = await isCommunityModerator({ userId, communityId });
       const mappedStories = [
         {
           user_id: communityId,
@@ -103,6 +105,7 @@ export default function CommunityStories({
           isOfficial: true,
           isPublic: true,
           seen: isSeen,
+          isModerator: isModerator,
         },
       ];
 

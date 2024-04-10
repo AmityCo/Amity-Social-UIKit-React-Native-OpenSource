@@ -67,6 +67,7 @@ export const StoryListItem = ({
   storyImageStyle,
   storyAvatarImageStyle,
   storyContainerStyle,
+  isModerator,
 }: StoryListItemProps) => {
   const styles = useStyles();
   const hasStoryPermission = useStoryPermission(userId);
@@ -126,6 +127,7 @@ export const StoryListItem = ({
   const [openCommentSheet, setOpenCommentSheet] = useState(false);
   const { handleReaction } = useStory();
   const prevCurrentPage = usePrevious(currentPage);
+  const hasStoryImpressionPermission = isModerator || content[current].isOwner;
 
   useEffect(() => {
     const mappedStories = stories.map((x) => ({
@@ -282,6 +284,12 @@ export const StoryListItem = ({
   }, []);
 
   const onCloseBottomSheet = useCallback(() => {
+    startAnimation();
+    setPressed(false);
+  }, []);
+
+  const onClosedCommentSheet = useCallback(() => {
+    setOpenCommentSheet(false);
     startAnimation();
     setPressed(false);
   }, []);
@@ -532,15 +540,19 @@ export const StoryListItem = ({
           })
         ) : (
           <View style={styles.footer}>
-            <TouchableOpacity
-              style={[
-                styles.seenContainer,
-                { backgroundColor: storyViewerBgColor },
-              ]}
-            >
-              <SvgXml xml={seenIcon()} width="25" height="25" />
-              <Text style={styles.seen}>{viewer}</Text>
-            </TouchableOpacity>
+            {hasStoryImpressionPermission ? (
+              <TouchableOpacity
+                style={[
+                  styles.seenContainer,
+                  { backgroundColor: storyViewerBgColor },
+                ]}
+              >
+                <SvgXml xml={seenIcon()} width="25" height="25" />
+                <Text style={styles.seen}>{viewer}</Text>
+              </TouchableOpacity>
+            ) : (
+              <View style={styles.seenContainer} />
+            )}
             <View style={styles.seenContainer}>
               <TouchableOpacity
                 style={[

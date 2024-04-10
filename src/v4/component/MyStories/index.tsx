@@ -7,6 +7,7 @@ import AmityStory, { IUserStory } from '../StoryKit';
 import { useFile } from '../../hook/useFile';
 import useAuth from '../../../hooks/useAuth';
 import { ImageSizeState } from '../../enum/imageSizeState';
+import { isCommunityModerator } from '../../../util/permission';
 
 export interface IStoryItems {
   communityId: string;
@@ -57,6 +58,10 @@ export default function MyStories() {
             const avatarFileId = community.avatarFileId;
             const displayName = community.displayName;
             const isSeen = items.every((item) => item.isSeen);
+            const isModerator = await isCommunityModerator({
+              userId,
+              communityId,
+            });
 
             const storyData = await Promise.all(
               items.map((item, index: number) => {
@@ -93,6 +98,7 @@ export default function MyStories() {
               isOfficial: community.isOfficial,
               isPublic: community.isPublic,
               seen: isSeen,
+              isModerator: isModerator,
             };
           })
         );

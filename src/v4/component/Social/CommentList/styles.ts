@@ -77,8 +77,6 @@ export const useStyles = () => {
     },
     inputContainer: {
       flex: 1,
-      justifyContent: 'center',
-      alignItems: 'flex-start',
       paddingVertical: 10,
       paddingHorizontal: 12,
       backgroundColor: theme.colors.baseShade4,
