@@ -153,11 +153,19 @@ const CameraScreen = ({ navigation, route }) => {
         onPressIn={onStartRecord}
         onPressOut={onStopRecord}
       >
-        <Progress.Circle
-          size={65}
-          progress={totalTime / TIMER_LIMIT}
-          borderColor="transparent"
-        />
+        <View
+          style={[
+            styles.videoCaptureInnerButton,
+            !isRecording && { width: 62, height: 62, borderRadius: 100 },
+          ]}
+        >
+          <Progress.Circle
+            size={75}
+            progress={totalTime / TIMER_LIMIT}
+            borderColor="transparent"
+            color="red"
+          />
+        </View>
       </Pressable>
     );
   }, [
@@ -167,6 +175,7 @@ const CameraScreen = ({ navigation, route }) => {
     onStopRecord,
     styles,
     totalTime,
+    isRecording,
   ]);
 
   const onPressBack = useCallback(() => {
