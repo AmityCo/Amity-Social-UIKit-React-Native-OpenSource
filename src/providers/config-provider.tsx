@@ -40,10 +40,13 @@ export const ConfigProvider = ({ children, configs }: IConfigProviderProps) => {
 
   const getCorrectConfig = (
     correctIds: string[]
-  ): Record<string, string | string[] | Record<string, string>> => {
+  ): Record<string, string | string[] | Record<string, string>> | null => {
     for (let i = 0; i < correctIds.length; i++) {
       const correctId = correctIds[i];
-      const correctConfig = configs.customizations[correctId];
+      const correctConfig: Record<
+        string,
+        string | string[] | Record<string, string>
+      > = configs.customizations[correctId];
       if (correctConfig) return correctConfig;
     }
   };
