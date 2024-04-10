@@ -577,7 +577,7 @@ export const StoryListItem = ({
         <Modal
           style={styles.bottomSheet}
           isOpen={openCommentSheet}
-          onClosed={() => setOpenCommentSheet(false)}
+          onClosed={onClosedCommentSheet}
           position="bottom"
           swipeToClose
           swipeArea={250}
