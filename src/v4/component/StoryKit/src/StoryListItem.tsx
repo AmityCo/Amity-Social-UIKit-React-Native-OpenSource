@@ -342,6 +342,15 @@ export const StoryListItem = ({
     setTotalReaction((prev) => (isLiked ? prev - 1 : prev + 1));
     setIsLiked((prev) => !prev);
   }, [storyId, isLiked]);
+
+  const onPressProfileName = useCallback(() => {
+    onClosePress();
+    navigation.navigate('CommunityHome', {
+      communityId: userId,
+      communityName: profileName,
+    });
+  }, [userId, profileName]);
+
   return (
     <>
       <GestureRecognizer
@@ -442,7 +451,9 @@ export const StoryListItem = ({
                 })
               ) : (
                 <View>
-                  <Text style={styles.avatarText}>{profileName}</Text>
+                  <Text onPress={onPressProfileName} style={styles.avatarText}>
+                    {profileName}
+                  </Text>
                   <View style={styles.flexRowCenter}>
                     <Text style={[styles.avatarSubText, { marginLeft: 10 }]}>
                       {timeDifference} .{' '}
