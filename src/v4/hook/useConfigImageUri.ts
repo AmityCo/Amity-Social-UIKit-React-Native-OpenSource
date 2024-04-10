@@ -24,6 +24,9 @@ export const useConfigImageUri = ({
     if (fileUri === 'unmute.png') {
       image = require('../configAssets/icons/unmute.png');
     }
+    if (fileUri === 'aspect_ratio.png') {
+      image = require('../configAssets/icons/aspect_ratio.png');
+    }
     if (typeof image === 'number') {
       return Image.resolveAssetSource(image)?.uri ?? defaultAvatarUri;
     }
