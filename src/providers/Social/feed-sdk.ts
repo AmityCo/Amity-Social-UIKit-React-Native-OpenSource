@@ -8,6 +8,8 @@ import {
   ReactionRepository,
 } from '@amityco/ts-sdk-react-native';
 import { IMentionPosition } from '../../screens/CreatePost';
+import { Alert } from 'react-native';
+import { text_contain_blocked_word } from '../../constants';
 
 export interface IGlobalFeedRes {
   data: Amity.Post<any>[];
@@ -152,6 +154,9 @@ export async function createPostToFeed(
         const { data: post } = await PostRepository.createPost(postParam);
         resolve(post);
       } catch (error) {
+        if (error.message.includes(text_contain_blocked_word)) {
+          Alert.alert('', text_contain_blocked_word);
+        }
         reject(error);
       }
     }
@@ -217,6 +222,9 @@ export async function editPost(
         const { data: post } = await PostRepository.editPost(postId, postParam);
         resolve(post);
       } catch (error) {
+        if (error.message.includes(text_contain_blocked_word)) {
+          Alert.alert('', text_contain_blocked_word);
+        }
         reject(error);
       }
     }

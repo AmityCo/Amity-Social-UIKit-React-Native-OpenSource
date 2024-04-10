@@ -22,6 +22,7 @@ import { checkCommunityPermission } from '../../providers/Social/communities-sdk
 import useAuth from '../../hooks/useAuth';
 import AmityMentionInput from '../../components/MentionInput/AmityMentionInput';
 import { TSearchItem } from '../../hooks/useSearch';
+import { text_contain_blocked_word } from '../../constants';
 
 const CreatePoll = ({ navigation, route }) => {
   const theme = useTheme() as MyMD3Theme;
@@ -89,43 +90,49 @@ const CreatePoll = ({ navigation, route }) => {
         userIds: mentionUsers.map((user) => user.id),
       },
     ];
-    const response = await PostRepository.createPost({
-      dataType: 'poll',
-      targetType,
-      targetId,
-      data: { pollId, text: optionQuestion },
-      mentionees,
-      metadata: { mentioned: mentionPosition },
-    });
-    setLoading(false);
-    if (targetType !== 'community') return goBack();
-    if (
-      !response ||
-      postSetting !== 'ADMIN_REVIEW_POST_REQUIRED' ||
-      !needApprovalOnPostCreation
-    )
-      return goBack();
-    const res = await checkCommunityPermission(
-      targetId,
-      client as Amity.Client,
-      apiRegion
-    );
-    if (
-      res.permissions.length > 0 &&
-      res.permissions.includes('Post/ManagePosts')
-    )
-      return goBack();
-    Alert.alert(
-      'Post submitted',
-      'Your post has been submitted to the pending list. It will be reviewed by community moderator',
-      [
-        {
-          text: 'OK',
-          onPress: () => goBack(),
-        },
-      ],
-      { cancelable: false }
-    );
+    try {
+      const response = await PostRepository.createPost({
+        dataType: 'poll',
+        targetType,
+        targetId,
+        data: { pollId, text: optionQuestion },
+        mentionees,
+        metadata: { mentioned: mentionPosition },
+      });
+      setLoading(false);
+      if (targetType !== 'community') return goBack();
+      if (
+        !response ||
+        postSetting !== 'ADMIN_REVIEW_POST_REQUIRED' ||
+        !needApprovalOnPostCreation
+      )
+        return goBack();
+      const res = await checkCommunityPermission(
+        targetId,
+        client as Amity.Client,
+        apiRegion
+      );
+      if (
+        res.permissions.length > 0 &&
+        res.permissions.includes('Post/ManagePosts')
+      )
+        return goBack();
+      Alert.alert(
+        'Post submitted',
+        'Your post has been submitted to the pending list. It will be reviewed by community moderator',
+        [
+          {
+            text: 'OK',
+            onPress: () => goBack(),
+          },
+        ],
+        { cancelable: false }
+      );
+    } catch (error) {
+      if (error.message.includes(text_contain_blocked_word)) {
+        Alert.alert('', text_contain_blocked_word);
+      }
+    }
   }, [
     answerType,
     apiRegion,

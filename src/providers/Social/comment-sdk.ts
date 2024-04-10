@@ -3,6 +3,8 @@ import {
   ReactionRepository,
 } from '@amityco/ts-sdk-react-native';
 import { IMentionPosition } from '../../screens/CreatePost';
+import { Alert } from 'react-native';
+import { text_contain_blocked_word } from '../../constants';
 
 export interface ICommentRes {
   data: Amity.Comment[];
@@ -79,6 +81,9 @@ export async function createComment(
         );
         resolve(comment);
       } catch (error) {
+        if (error.message.includes(text_contain_blocked_word)) {
+          Alert.alert('', text_contain_blocked_word);
+        }
         reject(error);
       }
     }
@@ -115,6 +120,9 @@ export async function createReplyComment(
         );
         resolve(comment);
       } catch (error) {
+        if (error.message.includes(text_contain_blocked_word)) {
+          Alert.alert('', text_contain_blocked_word);
+        }
         reject(error);
       }
     }
@@ -141,6 +149,9 @@ export async function editComment(
         );
         resolve(comment);
       } catch (error) {
+        if (error.message.includes(text_contain_blocked_word)) {
+          Alert.alert('', text_contain_blocked_word);
+        }
         reject(error);
       }
     }
@@ -156,6 +167,9 @@ export async function getCommentsDataByIds(
         const { data } = await CommentRepository.getCommentByIds(commentIds);
         resolve(data);
       } catch (error) {
+        if (error.message.includes(text_contain_blocked_word)) {
+          Alert.alert('', text_contain_blocked_word);
+        }
         reject(error);
       }
     }
@@ -174,6 +188,9 @@ export async function deleteCommentById(commentId: string): Promise<boolean> {
           resolve(true);
         }
       } catch (error) {
+        if (error.message.includes(text_contain_blocked_word)) {
+          Alert.alert('', text_contain_blocked_word);
+        }
         reject(error);
       }
     }

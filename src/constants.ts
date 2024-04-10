@@ -44,3 +44,4 @@ export const Permissions = Object.freeze({
   DeleteCommunityCategoryPermission: 'DELETE_COMMUNITY_CATEGORY',
   ManageStoryPermission: 'MANAGE_COMMUNITY_STORY',
 });
+export const text_contain_blocked_word = 'Text contain blocked word';
