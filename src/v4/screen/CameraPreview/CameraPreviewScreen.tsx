@@ -52,10 +52,7 @@ const CameraPreviewScreen = ({ navigation, route }) => {
           formData
         );
       }
-      navigation.navigate('CommunityHome', {
-        communityId: data.communityId,
-        communityName: data.communityName,
-      });
+      navigation.pop(2);
     } catch (error) {
       Alert.alert('Create Story fail', error.message);
     }
