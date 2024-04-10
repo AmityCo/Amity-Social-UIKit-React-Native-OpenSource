@@ -14,6 +14,7 @@ import {
   storyRing,
 } from '../../../../svg/svg-xml-list';
 import useConfig from '../../../hook/useConfig';
+import { useStoryPermission } from '../../../hook/useStoryPermission';
 
 const StoryCircleListItem = ({
   item,
@@ -24,6 +25,7 @@ const StoryCircleListItem = ({
   const styles = useStyles();
   const [, setIsPressed] = useState(item?.seen);
   const prevSeen = usePrevious(item?.seen);
+  const hasStoryPermission = useStoryPermission(item.user_id);
   const { getUiKitConfig } = useConfig();
   const storyRingColor: string[] = item?.seen
     ? ['#e2e2e2', '#e2e2e2']
@@ -83,7 +85,7 @@ const StoryCircleListItem = ({
               xml={officialIcon(theme.colors.primary)}
             />
           )}
-          {isCommunityStory && (
+          {isCommunityStory && hasStoryPermission && (
             <SvgXml
               style={styles.storyCreateIcon}
               xml={storyCircleCreatePlusIcon()}
