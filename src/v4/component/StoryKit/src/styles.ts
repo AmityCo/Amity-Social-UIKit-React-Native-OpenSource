@@ -9,7 +9,7 @@ export const useStyles = () => {
   const styles = StyleSheet.create({
     video: {
       width: width,
-      height: height - 50,
+      height: (width * 16) / 9,
     },
     container: {
       flex: 1,
@@ -115,6 +115,17 @@ export const useStyles = () => {
       justifyContent: 'space-between',
       marginBottom: 50,
       paddingHorizontal: 20,
+    },
+    muteBtn: {
+      width: 30,
+      height: 30,
+      position: 'absolute',
+      top: 80,
+      left: 16,
+    },
+    muteIcon: {
+      width: '100%',
+      height: '100%',
     },
     seenContainer: {
       marginHorizontal: 3,

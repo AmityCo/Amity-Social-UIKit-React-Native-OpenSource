@@ -297,7 +297,6 @@ export default function CommunityHome({ route }: any) {
             <Text style={styles.overlayCommunityText}>
               {communityData?.data.displayName}
             </Text>
-            {/* <Text style={styles.overlayCategoryText}>{communityData?.data.}</Text> */}
           </View>
         </View>
         <View style={styles.row}>
