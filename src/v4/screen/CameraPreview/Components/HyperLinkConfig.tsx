@@ -161,7 +161,7 @@ const HyperlinkConfig: FC<IHyperLinkConfig> = ({
                   !customTextErrorMessage &&
                   styles.activeDone,
               ]}
-              disabled={!url || urlErrorMessage || customTextErrorMessage}
+              disabled={!url || !!urlErrorMessage || !!customTextErrorMessage}
               onPress={onSubmit}
             >
               {configDoneText}

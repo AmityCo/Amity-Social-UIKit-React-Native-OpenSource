@@ -49,7 +49,6 @@ const CameraPreviewScreen = ({ navigation, route }) => {
     configKey: 'hyperlink_button_icon',
   });
 
-  const resizeMode = isFullScreen ? 'contain' : 'cover';
   const onPressBack = useCallback(() => {
     Alert.alert(
       'Discard this story?',
@@ -126,14 +125,12 @@ const CameraPreviewScreen = ({ navigation, route }) => {
         {type === StoryType.photo ? (
           <Image
             source={{ uri: data.uri }}
-            resizeMode={resizeMode}
             style={[styles.image, isFullScreen && styles.aspect_ratio]}
           />
         ) : (
           <Video
             repeat
             source={{ uri: data.uri }}
-            resizeMode={resizeMode}
             style={[styles.image, isFullScreen && styles.aspect_ratio]}
           />
         )}

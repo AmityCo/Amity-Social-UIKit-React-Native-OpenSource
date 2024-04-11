@@ -9,7 +9,7 @@ export const useStyles = () => {
     container: {
       flex: 1,
       width: '100%',
-      backgroundColor: theme.colors.background,
+      backgroundColor: theme.colors.base,
     },
     backBtn: {
       position: 'absolute',
@@ -31,7 +31,8 @@ export const useStyles = () => {
       borderRadius: 50,
     },
     imageContainer: {
-      height: (width * 16) / 9,
+      maxHeight: height * 0.8,
+      height: width * (16 / 9),
       width: width,
       borderRadius: 20,
       backgroundColor: theme.colors.baseShade4,
