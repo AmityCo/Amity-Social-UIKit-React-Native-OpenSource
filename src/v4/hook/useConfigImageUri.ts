@@ -27,6 +27,9 @@ export const useConfigImageUri = ({
     if (fileUri === 'aspect_ratio.png') {
       image = require('../configAssets/icons/aspect_ratio.png');
     }
+    if (fileUri === 'hyperlink_button.png') {
+      image = require('../configAssets/icons/hyperlink_button.png');
+    }
     if (typeof image === 'number') {
       return Image.resolveAssetSource(image)?.uri ?? defaultAvatarUri;
     }

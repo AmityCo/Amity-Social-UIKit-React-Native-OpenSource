@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { memo, useCallback, useEffect, useState } from 'react';
 import { Image, TouchableOpacity, View } from 'react-native';
 import { useStyles } from './styles';
 import AmityStory from '../../../v4/component/StoryKit';
@@ -27,11 +27,11 @@ interface ICommunityStories {
 type TAmityStory = Amity.Story & {
   creator: Amity.User;
 };
-export default function CommunityStories({
+const CommunityStories = ({
   communityId,
   displayName,
   avatarFileId,
-}: ICommunityStories) {
+}: ICommunityStories) => {
   const navigation =
     useNavigation() as NativeStackNavigationProp<RootStackParamList>;
   const styles = useStyles();
@@ -191,4 +191,6 @@ export default function CommunityStories({
   };
 
   return <View style={styles.container}>{renderCommunityStory()}</View>;
-}
+};
+
+export default memo(CommunityStories);
