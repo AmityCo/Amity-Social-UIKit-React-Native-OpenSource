@@ -63,6 +63,7 @@ const EditCommentModal = ({
         <TouchableOpacity
           onPress={handleEditComment}
           style={styles.headerTextContainer}
+          disabled={inputMessage === commentDetail?.data?.text}
         >
           <Text style={styles.headerText}>Save</Text>
         </TouchableOpacity>

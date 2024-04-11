@@ -277,7 +277,7 @@ export const StoryListItem = ({
     if (supported) {
       await Linking.openURL(storyHyperLink?.url);
     } else {
-      Alert.alert(`Don't know how to open this URL: ${storyHyperLink?.url}`);
+      Alert.alert(`Cannot open : ${storyHyperLink?.url}`);
     }
   }, [storyHyperLink?.url]);
 

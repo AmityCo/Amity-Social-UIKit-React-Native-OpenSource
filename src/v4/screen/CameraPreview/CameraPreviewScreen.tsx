@@ -8,7 +8,11 @@ import {
 } from 'react-native';
 import React, { useCallback, useState } from 'react';
 import Video from 'react-native-video';
-import { leftLongArrow, rightLongArrow } from '../../../svg/svg-xml-list';
+import {
+  leftLongArrow,
+  rightLongArrow,
+  storyHyperLinkIcon,
+} from '../../../svg/svg-xml-list';
 import { SvgXml } from 'react-native-svg';
 import { useStyles } from './styles';
 import { StoryRepository } from '@amityco/ts-sdk-react-native';
@@ -16,11 +20,17 @@ import { ComponentID, ElementID, PageID, StoryType } from '../../enum';
 import { useTheme } from 'react-native-paper';
 import { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
 import { useConfigImageUri } from '../../hook/useConfigImageUri';
+import HyperlinkConfig from './Components/HyperLinkConfig';
 
 const CameraPreviewScreen = ({ navigation, route }) => {
   const { type, data } = route.params;
   const styles = useStyles();
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const [isVisibleModal, setIsVisibleModal] = useState(false);
+  const [hyperlink, setHyperlink] = useState<Amity.StoryItem[]>(undefined);
+  const imageDisplayMode: Amity.ImageDisplayMode = isFullScreen
+    ? 'fill'
+    : 'fit';
   const theme = useTheme() as MyMD3Theme;
   const aspectRatioIcon = useConfigImageUri({
     configPath: {
@@ -30,7 +40,15 @@ const CameraPreviewScreen = ({ navigation, route }) => {
     },
     configKey: 'aspect_ratio_icon',
   });
-  const resizeMode = isFullScreen ? 'contain' : 'cover';
+  const hyperLinkIcon = useConfigImageUri({
+    configPath: {
+      page: PageID.CreateStoryPage,
+      component: ComponentID.WildCardComponent,
+      element: ElementID.StoryHyperLinkBtn,
+    },
+    configKey: 'hyperlink_button_icon',
+  });
+
   const onPressBack = useCallback(() => {
     Alert.alert(
       'Discard this story?',
@@ -52,28 +70,54 @@ const CameraPreviewScreen = ({ navigation, route }) => {
     setIsFullScreen((prev) => !prev);
   }, []);
 
+  const onPressHyperLink = useCallback(() => {
+    setIsVisibleModal(true);
+  }, []);
+
   const onPressShareStory = useCallback(async () => {
     const formData = new FormData();
     formData.append('files', data);
     try {
       if (type === StoryType.photo) {
-        StoryRepository.createImageStory(
+        await StoryRepository.createImageStory(
           'community',
           data.communityId,
-          formData
+          formData,
+          {},
+          imageDisplayMode,
+          hyperlink
         );
       } else {
-        StoryRepository.createVideoStory(
+        await StoryRepository.createVideoStory(
           'community',
           data.communityId,
-          formData
+          formData,
+          {},
+          hyperlink
         );
       }
       navigation.pop(2);
     } catch (error) {
       Alert.alert('Create Story fail', error.message);
     }
-  }, [data, navigation, type]);
+  }, [data, hyperlink, imageDisplayMode, navigation, type]);
+
+  const onHyperLinkSubmit = useCallback(
+    (item?: { url: string; customText: string }) => {
+      if (!item) {
+        setHyperlink(undefined);
+        setIsVisibleModal(false);
+        return;
+      }
+      const storyItem: Amity.StoryItem = {
+        data: item,
+        type: 'hyperlink' as Amity.StoryItemType.Hyperlink,
+      };
+      setHyperlink([storyItem]);
+      setIsVisibleModal(false);
+    },
+    []
+  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -81,18 +125,29 @@ const CameraPreviewScreen = ({ navigation, route }) => {
         {type === StoryType.photo ? (
           <Image
             source={{ uri: data.uri }}
-            resizeMode={resizeMode}
             style={[styles.image, isFullScreen && styles.aspect_ratio]}
           />
         ) : (
           <Video
             repeat
             source={{ uri: data.uri }}
-            resizeMode={resizeMode}
             style={[styles.image, isFullScreen && styles.aspect_ratio]}
           />
         )}
       </View>
+      {hyperlink?.length > 0 && (
+        <TouchableOpacity
+          style={styles.hyperlinkContainer}
+          onPress={onPressHyperLink}
+        >
+          <SvgXml xml={storyHyperLinkIcon('blue')} width="25" height="25" />
+          <Text style={styles.hyperlinkText}>
+            {hyperlink[0].data.customText.length === 0
+              ? hyperlink[0].data.url
+              : hyperlink[0].data.customText}
+          </Text>
+        </TouchableOpacity>
+      )}
       <TouchableOpacity
         style={styles.shareStoryBtn}
         onPress={onPressShareStory}
@@ -114,6 +169,15 @@ const CameraPreviewScreen = ({ navigation, route }) => {
       >
         <Image source={aspectRatioIcon} style={styles.aspectRationIcon} />
       </TouchableOpacity>
+      <TouchableOpacity style={styles.hyperLinkBtn} onPress={onPressHyperLink}>
+        <Image source={hyperLinkIcon} style={styles.hyperLinkIcon} />
+      </TouchableOpacity>
+      <HyperlinkConfig
+        isVisibleModal={isVisibleModal}
+        setIsVisibleModal={setIsVisibleModal}
+        onHyperLinkSubmit={onHyperLinkSubmit}
+        hyperlinkItem={hyperlink?.[0]?.data}
+      />
     </SafeAreaView>
   );
 };
