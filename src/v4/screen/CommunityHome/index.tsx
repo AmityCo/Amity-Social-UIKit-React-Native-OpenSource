@@ -41,9 +41,10 @@ import useFile from '../../../hooks/useFile';
 import { TabName } from '../../../enum/tabNameState';
 import uiSlice from '../../../redux/slices/uiSlice';
 import { PostTargetType } from '../../../enum/postTargetType';
-import CommunityStories from '../../component/CommunityStories';
 import useConfig from '../../hook/useConfig';
 import { ComponentID } from '../../enum/enumUIKitID';
+import AmityStoryTabComponent from '../../PublicApi/AmityStoryTabComponent/AmityStoryTabComponent';
+import { AmityStoryTabComponentEnum } from '../../PublicApi/types/index';
 
 export type FeedRefType = {
   handleLoadMore: () => void;
@@ -335,10 +336,9 @@ export default function CommunityHome({ route }: any) {
         {isJoin === false && joinCommunityButton()}
         {isJoin && isShowPendingArea && pendingPostArea()}
         {!excludes.includes(`*/${ComponentID.StoryTab}/*`) && isJoin && (
-          <CommunityStories
-            communityId={communityId}
-            displayName={communityData?.data.displayName ?? ''}
-            avatarFileId={communityData?.data.avatarFileId ?? ''}
+          <AmityStoryTabComponent
+            type={AmityStoryTabComponentEnum.communityFeed}
+            targetId={communityId}
           />
         )}
         <CustomTab
