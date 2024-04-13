@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useCallback, useState } from 'react';
+import React, { FC, useCallback, useState, useEffect, memo } from 'react';
 import Video from 'react-native-video';
 import {
   leftLongArrow,
@@ -15,18 +15,39 @@ import {
 } from '../../../svg/svg-xml-list';
 import { SvgXml } from 'react-native-svg';
 import { useStyles } from './styles';
-import { StoryRepository } from '@amityco/ts-sdk-react-native';
-import { ComponentID, ElementID, PageID, StoryType } from '../../enum';
+import {
+  CommunityRepository,
+  StoryRepository,
+} from '@amityco/ts-sdk-react-native';
+import {
+  ComponentID,
+  ElementID,
+  PageID,
+  StoryType,
+  ImageSizeState,
+} from '../../enum';
 import { useTheme } from 'react-native-paper';
 import { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
 import { useConfigImageUri } from '../../hook/useConfigImageUri';
 import HyperlinkConfig from './Components/HyperLinkConfig';
+import { IAmityDraftStoryPage } from '../types';
+import { useFile } from '../../hook/useFile';
+import { defaultAvatarUri } from '../../assets/index';
+import { getMediaTypeFromUrl } from '../../../util/urlUtil';
 
-const CameraPreviewScreen = ({ navigation, route }) => {
-  const { type, data } = route.params;
+const AmityDraftStoryPage: FC<IAmityDraftStoryPage> = ({
+  targetId,
+  targetType,
+  mediaType,
+  onCreateStory,
+  onDiscardStory,
+}) => {
+  const type = getMediaTypeFromUrl(mediaType.uri);
   const styles = useStyles();
+  const { getImage } = useFile();
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [isVisibleModal, setIsVisibleModal] = useState(false);
+  const [communityAvatarUrl, setCommunityAvatarUrl] = useState<string>(null);
   const [hyperlink, setHyperlink] = useState<Amity.StoryItem[]>(undefined);
   const imageDisplayMode: Amity.ImageDisplayMode = isFullScreen
     ? 'fill'
@@ -49,6 +70,24 @@ const CameraPreviewScreen = ({ navigation, route }) => {
     configKey: 'hyperlink_button_icon',
   });
 
+  useEffect(() => {
+    if (!targetId || targetType !== 'community')
+      return setCommunityAvatarUrl(defaultAvatarUri);
+    CommunityRepository.getCommunity(
+      targetId,
+      async ({ error, loading, data }) => {
+        if (error) return;
+        if (!loading) {
+          const image = await getImage({
+            fileId: data.avatarFileId,
+            imageSize: ImageSizeState.small,
+          });
+          setCommunityAvatarUrl(image);
+        }
+      }
+    )();
+  }, [getImage, targetId, targetType]);
+
   const onPressBack = useCallback(() => {
     Alert.alert(
       'Discard this story?',
@@ -59,12 +98,12 @@ const CameraPreviewScreen = ({ navigation, route }) => {
           text: 'Discard',
           style: 'destructive',
           onPress: () => {
-            navigation.goBack();
+            onDiscardStory();
           },
         },
       ]
     );
-  }, [navigation]);
+  }, [onDiscardStory]);
 
   const onPressAspectRatio = useCallback(() => {
     setIsFullScreen((prev) => !prev);
@@ -76,12 +115,12 @@ const CameraPreviewScreen = ({ navigation, route }) => {
 
   const onPressShareStory = useCallback(async () => {
     const formData = new FormData();
-    formData.append('files', data);
+    formData.append('files', mediaType);
     try {
-      if (type === StoryType.photo) {
+      if (type === StoryType.image) {
         await StoryRepository.createImageStory(
           'community',
-          data.communityId,
+          targetId,
           formData,
           {},
           imageDisplayMode,
@@ -90,17 +129,18 @@ const CameraPreviewScreen = ({ navigation, route }) => {
       } else {
         await StoryRepository.createVideoStory(
           'community',
-          data.communityId,
+          targetId,
           formData,
           {},
           hyperlink
         );
       }
-      navigation.pop(2);
     } catch (error) {
       Alert.alert('Create Story fail', error.message);
+    } finally {
+      onCreateStory();
     }
-  }, [data, hyperlink, imageDisplayMode, navigation, type]);
+  }, [hyperlink, imageDisplayMode, mediaType, onCreateStory, targetId, type]);
 
   const onHyperLinkSubmit = useCallback(
     (item?: { url: string; customText: string }) => {
@@ -122,15 +162,15 @@ const CameraPreviewScreen = ({ navigation, route }) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.imageContainer}>
-        {type === StoryType.photo ? (
+        {type === StoryType.image ? (
           <Image
-            source={{ uri: data.uri }}
+            source={{ uri: mediaType.uri }}
             style={[styles.image, isFullScreen && styles.aspect_ratio]}
           />
         ) : (
           <Video
             repeat
-            source={{ uri: data.uri }}
+            source={{ uri: mediaType.uri }}
             style={[styles.image, isFullScreen && styles.aspect_ratio]}
           />
         )}
@@ -152,7 +192,7 @@ const CameraPreviewScreen = ({ navigation, route }) => {
         style={styles.shareStoryBtn}
         onPress={onPressShareStory}
       >
-        <Image source={{ uri: data.communityAvatar }} style={styles.avatar} />
+        <Image source={{ uri: communityAvatarUrl }} style={styles.avatar} />
         <Text style={styles.shareStoryTxt}>Share story</Text>
         <SvgXml
           xml={rightLongArrow(theme.colors.baseShade2)}
@@ -182,4 +222,4 @@ const CameraPreviewScreen = ({ navigation, route }) => {
   );
 };
 
-export default CameraPreviewScreen;
+export default memo(AmityDraftStoryPage);

@@ -1,3 +1,6 @@
+import { StoryType } from '../v4/enum';
+import { ALLOWED_MEDIA_TYPE } from '../constants';
+
 export const checkURLValidation = (url: string) => {
   const pattern = new RegExp(
     '^([a-zA-Z]+:\\/\\/)?' + // protocol
@@ -9,4 +12,11 @@ export const checkURLValidation = (url: string) => {
     'i'
   );
   return pattern.test(url);
+};
+
+export const getMediaTypeFromUrl = (url: string) => {
+  const fileExtension = url.split('.').pop()?.toLowerCase();
+  if (ALLOWED_MEDIA_TYPE.image.includes(fileExtension)) return StoryType.image;
+  if (ALLOWED_MEDIA_TYPE.video.includes(fileExtension)) return StoryType.video;
+  return undefined;
 };

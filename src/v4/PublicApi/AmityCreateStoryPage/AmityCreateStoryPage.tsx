@@ -6,8 +6,16 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Platform,
+  Modal,
 } from 'react-native';
-import React, { useCallback, useState, useRef, useEffect } from 'react';
+import React, {
+  useCallback,
+  useState,
+  useRef,
+  useEffect,
+  FC,
+  memo,
+} from 'react';
 import {
   useCameraDevice,
   Camera,
@@ -16,7 +24,6 @@ import {
   useCameraFormat,
 } from 'react-native-vision-camera';
 import { useStyles } from './styles';
-import { useRequestPermission } from '../../hook/useCamera';
 import { SvgXml } from 'react-native-svg';
 import {
   closeIcon,
@@ -29,16 +36,34 @@ import ImagePicker, { launchImageLibrary } from 'react-native-image-picker';
 import * as Progress from 'react-native-progress';
 import { msToString } from '../../../util/timeUtil';
 import { StoryType } from '../../enum';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
+import { RootStackParamList } from '~/routes/RouteParamList';
+import AmityDraftStoryPage from '../AmityDraftStoryPage/AmityDraftStoryPage';
+import { TAmityStoryMediaType } from '../types';
+import { getMediaTypeFromUrl } from '../../../util/urlUtil';
+
+interface ICreateStoryPage {
+  targetId: string;
+  targetType: Amity.StoryTargetType;
+  onCreateStory?: () => void;
+  onDiscardStory?: () => void;
+}
 
 enum ACTIVE_SWITCH {
   camera = 'camera',
   video = 'video',
 }
 
-const CameraScreen = ({ navigation, route }) => {
+const AmityCreateStoryPage: FC<ICreateStoryPage> = ({
+  targetId,
+  targetType,
+  onCreateStory,
+  onDiscardStory,
+}) => {
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const styles = useStyles();
-  const communityData = route.params;
-  useRequestPermission();
   const backCamera = useCameraDevice('back');
   const frontCamera = useCameraDevice('front');
   const cameraRef = useRef<Camera>(null);
@@ -51,6 +76,9 @@ const CameraScreen = ({ navigation, route }) => {
   const [flashOnState, setFlashOnState] = useState(false);
   const [activeCamera, setActiveCamera] = useState(backCamera);
   const [isRecording, setIsRecording] = useState(false);
+  const [showDraftStory, setShowDraftStory] = useState(false);
+  const [mediaTypeData, setMediaTypeData] =
+    useState<TAmityStoryMediaType>(null);
   const format = Platform.select({
     ios: useCameraFormat(activeCamera, [
       { photoAspectRatio: 16 / 9 },
@@ -103,7 +131,7 @@ const CameraScreen = ({ navigation, route }) => {
   }, []);
 
   const onFinishCapture = useCallback(
-    (cameraData: PhotoFile | VideoFile | undefined, type: StoryType) => {
+    (cameraData: PhotoFile | VideoFile | undefined) => {
       setTotalTime(0);
       if (!cameraData)
         return Alert.alert('Error', 'Error on camera, please try again');
@@ -112,13 +140,20 @@ const CameraScreen = ({ navigation, route }) => {
         ios: cameraData.path,
         android: `file://${cameraData.path}`,
       });
-      const data = { ...cameraData, uri: uri, name: name };
-      navigation.navigate('CameraPreview', {
-        type: type,
-        data: { ...data, ...communityData },
-      });
+      const type = getMediaTypeFromUrl(uri);
+      if (!type) {
+        Alert.alert('Error', 'Unsupported Media Format');
+        return;
+      }
+      const data = {
+        ...cameraData,
+        uri: uri,
+        name: name,
+      };
+      setMediaTypeData(data);
+      setShowDraftStory(true);
     },
-    [communityData, navigation]
+    []
   );
 
   const onPressCameraCapture = useCallback(async () => {
@@ -127,13 +162,13 @@ const CameraScreen = ({ navigation, route }) => {
       flash: flashOnState ? 'on' : 'off',
       enableShutterSound: false,
     });
-    onFinishCapture(photo, StoryType.photo);
+    onFinishCapture(photo);
   }, [flashOnState, onFinishCapture]);
 
   const onStartRecord = useCallback(() => {
     setIsRecording(true);
     cameraRef?.current?.startRecording({
-      onRecordingFinished: (video) => onFinishCapture(video, StoryType.video),
+      onRecordingFinished: (video) => onFinishCapture(video),
       onRecordingError: (error) =>
         Alert.alert('Video Record Error', error.message),
       fileType: 'mp4',
@@ -196,7 +231,7 @@ const CameraScreen = ({ navigation, route }) => {
   }, [backCamera, frontCamera]);
 
   const onPressGallery = useCallback(async () => {
-    const type = isCamera ? StoryType.photo : StoryType.video;
+    const type = isCamera ? 'photo' : StoryType.video;
     const result: ImagePicker.ImagePickerResponse = await launchImageLibrary({
       mediaType: type,
       quality: 1,
@@ -205,24 +240,12 @@ const CameraScreen = ({ navigation, route }) => {
     if (!result.didCancel && result.assets && result.assets.length > 0) {
       const data = { ...result.assets[0], path: result.assets[0].uri };
       if (data) {
-        onFinishCapture(data as PhotoFile | VideoFile, type);
+        onFinishCapture(data as PhotoFile | VideoFile);
       } else {
         Alert.alert('Error on media selection');
       }
     }
   }, [isCamera, onFinishCapture]);
-
-  if (!frontCamera && !backCamera) {
-    Alert.alert('Camera Error', 'Cannot open camera', [
-      {
-        text: 'Go Back',
-        onPress: () => {
-          navigation.goBack();
-        },
-      },
-    ]);
-    return null;
-  }
 
   if (!activeCamera) return null;
 
@@ -277,8 +300,27 @@ const CameraScreen = ({ navigation, route }) => {
           <Text style={styles.switchTxt}>Video</Text>
         </Pressable>
       </View>
+      <Modal
+        visible={showDraftStory}
+        animationType="slide"
+        onRequestClose={() => setShowDraftStory(false)}
+      >
+        <AmityDraftStoryPage
+          targetId={targetId}
+          targetType={targetType}
+          mediaType={mediaTypeData}
+          onCreateStory={() => {
+            setShowDraftStory(false);
+            onCreateStory();
+          }}
+          onDiscardStory={() => {
+            setShowDraftStory(false);
+            onDiscardStory();
+          }}
+        />
+      </Modal>
     </SafeAreaView>
   );
 };
 
-export default CameraScreen;
+export default memo(AmityCreateStoryPage);

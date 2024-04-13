@@ -284,10 +284,9 @@ export const StoryListItem = ({
   const onPressAvatar = useCallback(() => {
     if (hasStoryPermission) {
       onClosePress();
-      navigation.navigate('Camera', {
-        communityId: userId,
-        communityName: profileName,
-        communityAvatar: profileImage,
+      navigation.navigate('CreateStory', {
+        targetId: userId,
+        targetType: 'community',
       });
     }
   }, [hasStoryPermission]);

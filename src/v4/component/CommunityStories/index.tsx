@@ -119,12 +119,11 @@ const CommunityStories = ({
 
   const onPress = useCallback(() => {
     hasStoryPermission &&
-      navigation.navigate('Camera', {
-        communityId,
-        communityName: displayName,
-        communityAvatar: avatarUrl,
+      navigation.navigate('CreateStory', {
+        targetId: communityId,
+        targetType: 'community',
       });
-  }, [avatarUrl, communityId, displayName, hasStoryPermission, navigation]);
+  }, [communityId, hasStoryPermission, navigation]);
 
   const renderCommunityStory = () => {
     if (loading) {

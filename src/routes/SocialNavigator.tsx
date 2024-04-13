@@ -36,8 +36,7 @@ import VideoPlayerFull from '../screens/VideoPlayerFullScreen';
 import PostTypeChoiceModal from '../components/PostTypeChoiceModal/PostTypeChoiceModal';
 import CreatePoll from '../screens/CreatePoll/CreatePoll';
 import ReactionListScreen from '../screens/ReactionListScreen/ReactionListScreen';
-import CameraScreen from '../v4/screen/Camera/CameraScreen';
-import CameraPreviewScreen from '../v4/screen/CameraPreview/CameraPreviewScreen';
+import CreateStoryScreen from '../v4/screen/CreateStory/CreateStoryScreen';
 
 export default function SocialNavigator() {
   const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -220,16 +219,14 @@ export default function SocialNavigator() {
               headerLeft: () => <BackButton />,
             }}
           />
-          <Stack.Screen
-            name="Camera"
-            component={CameraScreen}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="CameraPreview"
-            component={CameraPreviewScreen}
-            options={{ headerShown: false }}
-          />
+          <Stack.Group
+            screenOptions={{
+              headerShown: false,
+              animation: 'slide_from_bottom',
+            }}
+          >
+            <Stack.Screen name="CreateStory" component={CreateStoryScreen} />
+          </Stack.Group>
         </Stack.Navigator>
       )}
       <PostTypeChoiceModal />

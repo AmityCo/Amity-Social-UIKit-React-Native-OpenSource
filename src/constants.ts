@@ -45,3 +45,8 @@ export const Permissions = Object.freeze({
   ManageStoryPermission: 'MANAGE_COMMUNITY_STORY',
 });
 export const text_contain_blocked_word = 'Text contain blocked word';
+
+export const ALLOWED_MEDIA_TYPE = {
+  image: ['jpg', 'jpeg', 'png'],
+  video: ['mp4', 'mov'],
+};
