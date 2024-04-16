@@ -179,7 +179,7 @@ export const useStyles = () => {
       borderTopRightRadius: 20,
       backgroundColor: theme.colors.background,
       width: width,
-      height: 0.95 * height,
+      height: 0.7 * height,
     },
     deleteBottomSheet: {
       paddingHorizontal: 16,

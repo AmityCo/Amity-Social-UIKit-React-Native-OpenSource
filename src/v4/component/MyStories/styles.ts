@@ -1,11 +1,16 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, useWindowDimensions } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
 export const useStyles = () => {
   const theme = useTheme() as MyMD3Theme;
-
+  const { width, height } = useWindowDimensions();
   const styles = StyleSheet.create({
     container: {
+      backgroundColor: theme.colors.background,
+      width,
+      flex: 1,
+    },
+    skeletonContainer: {
       backgroundColor: theme.colors.background,
       flexDirection: 'row',
     },
@@ -14,6 +19,11 @@ export const useStyles = () => {
       fontWeight: '600',
       margin: 1,
       color: theme.colors.base,
+    },
+    modal: {
+      flex: 1,
+      height,
+      width,
     },
     scrollView: {
       justifyContent: 'space-between',
@@ -69,6 +79,21 @@ export const useStyles = () => {
       position: 'absolute',
       left: 45,
       top: 42,
+    },
+    scrollContainer: {
+      paddingVertical: 4,
+    },
+    communityAvatar: {
+      width: 60,
+      height: 60,
+      borderRadius: 56,
+      margin: 4,
+    },
+    avatarContainer: {
+      alignItems: 'center',
+      marginVertical: 12,
+      marginLeft: 16,
+      justifyContent: 'center',
     },
   });
 
