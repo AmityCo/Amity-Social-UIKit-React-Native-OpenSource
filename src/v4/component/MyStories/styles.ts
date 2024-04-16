@@ -43,11 +43,14 @@ export const useStyles = () => {
       fontSize: 13,
       fontWeight: '400',
       color: theme.colors.base,
+      textAlign: 'center',
     },
     textRow: {
       marginTop: 6,
       flexDirection: 'row',
       alignItems: 'center',
+      width: 55,
+      justifyContent: 'center',
     },
     titleContainer: {
       flexDirection: 'row',
@@ -91,9 +94,8 @@ export const useStyles = () => {
     },
     avatarContainer: {
       alignItems: 'center',
-      marginVertical: 12,
-      marginLeft: 16,
-      justifyContent: 'center',
+      width: 68,
+      margin: 8,
     },
   });
 

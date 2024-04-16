@@ -1,12 +1,18 @@
-import { Image, TouchableOpacity } from 'react-native';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
 import React, { FC, useEffect, useState } from 'react';
 import { SvgXml } from 'react-native-svg';
-import { storyRing } from '../../../svg/svg-xml-list';
+import {
+  officialIcon,
+  privateIcon,
+  storyRing,
+} from '../../../svg/svg-xml-list';
 import { ComponentID, ElementID, ImageSizeState, PageID } from '../../enum';
 import { useFile } from '../../hook';
 import useConfig from '../../hook/useConfig';
 import { useStyles } from './styles';
 import { CommunityRepository } from '@amityco/ts-sdk-react-native';
+import { useTheme } from 'react-native-paper';
+import { MyMD3Theme } from '~/providers/amity-ui-kit-provider';
 
 interface IStoryCircleItem {
   onPressStoryView: (storyTarget: Amity.StoryTarget) => void;
@@ -17,7 +23,9 @@ const StoryCircleItem: FC<IStoryCircleItem> = ({
   onPressStoryView,
   storyTarget,
 }) => {
+  const theme = useTheme() as MyMD3Theme;
   const [avatarUrl, setAvatarUrl] = useState(null);
+  const [communityData, setCommunityData] = useState<Amity.Community>(null);
   const { getImage } = useFile();
   const { getUiKitConfig } = useConfig();
   const styles = useStyles();
@@ -38,6 +46,7 @@ const StoryCircleItem: FC<IStoryCircleItem> = ({
       async ({ error, loading, data }) => {
         if (error) return;
         if (!loading) {
+          setCommunityData(data);
           const avatarImage = await getImage({
             fileId: data.avatarFileId,
             imageSize: ImageSizeState.small,
@@ -72,6 +81,20 @@ const StoryCircleItem: FC<IStoryCircleItem> = ({
         height={68}
         xml={storyRing(storyRingColor[0], storyRingColor[1])}
       />
+      {communityData?.isOfficial && (
+        <SvgXml
+          style={styles.officialIcon}
+          xml={officialIcon(theme.colors.primary)}
+        />
+      )}
+      <View style={styles.textRow}>
+        {!communityData?.isPublic && (
+          <SvgXml width={17} height={17} xml={privateIcon(theme.colors.base)} />
+        )}
+        <Text numberOfLines={1} ellipsizeMode="tail" style={styles.itemText}>
+          {communityData?.displayName}
+        </Text>
+      </View>
     </TouchableOpacity>
   );
 };
