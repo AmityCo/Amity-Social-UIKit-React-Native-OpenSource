@@ -13,32 +13,9 @@ const { height, width } = Dimensions.get('window');
 
 export const Story = ({
   data,
-  unPressedBorderColor,
-  pressedBorderColor,
-  unPressedAvatarTextColor,
-  pressedAvatarTextColor,
-  style,
-  onStart,
   onClose,
   duration,
-  swipeText,
-  avatarSize,
-  showAvatarText,
-  avatarTextStyle,
   onStorySeen,
-  renderCloseComponent,
-  renderSwipeUpComponent,
-  renderTextComponent,
-  loadedAnimationBarStyle,
-  unloadedAnimationBarStyle,
-  animationBarContainerStyle,
-  storyUserContainerStyle,
-  storyImageStyle,
-  storyAvatarImageStyle,
-  storyContainerStyle,
-  avatarImageStyle,
-  avatarWrapperStyle,
-  avatarFlatListProps,
   isCommunityStory = false,
 }: StoryProps) => {
   const [dataState, setDataState] = useState<IUserStory[]>(data);
@@ -50,9 +27,6 @@ export const Story = ({
   const _handleStoryItemPress = (item: IUserStory, index?: number) => {
     if (item?.stories?.length === 0) return;
     const newData = dataState.slice(index);
-    if (onStart) {
-      onStart(item);
-    }
     setCurrentPage(0);
     setSelectedData(newData);
     setIsModalOpen(true);
@@ -123,10 +97,6 @@ export const Story = ({
           stories={storyData.stories}
           currentPage={currentPage}
           onFinish={onStoryFinish}
-          swipeText={swipeText}
-          renderSwipeUpComponent={renderSwipeUpComponent}
-          renderCloseComponent={renderCloseComponent}
-          renderTextComponent={renderTextComponent}
           onClosePress={() => {
             setIsModalOpen(false);
             if (onClose) {
@@ -135,14 +105,6 @@ export const Story = ({
           }}
           index={index}
           onStorySeen={onStorySeen}
-          unloadedAnimationBarStyle={unloadedAnimationBarStyle}
-          animationBarContainerStyle={animationBarContainerStyle}
-          loadedAnimationBarStyle={loadedAnimationBarStyle}
-          storyUserContainerStyle={storyUserContainerStyle}
-          storyImageStyle={storyImageStyle}
-          storyAvatarImageStyle={storyAvatarImageStyle}
-          storyContainerStyle={storyContainerStyle}
-          isCommunityStory={isCommunityStory}
           isModerator={storyData.isModerator}
         />
       );
@@ -180,20 +142,10 @@ export const Story = ({
 
   return (
     <Fragment>
-      <View style={style}>
+      <View>
         <StoryCircleListView
           handleStoryItemPress={_handleStoryItemPress}
           data={dataState}
-          avatarSize={avatarSize}
-          unPressedBorderColor={unPressedBorderColor}
-          pressedBorderColor={pressedBorderColor}
-          unPressedAvatarTextColor={unPressedAvatarTextColor}
-          pressedAvatarTextColor={pressedAvatarTextColor}
-          showText={showAvatarText}
-          avatarTextStyle={avatarTextStyle}
-          avatarWrapperStyle={avatarWrapperStyle}
-          avatarImageStyle={avatarImageStyle}
-          avatarFlatListProps={avatarFlatListProps}
           isCommunityStory={isCommunityStory}
         />
       </View>

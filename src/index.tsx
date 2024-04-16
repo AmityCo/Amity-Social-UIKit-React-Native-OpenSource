@@ -5,6 +5,7 @@ import {
   AmityStoryTabComponent,
   AmityCreateStoryPage,
   AmityDraftStoryPage,
+  AmityViewStoryPage,
 } from './v4';
 import { AmityStoryTabComponentEnum } from './v4/PublicApi/types';
 
@@ -35,4 +36,5 @@ export {
   AmityStoryTabComponentEnum,
   AmityCreateStoryPage,
   AmityDraftStoryPage,
+  AmityViewStoryPage,
 };

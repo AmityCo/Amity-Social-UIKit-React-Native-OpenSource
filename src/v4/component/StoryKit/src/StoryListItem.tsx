@@ -58,16 +58,6 @@ export const StoryListItem = ({
   stories,
   currentPage,
   onStorySeen,
-  renderCloseComponent,
-  renderSwipeUpComponent,
-  renderTextComponent,
-  loadedAnimationBarStyle,
-  unloadedAnimationBarStyle,
-  animationBarContainerStyle,
-  storyUserContainerStyle,
-  storyImageStyle,
-  storyAvatarImageStyle,
-  storyContainerStyle,
   isModerator,
 }: StoryListItemProps) => {
   const styles = useStyles();
@@ -221,15 +211,6 @@ export const StoryListItem = ({
     });
   }
 
-  function onSwipeUp(_props?: any) {
-    if (onClosePress) {
-      onClosePress();
-    }
-    if (content[current].onPress) {
-      content[current].onPress?.();
-    }
-  }
-
   function next() {
     setCurrentSeek(0);
     // check if the next content is not empty
@@ -366,7 +347,7 @@ export const StoryListItem = ({
 
   return (
     <>
-      <View key={key} style={[styles.container, storyContainerStyle]}>
+      <View key={key} style={[styles.container]}>
         <SafeAreaView>
           <View style={styles.backgroundContainer}>
             {content[current].story_type === 'video' ? (
@@ -391,7 +372,7 @@ export const StoryListItem = ({
                 onLoadStart={() => setLoad(true)}
                 onLoadEnd={() => start()}
                 source={{ uri: content[current].story_image }}
-                style={[styles.image, storyImageStyle]}
+                style={[styles.image]}
                 resizeMode="contain"
               />
             )}
@@ -409,18 +390,10 @@ export const StoryListItem = ({
           </View>
         </SafeAreaView>
         <View style={styles.flexCol}>
-          <View
-            style={[styles.animationBarContainer, animationBarContainerStyle]}
-          >
+          <View style={styles.animationBarContainer}>
             {content.map((_index, key) => {
               return (
-                <View
-                  key={key}
-                  style={[
-                    styles.animationBackground,
-                    unloadedAnimationBarStyle,
-                  ]}
-                >
+                <View key={key} style={[styles.animationBackground]}>
                   <Animated.View
                     style={[
                       {
@@ -428,18 +401,17 @@ export const StoryListItem = ({
                         height: 2,
                         backgroundColor: 'white',
                       },
-                      loadedAnimationBarStyle,
                     ]}
                   />
                 </View>
               );
             })}
           </View>
-          <View style={[styles.userContainer, storyUserContainerStyle]}>
+          <View style={styles.userContainer}>
             <View style={styles.flexRowCenter}>
               <TouchableOpacity onPress={onPressAvatar} hitSlop={10}>
                 <Image
-                  style={[styles.avatarImage, storyAvatarImageStyle]}
+                  style={styles.avatarImage}
                   source={{ uri: profileImage }}
                 />
                 {hasStoryPermission && (
@@ -451,58 +423,41 @@ export const StoryListItem = ({
                   />
                 )}
               </TouchableOpacity>
-              {typeof renderTextComponent === 'function' ? (
-                renderTextComponent({
-                  item: content[current],
-                  profileName,
-                })
-              ) : (
-                <View>
-                  <Text onPress={onPressProfileName} style={styles.avatarText}>
-                    {profileName}
+
+              <View>
+                <Text onPress={onPressProfileName} style={styles.avatarText}>
+                  {profileName}
+                </Text>
+                <View style={styles.flexRowCenter}>
+                  <Text style={[styles.avatarSubText, { marginLeft: 10 }]}>
+                    {timeDifference} .{' '}
                   </Text>
-                  <View style={styles.flexRowCenter}>
-                    <Text style={[styles.avatarSubText, { marginLeft: 10 }]}>
-                      {timeDifference} .{' '}
-                    </Text>
-                    <Text style={styles.avatarSubText}>By {creatorName}</Text>
-                  </View>
+                  <Text style={styles.avatarSubText}>By {creatorName}</Text>
                 </View>
-              )}
+              </View>
             </View>
             <View style={styles.closeIconContainer}>
-              {typeof renderCloseComponent === 'function' ? (
-                renderCloseComponent({
-                  onPress: onClosePress,
-                  item: content[current],
-                })
-              ) : (
-                <View style={styles.menuCloseContaier}>
-                  {hasStoryPermission && (
-                    <TouchableOpacity
-                      hitSlop={5}
-                      style={styles.threeDotsMenu}
-                      onPress={onPressMenu}
-                    >
-                      <SvgXml
-                        xml={storyThreedotsMenu()}
-                        width="25"
-                        height="25"
-                      />
-                    </TouchableOpacity>
-                  )}
+              <View style={styles.menuCloseContaier}>
+                {hasStoryPermission && (
                   <TouchableOpacity
                     hitSlop={5}
-                    onPress={() => {
-                      if (onClosePress) {
-                        onClosePress();
-                      }
-                    }}
+                    style={styles.threeDotsMenu}
+                    onPress={onPressMenu}
                   >
-                    <Text style={styles.whiteText}>X</Text>
+                    <SvgXml xml={storyThreedotsMenu()} width="25" height="25" />
                   </TouchableOpacity>
-                </View>
-              )}
+                )}
+                <TouchableOpacity
+                  hitSlop={5}
+                  onPress={() => {
+                    if (onClosePress) {
+                      onClosePress();
+                    }
+                  }}
+                >
+                  <Text style={styles.whiteText}>X</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
           <View style={styles.pressContainer}>
@@ -562,56 +517,50 @@ export const StoryListItem = ({
             </TouchableOpacity>
           )}
         </View>
-        {typeof renderSwipeUpComponent === 'function' ? (
-          renderSwipeUpComponent({
-            onPress: onSwipeUp,
-            item: content[current],
-          })
-        ) : (
-          <View style={styles.footer}>
-            {hasStoryImpressionPermission ? (
-              <TouchableOpacity
-                style={[
-                  styles.seenContainer,
-                  { backgroundColor: storyViewerBgColor },
-                ]}
-              >
-                <SvgXml xml={seenIcon()} width="25" height="25" />
-                <Text style={styles.seen}>{viewer}</Text>
-              </TouchableOpacity>
-            ) : (
-              <View style={styles.seenContainer} />
-            )}
-            <View style={styles.seenContainer}>
-              <TouchableOpacity
-                style={[
-                  styles.iconContainer,
-                  { backgroundColor: storyCommentBgColor },
-                ]}
-                onPress={onPressComment}
-              >
-                <SvgXml xml={storyCommentIcon()} width="25" height="25" />
-                <Text style={styles.seen}>{commentsCounts}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.iconContainer,
-                  {
-                    backgroundColor: storyReactionBgColor,
-                  },
-                ]}
-                onPress={onPressReaction}
-              >
-                <SvgXml
-                  xml={isLiked ? storyLikedIcon : storyLikeIcon}
-                  width="25"
-                  height="25"
-                />
-                <Text style={styles.seen}>{totalReaction}</Text>
-              </TouchableOpacity>
-            </View>
+
+        <View style={styles.footer}>
+          {hasStoryImpressionPermission ? (
+            <TouchableOpacity
+              style={[
+                styles.seenContainer,
+                { backgroundColor: storyViewerBgColor },
+              ]}
+            >
+              <SvgXml xml={seenIcon()} width="25" height="25" />
+              <Text style={styles.seen}>{viewer}</Text>
+            </TouchableOpacity>
+          ) : (
+            <View style={styles.seenContainer} />
+          )}
+          <View style={styles.seenContainer}>
+            <TouchableOpacity
+              style={[
+                styles.iconContainer,
+                { backgroundColor: storyCommentBgColor },
+              ]}
+              onPress={onPressComment}
+            >
+              <SvgXml xml={storyCommentIcon()} width="25" height="25" />
+              <Text style={styles.seen}>{commentsCounts}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.iconContainer,
+                {
+                  backgroundColor: storyReactionBgColor,
+                },
+              ]}
+              onPress={onPressReaction}
+            >
+              <SvgXml
+                xml={isLiked ? storyLikedIcon : storyLikeIcon}
+                width="25"
+                height="25"
+              />
+              <Text style={styles.seen}>{totalReaction}</Text>
+            </TouchableOpacity>
           </View>
-        )}
+        </View>
       </View>
 
       {openCommentSheet && (
