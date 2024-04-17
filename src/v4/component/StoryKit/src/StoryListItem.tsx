@@ -526,7 +526,7 @@ export const StoryListItem = ({
                 { backgroundColor: storyViewerBgColor },
               ]}
             >
-              <SvgXml xml={seenIcon()} width="25" height="25" />
+              <SvgXml xml={seenIcon()} width="24" height="24" />
               <Text style={styles.seen}>{viewer}</Text>
             </TouchableOpacity>
           ) : (
@@ -540,7 +540,7 @@ export const StoryListItem = ({
               ]}
               onPress={onPressComment}
             >
-              <SvgXml xml={storyCommentIcon()} width="25" height="25" />
+              <SvgXml xml={storyCommentIcon()} width="24" height="24" />
               <Text style={styles.seen}>{commentsCounts}</Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -554,8 +554,8 @@ export const StoryListItem = ({
             >
               <SvgXml
                 xml={isLiked ? storyLikedIcon : storyLikeIcon}
-                width="25"
-                height="25"
+                width="24"
+                height="24"
               />
               <Text style={styles.seen}>{totalReaction}</Text>
             </TouchableOpacity>

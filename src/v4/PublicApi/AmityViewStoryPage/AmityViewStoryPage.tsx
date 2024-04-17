@@ -19,8 +19,8 @@ import AmityViewStoryItem from './Components/AmityViewStoryItem';
 interface IAmityViewStoryPage {
   targetType: Amity.StoryTargetType;
   targetId: string;
-  currentPage: number;
-  index: number;
+  currentPage?: number;
+  index?: number;
   onFinish?: (state?: NextOrPrevious, targetId?: string) => void;
   onPressCommunityName?: () => void;
   onPressAvatar?: () => void;
