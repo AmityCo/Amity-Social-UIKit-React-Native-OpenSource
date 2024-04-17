@@ -7,12 +7,14 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../../routes/RouteParamList';
 import { useStoryPermission } from '../../hook';
+import { NextOrPrevious } from '../StoryKit';
 
 interface IStorytargetView {
   currentCommunityIndex: number;
   setCurrentCommunityIndex: (arg: number) => void;
   globalStoryTargets: Amity.StoryTarget[];
   setViewStory: (arg: boolean) => void;
+  onClose?: () => void;
 }
 
 const StoryTargetView: FC<IStorytargetView> = ({
@@ -20,6 +22,7 @@ const StoryTargetView: FC<IStorytargetView> = ({
   setCurrentCommunityIndex,
   globalStoryTargets,
   setViewStory,
+  onClose,
 }) => {
   const cube = useRef<CubeNavigationHorizontal | AndroidCubeEffect>();
   const communityId = globalStoryTargets[currentCommunityIndex].targetId;
@@ -54,9 +57,31 @@ const StoryTargetView: FC<IStorytargetView> = ({
     });
   }, [communityId, navigation, setViewStory]);
 
-  const onFinish = useCallback(() => {
-    setViewStory(false);
-  }, [setViewStory]);
+  const onFinish = useCallback(
+    (state?: NextOrPrevious) => {
+      if (state === 'next') {
+        if (currentCommunityIndex < globalStoryTargets.length - 1)
+          setCurrentCommunityIndex(currentCommunityIndex + 1);
+        setViewStory(false);
+        onClose && onClose();
+        return;
+      }
+      if (state === 'previous') {
+        if (currentCommunityIndex > 0)
+          setCurrentCommunityIndex(currentCommunityIndex - 1);
+        return;
+      }
+      setViewStory(false);
+      onClose && onClose();
+    },
+    [
+      currentCommunityIndex,
+      globalStoryTargets.length,
+      onClose,
+      setCurrentCommunityIndex,
+      setViewStory,
+    ]
+  );
 
   if (Platform.OS === 'ios') {
     return (
@@ -68,7 +93,7 @@ const StoryTargetView: FC<IStorytargetView> = ({
           }
         }}
       >
-        {globalStoryTargets.map((storyTarget) => {
+        {globalStoryTargets.map((storyTarget, i) => {
           return (
             <AmityViewStoryPage
               targetType={'community'}
@@ -77,6 +102,8 @@ const StoryTargetView: FC<IStorytargetView> = ({
               onFinish={onFinish}
               onPressAvatar={onPressAvatar}
               onPressCommunityName={onPressCommunityName}
+              index={i}
+              currentPage={currentCommunityIndex}
             />
           );
         })}
@@ -92,7 +119,7 @@ const StoryTargetView: FC<IStorytargetView> = ({
           }
         }}
       >
-        {globalStoryTargets.map((storyTarget) => {
+        {globalStoryTargets.map((storyTarget, i) => {
           return (
             <AmityViewStoryPage
               targetType={'community'}
@@ -101,6 +128,8 @@ const StoryTargetView: FC<IStorytargetView> = ({
               onFinish={onFinish}
               onPressAvatar={onPressAvatar}
               onPressCommunityName={onPressCommunityName}
+              index={i}
+              currentPage={currentCommunityIndex}
             />
           );
         })}

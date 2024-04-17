@@ -144,7 +144,6 @@ const AmityViewStoryItem: FC<IAmityViewStoryItem> = ({
     if (current !== storyData.length - 1) {
       let data = [...storyData];
       data[current].finish = 1;
-
       setCurrent(current + 1);
       progress.setValue(0);
     } else {
@@ -178,10 +177,9 @@ const AmityViewStoryItem: FC<IAmityViewStoryItem> = ({
       setCurrent(current - 1);
       progress.setValue(0);
     } else {
-      progress.setValue(0);
-      start();
+      close('previous');
     }
-  }, [current, progress, setCurrent, setLoad, start, storyData]);
+  }, [close, current, progress, setCurrent, storyData]);
 
   const onPressComment = useCallback(() => {
     progress.stopAnimation(() => setPressed(true));
@@ -284,9 +282,9 @@ const AmityViewStoryItem: FC<IAmityViewStoryItem> = ({
       </SafeAreaView>
       <View style={styles.flexCol}>
         <View style={[styles.animationBarContainer]}>
-          {storyData.map((_, index) => {
+          {storyData.map((story, index) => {
             return (
-              <View key={index} style={[styles.animationBackground]}>
+              <View key={story.storyId} style={[styles.animationBackground]}>
                 <Animated.View
                   style={[
                     {

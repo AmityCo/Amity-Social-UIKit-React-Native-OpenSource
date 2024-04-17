@@ -68,6 +68,7 @@ const MyStories = () => {
             {globalStoryTargets.map((storyTarget) => {
               return (
                 <StoryCircleItem
+                  key={storyTarget.targetId}
                   onPressStoryView={onPressStoryView}
                   storyTarget={storyTarget}
                 />
@@ -91,6 +92,7 @@ const MyStories = () => {
             setCurrentCommunityIndex={setCurrentCommunityIndex}
             globalStoryTargets={globalStoryTargets}
             setViewStory={setViewStory}
+            onClose={getGlobalStoryTargets}
           />
         </Modal>
       </>
