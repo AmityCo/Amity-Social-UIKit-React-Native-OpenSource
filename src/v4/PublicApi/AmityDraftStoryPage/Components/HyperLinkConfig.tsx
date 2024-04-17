@@ -86,6 +86,7 @@ const HyperlinkConfig: FC<IHyperLinkConfig> = ({
       !validatedUrl && setUrlErrorMessage(blockedURLText);
       return validatedUrl;
     }
+    return false;
   }, [client, url]);
 
   const validateHyperlinkText = useCallback(async () => {
