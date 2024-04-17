@@ -36,7 +36,6 @@ export const useStyles = () => {
       flex: 1,
     },
     spinnerContainer: {
-      zIndex: -100,
       position: 'absolute',
       justifyContent: 'center',
       backgroundColor: 'black',

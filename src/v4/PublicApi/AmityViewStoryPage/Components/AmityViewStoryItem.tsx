@@ -86,7 +86,7 @@ const AmityViewStoryItem: FC<IAmityViewStoryItem> = ({
   const [totalReaction, setTotalReaction] = useState(reactionsCounts);
   const [isLiked, setIsLiked] = useState<boolean>(myReactions?.length > 0);
   const [openCommentSheet, setOpenCommentSheet] = useState(false);
-  const [load, setLoad] = useState(false);
+  const [load, setLoad] = useState(true);
   const [error, setError] = useState(false);
 
   const storyViewerBgColor =
@@ -247,6 +247,7 @@ const AmityViewStoryItem: FC<IAmityViewStoryItem> = ({
         <View style={styles.backgroundContainer}>
           {currentStory?.dataType === 'video' ? (
             <Video
+              onLoadStart={() => setLoad(true)}
               onProgress={({ currentTime }) => setCurrentSeek(currentTime)}
               source={{ uri: currentStory?.videoData.fileUrl }}
               style={styles.video}
@@ -259,6 +260,7 @@ const AmityViewStoryItem: FC<IAmityViewStoryItem> = ({
             />
           ) : currentStory?.dataType === 'image' ? (
             <Image
+              onLoadStart={() => setLoad(true)}
               onError={({ nativeEvent: { error: err } }) =>
                 err && setError(true)
               }
