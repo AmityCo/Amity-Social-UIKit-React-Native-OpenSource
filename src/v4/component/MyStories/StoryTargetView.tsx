@@ -60,16 +60,16 @@ const StoryTargetView: FC<IStorytargetView> = ({
   const onFinish = useCallback(
     (state?: NextOrPrevious) => {
       if (state === 'next') {
-        if (currentCommunityIndex < globalStoryTargets.length - 1)
-          setCurrentCommunityIndex(currentCommunityIndex + 1);
+        if (currentCommunityIndex < globalStoryTargets.length - 1) {
+          return setCurrentCommunityIndex(currentCommunityIndex + 1);
+        }
         setViewStory(false);
         onClose && onClose();
         return;
       }
       if (state === 'previous') {
         if (currentCommunityIndex > 0)
-          setCurrentCommunityIndex(currentCommunityIndex - 1);
-        return;
+          return setCurrentCommunityIndex(currentCommunityIndex - 1);
       }
       setViewStory(false);
       onClose && onClose();
