@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, memo, useEffect, useState } from 'react';
 import {
   AmityStoryTabComponentEnum,
   AmityStoryTabComponentType,
@@ -39,4 +39,4 @@ const AmityStoryTabComponent: FC<AmityStoryTabComponentType> = ({
   return null;
 };
 
-export default AmityStoryTabComponent;
+export default memo(AmityStoryTabComponent);
