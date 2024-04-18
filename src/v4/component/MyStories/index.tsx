@@ -1,13 +1,11 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { View } from 'react-native';
+import React, { memo, useCallback, useEffect, useState } from 'react';
+import { ScrollView, View } from 'react-native';
 import { useStyles } from './styles';
 import { useGlobalStory } from '../../hook/useGlobalStory';
 import ContentLoader, { Circle } from 'react-content-loader/native';
-import AmityStory, { IUserStory } from '../StoryKit';
-import { useFile } from '../../hook/useFile';
-import useAuth from '../../../hooks/useAuth';
-import { ImageSizeState } from '../../enum/imageSizeState';
-import { isCommunityModerator } from '../../../util/permission';
+import StoryCircleItem from './StoryCircleItem';
+import Modal from 'react-native-modalbox';
+import StoryTargetView from './StoryTargetView';
 
 export interface IStoryItems {
   communityId: string;
@@ -18,116 +16,31 @@ export interface IStoryItems {
   hasStories: boolean;
 }
 
-export default function MyStories() {
+const MyStories = () => {
   const styles = useStyles();
-  const { client } = useAuth();
-  const userId = (client as Amity.Client).userId;
-  const { getImage } = useFile();
-  const [globalStoriesItems, setGlobalStoriesItems] = useState<
-    IUserStory<Record<string, any>>[]
-  >([]);
-  const {
-    getGlobalStoryTargets,
-    globalStoryTargets,
-    getGlobalStories,
-    globalStories,
-    loading,
-  } = useGlobalStory();
 
+  const { getGlobalStoryTargets, globalStoryTargets, loading } =
+    useGlobalStory();
+  const [currentCommunityIndex, setCurrentCommunityIndex] = useState(0);
+  const [viewStory, setViewStory] = useState(false);
   useEffect(() => {
     getGlobalStoryTargets();
   }, [getGlobalStoryTargets]);
 
-  useEffect(() => {
-    const globalStoryTargetIds = globalStoryTargets.filter((target) => {
-      if (target.targetType === 'community') return target.targetId;
-      return null;
-    });
-    getGlobalStories({
-      targets: globalStoryTargetIds,
-      options: { sortBy: 'createdAt', orderBy: 'asc' },
-    });
-  }, [getGlobalStories, globalStoryTargets]);
-
-  const formatStory = useCallback(
-    async (categorizedStory: Amity.Story | Object) => {
-      const mappedGlobalStories: IUserStory<Record<string, any>>[] =
-        await Promise.all(
-          Object.entries(categorizedStory).map(
-            async ([communityId, items], index: number) => {
-              const { community } = items[0];
-              const avatarFileId = community.avatarFileId;
-              const displayName = community.displayName;
-              const isSeen = items.every((item) => item.isSeen);
-              const isModerator = await isCommunityModerator({
-                userId,
-                communityId,
-              });
-
-              const storyData = await Promise.all(
-                items.map((item) => {
-                  const isOwner = item.creator.userId === userId;
-                  return {
-                    story_id: item.storyId,
-                    story_image: item?.imageData?.fileUrl,
-                    swipeText: '',
-                    story_type: item.dataType,
-                    story_video: item?.videoData?.fileUrl,
-                    story_page: index,
-                    creatorName: item?.creator?.displayName ?? '',
-                    createdAt: item.createdAt,
-                    items: item.items,
-                    reactionCounts: item.reactionsCount,
-                    commentsCounts: item.commentsCount,
-                    viewer: item.reach,
-                    myReactions: item.myReactions,
-                    markAsSeen: item.analytics.markAsSeen,
-                    markLinkAsClicked: item.analytics.markLinkAsClicked,
-                    isOwner: isOwner,
-                  };
-                })
-              );
-
-              return {
-                user_id: communityId,
-                user_image: await getImage({
-                  fileId: avatarFileId,
-                  imageSize: ImageSizeState.small,
-                }),
-                user_name: displayName,
-                stories: storyData,
-                isOfficial: community.isOfficial,
-                isPublic: community.isPublic,
-                seen: isSeen,
-                isModerator: isModerator,
-              };
-            }
-          )
-        );
-      setGlobalStoriesItems([...mappedGlobalStories]);
+  const onPressStoryView = useCallback(
+    (storyTarget: Amity.StoryTarget) => {
+      setViewStory(true);
+      const currentIndex = globalStoryTargets.findIndex(
+        (target) => target.targetId === storyTarget.targetId
+      );
+      setCurrentCommunityIndex(currentIndex);
     },
-    [getImage, userId]
+    [globalStoryTargets]
   );
-
-  useEffect(() => {
-    const groupedByCommunity: Amity.Story | Object = globalStories.reduce(
-      (acc, item) => {
-        const { community } = item;
-        const communityId = community.communityId;
-        if (!acc[communityId]) {
-          acc[communityId] = [];
-        }
-        acc[communityId].push(item);
-        return acc;
-      },
-      {}
-    );
-    formatStory(groupedByCommunity);
-  }, [formatStory, globalStories]);
 
   if (loading) {
     return (
-      <View style={styles.container}>
+      <View style={styles.skeletonContainer}>
         {Array.from({ length: 6 }, (_, index) => {
           return (
             <View style={{ padding: 10 }} key={index}>
@@ -147,16 +60,46 @@ export default function MyStories() {
       </View>
     );
   }
-  if (globalStoriesItems?.length > 0) {
+  if (globalStoryTargets && globalStoryTargets.length > 0) {
     return (
-      <View style={styles.container}>
-        <AmityStory
-          data={globalStoriesItems}
-          duration={7}
-          onStorySeen={({ story }) => story.markAsSeen()}
-        />
-      </View>
+      <>
+        <View style={styles.container}>
+          <ScrollView horizontal contentContainerStyle={styles.scrollContainer}>
+            {globalStoryTargets.map((storyTarget) => {
+              return (
+                <StoryCircleItem
+                  key={storyTarget.targetId}
+                  onPressStoryView={onPressStoryView}
+                  storyTarget={storyTarget}
+                />
+              );
+            })}
+          </ScrollView>
+        </View>
+        <Modal
+          style={styles.modal}
+          isOpen={viewStory}
+          onClosed={() => setViewStory(false)}
+          position="center"
+          swipeToClose
+          swipeArea={250}
+          backButtonClose
+          coverScreen={true}
+          animationDuration={600}
+        >
+          <StoryTargetView
+            currentCommunityIndex={currentCommunityIndex}
+            setCurrentCommunityIndex={setCurrentCommunityIndex}
+            globalStoryTargets={globalStoryTargets}
+            setViewStory={setViewStory}
+            onClose={getGlobalStoryTargets}
+          />
+        </Modal>
+      </>
     );
   }
+
   return null;
-}
+};
+
+export default memo(MyStories);

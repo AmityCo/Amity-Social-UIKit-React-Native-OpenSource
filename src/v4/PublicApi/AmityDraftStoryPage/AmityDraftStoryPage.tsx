@@ -34,6 +34,7 @@ import { IAmityDraftStoryPage } from '../types';
 import { useFile } from '../../hook/useFile';
 import { defaultAvatarUri } from '../../assets/index';
 import { getMediaTypeFromUrl } from '../../../util/urlUtil';
+import { LoadingOverlay } from '../../../components/LoadingOverlay';
 
 const AmityDraftStoryPage: FC<IAmityDraftStoryPage> = ({
   targetId,
@@ -49,6 +50,7 @@ const AmityDraftStoryPage: FC<IAmityDraftStoryPage> = ({
   const [isVisibleModal, setIsVisibleModal] = useState(false);
   const [communityAvatarUrl, setCommunityAvatarUrl] = useState<string>(null);
   const [hyperlink, setHyperlink] = useState<Amity.StoryItem[]>(undefined);
+  const [loading, setLoading] = useState(false);
   const imageDisplayMode: Amity.ImageDisplayMode = isFullScreen
     ? 'fill'
     : 'fit';
@@ -116,7 +118,9 @@ const AmityDraftStoryPage: FC<IAmityDraftStoryPage> = ({
   const onPressShareStory = useCallback(async () => {
     const formData = new FormData();
     formData.append('files', mediaType);
+
     try {
+      setLoading(true);
       if (type === StoryType.image) {
         await StoryRepository.createImageStory(
           'community',
@@ -138,6 +142,7 @@ const AmityDraftStoryPage: FC<IAmityDraftStoryPage> = ({
     } catch (error) {
       Alert.alert('Create Story fail', error.message);
     } finally {
+      setLoading(false);
       onCreateStory();
     }
   }, [hyperlink, imageDisplayMode, mediaType, onCreateStory, targetId, type]);
@@ -218,6 +223,7 @@ const AmityDraftStoryPage: FC<IAmityDraftStoryPage> = ({
         onHyperLinkSubmit={onHyperLinkSubmit}
         hyperlinkItem={hyperlink?.[0]?.data}
       />
+      <LoadingOverlay isLoading={loading} />
     </SafeAreaView>
   );
 };

@@ -13,9 +13,9 @@ export const useConfigImageUri = ({
 }): ImageSourcePropType => {
   const { getUiKitConfig } = useConfig();
   const configImageUri = useMemo(() => {
-    if (!configPath || !configKey) return;
+    if (!configPath || !configKey) return defaultAvatarUri;
     const fileUri = getUiKitConfig(configPath)?.[configKey] as string;
-    if (!fileUri) return;
+    if (!fileUri) return defaultAvatarUri;
     if (fileUri.includes('http')) return fileUri;
     let image: number | string = defaultAvatarUri;
     if (fileUri === 'mute.png') {

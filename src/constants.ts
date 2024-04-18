@@ -50,3 +50,5 @@ export const ALLOWED_MEDIA_TYPE = {
   image: ['jpg', 'jpeg', 'png'],
   video: ['mp4', 'mov'],
 };
+
+export const STORY_DEFAULT_DURATION = 7000;
