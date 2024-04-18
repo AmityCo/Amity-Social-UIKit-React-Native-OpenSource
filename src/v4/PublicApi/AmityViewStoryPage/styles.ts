@@ -1,11 +1,10 @@
-import { StyleSheet, Dimensions, Platform } from 'react-native';
+import { StyleSheet, useWindowDimensions, Platform } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
 
-const { width, height } = Dimensions.get('window');
-
 export const useStyles = () => {
   const theme = useTheme() as MyMD3Theme;
+  const { width, height } = useWindowDimensions();
   const styles = StyleSheet.create({
     video: {
       width: width,
@@ -13,6 +12,7 @@ export const useStyles = () => {
     },
     container: {
       flex: 1,
+      width: width,
       backgroundColor: '#000',
     },
     flex: {

@@ -35,6 +35,7 @@ import { StoryRepository } from '@amityco/ts-sdk-react-native';
 import { NextOrPrevious } from '../../../component/StoryKit';
 import { useTimeDifference } from '../../../../hooks/useTimeDifference';
 import { STORY_DEFAULT_DURATION } from '../../../../constants';
+import GestureRecognizer from 'react-native-swipe-gestures';
 
 interface IAmityViewStoryItem {
   communityData: Amity.Community;
@@ -209,11 +210,14 @@ const AmityViewStoryItem: FC<IAmityViewStoryItem> = ({
 
   const deleteStory = useCallback(async () => {
     try {
+      previous();
       await StoryRepository.softDeleteStory(currentStory?.storyId);
     } catch (err) {
       Alert.alert('Delete Story Error ', err.message);
+    } finally {
+      sheetRef?.current?.close();
     }
-  }, [currentStory?.storyId]);
+  }, [currentStory?.storyId, previous]);
 
   const onPressDelete = useCallback(() => {
     Alert.alert(
@@ -282,7 +286,7 @@ const AmityViewStoryItem: FC<IAmityViewStoryItem> = ({
           )}
         </View>
       </SafeAreaView>
-      <View style={styles.flexCol}>
+      <GestureRecognizer onSwipeUp={onPressComment} style={styles.flexCol}>
         <View style={[styles.animationBarContainer]}>
           {storyData.map((story, index) => {
             return (
@@ -413,7 +417,7 @@ const AmityViewStoryItem: FC<IAmityViewStoryItem> = ({
             />
           </TouchableOpacity>
         )}
-      </View>
+      </GestureRecognizer>
       <View style={styles.footer}>
         {hasStoryImpressionPermission ? (
           <TouchableOpacity
