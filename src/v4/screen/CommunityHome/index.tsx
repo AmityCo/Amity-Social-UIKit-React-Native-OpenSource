@@ -66,6 +66,11 @@ export default function CommunityHome({ route }: any) {
   const [isJoin, setIsJoin] = useState(true);
   const [communityData, setCommunityData] =
     useState<Amity.LiveObject<Amity.Community>>();
+  const shouldShowAmityStoryTab = () => {
+    if (communityData?.data.isPublic) return true;
+    if (communityData?.data.isJoined) return true;
+    return false;
+  };
   const avatarUrl = useFile({ fileId: communityData?.data.avatarFileId });
   const feedRef: MutableRefObject<FeedRefType | null> =
     useRef<FeedRefType | null>(null);
@@ -333,14 +338,15 @@ export default function CommunityHome({ route }: any) {
             <Text style={styles.editProfileText}>Edit Profile</Text>
           </TouchableOpacity>
         )}
-        {isJoin === false && joinCommunityButton()}
+        {!isJoin && joinCommunityButton()}
         {isJoin && isShowPendingArea && pendingPostArea()}
-        {!excludes.includes(`*/${ComponentID.StoryTab}/*`) && isJoin && (
-          <AmityStoryTabComponent
-            type={AmityStoryTabComponentEnum.communityFeed}
-            targetId={communityId}
-          />
-        )}
+        {!excludes.includes(`*/${ComponentID.StoryTab}/*`) &&
+          shouldShowAmityStoryTab() && (
+            <AmityStoryTabComponent
+              type={AmityStoryTabComponentEnum.communityFeed}
+              targetId={communityId}
+            />
+          )}
         <CustomTab
           tabName={[TabName.Timeline, TabName.Gallery]}
           onTabChange={handleTab}

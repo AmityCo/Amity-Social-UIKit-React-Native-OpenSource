@@ -184,18 +184,47 @@ const AmityViewStoryItem: FC<IAmityViewStoryItem> = ({
 
   const onPressComment = useCallback(() => {
     progress.stopAnimation(() => setPressed(true));
-    setOpenCommentSheet(true);
-  }, [progress]);
+    if (communityData?.isJoined) setOpenCommentSheet(true);
+    Alert.alert('Join community to interact with all stories', null, [
+      {
+        text: 'OK',
+        onPress: () => {
+          startAnimation();
+          setPressed(false);
+        },
+      },
+    ]);
+  }, [communityData?.isJoined, progress, startAnimation]);
 
   const onPressReaction = useCallback(() => {
-    handleReaction({
-      targetId: currentStory?.storyId,
-      reactionName: 'like',
-      isLiked,
-    });
-    setTotalReaction((prev) => (isLiked ? prev - 1 : prev + 1));
-    setIsLiked((prev) => !prev);
-  }, [currentStory?.storyId, handleReaction, isLiked]);
+    if (communityData?.isJoined) {
+      handleReaction({
+        targetId: currentStory?.storyId,
+        reactionName: 'like',
+        isLiked,
+      });
+      setTotalReaction((prev) => (isLiked ? prev - 1 : prev + 1));
+      setIsLiked((prev) => !prev);
+      return;
+    }
+    progress.stopAnimation(() => setPressed(true));
+    Alert.alert('Join community to interact with all stories', null, [
+      {
+        text: 'OK',
+        onPress: () => {
+          startAnimation();
+          setPressed(false);
+        },
+      },
+    ]);
+  }, [
+    communityData?.isJoined,
+    currentStory?.storyId,
+    handleReaction,
+    isLiked,
+    progress,
+    startAnimation,
+  ]);
 
   const onCloseBottomSheet = useCallback(() => {
     startAnimation();
