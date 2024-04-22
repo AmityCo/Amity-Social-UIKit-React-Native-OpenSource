@@ -45,8 +45,7 @@ const AmityViewStoryPage: FC<IAmityViewStoryPage> = ({
   const styles = useStyles();
   const { getStories, stories, loading } = useStory();
   const { getImage } = useFile();
-  const storyData = stories as IStoryData[];
-
+  const [storyData, setStoryData] = useState<IStoryData[]>([]);
   const [current, setCurrent] = useState(0);
   const currentStory = storyData[current];
   const isOwner = currentStory?.creator?.userId === userId;
@@ -68,8 +67,21 @@ const AmityViewStoryPage: FC<IAmityViewStoryPage> = ({
   useLayoutEffect(() => {
     if (stories) {
       const unSeenStory = stories?.findIndex((story) => !story.isSeen);
-
-      if (unSeenStory > 0) setCurrent(unSeenStory);
+      if (unSeenStory > 0) {
+        setCurrent(unSeenStory);
+        const mappedStory: IStoryData[] = stories.map((story, i) => ({
+          ...story,
+          finish: i === unSeenStory ? 0 : 1,
+        }));
+        setStoryData(mappedStory);
+        return;
+      }
+      setCurrent(0);
+      const mappedStory: IStoryData[] = stories.map((story) => ({
+        ...story,
+        finish: 0,
+      }));
+      setStoryData(mappedStory);
     }
   }, [stories]);
 

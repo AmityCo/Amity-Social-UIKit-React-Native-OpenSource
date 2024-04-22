@@ -9495,11 +9495,6 @@ react-native-safe-area-context@^4.7.2:
   resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-4.9.0.tgz#21a570ca3594cb4259ba65f93befaa60d91bcbd0"
   integrity sha512-/OJD9Pb8IURyvn+1tWTszWPJqsbZ4hyHBU9P0xhOmk7h5owSuqL0zkfagU0pg7Vh0G2NKQkaPpUKUMMCUMDh/w==
 
-react-native-story-view@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/react-native-story-view/-/react-native-story-view-1.0.0.tgz#d383d80ef69818aab14094b7890ca44b5d826a44"
-  integrity sha512-1l4qAQTZC498Tx5by2iwhKKRhDMRLli57Ul+MWg2kmqLcZ1bZjeQgVdnbyQOOSkX4ufwFPY91TcXzMHY1M+k7g==
-
 react-native-svg@^14.1.0:
   version "14.1.0"
   resolved "https://registry.yarnpkg.com/react-native-svg/-/react-native-svg-14.1.0.tgz#7903bddd3c71bf3a8a503918253c839e6edaa724"

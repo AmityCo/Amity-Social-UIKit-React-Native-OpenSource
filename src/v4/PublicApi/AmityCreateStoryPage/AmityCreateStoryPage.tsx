@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   Platform,
   Modal,
+  useWindowDimensions,
+  ViewStyle,
 } from 'react-native';
 import React, {
   useCallback,
@@ -22,6 +24,7 @@ import {
   PhotoFile,
   VideoFile,
   useCameraFormat,
+  Templates,
 } from 'react-native-vision-camera';
 import { useStyles } from './styles';
 import { SvgXml } from 'react-native-svg';
@@ -61,6 +64,13 @@ const AmityCreateStoryPage: FC<ICreateStoryPage> = ({
   onCreateStory,
   onDiscardStory,
 }) => {
+  const { width, height } = useWindowDimensions();
+  const isPortrait = width < height;
+  const landscapeStyle: ViewStyle = !isPortrait && {
+    transform: [{ rotate: '-90deg' }],
+    height: width - 100,
+    alignSelf: 'center',
+  };
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const styles = useStyles();
@@ -80,10 +90,7 @@ const AmityCreateStoryPage: FC<ICreateStoryPage> = ({
   const [mediaTypeData, setMediaTypeData] =
     useState<TAmityStoryMediaType>(null);
   const format = Platform.select({
-    ios: useCameraFormat(activeCamera, [
-      { photoAspectRatio: 16 / 9 },
-      { videoAspectRatio: 16 / 9 },
-    ]),
+    ios: useCameraFormat(activeCamera, Templates.Instagram),
     android: useCameraFormat(activeCamera, [
       { photoAspectRatio: 16 / 9 },
       { videoAspectRatio: 16 / 9 },
@@ -254,13 +261,14 @@ const AmityCreateStoryPage: FC<ICreateStoryPage> = ({
       <View style={styles.cameraContainer}>
         <Camera
           ref={cameraRef}
-          style={styles.camera}
+          style={[styles.camera, landscapeStyle]}
           device={activeCamera}
           isActive={true}
           video={isVideo}
           photo={isCamera}
           audio={true}
           format={format}
+          orientation={isPortrait ? 'portrait' : 'landscape-right'}
         />
 
         {renderCaptureBtn()}
@@ -315,7 +323,7 @@ const AmityCreateStoryPage: FC<ICreateStoryPage> = ({
           }}
           onDiscardStory={() => {
             setShowDraftStory(false);
-            onDiscardStory();
+            onDiscardStory && onDiscardStory();
           }}
         />
       </Modal>
