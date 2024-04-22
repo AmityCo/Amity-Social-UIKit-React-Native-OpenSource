@@ -37,6 +37,7 @@ import PostTypeChoiceModal from '../components/PostTypeChoiceModal/PostTypeChoic
 import CreatePoll from '../screens/CreatePoll/CreatePoll';
 import ReactionListScreen from '../screens/ReactionListScreen/ReactionListScreen';
 import CreateStoryScreen from '../v4/screen/CreateStory/CreateStoryScreen';
+import Toast from '../components/Toast/Toast';
 
 export default function SocialNavigator() {
   const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -230,6 +231,7 @@ export default function SocialNavigator() {
         </Stack.Navigator>
       )}
       <PostTypeChoiceModal />
+      <Toast />
     </NavigationContainer>
   );
 }
