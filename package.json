@@ -101,20 +101,22 @@
     "@types/react": "17.0.21"
   },
   "peerDependencies": {
-    "@react-native-async-storage/async-storage": "*",
-    "@react-navigation/native": "*",
-    "@react-navigation/native-stack": "*",
-    "@react-navigation/stack": "*",
+    "@react-native-async-storage/async-storage": "^1.19.3",
+    "@react-native-community/netinfo": "^11.3.1",
+    "@react-navigation/native": "^6.1.17",
+    "@react-navigation/native-stack": "^6.9.26",
+    "@react-navigation/stack": "^6.3.29",
     "react": "*",
     "react-native": "*",
-    "react-native-create-thumbnail": "*",
-    "react-native-gesture-handler": "*",
-    "react-native-image-picker": "*",
-    "react-native-safe-area-context": "*",
-    "react-native-screens": "*",
-    "react-native-svg": "*",
-    "react-native-video": "*",
-    "react-native-vision-camera": "*"
+    "react-native-create-thumbnail": "^2.0.0",
+    "react-native-gesture-handler": "^2.16.0",
+    "react-native-image-picker": "^7.0.0",
+    "react-native-netinfo": "^1.1.0",
+    "react-native-safe-area-context": "^4.7.2",
+    "react-native-screens": "^3.25.0",
+    "react-native-svg": "^14.1.0",
+    "react-native-video": "^6.0.0-beta.5",
+    "react-native-vision-camera": "^3.9.2"
   },
   "engines": {
     "node": ">= 16.0.0"
@@ -210,7 +212,6 @@
     "react-i18next": "12.1.5",
     "react-native-controlled-mentions": "^2.2.5",
     "react-native-insta-story": "^1.1.9",
-    "react-native-media-controls": "^2.3.0",
     "react-native-modal-selector": "^2.1.2",
     "react-native-orientation-locker": "^1.5.0",
     "react-native-paper": "^5.10.6",
