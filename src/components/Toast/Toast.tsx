@@ -1,10 +1,10 @@
 import { StyleSheet, Text, Animated } from 'react-native';
 import React, { FC, memo, useEffect, useRef } from 'react';
-import { useTheme } from 'react-native-paper';
-import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
 import { useDispatch, useSelector } from 'react-redux';
 import uiSlice from '../../redux/slices/uiSlice';
 import { RootState } from 'src/redux/store';
+import { toastIcon } from '../../svg/svg-xml-list';
+import { SvgXml } from 'react-native-svg';
 
 const Toast: FC = () => {
   const dispatch = useDispatch();
@@ -12,7 +12,6 @@ const Toast: FC = () => {
   const { toastMessage, showToastMessage } = useSelector(
     (state: RootState) => state.ui
   );
-  const theme = useTheme() as MyMD3Theme;
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const timeoutRef = useRef<NodeJS.Timeout>(null);
   useEffect(() => {
@@ -43,22 +42,28 @@ const Toast: FC = () => {
 
   const styles = StyleSheet.create({
     toastContainer: {
+      width: '90%',
       position: 'absolute',
       bottom: 100,
-      backgroundColor: theme.colors.baseShade4,
-      borderRadius: 8,
-      paddingHorizontal: 16,
-      paddingVertical: 8,
+      backgroundColor: '#292b32',
+      borderRadius: 16,
+      padding: 16,
       alignSelf: 'center',
+      flexDirection: 'row',
+      alignItems: 'center',
     },
     message: {
-      color: 'white',
+      lineHeight: 24,
+      flex: 1,
+      marginLeft: 4,
+      color: '#ffffff',
     },
   });
 
   if (!showToastMessage) return null;
   return (
-    <Animated.View style={[styles.toastContainer, { opacity: fadeAnim }]}>
+    <Animated.View style={[styles.toastContainer, { opacity: 1 }]}>
+      <SvgXml xml={toastIcon()} width="24" height="24" />
       <Text style={styles.message}>{toastMessage}</Text>
     </Animated.View>
   );
