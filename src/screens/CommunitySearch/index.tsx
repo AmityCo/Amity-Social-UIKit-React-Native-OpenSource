@@ -129,12 +129,15 @@ export default function CommunitySearch() {
     navigation.goBack();
   };
   const handleTabChange = (tabName: TabName) => {
-    if (searchTerm.length <= 1) return setSearchList([]);
     if (tabName === TabName.Communities) {
       setSearchType(searchTypeEnum.community);
-      searchCommunities(searchTerm);
     } else if (tabName === TabName.Accounts) {
       setSearchType(searchTypeEnum.user);
+    }
+    if (searchTerm.length <= 1) return setSearchList([]);
+    if (tabName === TabName.Communities) {
+      searchCommunities(searchTerm);
+    } else if (tabName === TabName.Accounts) {
       searchAccounts(searchTerm);
     }
   };
