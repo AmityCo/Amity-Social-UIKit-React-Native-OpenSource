@@ -36,6 +36,10 @@ import { NextOrPrevious } from '../../../component/StoryKit';
 import { useTimeDifference } from '../../../../hooks/useTimeDifference';
 import { STORY_DEFAULT_DURATION } from '../../../../constants';
 import GestureRecognizer from 'react-native-swipe-gestures';
+import { useDispatch } from 'react-redux';
+import uiSlice from '../../../../redux/slices/uiSlice';
+import { LoadingOverlay } from '../../../../components/LoadingOverlay';
+import Toast from '../../../../components/Toast/Toast';
 
 interface IAmityViewStoryItem {
   communityData: Amity.Community;
@@ -89,6 +93,9 @@ const AmityViewStoryItem: FC<IAmityViewStoryItem> = ({
   const [openCommentSheet, setOpenCommentSheet] = useState(false);
   const [load, setLoad] = useState(true);
   const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const { showToastMessage } = uiSlice.actions;
 
   const storyViewerBgColor =
     (getUiKitConfig({
@@ -238,15 +245,23 @@ const AmityViewStoryItem: FC<IAmityViewStoryItem> = ({
   }, [startAnimation]);
 
   const deleteStory = useCallback(async () => {
+    setLoading(true);
     try {
-      previous();
-      await StoryRepository.softDeleteStory(currentStory?.storyId);
+      current > 0 && previous();
+      const deleted = await StoryRepository.softDeleteStory(
+        currentStory?.storyId
+      );
+      if (deleted) {
+        current === 0 && previous();
+        dispatch(showToastMessage({ toastMessage: 'Story deleted' }));
+      }
     } catch (err) {
-      Alert.alert('Delete Story Error ', err.message);
+      dispatch(showToastMessage({ toastMessage: 'Delete Story Error!' }));
     } finally {
+      setLoading(false);
       sheetRef?.current?.close();
     }
-  }, [currentStory?.storyId, previous]);
+  }, [current, currentStory?.storyId, dispatch, previous, showToastMessage]);
 
   const onPressDelete = useCallback(() => {
     Alert.alert(
@@ -526,6 +541,8 @@ const AmityViewStoryItem: FC<IAmityViewStoryItem> = ({
           </TouchableOpacity>
         </View>
       </BottomSheet>
+      <LoadingOverlay isLoading={loading} />
+      <Toast />
     </View>
   );
 };

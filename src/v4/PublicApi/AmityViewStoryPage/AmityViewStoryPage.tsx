@@ -1,12 +1,5 @@
 import { ActivityIndicator, View } from 'react-native';
-import React, {
-  FC,
-  memo,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useState,
-} from 'react';
+import React, { FC, memo, useCallback, useLayoutEffect, useState } from 'react';
 import { useFile, useStory, useStoryPermission } from '../../hook';
 import { useStyles } from './styles';
 import { isCommunityModerator } from '../../../util/permission';
@@ -69,17 +62,10 @@ const AmityViewStoryPage: FC<IAmityViewStoryPage> = ({
       const unSeenStory = stories?.findIndex((story) => !story.isSeen);
       if (unSeenStory > 0) {
         setCurrent(unSeenStory);
-        const mappedStory: IStoryData[] = stories.map((story, i) => ({
-          ...story,
-          finish: i === unSeenStory ? 0 : 1,
-        }));
-        setStoryData(mappedStory);
-        return;
       }
-      setCurrent(0);
-      const mappedStory: IStoryData[] = stories.map((story) => ({
+      const mappedStory: IStoryData[] = stories.map((story, i) => ({
         ...story,
-        finish: 0,
+        finish: i < unSeenStory ? 1 : 0,
       }));
       setStoryData(mappedStory);
     }
@@ -114,7 +100,7 @@ const AmityViewStoryPage: FC<IAmityViewStoryPage> = ({
     );
   }, [getImage, targetId]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!storyData?.length) return;
     storyData[current]?.analytics.markAsSeen();
   }, [current, storyData]);
@@ -142,6 +128,7 @@ const AmityViewStoryPage: FC<IAmityViewStoryPage> = ({
   if (currentPage === index) {
     return (
       <AmityViewStoryItem
+        key={storyData[current].storyId}
         communityData={communityData}
         communityAvatar={communityAvatar}
         storyData={storyData}
