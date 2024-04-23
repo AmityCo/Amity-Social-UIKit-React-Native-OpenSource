@@ -44,23 +44,20 @@ const UserProfileGallery = forwardRef(
       setShowFullImage(true);
     }, []);
 
-    const renderGalleryContent = useCallback(
-      ({ item, index }) => {
-        return (
-          <TouchableOpacity onPress={() => onPressThumbnail(index)}>
-            <Image source={{ uri: item.uri }} style={styles.thumbnail} />
-            {item.dataType === 'video' && (
-              <View style={styles.playButton}>
-                <SvgXml xml={playBtn} width="50" height="50" />
-              </View>
-            )}
-          </TouchableOpacity>
-        );
-      },
-      [onPressThumbnail, styles.playButton, styles.thumbnail]
-    );
+    const renderGalleryContent = ({ item, index }) => {
+      return (
+        <TouchableOpacity onPress={() => onPressThumbnail(index)}>
+          <Image source={{ uri: item.uri }} style={styles.thumbnail} />
+          {item.dataType === 'video' && (
+            <View style={styles.playButton}>
+              <SvgXml xml={playBtn} width="50" height="50" />
+            </View>
+          )}
+        </TouchableOpacity>
+      );
+    };
 
-    const renderGallery = useCallback(() => {
+    const renderGallery = () => {
       if (!mediaFiles || mediaFiles?.length === 0) {
         const icon = tabName === TabName.Photos ? photo() : video();
         return (
@@ -85,14 +82,7 @@ const UserProfileGallery = forwardRef(
           showsVerticalScrollIndicator={false}
         />
       );
-    }, [
-      getNextPage,
-      mediaFiles,
-      renderGalleryContent,
-      styles.emptyContentContainer,
-      styles.emptyContentText,
-      tabName,
-    ]);
+    };
     return (
       <View>
         <GalleryTab
