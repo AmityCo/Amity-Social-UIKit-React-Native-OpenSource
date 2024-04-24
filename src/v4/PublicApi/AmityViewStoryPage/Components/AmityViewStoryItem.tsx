@@ -191,17 +191,8 @@ const AmityViewStoryItem: FC<IAmityViewStoryItem> = ({
 
   const onPressComment = useCallback(() => {
     progress.stopAnimation(() => setPressed(true));
-    if (communityData?.isJoined) return setOpenCommentSheet(true);
-    Alert.alert('Join community to interact with all stories', null, [
-      {
-        text: 'OK',
-        onPress: () => {
-          startAnimation();
-          setPressed(false);
-        },
-      },
-    ]);
-  }, [communityData?.isJoined, progress, startAnimation]);
+    return setOpenCommentSheet(true);
+  }, [progress]);
 
   const onPressReaction = useCallback(() => {
     if (communityData?.isJoined) {
@@ -528,7 +519,12 @@ const AmityViewStoryItem: FC<IAmityViewStoryItem> = ({
             <Text style={styles.commentTitle}>Comments</Text>
 
             <View style={styles.horizontalSperator} />
-            <CommentList postId={currentStory?.storyId} postType="story" />
+            <CommentList
+              postId={currentStory?.storyId}
+              postType="story"
+              disabledInteraction={!communityData?.isJoined}
+              onNavigate={onClose}
+            />
           </KeyboardAvoidingView>
         </Modal>
       )}

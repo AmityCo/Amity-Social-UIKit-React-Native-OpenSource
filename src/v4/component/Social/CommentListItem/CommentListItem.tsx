@@ -65,6 +65,8 @@ export interface ICommentList {
   onDelete: (commentId: string) => void;
   onClickReply: (user: UserInterface, commentId: string) => void;
   postType: Amity.CommentReferenceType;
+  disabledInteraction?: boolean;
+  onNavigate?: () => void;
 }
 
 const CommentListItem = ({
@@ -72,6 +74,8 @@ const CommentListItem = ({
   onDelete,
   onClickReply,
   postType,
+  disabledInteraction,
+  onNavigate,
 }: ICommentList) => {
   const theme = useTheme() as MyMD3Theme;
   const styles = useStyles();
@@ -285,6 +289,7 @@ const CommentListItem = ({
   };
 
   const onPressCommentReaction = () => {
+    onNavigate && onNavigate();
     navigation.navigate('ReactionList', {
       referenceId: commentId,
       referenceType: 'comment',
@@ -319,49 +324,55 @@ const CommentListItem = ({
               />
             )}
           </View>
-          <View style={styles.actionSection}>
-            <View style={styles.rowContainer}>
-              <View style={styles.timeRow}>
-                <Text style={styles.headerTextTime}>{timeDifference}</Text>
-                {(editedAt !== createdAt || isEditComment) && (
-                  <Text style={styles.headerTextTime}> (edited)</Text>
-                )}
-              </View>
-              <TouchableOpacity
-                onPress={() => addReactionToComment()}
-                style={styles.likeBtn}
-              >
-                <Text style={isLike ? styles.likedText : styles.btnText}>
-                  {!isLike ? 'Like' : 'Liked'}
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={onHandleReply} style={styles.likeBtn}>
-                <Text style={styles.btnText}>Reply</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={openModal} style={styles.threeDots}>
-                <SvgXml
-                  xml={threeDots(theme.colors.base)}
-                  width="20"
-                  height="16"
-                />
-              </TouchableOpacity>
-            </View>
+          {!disabledInteraction && (
+            <View style={styles.actionSection}>
+              <View style={styles.rowContainer}>
+                <View style={styles.timeRow}>
+                  <Text style={styles.headerTextTime}>{timeDifference}</Text>
+                  {(editedAt !== createdAt || isEditComment) && (
+                    <Text style={styles.headerTextTime}> (edited)</Text>
+                  )}
+                </View>
 
-            {likeReaction > 0 && (
-              <TouchableOpacity
-                onPress={onPressCommentReaction}
-                style={styles.likeBtn}
-              >
-                <Text style={styles.btnText}>{likeReaction}</Text>
-                <SvgXml
-                  style={{ marginLeft: 4 }}
-                  xml={likeCircle}
-                  width="20"
-                  height="16"
-                />
-              </TouchableOpacity>
-            )}
-          </View>
+                <TouchableOpacity
+                  onPress={() => addReactionToComment()}
+                  style={styles.likeBtn}
+                >
+                  <Text style={isLike ? styles.likedText : styles.btnText}>
+                    {!isLike ? 'Like' : 'Liked'}
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={onHandleReply}
+                  style={styles.likeBtn}
+                >
+                  <Text style={styles.btnText}>Reply</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={openModal} style={styles.threeDots}>
+                  <SvgXml
+                    xml={threeDots(theme.colors.base)}
+                    width="20"
+                    height="16"
+                  />
+                </TouchableOpacity>
+              </View>
+
+              {likeReaction > 0 && (
+                <TouchableOpacity
+                  onPress={onPressCommentReaction}
+                  style={styles.likeBtn}
+                >
+                  <Text style={styles.btnText}>{likeReaction}</Text>
+                  <SvgXml
+                    style={{ marginLeft: 4 }}
+                    xml={likeCircle}
+                    width="20"
+                    height="16"
+                  />
+                </TouchableOpacity>
+              )}
+            </View>
+          )}
 
           {previewReplyCommentList.length > 0 && !isOpenReply && (
             <ReplyCommentList
