@@ -191,7 +191,7 @@ const AmityViewStoryItem: FC<IAmityViewStoryItem> = ({
 
   const onPressComment = useCallback(() => {
     progress.stopAnimation(() => setPressed(true));
-    if (communityData?.isJoined) setOpenCommentSheet(true);
+    if (communityData?.isJoined) return setOpenCommentSheet(true);
     Alert.alert('Join community to interact with all stories', null, [
       {
         text: 'OK',
