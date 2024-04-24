@@ -276,11 +276,15 @@ const AmityViewStoryItem: FC<IAmityViewStoryItem> = ({
 
   const onPressHyperLink = useCallback(async () => {
     currentStory?.analytics.markLinkAsClicked();
-    const supported = await Linking.canOpenURL(storyHyperLink?.url);
+    const hyperlinkUrl = storyHyperLink?.url?.includes('http')
+      ? storyHyperLink?.url
+      : `https://${storyHyperLink?.url}`;
+    await Linking.openURL('https://google.com');
+    const supported = await Linking.canOpenURL(hyperlinkUrl);
     if (supported) {
-      await Linking.openURL(storyHyperLink?.url);
+      await Linking.openURL(hyperlinkUrl);
     } else {
-      Alert.alert(`Cannot open : ${storyHyperLink?.url}`);
+      Alert.alert(`Cannot open : ${hyperlinkUrl}`);
     }
   }, [currentStory?.analytics, storyHyperLink?.url]);
 

@@ -174,6 +174,7 @@ const AmityDraftStoryPage: FC<IAmityDraftStoryPage> = ({
           />
         ) : (
           <Video
+            paused={loading}
             repeat
             source={{ uri: mediaType.uri }}
             style={[styles.image, isFullScreen && styles.aspect_ratio]}

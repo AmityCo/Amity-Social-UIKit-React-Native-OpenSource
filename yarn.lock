@@ -9493,11 +9493,6 @@ react-native-insta-story@^1.1.9:
     react-native-modalbox "^2.0.2"
     react-native-swipe-gestures "^1.0.5"
 
-react-native-media-controls@^2.3.0:
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/react-native-media-controls/-/react-native-media-controls-2.3.0.tgz#c36e876a14d12982b7c6fb759201ff439117cbd0"
-  integrity sha512-N10i12ZO+GIXjmdA9hQk/HuBm5u9xWPIOydG/2SvLEZcnY3xg3D8d2IJXRolzSm2jBRgEGSO4rMgRBU6MpdNMg==
-
 react-native-modal-selector@^2.1.2:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/react-native-modal-selector/-/react-native-modal-selector-2.1.2.tgz#c9fae030baf8bb2c5419e766ff63c31fc946f396"
