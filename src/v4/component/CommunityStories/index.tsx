@@ -129,10 +129,12 @@ const CommunityStories = ({
             height={48}
             xml={storyRing(storyRingColor[0], storyRingColor[1])}
           />
-          <SvgXml
-            style={styles.storyCreateIcon}
-            xml={storyCircleCreatePlusIcon()}
-          />
+          {hasStoryPermission && (
+            <SvgXml
+              style={styles.storyCreateIcon}
+              xml={storyCircleCreatePlusIcon()}
+            />
+          )}
         </TouchableOpacity>
       );
     }
