@@ -284,24 +284,15 @@ const AmityViewStoryItem: FC<IAmityViewStoryItem> = ({
         <View style={styles.backgroundContainer}>
           {currentStory?.dataType === 'video' ? (
             <Video
-              onLoadStart={() => {
-                console.log('Load Start');
-                setLoad(true);
-              }}
+              onLoadStart={() => setLoad(true)}
               onProgress={({ currentTime }) => setCurrentSeek(currentTime)}
               source={{ uri: currentStory?.videoData.fileUrl }}
               style={styles.video}
               resizeMode="contain"
               controls={false}
-              onReadyForDisplay={() => {
-                console.log('Ready');
-                start();
-              }}
+              onReadyForDisplay={() => start()}
               paused={false}
-              onLoad={(data: OnLoadData) => {
-                console.log('Loaded');
-                handleLoadVideo(data);
-              }}
+              onLoad={handleLoadVideo}
               muted={muted}
             />
           ) : currentStory?.dataType === 'image' ? (
