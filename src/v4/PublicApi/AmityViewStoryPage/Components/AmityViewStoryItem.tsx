@@ -261,11 +261,15 @@ const AmityViewStoryItem: FC<IAmityViewStoryItem> = ({
 
   const onPressHyperLink = useCallback(async () => {
     currentStory?.analytics.markLinkAsClicked();
-    const supported = await Linking.canOpenURL(storyHyperLink?.url);
+    const hyperlinkUrl = storyHyperLink?.url?.includes('http')
+      ? storyHyperLink?.url
+      : `https://${storyHyperLink?.url}`;
+    await Linking.openURL('https://google.com');
+    const supported = await Linking.canOpenURL(hyperlinkUrl);
     if (supported) {
-      await Linking.openURL(storyHyperLink?.url);
+      await Linking.openURL(hyperlinkUrl);
     } else {
-      Alert.alert(`Cannot open : ${storyHyperLink?.url}`);
+      Alert.alert(`Cannot open : ${hyperlinkUrl}`);
     }
   }, [currentStory?.analytics, storyHyperLink?.url]);
 
@@ -280,15 +284,24 @@ const AmityViewStoryItem: FC<IAmityViewStoryItem> = ({
         <View style={styles.backgroundContainer}>
           {currentStory?.dataType === 'video' ? (
             <Video
-              onLoadStart={() => setLoad(true)}
+              onLoadStart={() => {
+                console.log('Load Start');
+                setLoad(true);
+              }}
               onProgress={({ currentTime }) => setCurrentSeek(currentTime)}
               source={{ uri: currentStory?.videoData.fileUrl }}
               style={styles.video}
               resizeMode="contain"
               controls={false}
-              onReadyForDisplay={() => start()}
-              paused={pressed}
-              onLoad={handleLoadVideo}
+              onReadyForDisplay={() => {
+                console.log('Ready');
+                start();
+              }}
+              paused={false}
+              onLoad={(data: OnLoadData) => {
+                console.log('Loaded');
+                handleLoadVideo(data);
+              }}
               muted={muted}
             />
           ) : currentStory?.dataType === 'image' ? (

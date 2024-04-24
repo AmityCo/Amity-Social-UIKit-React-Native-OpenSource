@@ -24,7 +24,6 @@ import {
   PhotoFile,
   VideoFile,
   useCameraFormat,
-  Templates,
 } from 'react-native-vision-camera';
 import { useStyles } from './styles';
 import { SvgXml } from 'react-native-svg';
@@ -90,7 +89,10 @@ const AmityCreateStoryPage: FC<ICreateStoryPage> = ({
   const [mediaTypeData, setMediaTypeData] =
     useState<TAmityStoryMediaType>(null);
   const format = Platform.select({
-    ios: useCameraFormat(activeCamera, Templates.Instagram),
+    ios: useCameraFormat(activeCamera, [
+      { photoAspectRatio: 16 / 9 },
+      { videoAspectRatio: 16 / 9 },
+    ]),
     android: useCameraFormat(activeCamera, [
       { photoAspectRatio: 16 / 9 },
       { videoAspectRatio: 16 / 9 },
