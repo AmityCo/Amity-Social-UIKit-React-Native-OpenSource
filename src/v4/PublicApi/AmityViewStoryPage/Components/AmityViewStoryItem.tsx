@@ -291,7 +291,7 @@ const AmityViewStoryItem: FC<IAmityViewStoryItem> = ({
               resizeMode="contain"
               controls={false}
               onReadyForDisplay={() => start()}
-              paused={false}
+              paused={pressed}
               onLoad={handleLoadVideo}
               muted={muted}
             />
