@@ -50,7 +50,8 @@ export const useGallery = ({
                 ? getFile(mediaData.data.thumbnailFileId)
                 : null;
             return {
-              ...mediaData,
+              dataType,
+              ...mediaData.data,
               uri,
             };
           });
