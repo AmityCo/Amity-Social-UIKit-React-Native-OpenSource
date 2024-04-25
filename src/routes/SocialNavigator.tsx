@@ -212,20 +212,22 @@ export default function SocialNavigator() {
             component={VideoPlayerFull}
             options={{ headerShown: false }}
           />
-          <Stack.Screen
-            name="ReactionList"
-            component={ReactionListScreen}
-            options={{
-              title: 'Reactions',
-              headerLeft: () => <BackButton />,
-            }}
-          />
+
           <Stack.Group
             screenOptions={{
               headerShown: false,
               animation: 'slide_from_bottom',
             }}
           >
+            <Stack.Screen
+              name="ReactionList"
+              component={ReactionListScreen}
+              options={{
+                headerShown: true,
+                title: 'Reactions',
+                headerLeft: () => <BackButton />,
+              }}
+            />
             <Stack.Screen name="CreateStory" component={CreateStoryScreen} />
           </Stack.Group>
         </Stack.Navigator>

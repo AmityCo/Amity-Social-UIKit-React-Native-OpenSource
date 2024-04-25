@@ -35,6 +35,8 @@ import { SvgXml } from 'react-native-svg';
 interface ICommentListProp {
   postId: string;
   postType: Amity.CommentReferenceType;
+  disabledInteraction?: boolean;
+  onNavigate?: () => void;
 }
 
 interface IComment {
@@ -54,7 +56,12 @@ interface IComment {
   childrenNumber: number;
 }
 
-const CommentList: FC<ICommentListProp> = ({ postId, postType }) => {
+const CommentList: FC<ICommentListProp> = ({
+  postId,
+  postType,
+  disabledInteraction,
+  onNavigate,
+}) => {
   const styles = useStyles();
   const theme = useTheme() as MyMD3Theme;
   const onNextPageRef = useRef<() => void | null>(null);
@@ -220,43 +227,46 @@ const CommentList: FC<ICommentListProp> = ({ postId, postType }) => {
             </TouchableOpacity>
           </View>
         )}
-        <View style={styles.InputWrap}>
-          <View style={styles.inputContainer}>
-            <AmityMentionInput
-              resetValue={resetValue}
-              initialValue=""
-              privateCommunityId={null}
-              multiline
-              placeholder="Say something nice..."
-              placeholderTextColor={theme.colors.baseShade3}
-              mentionUsers={mentionNames}
-              setInputMessage={setInputMessage}
-              setMentionUsers={setMentionNames}
-              mentionsPosition={mentionsPosition}
-              setMentionsPosition={setMentionsPosition}
-              isBottomMentionSuggestionsRender={false}
-            />
-          </View>
+        {!disabledInteraction && (
+          <View style={styles.InputWrap}>
+            <View style={styles.inputContainer}>
+              <AmityMentionInput
+                resetValue={resetValue}
+                initialValue=""
+                privateCommunityId={null}
+                multiline
+                placeholder="Say something nice..."
+                placeholderTextColor={theme.colors.baseShade3}
+                mentionUsers={mentionNames}
+                setInputMessage={setInputMessage}
+                setMentionUsers={setMentionNames}
+                mentionsPosition={mentionsPosition}
+                setMentionsPosition={setMentionsPosition}
+                isBottomMentionSuggestionsRender={false}
+              />
+            </View>
 
-          <TouchableOpacity
-            disabled={inputMessage.length > 0 ? false : true}
-            onPress={handleSend}
-            style={styles.postBtn}
-          >
-            <Text
-              style={
-                inputMessage.length > 0
-                  ? styles.postBtnText
-                  : styles.postDisabledBtn
-              }
+            <TouchableOpacity
+              disabled={inputMessage.length > 0 ? false : true}
+              onPress={handleSend}
+              style={styles.postBtn}
             >
-              Post
-            </Text>
-          </TouchableOpacity>
-        </View>
+              <Text
+                style={
+                  inputMessage.length > 0
+                    ? styles.postBtnText
+                    : styles.postDisabledBtn
+                }
+              >
+                Post
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
     );
   }, [
+    disabledInteraction,
     handleSend,
     inputMessage.length,
     mentionNames,
@@ -279,6 +289,8 @@ const CommentList: FC<ICommentListProp> = ({ postId, postType }) => {
               commentDetail={item}
               onClickReply={handleClickReply}
               postType={postType}
+              disabledInteraction={disabledInteraction}
+              onNavigate={onNavigate}
             />
           );
         }}
