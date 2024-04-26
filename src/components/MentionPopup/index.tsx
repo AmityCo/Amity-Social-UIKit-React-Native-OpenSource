@@ -16,13 +16,7 @@ export default function MentionPopup({
     useState<Amity.LiveCollection<Amity.User>>();
   const [searchList, setSearchList] = useState<ISearchItem[]>([]);
 
-  const {
-    data: userArr = [],
-    onNextPage,
-    // hasNextPage,
-    // loading,
-    // error,
-  } = usersObject ?? {};
+  const { data: userArr = [], onNextPage } = usersObject ?? {};
 
   useEffect(() => {
     searchAccounts(userName);

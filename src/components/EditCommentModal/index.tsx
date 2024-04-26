@@ -42,7 +42,8 @@ const EditCommentModal = ({
     if (inputMessage) {
       const editedComment = await editComment(
         inputMessage,
-        commentDetail.commentId
+        commentDetail.commentId,
+        'post'
       );
       if (editedComment) {
         onFinishEdit && onFinishEdit(inputMessage);
@@ -62,6 +63,7 @@ const EditCommentModal = ({
         <TouchableOpacity
           onPress={handleEditComment}
           style={styles.headerTextContainer}
+          disabled={inputMessage === commentDetail?.data?.text}
         >
           <Text style={styles.headerText}>Save</Text>
         </TouchableOpacity>

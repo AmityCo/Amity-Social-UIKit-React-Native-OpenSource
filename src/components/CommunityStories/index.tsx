@@ -1,95 +1,88 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { useStyles } from './styles';
-import {
-  CommunityRepository,
-  StoryRepository,
-} from '@amityco/ts-sdk-react-native';
 import useAuth from '../../hooks/useAuth';
-import { IStoryItems } from '../MyStories';
-import InstaStory from '../StoryKit';
+import AmityStory from '../../v4/component/StoryKit';
+import { useStory } from '../../hooks/useStory';
+import ContentLoader, { Circle } from 'react-content-loader/native';
+import { useFocusEffect } from '@react-navigation/native';
 
 interface ICommunityStories {
   communityId: string;
 }
+
+type TAmityStory = Amity.Story & {
+  creator: Amity.User;
+};
 export default function CommunityStories({ communityId }: ICommunityStories) {
   const styles = useStyles();
   const { apiRegion } = useAuth();
-  const [communityItem, setCommunityItem] = useState<IStoryItems>();
-  console.log({ communityItem });
+  const { getStories, stories, loading } = useStory();
 
-  const [communityStories, setCommunityStories] = useState<any>([]);
-
-  const queryCommunities = () => {
-    const unsubscribe = CommunityRepository.getCommunity(
-      communityId,
-      ({ data }) => {
-        const formattedData = {
-          communityId: data.communityId as string,
-          avatarFileId: data.avatarFileId as string,
-          displayName: data.displayName as string,
-          isPublic: data.isPublic as boolean,
-          isOfficial: data.isOfficial as boolean,
-          hasStories: true,
-        };
-        setCommunityItem(formattedData);
-      }
-    );
-    unsubscribe();
-  };
-
-  useEffect(() => {
-    queryCommunities();
-    return () => {
-      setCommunityItem(undefined);
-    };
-  }, []);
-
-  const getStory = () => {
-    const params: Amity.GetStoriesByTargetParam = {
-      targetType: 'community',
-      targetId: communityId,
-    };
-    StoryRepository.getActiveStoriesByTarget(params, ({ data }) => {
-      const storyData = data.map((item: Amity.Story) => {
-        return {
-          story_id: item.storyId,
-          story_image: `https://api.${apiRegion}.amity.co/api/v3/files/${item?.data?.fileId}/download?size=full`,
-          swipeText: '',
-          onPress: () => console.log('story 1 swiped'),
-          story_type: item.dataType,
-          story_video: `https://api.${apiRegion}.amity.co/api/v3/files/${item?.data?.videoFileId?.original}/download`,
-          story_page: 0,
-        };
+  useFocusEffect(
+    useCallback(() => {
+      getStories({
+        targetId: communityId,
+        targetType: 'community',
       });
-      if (storyData.length > 0) {
-        const stories = [
-          {
-            user_id: communityItem?.communityId,
-            user_image: `https://api.${apiRegion}.amity.co/api/v3/files/${communityItem?.avatarFileId}/download?size=full`,
-            user_name: communityItem.displayName,
-            stories: storyData ?? [],
-            isOfficial: true,
-            isPublic: true,
-          },
-        ];
-        setCommunityStories(stories);
-      }
+    }, [communityId, getStories])
+  );
+
+  const [communityStories, setCommunityStories] = useState([]);
+  const getStory = useCallback(() => {
+    const storyData = stories.map((item: TAmityStory) => {
+      return {
+        story_id: item.storyId,
+        story_image: `https://api.${apiRegion}.amity.co/api/v3/files/${item?.data?.fileId}/download?size=full`,
+        swipeText: '',
+        onPress: () => console.log('story 1 swiped'),
+        story_type: item.dataType,
+        story_video: `https://api.${apiRegion}.amity.co/api/v3/files/${item?.data?.videoFileId?.original}/download`,
+        story_page: 0,
+        creatorName: item?.creator?.displayName ?? '',
+        createdAt: item.createdAt,
+        items: item.items,
+        reactionCounts: item.reactionsCount,
+        comments: item.comments,
+        viewer: item.impression,
+        myReactions: item.myReactions,
+      };
     });
-  };
+    if (storyData.length > 0) {
+      const mappedStories = [
+        {
+          user_id: stories[0].community.communityId,
+          user_image: `https://api.${apiRegion}.amity.co/api/v3/files/${stories[0]?.community?.avatarFileId}/download?size=full`,
+          user_name: stories[0].community.displayName,
+          stories: storyData ?? [],
+          isOfficial: true,
+          isPublic: true,
+        },
+      ];
+      setCommunityStories(mappedStories);
+    }
+  }, [apiRegion, stories]);
 
   useEffect(() => {
-    if (communityItem) {
-      getStory();
-    }
-  }, [communityItem]);
+    getStory();
+  }, [getStory]);
 
   return (
     <View style={styles.container}>
-      {communityStories.length > 0 && (
-        <InstaStory data={communityStories} duration={7} isCommunityStory />
-      )}
+      {loading ? (
+        <ContentLoader
+          height={70}
+          speed={1}
+          width={100}
+          backgroundColor={'#d2d2d2'}
+          foregroundColor={'#eee'}
+          viewBox="-10 7 100 30"
+        >
+          <Circle cx="25" cy="25" r="25" />
+        </ContentLoader>
+      ) : communityStories.length > 0 ? (
+        <AmityStory data={communityStories} duration={7} isCommunityStory />
+      ) : null}
     </View>
   );
 }

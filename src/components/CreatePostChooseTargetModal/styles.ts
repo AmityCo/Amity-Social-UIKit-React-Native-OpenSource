@@ -60,7 +60,7 @@ export const useStyles = () => {
       paddingBottom: 16,
       paddingTop: 26,
       paddingHorizontal: 16,
-      borderBottomColor: theme.colors.border,
+      borderBottomColor: theme.colors.baseShade4,
       borderBottomWidth: 1,
     },
     avatar: {

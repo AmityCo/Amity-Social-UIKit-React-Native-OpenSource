@@ -7,7 +7,7 @@ export const useStyles = () => {
   const styles = StyleSheet.create({
     container: {
       paddingBottom: 320,
-      backgroundColor: theme.colors.screenBackground,
+      backgroundColor: theme.colors.baseShade4,
     },
     uploadContainer: {
       width: '100%',
@@ -63,7 +63,7 @@ export const useStyles = () => {
     },
     inputField: {
       borderBottomWidth: 1,
-      borderBottomColor: theme.colors.border,
+      borderBottomColor: theme.colors.baseShade4,
       borderRadius: 5,
       marginTop: 5,
       paddingVertical: 16,
@@ -88,7 +88,7 @@ export const useStyles = () => {
       alignItems: 'center',
       paddingVertical: 16,
       borderBottomWidth: 1,
-      borderBottomColor: theme.colors.border,
+      borderBottomColor: theme.colors.baseShade4,
     },
     addIcon: {
       marginHorizontal: 6,
@@ -131,7 +131,7 @@ export const useStyles = () => {
     },
     radioGroup: {
       borderBottomWidth: 1,
-      borderBottomColor: theme.colors.border,
+      borderBottomColor: theme.colors.baseShade4,
       marginBottom: 24,
     },
     createButton: {
@@ -152,7 +152,7 @@ export const useStyles = () => {
     addUsersContainer: {
       marginVertical: 6,
       borderBottomWidth: 1,
-      borderBottomColor: theme.colors.border,
+      borderBottomColor: theme.colors.baseShade4,
       paddingBottom: 24,
     },
     userItemWrap: {

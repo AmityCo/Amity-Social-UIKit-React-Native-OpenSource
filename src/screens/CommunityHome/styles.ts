@@ -97,7 +97,7 @@ export const useStyles = () => {
     verticalLine: {
       height: 40,
       width: 1,
-      backgroundColor: theme.colors.border,
+      backgroundColor: theme.colors.baseShade4,
       marginHorizontal: 5,
     },
     rowNumber: {
@@ -125,7 +125,7 @@ export const useStyles = () => {
     pendingPostArea: {
       width: '100%',
       height: 62,
-      backgroundColor: theme.colors.secondary,
+      backgroundColor: theme.colors.baseShade4,
       paddingVertical: 12,
       alignItems: 'center',
       borderRadius: 4,
@@ -162,6 +162,12 @@ export const useStyles = () => {
       fontSize: 16,
       fontWeight: '600',
       color: theme.colors.base,
+    },
+    storyAvatar: {
+      width: 50,
+      height: 50,
+      borderRadius: 50,
+      marginLeft: 12,
     },
   });
 

@@ -74,4 +74,8 @@ export type RootStackParamList = {
   VideoPlayer: { source: string };
   PendingPosts: { communityId: string; isModerator: boolean };
   ReactionList: { referenceId: string; referenceType: string };
+  CreateStory: {
+    targetId: string;
+    targetType: Amity.StoryTargetType;
+  };
 };

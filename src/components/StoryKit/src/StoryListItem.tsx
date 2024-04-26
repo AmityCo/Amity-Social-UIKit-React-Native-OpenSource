@@ -1,20 +1,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   Animated,
   Image,
   Text,
   TouchableOpacity,
-  StyleSheet,
-  Dimensions,
+  Linking,
   TouchableWithoutFeedback,
   ActivityIndicator,
   View,
-  Platform,
   SafeAreaView,
+  Alert,
 } from 'react-native';
 import GestureRecognizer from 'react-native-swipe-gestures';
-
 import { usePrevious, isNullOrWhitespace } from './helpers';
 import {
   IUserStoryItem,
@@ -23,9 +21,18 @@ import {
 } from './interfaces';
 import Video, { OnLoadData } from 'react-native-video';
 import { useFocusEffect } from '@react-navigation/native';
-
-const { width, height } = Dimensions.get('window');
-
+import { SvgXml } from 'react-native-svg';
+import {
+  seenIcon,
+  storyCommentIcon,
+  storyHyperLinkIcon,
+  storyLikeIcon,
+  storyLikedIcon,
+} from '../../../svg/svg-xml-list';
+import { useStyles } from './styles';
+import { useTimeDifference } from '../../../hooks/useTimeDifference';
+import { useStory } from '../../../hooks/useStory';
+import { StoryRepository } from '@amityco/ts-sdk-react-native';
 export const StoryListItem = ({
   index,
   key,
@@ -48,8 +55,8 @@ export const StoryListItem = ({
   storyImageStyle,
   storyAvatarImageStyle,
   storyContainerStyle,
-  ...props
 }: StoryListItemProps) => {
+  const styles = useStyles();
   const [load, setLoad] = useState<boolean>(true);
   const [pressed, setPressed] = useState<boolean>(false);
   const [content, setContent] = useState<IUserStoryItem[]>(
@@ -61,17 +68,36 @@ export const StoryListItem = ({
 
   const [current, setCurrent] = useState(0);
   const [storyDuration, setStoryDuration] = useState(duration);
-
+  const [currentSeek, setCurrentSeek] = useState(0);
   const progress = useRef(new Animated.Value(0)).current;
-
+  const timeDifference = useTimeDifference(content[current].createdAt, true);
+  const storyHyperLink = content[current]?.items[0]?.data || undefined;
+  const creatorName = content[current].creatorName ?? '';
+  const viewer = content[current].viewer ?? 0;
+  const comments = content[current].comments ?? [];
+  const storyId = content[current].story_id;
+  const [totalReaction, setTotalReaction] = useState(0);
+  const [isLiked, setIsLiked] = useState<boolean>(false);
+  const { handleReaction } = useStory();
   const prevCurrentPage = usePrevious(currentPage);
-
   useFocusEffect(
     React.useCallback(() => {
+      const unsubscribe = StoryRepository.getStoryByStoryId(
+        storyId,
+        ({ error, loading, data }) => {
+          if (error) return;
+          if (!loading) {
+            const myReaction = data.myReactions ?? [];
+            setIsLiked(myReaction.length > 0);
+            setTotalReaction(data.reactionsCount);
+          }
+        }
+      );
       return () => {
         setPressed(true);
+        unsubscribe();
       };
-    }, [])
+    }, [storyId])
   );
 
   useEffect(() => {
@@ -126,7 +152,7 @@ export const StoryListItem = ({
   function startAnimation() {
     Animated.timing(progress, {
       toValue: 1,
-      duration: storyDuration,
+      duration: storyDuration - currentSeek * 1000,
       useNativeDriver: false,
     }).start(({ finished }) => {
       if (finished) {
@@ -154,6 +180,7 @@ export const StoryListItem = ({
   };
 
   function next() {
+    setCurrentSeek(0);
     // check if the next content is not empty
     setLoad(true);
     if (current !== content.length - 1) {
@@ -169,6 +196,7 @@ export const StoryListItem = ({
   }
 
   function previous() {
+    setCurrentSeek(0);
     // checking if the previous content is not empty
     setLoad(true);
     if (current - 1 >= 0) {
@@ -195,8 +223,14 @@ export const StoryListItem = ({
     }
   }
 
-  const swipeText =
-    content?.[current]?.swipeText || props.swipeText || 'Swipe Up';
+  const onPressHyperLink = useCallback(async () => {
+    const supported = await Linking.canOpenURL(storyHyperLink?.url);
+    if (supported) {
+      await Linking.openURL(storyHyperLink?.url);
+    } else {
+      Alert.alert(`Don't know how to open this URL: ${storyHyperLink?.url}`);
+    }
+  }, [storyHyperLink?.url]);
 
   React.useEffect(() => {
     if (onStorySeen && currentPage === index) {
@@ -212,6 +246,16 @@ export const StoryListItem = ({
   const handleLoadVideo = (data: OnLoadData) => {
     setStoryDuration(data.duration * 1000);
   };
+  const onPressReaction = useCallback(() => {
+    handleReaction({
+      targetId: storyId,
+      reactionName: 'like',
+      isLiked,
+    });
+    setTotalReaction((prev) => (isLiked ? prev - 1 : prev + 1));
+    setIsLiked((prev) => !prev);
+  }, [storyId, isLiked]);
+
   return (
     <GestureRecognizer
       key={key}
@@ -224,6 +268,7 @@ export const StoryListItem = ({
         <View style={styles.backgroundContainer}>
           {content[current].story_type === 'video' ? (
             <Video
+              onProgress={({ currentTime }) => setCurrentSeek(currentTime)}
               source={{ uri: content[current].story_video }}
               style={styles.video}
               resizeMode="contain"
@@ -239,6 +284,7 @@ export const StoryListItem = ({
               onLoadEnd={() => start()}
               source={{ uri: content[current].story_image }}
               style={[styles.image, storyImageStyle]}
+              resizeMode="contain"
             />
           )}
 
@@ -285,7 +331,14 @@ export const StoryListItem = ({
                 profileName,
               })
             ) : (
-              <Text style={styles.avatarText}>{profileName}</Text>
+              <View>
+                <Text style={styles.avatarText}>{profileName}</Text>
+                <View style={styles.flexRowCenter}>
+                  <Text style={styles.avatarText}>{timeDifference}</Text>
+                  <Text style={styles.avatarText}>.</Text>
+                  <Text style={styles.avatarText}>{creatorName}</Text>
+                </View>
+              </View>
             )}
           </View>
           <View style={styles.closeIconContainer}>
@@ -340,6 +393,15 @@ export const StoryListItem = ({
           >
             <View style={styles.flex} />
           </TouchableWithoutFeedback>
+          {storyHyperLink && (
+            <TouchableOpacity
+              style={styles.hyperlinkContainer}
+              onPress={onPressHyperLink}
+            >
+              <SvgXml xml={storyHyperLinkIcon('blue')} width="25" height="25" />
+              <Text>{storyHyperLink.customText}</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
       {typeof renderSwipeUpComponent === 'function' ? (
@@ -348,14 +410,29 @@ export const StoryListItem = ({
           item: content[current],
         })
       ) : (
-        <TouchableOpacity
-          activeOpacity={1}
-          onPress={onSwipeUp}
-          style={styles.swipeUpBtn}
-        >
-          <Text style={styles.swipeText} />
-          <Text style={styles.swipeText}>{swipeText}</Text>
-        </TouchableOpacity>
+        <View style={styles.footer}>
+          <TouchableOpacity style={styles.seenContainer}>
+            <SvgXml xml={seenIcon()} width="25" height="25" />
+            <Text style={styles.seen}>{viewer}</Text>
+          </TouchableOpacity>
+          <View style={styles.seenContainer}>
+            <TouchableOpacity style={styles.iconContainer}>
+              <SvgXml xml={storyCommentIcon()} width="25" height="25" />
+              <Text style={styles.seen}>{comments.length}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.iconContainer}
+              onPress={onPressReaction}
+            >
+              <SvgXml
+                xml={isLiked ? storyLikedIcon : storyLikeIcon}
+                width="25"
+                height="25"
+              />
+              <Text style={styles.seen}>{totalReaction}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       )}
     </GestureRecognizer>
   );
@@ -366,98 +443,3 @@ export default StoryListItem;
 StoryListItem.defaultProps = {
   duration: 10000,
 };
-const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
-const styles = StyleSheet.create({
-  video: {
-    width: screenWidth,
-    height: screenHeight,
-  },
-  container: {
-    flex: 1,
-    backgroundColor: '#000',
-  },
-  flex: {
-    flex: 1,
-  },
-  flexCol: {
-    flex: 1,
-    flexDirection: 'column',
-  },
-  flexRowCenter: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  image: {
-    width: width,
-    height: height,
-    resizeMode: 'cover',
-  },
-  backgroundContainer: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-  },
-  spinnerContainer: {
-    zIndex: -100,
-    position: 'absolute',
-    justifyContent: 'center',
-    backgroundColor: 'black',
-    alignSelf: 'center',
-    width: width,
-    height: height,
-  },
-  animationBarContainer: {
-    flexDirection: 'row',
-    paddingTop: 10,
-    paddingHorizontal: 10,
-  },
-  animationBackground: {
-    height: 2,
-    flex: 1,
-    flexDirection: 'row',
-    backgroundColor: 'rgba(117, 117, 117, 0.5)',
-    marginHorizontal: 2,
-  },
-  userContainer: {
-    height: 50,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 15,
-  },
-  avatarImage: {
-    height: 30,
-    width: 30,
-    borderRadius: 100,
-  },
-  avatarText: {
-    fontWeight: 'bold',
-    color: 'white',
-    paddingLeft: 10,
-  },
-  closeIconContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 50,
-    paddingHorizontal: 15,
-  },
-  pressContainer: {
-    flex: 1,
-    flexDirection: 'row',
-  },
-  swipeUpBtn: {
-    position: 'absolute',
-    right: 0,
-    left: 0,
-    alignItems: 'center',
-    bottom: Platform.OS == 'ios' ? 20 : 50,
-  },
-  whiteText: {
-    color: 'white',
-  },
-  swipeText: {
-    color: 'white',
-    marginTop: 5,
-  },
-});

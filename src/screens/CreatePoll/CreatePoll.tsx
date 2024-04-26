@@ -20,7 +20,7 @@ import Header from './Components/Header';
 import { PollRepository, PostRepository } from '@amityco/ts-sdk-react-native';
 import { checkCommunityPermission } from '../../providers/Social/communities-sdk';
 import useAuth from '../../hooks/useAuth';
-import MentionInput from '../../components/MentionInput/MentionInput';
+import AmityMentionInput from '../../components/MentionInput/AmityMentionInput';
 import { TSearchItem } from '../../hooks/useSearch';
 import { text_contain_blocked_word } from '../../constants';
 
@@ -205,7 +205,7 @@ const CreatePoll = ({ navigation, route }) => {
             </Text>
           </View>
           <View style={styles.mentionInputContainer}>
-            <MentionInput
+            <AmityMentionInput
               privateCommunityId={privateCommunityId}
               isBottomMentionSuggestionsRender={true}
               onFocus={() => {

@@ -122,8 +122,8 @@ Add following permissions to `info.plist` file (ios/{YourAppName}/Info.plist)
 ### Add Camera permission (Android)
 
 Add following permissions to `AndroidManifest.xml` file (android/app/src/main/AndroidManifest.xml)
- <uses-permission android:name="android.permission.CAMERA" /> 
- <uses-permission android:name="android.permission.RECORD_AUDIO" />
+<uses-permission android:name="android.permission.CAMERA" />
+<uses-permission android:name="android.permission.RECORD_AUDIO" />
 
 ### Usage
 
