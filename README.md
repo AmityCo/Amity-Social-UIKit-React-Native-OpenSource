@@ -113,8 +113,6 @@ Add following permissions to `info.plist` file (ios/{YourAppName}/Info.plist)
  <string>App needs access to the camera to take photos.</string>
  <key>NSMicrophoneUsageDescription</key>
  <string>App needs access to the microphone to record audio.</string>
- <key>NSCameraUsageDescription</key>
- <string>App needs access to the camera to take photos.</string>
  <key>NSPhotoLibraryUsageDescription</key>
  <string>App needs access to the gallery to select photos.</string>
 ```
@@ -122,8 +120,11 @@ Add following permissions to `info.plist` file (ios/{YourAppName}/Info.plist)
 ### Add Camera permission (Android)
 
 Add following permissions to `AndroidManifest.xml` file (android/app/src/main/AndroidManifest.xml)
+```xml
 <uses-permission android:name="android.permission.CAMERA" />
 <uses-permission android:name="android.permission.RECORD_AUDIO" />
+```
+
 
 ### Usage
 
@@ -150,6 +151,35 @@ export default function App() {
 }
 ```
 
+### Customization
+
+Our UIKit v4 supports customization in a single place by modifying a `uikit.config.json` file in related UIKit repository. This configuration file includes all necessary data to customize the appearance of each pages, components and elements that we allow to do customization. 
+Note: uikit.config.json file should be in your project. Please kindly check in example project. 
+
+```js
+import * as React from 'react';
+import {
+  AmityUiKitSocial,
+  AmityUiKitProvider,
+} from 'amity-react-native-social-ui-kit';
+import config from './uikit.config.json'; 
+
+export default function App() {
+  return (
+    <AmityUiKitProvider
+      configs={config} //put your customized config json object
+      apiKey="API_KEY"
+      apiRegion="API_REGION"
+      userId="userId"
+      displayName="displayName"
+      apiEndpoint="https://api.{API_REGION}.amity.co"
+    >
+      <AmityUiKitSocial />
+    </AmityUiKitProvider>
+  );
+}
+```
+
 ### Using Theme
 
 #### Using the default theme
@@ -158,70 +188,42 @@ AmityUIKit uses the default theme as part of the design language.
 
 #### Theme customization
 
-Without customization, the UIKit already looks good. However, if you wish to customize the theme, you can declare changes to color variables by passing your own color codes to our UIKit. Here is the code usage of how to customize the theme.
+Without customization, the UIKit already looks good. However, if you wish to customize the theme, you can declare changes to color variables by passing your own color codes to our `uikit.config.json`. Here is the code usage of how to customize the theme.
 
-```js
-import * as React from 'react';
-
-import {
-  AmityUiKitSocial,
-  AmityUiKitProvider,
-} from 'amity-react-native-social-ui-kit';
-
-export default function App() {
-  const myTheme = {
-    primary: '#1054DE', // Primary color for main elements
-    secondary: '#636878', // Secondary color UI elements e.g comment bubble, input bar
-    background: '#1E1E1E', // Background color for components
-    border: '#EBECEF', // Border color for elements
-    base: '#FFFFFF', // Base color for main text, Title, input text
-    baseShade1: '#EBECEF', // Base color for Sub Text, Sub Title, TimeStamp Text
-    baseShade2: '#EBECEF', // Base color for comments, like text
-    baseShade3: '#EBECEF', // Base color for placeHolder
-    screenBackground: '#000000', // Background color for screens
-  };
-
-  return (
-    <AmityUiKitProvider
-      apiKey="API_KEY"
-      apiRegion="API_REGION"
-      userId="userId"
-      displayName="displayName"
-      apiEndpoint="https://api.{API_REGION}.amity.co"
-      theme={myTheme}
-    >
-      <AmityUiKitSocial />
-    </AmityUiKitProvider>
-  );
-}
+```json
+"preferred_theme": "default",
+  "theme": {
+    "light": {
+      "primary_color": "#1054DE",
+      "secondary_color": "#292B32",
+      "base_color": "#292b32",
+      "base_shade1_color": "#636878",
+      "base_shade2_color": "#898e9e",
+      "base_shade3_color": "#a5a9b5",
+      "base_shade4_color": "#ebecef",
+      "alert_color": "#FA4D30",
+      "background_color": "#FFFFFF"
+    },
+    "dark": {
+      "primary_color": "#1054DE",
+      "secondary_color": "#292B32",
+      "base_color": "#ebecef",
+      "base_shade1_color": "#a5a9b5",
+      "base_shade2_color": "#6e7487",
+      "base_shade3_color": "#40434e",
+      "base_shade4_color": "#292b32",
+      "alert_color": "#FA4D30",
+      "background_color": "#191919"
+    }
+  },
 ```
 
 #### Dark Mode
 
-The Dark Mode feature in our UIKit enhances user experience by providing an alternative visual style that is particularly beneficial in low-light environments. It's designed to reduce eye strain, improve readability, and offer a more visually comfortable interface. You can enable dark mode by just passing variable `darkMode` to the `AmityUiKitProvider`
+The Dark Mode feature in our UIKit enhances user experience by providing an alternative visual style that is particularly beneficial in low-light environments. It's designed to reduce eye strain, improve readability, and offer a more visually comfortable interface. You can enable dark mode by just changing `preferred_theme: "default"` to the `preferred_theme: "dark"` in `uikit.config.json`
 
 ```js
-import * as React from 'react';
-
-import {
-  AmityUiKitSocial,
-  AmityUiKitProvider,
-} from 'amity-react-native-social-ui-kit';
-
-export default function App() {
-  return (
-    <AmityUiKitProvider
-      apiKey="API_KEY"
-      apiRegion="API_REGION"
-      userId="userId"
-      displayName="displayName"
-      apiEndpoint="https://api.{API_REGION}.amity.co"
-      darkMode
-    >
-      <AmityUiKitSocial />
-    </AmityUiKitProvider>
-  );
-}
+"preferred_theme": "dark" // change it to dark || light || default,
 ```
 
 ```
