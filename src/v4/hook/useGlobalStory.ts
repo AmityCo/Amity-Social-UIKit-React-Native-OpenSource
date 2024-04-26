@@ -2,13 +2,12 @@ import { StoryRepository } from '@amityco/ts-sdk-react-native';
 import { useCallback, useRef, useState } from 'react';
 
 export const useGlobalStory = () => {
-  const globalStoryTargetsOnNextPageRef = useRef<
-    (() => void) | undefined | null
-  >(null);
   const globalStoriesOnNextPageRef = useRef<(() => void) | undefined | null>(
     null
   );
   const [fetching, setFetching] = useState(false);
+  const [globalStoryTargetsOnNextPage, setGlobalStoryTargetsOnNextPage] =
+    useState<(() => void) | null>(null);
   const [globalStories, setGlobalStories] = useState<Amity.Story[]>([]);
   const [globalStoryTargets, setGlobalStoryTargets] = useState<
     Amity.StoryTarget[]
@@ -16,15 +15,15 @@ export const useGlobalStory = () => {
 
   const getGlobalStoryTargets = useCallback(() => {
     const unsubscribe = StoryRepository.getGlobalStoryTargets(
-      { limit: 8, seenState: 'smart' as Amity.StorySeenQuery.SMART },
+      { limit: 20, seenState: 'smart' as Amity.StorySeenQuery.SMART },
       ({ data, error, loading, hasNextPage, onNextPage }) => {
         if (error) return;
         setFetching(loading);
         if (!loading) {
           setGlobalStoryTargets([...data]);
-          globalStoryTargetsOnNextPageRef.current = hasNextPage
-            ? onNextPage
-            : null;
+          setGlobalStoryTargetsOnNextPage(() =>
+            hasNextPage ? onNextPage : null
+          );
         }
       }
     );
@@ -56,7 +55,7 @@ export const useGlobalStory = () => {
     loading: fetching,
     getGlobalStoryTargets,
     globalStoryTargets,
-    globalStoryTargetsOnNextPage: globalStoryTargetsOnNextPageRef.current,
+    globalStoryTargetsOnNextPage,
     getGlobalStories,
     globalStories,
     globalStoriesOnNextPage: globalStoriesOnNextPageRef.current,

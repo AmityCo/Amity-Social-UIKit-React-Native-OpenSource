@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useEffect, useState } from 'react';
-import { ScrollView, View } from 'react-native';
+import { FlatList, View } from 'react-native';
 import { useStyles } from './styles';
 import { useGlobalStory } from '../../hook/useGlobalStory';
 import ContentLoader, { Circle } from 'react-content-loader/native';
@@ -19,8 +19,12 @@ export interface IStoryItems {
 const MyStories = () => {
   const styles = useStyles();
 
-  const { getGlobalStoryTargets, globalStoryTargets, loading } =
-    useGlobalStory();
+  const {
+    getGlobalStoryTargets,
+    globalStoryTargets,
+    loading,
+    globalStoryTargetsOnNextPage,
+  } = useGlobalStory();
   const [currentCommunityIndex, setCurrentCommunityIndex] = useState(0);
   const [viewStory, setViewStory] = useState(false);
   useEffect(() => {
@@ -38,7 +42,7 @@ const MyStories = () => {
     [globalStoryTargets]
   );
 
-  if (loading) {
+  if (loading && !globalStoryTargets) {
     return (
       <View style={styles.skeletonContainer}>
         {Array.from({ length: 6 }, (_, index) => {
@@ -64,17 +68,22 @@ const MyStories = () => {
     return (
       <>
         <View style={styles.container}>
-          <ScrollView horizontal contentContainerStyle={styles.scrollContainer}>
-            {globalStoryTargets.map((storyTarget) => {
+          <FlatList
+            showsHorizontalScrollIndicator={false}
+            onEndReached={globalStoryTargetsOnNextPage}
+            contentContainerStyle={styles.scrollContainer}
+            horizontal
+            data={globalStoryTargets}
+            renderItem={({ item: storyTarget }) => {
               return (
                 <StoryCircleItem
-                  key={storyTarget.targetId}
                   onPressStoryView={onPressStoryView}
                   storyTarget={storyTarget}
                 />
               );
-            })}
-          </ScrollView>
+            }}
+            keyExtractor={(item) => item.targetId}
+          />
         </View>
         <Modal
           style={styles.modal}
