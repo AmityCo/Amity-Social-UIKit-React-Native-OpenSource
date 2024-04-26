@@ -50,6 +50,8 @@ export default function UserProfile({ route }: any) {
   const isUnfollowed = followStatus === 'none';
   const feedRef: MutableRefObject<FeedRefType | null> =
     useRef<FeedRefType | null>(null);
+  const galleryRef: MutableRefObject<FeedRefType | null> =
+    useRef<FeedRefType | null>(null);
   const scrollViewRef = useRef(null);
 
   const avatarFileURL = (fileId: string) => {
@@ -188,6 +190,9 @@ export default function UserProfile({ route }: any) {
     if (feedRef.current) {
       feedRef.current.handleLoadMore(); // Call the function inside the child component
     }
+    if (galleryRef.current) {
+      galleryRef.current.handleLoadMore();
+    }
   }
   const handleOnPressPostBtn = () => {
     dispatch(
@@ -211,7 +216,7 @@ export default function UserProfile({ route }: any) {
     if (currentTab === TabName.Timeline)
       return <Feed targetType="user" targetId={userId} ref={feedRef} />;
     if (currentTab === TabName.Gallery)
-      return <UserProfileGallery userId={userId} />;
+      return <UserProfileGallery userId={userId} ref={galleryRef} />;
     return null;
   };
 
