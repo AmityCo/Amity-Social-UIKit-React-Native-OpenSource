@@ -5,7 +5,7 @@ import { FlatList, View, Text } from 'react-native';
 import { useStyles } from './styles';
 import CloseButton from '../../components/BackButton';
 import useAuth from '../../hooks/useAuth';
-import { RootStackParamList } from 'src/routes/RouteParamList';
+import { RootStackParamList } from '../../routes/RouteParamList';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { amityPostsFormatter } from '../../util/postDataFormatter';
