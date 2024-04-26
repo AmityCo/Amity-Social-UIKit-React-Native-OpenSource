@@ -115,7 +115,11 @@ export default function SocialNavigator() {
               ),
             })}
           />
-          <Stack.Screen name="PendingPosts" component={PendingPosts} />
+          <Stack.Screen
+            name="PendingPosts"
+            component={PendingPosts}
+            options={{ title: 'Pending Posts' }}
+          />
           <Stack.Screen
             name="CommunitySearch"
             component={CommunitySearch}
