@@ -12,7 +12,7 @@ import {
   leftLongArrow,
   rightLongArrow,
   storyHyperLinkIcon,
-} from '../../../svg/svg-xml-list';
+} from '../../../../svg/svg-xml-list';
 import { SvgXml } from 'react-native-svg';
 import { useStyles } from './styles';
 import {
@@ -25,16 +25,16 @@ import {
   PageID,
   StoryType,
   ImageSizeState,
-} from '../../enum';
+} from '../../../enum';
 import { useTheme } from 'react-native-paper';
 import { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
-import { useConfigImageUri } from '../../hook/useConfigImageUri';
+import { useConfigImageUri } from '../../../hook/useConfigImageUri';
 import HyperlinkConfig from './Components/HyperLinkConfig';
-import { IAmityDraftStoryPage } from '../types';
-import { useFile } from '../../hook/useFile';
-import { defaultAvatarUri } from '../../assets/index';
-import { getMediaTypeFromUrl } from '../../../util/urlUtil';
-import { LoadingOverlay } from '../../../components/LoadingOverlay';
+import { IAmityDraftStoryPage } from '../../types';
+import { useFile } from '../../../hook/useFile';
+import { defaultAvatarUri } from '../../../assets/index';
+import { getMediaTypeFromUrl } from '../../../../util/urlUtil';
+import { LoadingOverlay } from '../../../../components/LoadingOverlay';
 
 const AmityDraftStoryPage: FC<IAmityDraftStoryPage> = ({
   targetId,

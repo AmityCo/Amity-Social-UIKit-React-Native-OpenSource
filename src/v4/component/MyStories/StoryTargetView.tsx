@@ -2,7 +2,7 @@ import { Platform } from 'react-native';
 import React, { FC, useCallback, useLayoutEffect, useRef } from 'react';
 import AndroidCubeEffect from '../StoryKit/src/components/AndroidCubeEffect';
 import CubeNavigationHorizontal from '../StoryKit/src/components/CubeNavigationHorizontal';
-import AmityViewStoryPage from '../../PublicApi/AmityViewStoryPage/AmityViewStoryPage';
+import AmityViewStoryPage from '../../PublicApi/Pages/AmityViewStoryPage/AmityViewStoryPage';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../../routes/RouteParamList';

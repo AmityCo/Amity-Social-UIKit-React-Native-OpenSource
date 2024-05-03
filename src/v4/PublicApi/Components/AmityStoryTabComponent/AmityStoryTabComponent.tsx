@@ -2,9 +2,9 @@ import React, { FC, memo, useEffect, useState } from 'react';
 import {
   AmityStoryTabComponentEnum,
   AmityStoryTabComponentType,
-} from '../types';
-import MyStories from '../../component/MyStories';
-import CommunityStories from '../../component/CommunityStories';
+} from '../../types';
+import MyStories from '../../../component/MyStories';
+import CommunityStories from '../../../component/CommunityStories';
 import { CommunityRepository } from '@amityco/ts-sdk-react-native';
 
 const AmityStoryTabComponent: FC<AmityStoryTabComponentType> = ({

@@ -4,10 +4,10 @@ import { useTheme } from 'react-native-paper';
 import { MyMD3Theme } from '~/providers/amity-ui-kit-provider';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../../routes/RouteParamList';
-import { useUiKitConfig, useConfigImageUri } from '../../hook';
-import { ComponentID, ElementID, PageID } from '../../enum/enumUIKitID';
-import { useBehaviour } from '../../providers/BehaviourProvider';
+import { RootStackParamList } from '../../../../routes/RouteParamList';
+import { useUiKitConfig, useConfigImageUri } from '../../../hook';
+import { ComponentID, ElementID, PageID } from '../../../enum/enumUIKitID';
+import { useBehaviour } from '../../../providers/BehaviourProvider';
 
 const AmitySocialHomeTopNavigationComponent = () => {
   const theme = useTheme() as MyMD3Theme;

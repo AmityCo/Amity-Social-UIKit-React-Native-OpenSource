@@ -13,7 +13,7 @@ import CommunityList from '../screens/CommunityList';
 import CommunityHome from '../v4/screen/CommunityHome';
 import { CommunitySetting } from '../screens/CommunitySetting/index';
 import CommunityMemberDetail from '../screens/CommunityMemberDetail/CommunityMemberDetail';
-import AmitySocialHomePage from '../v4/PublicApi/AmitySocialHomePage/AmitySocialHomePage';
+import AmitySocialHomePage from '../v4/PublicApi/Pages/AmitySocialHomePage/AmitySocialHomePage';
 import PostDetail from '../screens/PostDetail';
 import CreatePost from '../screens/CreatePost';
 import UserProfile from '../screens/UserProfile/UserProfile';
