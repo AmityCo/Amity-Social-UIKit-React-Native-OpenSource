@@ -17,7 +17,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { RefreshControl } from 'react-native';
 import { ComponentID } from '../../enum';
 import useConfig from '../../hook/useConfig';
-import AmityStoryTabComponent from '../../PublicApi/AmityStoryTabComponent/AmityStoryTabComponent';
+import AmityStoryTabComponent from '../../PublicApi/Components/AmityStoryTabComponent/AmityStoryTabComponent';
 import { AmityStoryTabComponentEnum } from '../../PublicApi/types/index';
 
 export default function GlobalFeed() {

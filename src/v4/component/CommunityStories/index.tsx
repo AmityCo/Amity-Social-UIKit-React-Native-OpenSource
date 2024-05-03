@@ -17,7 +17,7 @@ import { useStoryPermission } from '../../hook/useStoryPermission';
 import useConfig from '../../hook/useConfig';
 import { ComponentID, ElementID, PageID } from '../../enum';
 import Modal from 'react-native-modalbox';
-import AmityViewStoryPage from '../../PublicApi/AmityViewStoryPage/AmityViewStoryPage';
+import AmityViewStoryPage from '../../PublicApi/Pages/AmityViewStoryPage/AmityViewStoryPage';
 
 interface ICommunityStories {
   communityId: string;

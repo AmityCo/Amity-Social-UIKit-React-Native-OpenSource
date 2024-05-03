@@ -33,17 +33,17 @@ import {
   flashOn,
   storyGallery,
   switchCamera,
-} from '../../../svg/svg-xml-list';
+} from '../../../../svg/svg-xml-list';
 import ImagePicker, { launchImageLibrary } from 'react-native-image-picker';
 import * as Progress from 'react-native-progress';
-import { msToString } from '../../../util/timeUtil';
-import { StoryType } from '../../enum';
+import { msToString } from '../../../../util/timeUtil';
+import { StoryType } from '../../../enum';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '~/routes/RouteParamList';
 import AmityDraftStoryPage from '../AmityDraftStoryPage/AmityDraftStoryPage';
-import { TAmityStoryMediaType } from '../types';
-import { getMediaTypeFromUrl } from '../../../util/urlUtil';
+import { TAmityStoryMediaType } from '../../types';
+import { getMediaTypeFromUrl } from '../../../../util/urlUtil';
 
 interface ICreateStoryPage {
   targetId: string;

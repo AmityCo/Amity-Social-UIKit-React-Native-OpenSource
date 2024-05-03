@@ -13,7 +13,7 @@ import {
   View,
 } from 'react-native';
 import React, { FC, memo, useCallback, useRef, useState } from 'react';
-import { useConfigImageUri, useStory } from '../../../hook';
+import { useConfigImageUri, useStory } from '../../../../hook';
 import { useStyles } from '../styles';
 import Video, { OnLoadData } from 'react-native-video';
 import {
@@ -24,22 +24,22 @@ import {
   storyLikeIcon,
   storyLikedIcon,
   storyThreedotsMenu,
-} from '../../../../svg/svg-xml-list';
+} from '../../../../../svg/svg-xml-list';
 import { SvgXml } from 'react-native-svg';
 import Modal from 'react-native-modalbox';
-import { ComponentID, ElementID, PageID } from '../../../enum';
-import useConfig from '../../../hook/useConfig';
+import { ComponentID, ElementID, PageID } from '../../../../enum';
+import useConfig from '../../../../hook/useConfig';
 import BottomSheet, { BottomSheetMethods } from '@devvie/bottom-sheet';
-import CommentList from '../../../component/Social/CommentList/CommentList';
+import CommentList from '../../../../component/Social/CommentList/CommentList';
 import { StoryRepository } from '@amityco/ts-sdk-react-native';
-import { NextOrPrevious } from '../../../component/StoryKit';
-import { useTimeDifference } from '../../../../hooks/useTimeDifference';
-import { STORY_DEFAULT_DURATION } from '../../../../constants';
+import { NextOrPrevious } from '../../../../component/StoryKit';
+import { useTimeDifference } from '../../../../../hooks/useTimeDifference';
+import { STORY_DEFAULT_DURATION } from '../../../../../constants';
 import GestureRecognizer from 'react-native-swipe-gestures';
 import { useDispatch } from 'react-redux';
-import uiSlice from '../../../../redux/slices/uiSlice';
-import { LoadingOverlay } from '../../../../components/LoadingOverlay';
-import Toast from '../../../../components/Toast/Toast';
+import uiSlice from '../../../../../redux/slices/uiSlice';
+import { LoadingOverlay } from '../../../../../components/LoadingOverlay';
+import Toast from '../../../../../components/Toast/Toast';
 
 interface IAmityViewStoryItem {
   communityData: Amity.Community;
