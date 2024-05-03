@@ -1,7 +1,9 @@
 export interface IBehaviour {
-  AmitySocialHomePage?: {
+  AmitySocialHomePageBehaviour?: {
+    onChooseTab?: (arg?: string) => void;
+  };
+  AmitySocialHomeTopNavigationComponentBehaviour?: {
     onPressSearch?: () => void;
     onPressCreate?: () => void;
-    onChooseTab?: (arg?: string) => void;
   };
 }

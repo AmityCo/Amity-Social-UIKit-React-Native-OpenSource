@@ -9,24 +9,14 @@ import { useUiKitConfig, useConfigImageUri } from '../../hook';
 import { ComponentID, ElementID, PageID } from '../../enum/enumUIKitID';
 import { useBehaviour } from '../../providers/BehaviourProvider';
 
-const AmitySocialHomeTopNavigationComponent = ({
-  currentTab,
-}: {
-  currentTab?: string;
-}) => {
+const AmitySocialHomeTopNavigationComponent = () => {
   const theme = useTheme() as MyMD3Theme;
-  const { AmitySocialHomePage } = useBehaviour();
+  const { AmitySocialHomeTopNavigationComponentBehaviour } = useBehaviour();
   const [headerTitle] = useUiKitConfig({
     keys: ['text'],
     page: PageID.social_home_page,
     component: ComponentID.top_navigation,
     element: ElementID.header_label,
-  }) as string[];
-  const [myCommunitiesTab] = useUiKitConfig({
-    page: PageID.social_home_page,
-    component: ComponentID.WildCardComponent,
-    element: ElementID.my_communities_button,
-    keys: ['text'],
   }) as string[];
   const searchIcon = useConfigImageUri({
     configPath: {
@@ -81,20 +71,20 @@ const AmitySocialHomeTopNavigationComponent = ({
   });
 
   const onPressSearch = useCallback(() => {
-    if (AmitySocialHomePage.onPressSearch)
-      return AmitySocialHomePage.onPressSearch();
+    if (AmitySocialHomeTopNavigationComponentBehaviour.onPressSearch)
+      return AmitySocialHomeTopNavigationComponentBehaviour.onPressSearch();
     navigation.navigate('CommunitySearch');
-  }, [AmitySocialHomePage, navigation]);
+  }, [AmitySocialHomeTopNavigationComponentBehaviour, navigation]);
 
   const onCreateCommunity = useCallback(() => {
     navigation.navigate('CreateCommunity');
   }, [navigation]);
 
   const onPressCreate = useCallback(() => {
-    if (AmitySocialHomePage.onPressCreate)
-      return AmitySocialHomePage.onPressCreate();
-    if (currentTab === myCommunitiesTab) return onCreateCommunity();
-  }, [AmitySocialHomePage, currentTab, myCommunitiesTab, onCreateCommunity]);
+    if (AmitySocialHomeTopNavigationComponentBehaviour.onPressCreate)
+      return AmitySocialHomeTopNavigationComponentBehaviour.onPressCreate();
+    return onCreateCommunity();
+  }, [AmitySocialHomeTopNavigationComponentBehaviour, onCreateCommunity]);
 
   return (
     <View

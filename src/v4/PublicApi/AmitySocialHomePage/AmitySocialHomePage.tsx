@@ -20,7 +20,7 @@ const AmitySocialHomePage = () => {
   const { client } = useAuth();
   const dispatch = useDispatch();
   const theme = useTheme() as MyMD3Theme;
-  const { AmitySocialHomePage } = useBehaviour();
+  const { AmitySocialHomePageBehaviour } = useBehaviour();
   const { openPostTypeChoiceModal } = uiSlice.actions;
   const [newsFeedTab] = useUiKitConfig({
     page: PageID.social_home_page,
@@ -53,11 +53,11 @@ const AmitySocialHomePage = () => {
 
   const onTabChange = useCallback(
     (tabName: string) => {
-      if (AmitySocialHomePage.onChooseTab)
-        return AmitySocialHomePage.onChooseTab();
+      if (AmitySocialHomePageBehaviour.onChooseTab)
+        return AmitySocialHomePageBehaviour.onChooseTab(tabName);
       setActiveTab(tabName);
     },
-    [AmitySocialHomePage]
+    [AmitySocialHomePageBehaviour]
   );
 
   return (
@@ -70,7 +70,7 @@ const AmitySocialHomePage = () => {
         backgroundColor: theme.colors.background,
       }}
     >
-      <AmitySocialHomeTopNavigationComponent currentTab={activeTab} />
+      <AmitySocialHomeTopNavigationComponent />
       <CustomTab
         tabNames={[newsFeedTab, exploreTab, myCommunitiesTab]}
         onTabChange={onTabChange}
