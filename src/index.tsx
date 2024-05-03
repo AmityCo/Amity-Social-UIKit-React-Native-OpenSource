@@ -7,6 +7,7 @@ import {
   AmityDraftStoryPage,
   AmityViewStoryPage,
   AmitySocialHomePage,
+  AmitySocialHomeTopNavigationComponent,
 } from './v4';
 import { AmityStoryTabComponentEnum } from './v4/PublicApi/types';
 
@@ -39,4 +40,5 @@ export {
   AmityDraftStoryPage,
   AmityViewStoryPage,
   AmitySocialHomePage,
+  AmitySocialHomeTopNavigationComponent,
 };
