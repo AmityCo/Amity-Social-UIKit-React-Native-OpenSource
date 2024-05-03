@@ -14,7 +14,7 @@ import { MyMD3Theme } from '~/providers/amity-ui-kit-provider';
 
 type TCustomTab = {
   onTabChange: (tabName: TabName) => void;
-  tabNames: TabName[];
+  tabNames: TabName[] | string[];
 };
 
 const CustomTab: FC<TCustomTab> = ({ tabNames, onTabChange }) => {

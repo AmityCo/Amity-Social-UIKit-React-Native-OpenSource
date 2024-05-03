@@ -38,7 +38,6 @@ import CreatePoll from '../screens/CreatePoll/CreatePoll';
 import ReactionListScreen from '../screens/ReactionListScreen/ReactionListScreen';
 import CreateStoryScreen from '../v4/screen/CreateStory/CreateStoryScreen';
 import Toast from '../components/Toast/Toast';
-import AmitySocialHomeTopNavigationComponent from './Components/AmitySocialHomeTopNavigationComponent';
 
 export default function SocialNavigator() {
   const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -66,11 +65,7 @@ export default function SocialNavigator() {
           <Stack.Screen
             name="Home"
             component={AmitySocialHomePage}
-            options={{
-              headerTitle: () => {
-                return <AmitySocialHomeTopNavigationComponent />;
-              },
-            }}
+            options={{ headerShown: false }}
           />
           <Stack.Screen name="Explore" component={Explore} />
           <Stack.Screen
