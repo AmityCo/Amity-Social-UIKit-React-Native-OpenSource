@@ -9,6 +9,8 @@ import { IConfigRaw } from '../v4/types/config.interface';
 import { validateConfigColor } from '../util/colorUtil';
 import useValidateConfig from '../v4/hook/useValidateConfig';
 import fallBackConfig from '../../uikit.config.json';
+import { BehaviourProvider } from '../v4/providers/BehaviourProvider';
+import { IBehaviour } from '../v4/types/behaviour.interface';
 
 export type CusTomTheme = typeof DefaultTheme;
 export interface IAmityUIkitProvider {
@@ -20,6 +22,7 @@ export interface IAmityUIkitProvider {
   children: any;
   authToken?: string;
   configs?: IConfigRaw;
+  behaviour?: IBehaviour;
 }
 
 interface CustomColors {
@@ -45,6 +48,7 @@ export default function AmityUiKitProvider({
   children,
   authToken,
   configs,
+  behaviour,
 }: IAmityUIkitProvider) {
   const colorScheme = useColorScheme();
   const isValidConfig = useValidateConfig(configs);
@@ -82,7 +86,9 @@ export default function AmityUiKitProvider({
         authToken={authToken}
       >
         <ConfigProvider configs={configData}>
-          <PaperProvider theme={globalTheme}>{children}</PaperProvider>
+          <BehaviourProvider behaviour={behaviour}>
+            <PaperProvider theme={globalTheme}>{children}</PaperProvider>
+          </BehaviourProvider>
         </ConfigProvider>
       </AuthContextProvider>
     </Provider>

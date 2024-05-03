@@ -3,13 +3,14 @@ import { defaultAvatarUri } from '../assets';
 import { useMemo } from 'react';
 import useConfig from './useConfig';
 import { IUIKitConfigOptions } from '../types/config.interface';
+import { UiKitConfigKeys } from '../enum';
 
 export const useConfigImageUri = ({
   configPath,
   configKey,
 }: {
   configPath: IUIKitConfigOptions;
-  configKey: string;
+  configKey: keyof UiKitConfigKeys;
 }): ImageSourcePropType => {
   const { getUiKitConfig } = useConfig();
   const configImageUri = useMemo(() => {
@@ -29,6 +30,12 @@ export const useConfigImageUri = ({
     }
     if (fileUri === 'hyperlink_button.png') {
       image = require('../configAssets/icons/hyperlink_button.png');
+    }
+    if (fileUri === 'searchButtonIcon') {
+      image = require('../configAssets/icons/search.png');
+    }
+    if (fileUri === 'postCreationIcon') {
+      image = require('../configAssets/icons/plus.png');
     }
     if (typeof image === 'number') {
       return Image.resolveAssetSource(image)?.uri ?? defaultAvatarUri;

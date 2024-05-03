@@ -13,7 +13,7 @@ import CommunityList from '../screens/CommunityList';
 import CommunityHome from '../v4/screen/CommunityHome';
 import { CommunitySetting } from '../screens/CommunitySetting/index';
 import CommunityMemberDetail from '../screens/CommunityMemberDetail/CommunityMemberDetail';
-import Home from '../v4/screen/Home';
+import AmitySocialHomePage from '../v4/PublicApi/AmitySocialHomePage/AmitySocialHomePage';
 import PostDetail from '../screens/PostDetail';
 import CreatePost from '../screens/CreatePost';
 import UserProfile from '../screens/UserProfile/UserProfile';
@@ -62,7 +62,11 @@ export default function SocialNavigator() {
             },
           }}
         >
-          <Stack.Screen name="Home" component={Home} />
+          <Stack.Screen
+            name="Home"
+            component={AmitySocialHomePage}
+            options={{ headerShown: false }}
+          />
           <Stack.Screen name="Explore" component={Explore} />
           <Stack.Screen
             name="PostDetail"
@@ -91,7 +95,7 @@ export default function SocialNavigator() {
               headerLeft: () => (
                 <BackButton
                   onPress={() => {
-                    navigation.navigate(Home);
+                    navigation.navigate('Home');
                   }}
                 />
               ),
