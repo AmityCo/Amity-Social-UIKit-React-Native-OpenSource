@@ -99,7 +99,6 @@ export default function SocialNavigator() {
               headerRight: () => (
                 <TouchableOpacity
                   onPress={() => {
-                    // Handle button press here
                     navigation.navigate('CommunitySetting', {
                       communityId: communityId,
                       communityName: communityName,
@@ -118,13 +117,32 @@ export default function SocialNavigator() {
           <Stack.Screen
             name="PendingPosts"
             component={PendingPosts}
-            options={{ title: 'Pending Posts' }}
+            options={({
+              navigation,
+              route: {
+                params: { communityName, communityId, isModerator },
+              },
+            }: any) => ({
+              title: 'Pending Posts',
+              headerLeft: () => (
+                <BackButton
+                  goBack={false}
+                  onPress={() =>
+                    navigation.navigate('CommunityHome', {
+                      communityName,
+                      communityId,
+                      isModerator,
+                    })
+                  }
+                />
+              ),
+            })}
           />
           <Stack.Screen
             name="CommunitySearch"
             component={CommunitySearch}
             options={{
-              headerShown: false, // Remove the back button
+              headerShown: false,
             }}
           />
           <Stack.Screen
