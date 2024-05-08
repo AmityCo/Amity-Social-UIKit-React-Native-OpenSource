@@ -9,6 +9,7 @@ import {
   ScrollView,
   Pressable,
   FlatList,
+  ActivityIndicator,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import {
@@ -101,14 +102,19 @@ const EditCommunity = ({ navigation, route }) => {
 
   useEffect(() => {
     navigation.setOptions({
-      headerRight: () => (
-        <TouchableOpacity
-          disabled={loading}
-          onPress={handleSubmit(onPressUpdateCommunity)}
-        >
-          <Text style={styles.saveText}>Save</Text>
-        </TouchableOpacity>
-      ),
+      headerRight: () => {
+        if (loading) {
+          return <ActivityIndicator animating={loading} size="small" />;
+        }
+        return (
+          <TouchableOpacity
+            disabled={loading}
+            onPress={handleSubmit(onPressUpdateCommunity)}
+          >
+            <Text style={styles.saveText}>Save</Text>
+          </TouchableOpacity>
+        );
+      },
     });
   }, [
     handleSubmit,
