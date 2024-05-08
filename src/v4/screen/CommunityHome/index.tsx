@@ -269,7 +269,7 @@ export default function CommunityHome({ route }: any) {
           postSetting: postSetting,
           needApprovalOnPostCreation: (
             communityData?.data as Record<string, any>
-          ).needApprovalOnPostCreation,
+          )?.needApprovalOnPostCreation,
         })
       );
     }
