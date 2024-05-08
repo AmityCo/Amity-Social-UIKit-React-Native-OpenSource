@@ -37,6 +37,18 @@ export const useConfigImageUri = ({
     if (fileUri === 'postCreationIcon') {
       image = require('../configAssets/icons/plus.png');
     }
+    if (fileUri === 'search') {
+      image = require('../configAssets/icons/search.png');
+    }
+    if (fileUri === 'clear') {
+      image = require('../configAssets/icons/clear.png');
+    }
+    if (fileUri === 'lockIcon') {
+      image = require('../configAssets/icons/lockIcon.png');
+    }
+    if (fileUri === 'officalBadgeIcon') {
+      image = require('../configAssets/icons/officalBadgeIcon.png');
+    }
     if (typeof image === 'number') {
       return Image.resolveAssetSource(image)?.uri ?? defaultAvatarUri;
     }

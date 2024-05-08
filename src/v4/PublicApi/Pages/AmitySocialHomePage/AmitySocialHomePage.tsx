@@ -5,7 +5,7 @@ import FloatingButton from '../../../../components/FloatingButton';
 import useAuth from '../../../../hooks/useAuth';
 import Explore from '../../../../screens/Explore';
 import GlobalFeed from '../../../screen/GlobalFeed';
-import CustomTab from '../../../component/CustomTab/CustomTab';
+import CustomSocialTab from '../../../component/CustomSocialTab/CustomSocialTab';
 import AllMyCommunity from '../../../../screens/AllMyCommunity';
 import { useDispatch } from 'react-redux';
 import uiSlice from '../../../../redux/slices/uiSlice';
@@ -71,7 +71,7 @@ const AmitySocialHomePage = () => {
       }}
     >
       <AmitySocialHomeTopNavigationComponent />
-      <CustomTab
+      <CustomSocialTab
         tabNames={[newsFeedTab, exploreTab, myCommunitiesTab]}
         onTabChange={onTabChange}
       />

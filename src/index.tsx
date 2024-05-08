@@ -8,6 +8,9 @@ import {
   AmityViewStoryPage,
   AmitySocialHomePage,
   AmitySocialHomeTopNavigationComponent,
+  AmityCommunitySearchResultComponent,
+  AmitySocialGlobalSearchPage,
+  AmityTopSearchBarComponent,
 } from './v4';
 import { AmityStoryTabComponentEnum } from './v4/PublicApi/types';
 
@@ -41,4 +44,7 @@ export {
   AmityViewStoryPage,
   AmitySocialHomePage,
   AmitySocialHomeTopNavigationComponent,
+  AmityCommunitySearchResultComponent,
+  AmitySocialGlobalSearchPage,
+  AmityTopSearchBarComponent,
 };
