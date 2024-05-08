@@ -3,11 +3,9 @@ import { PostRepository } from '@amityco/ts-sdk-react-native';
 import React, { useEffect, useState } from 'react';
 import { FlatList, View, Text } from 'react-native';
 import { useStyles } from './styles';
-import CloseButton from '../../components/BackButton';
 import useAuth from '../../hooks/useAuth';
 import { RootStackParamList } from '../../routes/RouteParamList';
-import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RouteProp, useRoute } from '@react-navigation/native';
 import { amityPostsFormatter } from '../../util/postDataFormatter';
 import { IPost } from '../../components/Social/PostList';
 import PendingPostList from '../../components/Social/PendingPostList';
@@ -16,17 +14,9 @@ export default function PendingPosts() {
 
   const { communityId, isModerator } = route.params;
   const [postList, setPostList] = useState<IPost[]>([]);
-  const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const { client } = useAuth();
 
   const styles = useStyles();
-
-  React.useLayoutEffect(() => {
-    // Set the headerRight component to a TouchableOpacity
-    navigation.setOptions({
-      headerLeft: () => <CloseButton />,
-    });
-  }, [navigation]);
 
   const getPendingPosts = async () => {
     const unsubscribe = PostRepository.getPosts(

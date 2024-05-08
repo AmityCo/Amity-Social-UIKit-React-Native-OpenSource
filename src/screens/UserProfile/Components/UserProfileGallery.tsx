@@ -84,7 +84,7 @@ const UserProfileGallery = forwardRef(
       );
     };
     return (
-      <View>
+      <View style={styles.container}>
         <GalleryTab
           tabName={[TabName.Photos, TabName.Videos]}
           onTabChange={setTabName}
