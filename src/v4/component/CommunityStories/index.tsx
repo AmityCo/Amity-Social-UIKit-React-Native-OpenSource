@@ -2,7 +2,6 @@ import React, { memo, useCallback, useEffect, useState } from 'react';
 import { Image, TouchableOpacity, View } from 'react-native';
 import { useStyles } from './styles';
 import { useStory } from '../../hook/useStory';
-import ContentLoader, { Circle } from 'react-content-loader/native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { SvgXml } from 'react-native-svg';
 import {
@@ -35,7 +34,7 @@ const CommunityStories = ({
   const styles = useStyles();
   const { getUiKitConfig } = useConfig();
   const hasStoryPermission = useStoryPermission(communityId);
-  const { loading, getStoryTarget, storyTarget } = useStory();
+  const { getStoryTarget, storyTarget } = useStory();
   const { getImage } = useFile();
   const [avatarUrl, setAvatarUrl] = useState(undefined);
   const [viewStory, setViewStory] = useState(false);
@@ -93,20 +92,6 @@ const CommunityStories = ({
   }, [communityId, displayName, navigation]);
 
   const renderCommunityStory = () => {
-    if (loading) {
-      return (
-        <ContentLoader
-          height={70}
-          speed={1}
-          width={100}
-          backgroundColor={'#d2d2d2'}
-          foregroundColor={'#eee'}
-          viewBox="-10 7 100 30"
-        >
-          <Circle cx="25" cy="25" r="25" />
-        </ContentLoader>
-      );
-    }
     if (storyTarget?.lastStoryExpiresAt) {
       return (
         <TouchableOpacity
