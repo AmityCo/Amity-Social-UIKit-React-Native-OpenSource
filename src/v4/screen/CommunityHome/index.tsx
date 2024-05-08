@@ -62,8 +62,7 @@ export default function CommunityHome({ route }: any) {
     communityId: string;
     communityName: string;
   };
-
-  const [isJoin, setIsJoin] = useState(true);
+  const [isJoin, setIsJoin] = useState(false);
   const [communityData, setCommunityData] =
     useState<Amity.LiveObject<Amity.Community>>();
   const shouldShowAmityStoryTab = () => {
@@ -130,12 +129,13 @@ export default function CommunityHome({ route }: any) {
       res.permissions.includes('Post/ManagePosts')
     ) {
       setIsUserHasPermission(true);
-      navigation.setParams({ isModerator: true });
+      navigation.setParams({ isModerator: true, communityId, communityName });
     }
   }, [
     apiRegion,
     client,
     communityId,
+    communityName,
     disposers,
     navigation,
     subscribePostTopic,

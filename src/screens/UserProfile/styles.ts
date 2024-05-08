@@ -9,9 +9,7 @@ export const useStyles = () => {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      // alignItems: 'center',
-      width: '100%',
-      justifyContent: 'flex-start',
+      backgroundColor: theme.colors.background,
     },
     loadingIndicator: {
       flex: 1,
