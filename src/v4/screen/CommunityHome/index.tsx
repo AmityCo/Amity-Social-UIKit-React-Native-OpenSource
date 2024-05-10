@@ -45,6 +45,7 @@ import useConfig from '../../hook/useConfig';
 import { ComponentID } from '../../enum/enumUIKitID';
 import AmityStoryTabComponent from '../../PublicApi/AmityStoryTabComponent/AmityStoryTabComponent';
 import { AmityStoryTabComponentEnum } from '../../PublicApi/types/index';
+import GalleryComponent from '../../component/Gallery/GalleryComponent';
 
 export type FeedRefType = {
   handleLoadMore: () => void;
@@ -63,6 +64,7 @@ export default function CommunityHome({ route }: any) {
     communityName: string;
   };
   const [isJoin, setIsJoin] = useState(false);
+  const [currentTab, setCurrentTab] = useState<TabName>(TabName.Timeline);
   const [communityData, setCommunityData] =
     useState<Amity.LiveObject<Amity.Community>>();
   const shouldShowAmityStoryTab = () => {
@@ -226,7 +228,7 @@ export default function CommunityHome({ route }: any) {
   };
 
   const handleTab = (tabName: TabName) => {
-    console.log('index: ', tabName); //this func not implmented yet
+    setCurrentTab(tabName);
   };
 
   const handleClickPendingArea = () => {
@@ -276,6 +278,22 @@ export default function CommunityHome({ route }: any) {
     navigation.navigate('EditCommunity', {
       communityData,
     });
+  };
+
+  const renderTabs = () => {
+    if (currentTab === TabName.Timeline)
+      return (
+        <Feed targetType="community" targetId={communityId} ref={feedRef} />
+      );
+    if (currentTab === TabName.Gallery)
+      return (
+        <GalleryComponent
+          targetId={communityId}
+          ref={feedRef}
+          targetType="community"
+        />
+      );
+    return null;
   };
 
   return (
@@ -351,7 +369,7 @@ export default function CommunityHome({ route }: any) {
           tabName={[TabName.Timeline, TabName.Gallery]}
           onTabChange={handleTab}
         />
-        <Feed targetType="community" targetId={communityId} ref={feedRef} />
+        {renderTabs()}
       </ScrollView>
       {isJoin && (
         <FloatingButton onPress={handleOnPressPostBtn} isGlobalFeed={false} />

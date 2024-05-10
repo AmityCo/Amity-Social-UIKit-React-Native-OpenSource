@@ -65,11 +65,24 @@ function ImageViewing({
   const [playingUri, setPlayingUri] = useState('');
   const videoPlayerRef = useRef(null);
 
+ 
+  
+
   useEffect(() => {
     if (onImageIndexChange) {
       onImageIndexChange(currentImageIndex);
     }
   }, [currentImageIndex]);
+
+
+  const onClosePlayer = () => {
+    setIsPlaying(false);
+    setPlayingUri('');
+  };
+
+  useEffect(() => {
+    if(!videoPosts) return onClosePlayer()
+  }, [videoPosts])
 
   const onZoom = useCallback(
     (isScaled) => {
@@ -109,10 +122,6 @@ if (Platform.OS === 'ios') {
     return null;
   }
 
-  const onClosePlayer = () => {
-    setIsPlaying(false);
-    setPlayingUri('');
-  };
 
   return (
     <Modal
