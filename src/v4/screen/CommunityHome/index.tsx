@@ -260,24 +260,16 @@ export default function CommunityHome({ route }: any) {
     );
   };
   const handleOnPressPostBtn = () => {
-    if (isJoin) {
-      return dispatch(
-        openPostTypeChoiceModal({
-          userId: (client as Amity.Client).userId as string,
-          targetId: communityId,
-          isPublic: communityData?.data.isPublic,
-          targetName: communityName,
-          targetType: PostTargetType.community,
-          postSetting: postSetting,
-          needApprovalOnPostCreation: (
-            communityData?.data as Record<string, any>
-          )?.needApprovalOnPostCreation,
-        })
-      );
-    }
     return dispatch(
       openPostTypeChoiceModal({
         userId: (client as Amity.Client).userId as string,
+        targetId: communityId,
+        isPublic: communityData?.data.isPublic,
+        targetName: communityName,
+        targetType: PostTargetType.community,
+        postSetting: postSetting,
+        needApprovalOnPostCreation: (communityData?.data as Record<string, any>)
+          ?.needApprovalOnPostCreation,
       })
     );
   };
@@ -379,8 +371,9 @@ export default function CommunityHome({ route }: any) {
         />
         {renderTabs()}
       </ScrollView>
-
-      <FloatingButton onPress={handleOnPressPostBtn} isGlobalFeed={false} />
+      {isJoin && (
+        <FloatingButton onPress={handleOnPressPostBtn} isGlobalFeed={false} />
+      )}
     </View>
   );
 }
