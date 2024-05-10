@@ -119,7 +119,7 @@
     "react-native-vision-camera": "^3.9.2"
   },
   "engines": {
-    "node": ">= 16.0.0"
+    "node": ">= 18.0.0"
   },
   "packageManager": "^yarn@1.22.15",
   "jest": {
