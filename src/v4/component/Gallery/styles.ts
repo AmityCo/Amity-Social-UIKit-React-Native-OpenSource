@@ -75,8 +75,6 @@ export const useStyles = () => {
       color: theme.colors.base,
     },
     editProfileButton: {
-      // flex: 1,
-      // backgroundColor: 'white',
       borderWidth: 1,
       borderColor: '#A5A9B5',
       padding: 8,
@@ -86,10 +84,6 @@ export const useStyles = () => {
       alignItems: 'center',
     },
     followButton: {
-      // flex: 1,
-      // backgroundColor: 'white',
-      // borderWidth: 1,
-      // borderColor: '#A5A9B5',
       backgroundColor: theme.colors.primary,
       padding: 8,
       borderRadius: 4,
