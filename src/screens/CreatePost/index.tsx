@@ -38,6 +38,9 @@ import { checkCommunityPermission } from '../../providers/Social/communities-sdk
 import useAuth from '../../hooks/useAuth';
 import AmityMentionInput from '../../components/MentionInput/AmityMentionInput';
 import { TSearchItem } from '../../hooks/useSearch';
+import globalFeedSlice from '../../redux/slices/globalfeedSlice';
+import { useDispatch } from 'react-redux';
+import { amityPostsFormatter } from '../../util/postDataFormatter';
 
 export interface IDisplayImage {
   url: string;
@@ -56,6 +59,8 @@ export interface IMentionPosition {
 const CreatePost = ({ route }: any) => {
   const theme = useTheme() as MyMD3Theme;
   const styles = useStyles();
+  const { addPostToGlobalFeed } = globalFeedSlice.actions;
+  const dispatch = useDispatch();
   const { targetId, targetType, targetName } = route.params;
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const [inputMessage, setInputMessage] = useState('');
@@ -74,7 +79,6 @@ const CreatePost = ({ route }: any) => {
   const { data: community } = communityObject ?? {};
   const privateCommunityId = !community?.isPublic && community?.communityId;
   const { client, apiRegion } = useAuth();
-
   const getCommunityDetail = useCallback(() => {
     if (targetType === 'community') {
       CommunityRepository.getCommunity(targetId, setCommunityObject);
@@ -107,6 +111,8 @@ const CreatePost = ({ route }: any) => {
         mentionsPosition
       );
       if (response) {
+        const formattedPost = await amityPostsFormatter([response]);
+        dispatch(addPostToGlobalFeed(formattedPost[0]));
         goBack();
       }
     } else {
@@ -127,6 +133,10 @@ const CreatePost = ({ route }: any) => {
         mentionUserIds.length > 0 ? mentionUserIds : [],
         mentionsPosition
       );
+      if (response) {
+        const formattedPost = await amityPostsFormatter([response]);
+        dispatch(addPostToGlobalFeed(formattedPost[0]));
+      }
       if (targetType !== 'community') return goBack();
       if (
         !response ||

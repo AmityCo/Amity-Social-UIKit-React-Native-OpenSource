@@ -22,6 +22,9 @@ const globalFeedSlice = createSlice({
         ...getUniqueArrayById(action.payload),
       ];
     },
+    addPostToGlobalFeed: (state, action: PayloadAction<IPost>) => {
+      state.postList = [action.payload, ...state.postList];
+    },
 
     updateByPostId: (
       state,
@@ -30,15 +33,6 @@ const globalFeedSlice = createSlice({
       const { postId, postDetail } = action.payload;
 
       const index = state.postList.findIndex((item) => item.postId === postId);
-      // const updatedPostList = state.postList.map((item: IPost) => {
-      //     if (item.postId === postId) {
-
-      //       return postDetail
-      //     } else {
-      //       return item
-      //     }
-      //   })
-
       state.postList[index] = postDetail;
     },
     deleteByPostId: (state, action: PayloadAction<{ postId: string }>) => {
@@ -56,5 +50,4 @@ const globalFeedSlice = createSlice({
   },
 });
 
-// const {actions: globalFeedActions, reducer: globalFeedReducer } = globalFeedSlice
 export default globalFeedSlice;
