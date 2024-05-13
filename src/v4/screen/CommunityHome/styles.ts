@@ -8,6 +8,7 @@ export const useStyles = () => {
     container: {
       flex: 1,
       backgroundColor: theme.colors.background,
+      paddingBottom: 60,
     },
     joinContainer: {
       flex: 0.2,

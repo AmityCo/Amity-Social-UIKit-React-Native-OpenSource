@@ -90,6 +90,7 @@ export default function PostList({
   const [isLike, setIsLike] = useState<boolean>(false);
   const [likeReaction, setLikeReaction] = useState<number>(0);
   const [communityName, setCommunityName] = useState('');
+  const [isJoined, setIsJoined] = useState<boolean>(false);
   const [textPost, setTextPost] = useState<string>('');
   const [privateCommunityId, setPrivateCommunityId] = useState(null);
   const [isVisible, setIsVisible] = useState<boolean>(false);
@@ -236,6 +237,7 @@ export default function PostList({
     const { data: community }: { data: Amity.LiveObject<Amity.Community> } =
       await getCommunityById(id);
     setCommunityName(community.data.displayName);
+    setIsJoined(community.data.isJoined);
     !community.data.isPublic &&
       setPrivateCommunityId(community.data.communityId);
   }
@@ -483,25 +485,41 @@ export default function PostList({
           </View>
         )}
 
-        <View style={styles.actionSection}>
-          <TouchableOpacity onPress={addReactionToPost} style={styles.likeBtn}>
-            {isLike ? (
-              <SvgXml
-                xml={likedXml(theme.colors.primary)}
-                width="20"
-                height="16"
-              />
-            ) : (
-              <SvgXml xml={likeXml} width="20" height="16" />
-            )}
+        {targetType !== 'community' || isJoined ? (
+          <View style={styles.actionSection}>
+            <TouchableOpacity
+              onPress={addReactionToPost}
+              style={styles.likeBtn}
+            >
+              {isLike ? (
+                <SvgXml
+                  xml={likedXml(theme.colors.primary)}
+                  width="20"
+                  height="16"
+                />
+              ) : (
+                <SvgXml xml={likeXml} width="20" height="16" />
+              )}
 
-            <Text style={isLike ? styles.likedText : styles.btnText}>Like</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={onClickComment} style={styles.commentBtn}>
-            <SvgXml xml={commentXml} width="20" height="16" />
-            <Text style={styles.btnText}>Comment</Text>
-          </TouchableOpacity>
-        </View>
+              <Text style={isLike ? styles.likedText : styles.btnText}>
+                Like
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={onClickComment}
+              style={styles.commentBtn}
+            >
+              <SvgXml xml={commentXml} width="20" height="16" />
+              <Text style={styles.btnText}>Comment</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <View style={styles.actionSection}>
+            <Text style={styles.btnText}>
+              Join community to interact with all posts
+            </Text>
+          </View>
+        )}
       </View>
       {renderOptionModal()}
       {editPostModalVisible && (

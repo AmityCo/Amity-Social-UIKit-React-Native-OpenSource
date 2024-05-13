@@ -72,6 +72,7 @@ export const useStyles = () => {
       flexDirection: 'row',
       marginTop: 8,
       marginBottom: 4,
+      paddingVertical: 8,
     },
     likeBtn: {
       flexDirection: 'row',

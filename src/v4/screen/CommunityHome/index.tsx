@@ -45,6 +45,7 @@ import useConfig from '../../hook/useConfig';
 import { ComponentID } from '../../enum/enumUIKitID';
 import AmityStoryTabComponent from '../../PublicApi/Components/AmityStoryTabComponent/AmityStoryTabComponent';
 import { AmityStoryTabComponentEnum } from '../../PublicApi/types/index';
+import GalleryComponent from '../../component/Gallery/GalleryComponent';
 
 export type FeedRefType = {
   handleLoadMore: () => void;
@@ -62,8 +63,8 @@ export default function CommunityHome({ route }: any) {
     communityId: string;
     communityName: string;
   };
-
-  const [isJoin, setIsJoin] = useState(true);
+  const [isJoin, setIsJoin] = useState(false);
+  const [currentTab, setCurrentTab] = useState<TabName>(TabName.Timeline);
   const [communityData, setCommunityData] =
     useState<Amity.LiveObject<Amity.Community>>();
   const shouldShowAmityStoryTab = () => {
@@ -130,12 +131,13 @@ export default function CommunityHome({ route }: any) {
       res.permissions.includes('Post/ManagePosts')
     ) {
       setIsUserHasPermission(true);
-      navigation.setParams({ isModerator: true });
+      navigation.setParams({ isModerator: true, communityId, communityName });
     }
   }, [
     apiRegion,
     client,
     communityId,
+    communityName,
     disposers,
     navigation,
     subscribePostTopic,
@@ -226,7 +228,7 @@ export default function CommunityHome({ route }: any) {
   };
 
   const handleTab = (tabName: TabName) => {
-    console.log('index: ', tabName); //this func not implmented yet
+    setCurrentTab(tabName);
   };
 
   const handleClickPendingArea = () => {
@@ -258,7 +260,7 @@ export default function CommunityHome({ route }: any) {
     );
   };
   const handleOnPressPostBtn = () => {
-    dispatch(
+    return dispatch(
       openPostTypeChoiceModal({
         userId: (client as Amity.Client).userId as string,
         targetId: communityId,
@@ -267,7 +269,7 @@ export default function CommunityHome({ route }: any) {
         targetType: PostTargetType.community,
         postSetting: postSetting,
         needApprovalOnPostCreation: (communityData?.data as Record<string, any>)
-          .needApprovalOnPostCreation,
+          ?.needApprovalOnPostCreation,
       })
     );
   };
@@ -276,6 +278,22 @@ export default function CommunityHome({ route }: any) {
     navigation.navigate('EditCommunity', {
       communityData,
     });
+  };
+
+  const renderTabs = () => {
+    if (currentTab === TabName.Timeline)
+      return (
+        <Feed targetType="community" targetId={communityId} ref={feedRef} />
+      );
+    if (currentTab === TabName.Gallery)
+      return (
+        <GalleryComponent
+          targetId={communityId}
+          ref={feedRef}
+          targetType="community"
+        />
+      );
+    return null;
   };
 
   return (
@@ -351,10 +369,11 @@ export default function CommunityHome({ route }: any) {
           tabName={[TabName.Timeline, TabName.Gallery]}
           onTabChange={handleTab}
         />
-        <Feed targetType="community" targetId={communityId} ref={feedRef} />
+        {renderTabs()}
       </ScrollView>
-
-      <FloatingButton onPress={handleOnPressPostBtn} isGlobalFeed={false} />
+      {isJoin && (
+        <FloatingButton onPress={handleOnPressPostBtn} isGlobalFeed={false} />
+      )}
     </View>
   );
 }

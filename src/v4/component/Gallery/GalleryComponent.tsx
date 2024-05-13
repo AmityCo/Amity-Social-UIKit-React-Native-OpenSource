@@ -7,27 +7,31 @@ import React, {
   useImperativeHandle,
 } from 'react';
 import { useGallery } from '../../../hooks/useGallery';
-import GalleryTab from './GalleryTab';
 import { TabName } from '../../../enum/tabNameState';
 import { SvgXml } from 'react-native-svg';
 import { photo, playBtn, video } from '../../../svg/svg-xml-list';
-import { useStyles } from '../styles';
+import { useStyles } from './styles';
 import ImageView from '../../../components/react-native-image-viewing/dist';
-import { FeedRefType } from '../../CommunityHome';
+import { FeedRefType } from '../../screen/CommunityHome';
+import GalleryTab from './GalleryTab';
 
-interface IUserProfileGallery {
-  userId: string;
+interface IGalleryComponent {
+  targetId: string;
+  targetType: 'user' | 'community';
 }
 
-const UserProfileGallery = forwardRef(
-  ({ userId }: IUserProfileGallery, ref: React.Ref<FeedRefType>) => {
+const GalleryComponent = forwardRef(
+  (
+    { targetId, targetType }: IGalleryComponent,
+    ref: React.Ref<FeedRefType>
+  ) => {
     const [showFullImage, setShowFullImage] = useState(false);
     const [imageIndex, setImageIndex] = useState(0);
     const [tabName, setTabName] = useState<TabName>(TabName.Photos);
     const dataType = tabName === TabName.Photos ? 'image' : 'video';
     const { mediaFiles, getNextPage } = useGallery({
-      targetId: userId,
-      targetType: 'user',
+      targetId,
+      targetType,
       dataType: dataType,
       limit: 21,
     });
@@ -104,4 +108,4 @@ const UserProfileGallery = forwardRef(
   }
 );
 
-export default memo(UserProfileGallery);
+export default memo(GalleryComponent);
