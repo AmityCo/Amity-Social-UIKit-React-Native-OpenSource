@@ -49,6 +49,12 @@ export const useConfigImageUri = ({
     if (fileUri === 'officalBadgeIcon') {
       image = require('../configAssets/icons/officalBadgeIcon.png');
     }
+    if (fileUri === 'emptyFeedIcon') {
+      image = require('../configAssets/icons/emptyFeedIcon.png');
+    }
+    if (fileUri === 'exploreCommunityIcon') {
+      image = require('../configAssets/icons/exploreCommunityIcon.png');
+    }
     if (typeof image === 'number') {
       return Image.resolveAssetSource(image)?.uri ?? defaultAvatarUri;
     }
