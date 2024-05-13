@@ -4,7 +4,7 @@ import { useTheme } from 'react-native-paper';
 import { MyMD3Theme } from '~/providers/amity-ui-kit-provider';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../../../routes/RouteParamList';
+import { RootStackParamList } from '../../../routes/RouteParamList';
 import { useUiKitConfig, useConfigImageUri } from '../../../hook';
 import { ComponentID, ElementID, PageID } from '../../../enum/enumUIKitID';
 import { useBehaviour } from '../../../providers/BehaviourProvider';
@@ -73,7 +73,7 @@ const AmitySocialHomeTopNavigationComponent = () => {
   const onPressSearch = useCallback(() => {
     if (AmitySocialHomeTopNavigationComponentBehaviour.onPressSearch)
       return AmitySocialHomeTopNavigationComponentBehaviour.onPressSearch();
-    navigation.navigate('CommunitySearch');
+    navigation.navigate('AmitySocialGlobalSearchPage');
   }, [AmitySocialHomeTopNavigationComponentBehaviour, navigation]);
 
   const onCreateCommunity = useCallback(() => {

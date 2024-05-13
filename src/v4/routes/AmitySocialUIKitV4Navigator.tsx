@@ -6,41 +6,41 @@ import {
   createNativeStackNavigator,
 } from '@react-navigation/native-stack';
 import type { RootStackParamList } from './RouteParamList';
-import useAuth from '../hooks/useAuth';
-import Explore from '../screens/Explore';
-import CategoryList from '../screens/CategorytList';
-import CommunityList from '../screens/CommunityList';
-import CommunityHome from '../v4/screen/CommunityHome';
-import { CommunitySetting } from '../screens/CommunitySetting/index';
-import CommunityMemberDetail from '../screens/CommunityMemberDetail/CommunityMemberDetail';
-import PostDetail from '../screens/PostDetail';
-import CreatePost from '../screens/CreatePost';
-import UserProfile from '../screens/UserProfile/UserProfile';
-import { EditProfile } from '../screens/EditProfile/EditProfile';
-import UserProfileSetting from '../screens/UserProfileSetting/UserProfileSetting';
-import CommunitySearch from '../screens/CommunitySearch';
-import AllMyCommunity from '../screens/AllMyCommunity';
-import CreateCommunity from '../screens/CreateCommunity';
-import PendingPosts from '../screens/PendingPosts';
-import type { MyMD3Theme } from '../providers/amity-ui-kit-provider';
+import useAuth from '../../hooks/useAuth';
+import Explore from '../../screens/Explore';
+import CategoryList from '../../screens/CategorytList';
+import CommunityList from '../../screens/CommunityList';
+import CommunityHome from '../screen/CommunityHome';
+import { CommunitySetting } from '../../screens/CommunitySetting/index';
+import CommunityMemberDetail from '../../screens/CommunityMemberDetail/CommunityMemberDetail';
+import AmitySocialHomePage from '../PublicApi/Pages/AmitySocialHomePage/AmitySocialHomePage';
+import PostDetail from '../../screens/PostDetail';
+import CreatePost from '../../screens/CreatePost';
+import UserProfile from '../../screens/UserProfile/UserProfile';
+import { EditProfile } from '../../screens/EditProfile/EditProfile';
+import UserProfileSetting from '../../screens/UserProfileSetting/UserProfileSetting';
+import CommunitySearch from '../../screens/CommunitySearch';
+import AllMyCommunity from '../../screens/AllMyCommunity';
+import CreateCommunity from '../../screens/CreateCommunity';
+import PendingPosts from '../../screens/PendingPosts';
+import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import { useTheme } from 'react-native-paper';
 import { Image, TouchableOpacity } from 'react-native';
 import { SvgXml } from 'react-native-svg';
-import { closeIcon } from '../svg/svg-xml-list';
-import { useStyles } from '../routes/style';
-import BackButton from '../components/BackButton';
-import CloseButton from '../components/CloseButton';
-import EditCommunity from '../screens/EditCommunity/EditCommunity';
-import VideoPlayerFull from '../screens/VideoPlayerFullScreen';
-import PostTypeChoiceModal from '../components/PostTypeChoiceModal/PostTypeChoiceModal';
-import CreatePoll from '../screens/CreatePoll/CreatePoll';
-import ReactionListScreen from '../screens/ReactionListScreen/ReactionListScreen';
-import CreateStoryScreen from '../v4/screen/CreateStory/CreateStoryScreen';
-import Toast from '../components/Toast/Toast';
-import Home from '../screens/Home';
-import AmitySocialUIKitV4Navigator from '../v4/routes/AmitySocialUIKitV4Navigator';
+import { closeIcon } from '../../svg/svg-xml-list';
+import { useStyles } from '../../routes/style';
+import BackButton from '../../components/BackButton';
+import CloseButton from '../../components/CloseButton';
+import EditCommunity from '../../screens/EditCommunity/EditCommunity';
+import VideoPlayerFull from '../../screens/VideoPlayerFullScreen';
+import PostTypeChoiceModal from '../../components/PostTypeChoiceModal/PostTypeChoiceModal';
+import CreatePoll from '../../screens/CreatePoll/CreatePoll';
+import ReactionListScreen from '../../screens/ReactionListScreen/ReactionListScreen';
+import CreateStoryScreen from '../screen/CreateStory/CreateStoryScreen';
+import Toast from '../../components/Toast/Toast';
+import AmitySocialGlobalSearchPage from '../PublicApi/Pages/AmitySocialGlobalSearchPage/AmitySocialGlobalSearchPage';
 
-export default function SocialNavigator() {
+export default function AmitySocialUIKitV4Navigator() {
   const Stack = createNativeStackNavigator<RootStackParamList>();
   const { isConnected } = useAuth();
   const theme = useTheme() as MyMD3Theme;
@@ -50,7 +50,6 @@ export default function SocialNavigator() {
     <NavigationContainer independent={true}>
       {isConnected && (
         <Stack.Navigator
-          initialRouteName="AmitySocialUIKitV4Navigator"
           screenOptions={{
             headerShadowVisible: false,
             contentStyle: {
@@ -65,11 +64,17 @@ export default function SocialNavigator() {
           }}
         >
           <Stack.Screen
-            name="AmitySocialUIKitV4Navigator"
-            component={AmitySocialUIKitV4Navigator}
+            name="Home"
+            component={AmitySocialHomePage}
             options={{ headerShown: false }}
           />
-          <Stack.Screen name="Home" component={Home} />
+          <Stack.Screen
+            name="AmitySocialGlobalSearchPage"
+            component={AmitySocialGlobalSearchPage}
+            options={{
+              headerShown: false, // Remove the back button
+            }}
+          />
           <Stack.Screen name="Explore" component={Explore} />
           <Stack.Screen
             name="PostDetail"
@@ -115,7 +120,7 @@ export default function SocialNavigator() {
                   }}
                 >
                   <Image
-                    source={require('../../assets/icon/threeDot.png')}
+                    source={require('../assets/icon/threeDot.png')}
                     style={styles.dotIcon}
                   />
                 </TouchableOpacity>

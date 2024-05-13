@@ -6,25 +6,33 @@ export const useStyles = () => {
   const theme = useTheme() as MyMD3Theme;
 
   const styles = StyleSheet.create({
-    tabContainer: {
+    container: {
       flexDirection: 'row',
       alignItems: 'center',
+      height: 50,
       backgroundColor: theme.colors.background,
-      padding: 12,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.baseShade4,
     },
-    tabBtn: {
-      borderRadius: 24,
-      paddingHorizontal: 12,
-      paddingVertical: 8,
-      marginHorizontal: 4,
-      borderWidth: 1,
-      borderColor: theme.colors.baseShade4,
-      backgroundColor: theme.colors.background,
+    activeTab: {
+      borderBottomWidth: 2,
+      borderBottomColor: theme.colors.baseShade4,
     },
-    tabName: {
+    tabText: {
       fontSize: 17,
-      lineHeight: 22,
-      color: theme.colors.baseShade1,
+      fontWeight: 'bold',
+      color: theme.colors.base,
+      marginHorizontal: 15,
+      textAlign: 'center',
+    },
+    activeTabText: {
+      color: theme.colors.primary,
+    },
+    indicator: {
+      position: 'absolute',
+      bottom: 0,
+      height: 2,
+      backgroundColor: theme.colors.primary,
     },
   });
   return styles;

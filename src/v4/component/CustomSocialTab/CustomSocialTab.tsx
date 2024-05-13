@@ -17,7 +17,7 @@ type TCustomTab = {
   tabNames: TabName[] | string[];
 };
 
-const CustomTab: FC<TCustomTab> = ({ tabNames, onTabChange }) => {
+const CustomSocialTab: FC<TCustomTab> = ({ tabNames, onTabChange }) => {
   const styles = useStyles();
   const theme = useTheme() as MyMD3Theme;
   const [currentTab, setCurrentTab] = useState(tabNames[0]);
@@ -50,4 +50,4 @@ const CustomTab: FC<TCustomTab> = ({ tabNames, onTabChange }) => {
   );
 };
 
-export default memo(CustomTab);
+export default memo(CustomSocialTab);
