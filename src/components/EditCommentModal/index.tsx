@@ -50,6 +50,9 @@ const EditCommentModal = ({
       }
     }
   };
+  const disabledState =
+    !inputMessage || inputMessage === commentDetail?.data?.text;
+  const disabledColor = disabledState && { color: theme.colors.baseShade2 };
 
   return (
     <Modal visible={visible} animationType="slide">
@@ -63,9 +66,9 @@ const EditCommentModal = ({
         <TouchableOpacity
           onPress={handleEditComment}
           style={styles.headerTextContainer}
-          disabled={inputMessage === commentDetail?.data?.text}
+          disabled={disabledState}
         >
-          <Text style={styles.headerText}>Save</Text>
+          <Text style={[styles.headerText, disabledColor]}>Save</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.container}>

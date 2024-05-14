@@ -202,14 +202,14 @@ export default function ReplyCommentList({
     if (isReportByMe) {
       const unReportPost = await unReportTargetById('comment', commentId);
       if (unReportPost) {
-        Alert.alert('Undo Report sent', '', []);
+        Alert.alert('Undo Report sent');
       }
       setIsVisible(false);
       setIsReportByMe(false);
     } else {
       const reportPost = await reportTargetById('comment', commentId);
       if (reportPost) {
-        Alert.alert('Report sent', '', []);
+        Alert.alert('Report sent');
       }
       setIsVisible(false);
       setIsReportByMe(true);

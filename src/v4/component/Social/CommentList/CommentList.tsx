@@ -162,6 +162,7 @@ const CommentList: FC<ICommentListProp> = ({
   };
 
   const handleSend: () => Promise<void> = useCallback(async () => {
+    setResetValue(false);
     if (inputMessage.trim() === '') {
       return;
     }

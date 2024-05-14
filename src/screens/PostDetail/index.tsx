@@ -245,6 +245,7 @@ const PostDetail = () => {
     }
   };
   const handleSend: () => Promise<void> = async () => {
+    setResetValue(false);
     if (inputMessage.trim() === '') {
       return;
     }
