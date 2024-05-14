@@ -34,6 +34,9 @@ export const useStyles = () => {
       color: theme.colors.primary,
       fontSize: 15,
     },
+    inputContainer: {
+      width: '100%',
+    },
     inputText: {
       color: theme.colors.base,
       fontSize: 15,

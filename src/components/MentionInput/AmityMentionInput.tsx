@@ -82,7 +82,7 @@ const AmityMentionInput: FC<IMentionInput> = ({
   );
   useEffect(() => {
     if (resetValue) {
-      onChangeInput('');
+      return onChangeInput('');
     }
     onChangeInput(initialValue);
   }, [initialValue, onChangeInput, resetValue]);
@@ -127,6 +127,7 @@ const AmityMentionInput: FC<IMentionInput> = ({
   );
   return (
     <MentionTextInput
+      containerStyle={styles.inputContainer}
       style={styles.inputText}
       {...rest}
       value={value}
