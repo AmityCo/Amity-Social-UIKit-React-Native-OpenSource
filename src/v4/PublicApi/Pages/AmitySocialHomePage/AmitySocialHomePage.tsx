@@ -74,9 +74,18 @@ const AmitySocialHomePage = () => {
     [AmitySocialHomePageBehaviour]
   );
 
+  const onPressExploreCommunity = useCallback(() => {
+    onTabChange(exploreTab);
+  }, [exploreTab, onTabChange]);
+
   const renderNewsFeed = () => {
     if (activeTab === exploreTab) return <Explore />;
-    if (!myCommunities?.length) return <AmityEmptyNewsFeedComponent />;
+    if (!myCommunities?.length)
+      return (
+        <AmityEmptyNewsFeedComponent
+          onPressExploreCommunity={onPressExploreCommunity}
+        />
+      );
     if (activeTab === newsFeedTab) {
       return (
         <>
@@ -103,6 +112,7 @@ const AmitySocialHomePage = () => {
       <CustomSocialTab
         tabNames={[newsFeedTab, exploreTab, myCommunitiesTab]}
         onTabChange={onTabChange}
+        activeTab={activeTab}
       />
       {renderNewsFeed()}
     </SafeAreaView>

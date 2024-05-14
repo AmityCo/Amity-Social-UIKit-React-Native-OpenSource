@@ -11,6 +11,7 @@ import {
   AmityCommunitySearchResultComponent,
   AmitySocialGlobalSearchPage,
   AmityTopSearchBarComponent,
+  AmityEmptyNewsFeedComponent,
 } from './v4';
 import { AmityStoryTabComponentEnum } from './v4/PublicApi/types';
 
@@ -47,4 +48,5 @@ export {
   AmityCommunitySearchResultComponent,
   AmitySocialGlobalSearchPage,
   AmityTopSearchBarComponent,
+  AmityEmptyNewsFeedComponent,
 };

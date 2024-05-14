@@ -51,7 +51,7 @@ export enum ElementID {
   illustration = 'illustration',
   title = 'title',
   description = 'description',
-  explore_communities_button = 'explore_communitties_button',
+  explore_communities_button = 'explore_communities_button',
   create_community_button = 'create_community_button',
   community_avatar = 'community_avatar',
   community_display_name = 'community_display_name',

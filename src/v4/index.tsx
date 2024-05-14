@@ -1,20 +1,10 @@
-import AmityStoryTabComponent from './PublicApi/Components/AmityStoryTabComponent/AmityStoryTabComponent';
-import AmityCreateStoryPage from './PublicApi/Pages/AmityCreateStoryPage/AmityCreateStoryPage';
-import AmityDraftStoryPage from './PublicApi/Pages/AmityDraftStoryPage/AmityDraftStoryPage';
-import AmityViewStoryPage from './PublicApi/Pages/AmityViewStoryPage/AmityViewStoryPage';
-import AmitySocialHomePage from './PublicApi/Pages/AmitySocialHomePage/AmitySocialHomePage';
-import AmitySocialGlobalSearchPage from './PublicApi/Pages/AmitySocialGlobalSearchPage/AmitySocialGlobalSearchPage';
-import AmitySocialHomeTopNavigationComponent from './PublicApi/Components/AmitySocialHomeTopNavigationComponent/AmitySocialHomeTopNavigationComponent';
-import AmityCommunitySearchResultComponent from './PublicApi/Components/AmityCommunitySearchResultComponent/AmityCommunitySearchResultComponent';
-import AmityTopSearchBarComponent from './PublicApi/Components/AmityTopSearchBarComponent/AmityTopSearchBarComponent';
-export {
-  AmityStoryTabComponent,
-  AmityCreateStoryPage,
-  AmityDraftStoryPage,
-  AmityViewStoryPage,
-  AmitySocialHomePage,
-  AmitySocialHomeTopNavigationComponent,
-  AmityCommunitySearchResultComponent,
-  AmityTopSearchBarComponent,
-  AmitySocialGlobalSearchPage,
-};
+export { default as AmityStoryTabComponent } from './PublicApi/Components/AmityStoryTabComponent/AmityStoryTabComponent';
+export { default as AmityCreateStoryPage } from './PublicApi/Pages/AmityCreateStoryPage/AmityCreateStoryPage';
+export { default as AmityDraftStoryPage } from './PublicApi/Pages/AmityDraftStoryPage/AmityDraftStoryPage';
+export { default as AmityViewStoryPage } from './PublicApi/Pages/AmityViewStoryPage/AmityViewStoryPage';
+export { default as AmitySocialHomePage } from './PublicApi/Pages/AmitySocialHomePage/AmitySocialHomePage';
+export { default as AmitySocialGlobalSearchPage } from './PublicApi/Pages/AmitySocialGlobalSearchPage/AmitySocialGlobalSearchPage';
+export { default as AmitySocialHomeTopNavigationComponent } from './PublicApi/Components/AmitySocialHomeTopNavigationComponent/AmitySocialHomeTopNavigationComponent';
+export { default as AmityCommunitySearchResultComponent } from './PublicApi/Components/AmityCommunitySearchResultComponent/AmityCommunitySearchResultComponent';
+export { default as AmityTopSearchBarComponent } from './PublicApi/Components/AmityTopSearchBarComponent/AmityTopSearchBarComponent';
+export { default as AmityEmptyNewsFeedComponent } from './PublicApi/Components/AmityEmptyNewsFeedComponent/AmityEmptyNewsFeedComponent';

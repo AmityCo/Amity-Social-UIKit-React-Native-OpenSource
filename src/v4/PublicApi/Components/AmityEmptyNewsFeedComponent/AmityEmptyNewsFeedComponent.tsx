@@ -1,5 +1,5 @@
 import { View } from 'react-native';
-import React, { memo } from 'react';
+import React, { FC, memo } from 'react';
 import { useStyles } from './styles';
 import {
   Illustration,
@@ -9,7 +9,14 @@ import {
   CreateCommunityButton,
 } from './Elements';
 import useConfig from '../../../hook/useConfig';
-const AmityEmptyNewsFeedComponent = () => {
+
+type AmityEmptyNewsFeedComponentType = {
+  onPressExploreCommunity: () => void;
+};
+
+const AmityEmptyNewsFeedComponent: FC<AmityEmptyNewsFeedComponentType> = ({
+  onPressExploreCommunity,
+}) => {
   const { excludes } = useConfig();
   const styles = useStyles();
   if (excludes.includes('social_home_page/empty_newsfeed/*')) return null;
@@ -18,7 +25,9 @@ const AmityEmptyNewsFeedComponent = () => {
       <Illustration />
       <Title />
       <Description />
-      <ExploreCommunityButton />
+      <ExploreCommunityButton
+        onPressExploreCommunity={onPressExploreCommunity}
+      />
       <CreateCommunityButton />
     </View>
   );

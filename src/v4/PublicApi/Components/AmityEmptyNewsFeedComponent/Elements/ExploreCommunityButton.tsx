@@ -1,11 +1,17 @@
 import { Image, Text, TouchableOpacity } from 'react-native';
-import React, { memo, useCallback } from 'react';
+import React, { FC, memo } from 'react';
 import { ComponentID, ElementID, PageID } from '../../../../enum';
 import useConfig from '../../../../hook/useConfig';
 import { useConfigImageUri, useUiKitConfig } from '../../../../hook';
 import { useStyles } from './styles/styles';
 
-const ExploreCommunityButton = () => {
+type ExploreCommunityButtonType = {
+  onPressExploreCommunity: () => void;
+};
+
+const ExploreCommunityButton: FC<ExploreCommunityButtonType> = ({
+  onPressExploreCommunity,
+}) => {
   const { excludes } = useConfig();
   const styles = useStyles();
 
@@ -24,8 +30,6 @@ const ExploreCommunityButton = () => {
       element: ElementID.explore_communities_button,
     },
   });
-
-  const onPressExploreCommunity = useCallback(() => {}, []);
 
   if (
     excludes.includes(
