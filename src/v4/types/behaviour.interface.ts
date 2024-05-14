@@ -14,4 +14,8 @@ export interface IBehaviour {
       targetType: TabName.Communities | TabName.Users;
     }) => void;
   };
+  AmityEmptyNewsFeedComponent?: {
+    onPressCreateCommunity?: () => void;
+    onPressExploreCommunity?: () => void;
+  };
 }

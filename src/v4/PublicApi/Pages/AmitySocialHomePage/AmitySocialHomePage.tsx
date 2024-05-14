@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useCallback, useState } from 'react';
-import { View, LogBox, SafeAreaView } from 'react-native';
+import { useCallback, useEffect, useState } from 'react';
+import { LogBox, SafeAreaView } from 'react-native';
 import FloatingButton from '../../../../components/FloatingButton';
 import useAuth from '../../../../hooks/useAuth';
 import Explore from '../../../../screens/Explore';
@@ -15,6 +15,8 @@ import { MyMD3Theme } from '~/providers/amity-ui-kit-provider';
 import { useTheme } from 'react-native-paper';
 import { useBehaviour } from '../../../providers/BehaviourProvider';
 import AmitySocialHomeTopNavigationComponent from '../../Components/AmitySocialHomeTopNavigationComponent/AmitySocialHomeTopNavigationComponent';
+import AmityEmptyNewsFeedComponent from '../../Components/AmityEmptyNewsFeedComponent/AmityEmptyNewsFeedComponent';
+import { CommunityRepository } from '@amityco/ts-sdk-react-native';
 LogBox.ignoreAllLogs(true);
 const AmitySocialHomePage = () => {
   const { client } = useAuth();
@@ -42,6 +44,18 @@ const AmitySocialHomePage = () => {
   }) as string[];
 
   const [activeTab, setActiveTab] = useState<string>(newsFeedTab);
+  const [myCommunities, setMyCommunities] = useState<Amity.Community[]>(null);
+
+  useEffect(() => {
+    const unsubscribe = CommunityRepository.getCommunities(
+      { membership: 'member', limit: 20 },
+      ({ data, error, loading }) => {
+        if (error) return;
+        if (!loading) setMyCommunities(data);
+      }
+    );
+    return () => unsubscribe();
+  }, []);
 
   const openModal = () => {
     dispatch(
@@ -60,6 +74,30 @@ const AmitySocialHomePage = () => {
     [AmitySocialHomePageBehaviour]
   );
 
+  const onPressExploreCommunity = useCallback(() => {
+    onTabChange(exploreTab);
+  }, [exploreTab, onTabChange]);
+
+  const renderNewsFeed = () => {
+    if (activeTab === exploreTab) return <Explore />;
+    if (!myCommunities?.length)
+      return (
+        <AmityEmptyNewsFeedComponent
+          onPressExploreCommunity={onPressExploreCommunity}
+        />
+      );
+    if (activeTab === newsFeedTab) {
+      return (
+        <>
+          <GlobalFeed />
+          <FloatingButton onPress={openModal} />
+        </>
+      );
+    }
+    if (activeTab === myCommunitiesTab) return <AllMyCommunity />;
+    return null;
+  };
+
   return (
     <SafeAreaView
       testID="social_home_page"
@@ -74,17 +112,9 @@ const AmitySocialHomePage = () => {
       <CustomSocialTab
         tabNames={[newsFeedTab, exploreTab, myCommunitiesTab]}
         onTabChange={onTabChange}
+        activeTab={activeTab}
       />
-      {activeTab === newsFeedTab ? (
-        <View>
-          <GlobalFeed />
-          <FloatingButton onPress={openModal} />
-        </View>
-      ) : activeTab === exploreTab ? (
-        <Explore />
-      ) : (
-        <AllMyCommunity />
-      )}
+      {renderNewsFeed()}
     </SafeAreaView>
   );
 };
