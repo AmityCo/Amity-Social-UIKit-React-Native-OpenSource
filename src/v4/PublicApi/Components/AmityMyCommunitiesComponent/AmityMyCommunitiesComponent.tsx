@@ -18,6 +18,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useBehaviour } from '../../../providers/BehaviourProvider';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../../routes/RouteParamList';
+import { formatNumber } from '../../../../util/numberUtil';
 type AmityMyCommunitiesComponentType = {
   pageId?: PageID;
   componentId?: ComponentID;
@@ -112,7 +113,7 @@ const AmityMyCommunitiesComponent: FC<AmityMyCommunitiesComponentType> = ({
             pageID={pageId}
             componentID={componentId}
             elementID={ElementID.community_members_count}
-            text={`${item.membersCount} members`}
+            text={`${formatNumber(item.membersCount)} members`}
           />
         </View>
       </TouchableOpacity>
