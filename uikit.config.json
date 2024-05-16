@@ -166,13 +166,14 @@
     "social_home_page/empty_newsfeed/create_community_button": {
       "icon": "createCommunityIcon"
     },
+    "social_home_page/my_communities/*": {},
     "social_home_page/my_communities/community_avatar": {},
     "social_home_page/my_communities/community_display_name": {},
     "social_home_page/my_communities/community_private_badge": {
       "icon": "lockIcon"
     },
     "social_home_page/my_communities/community_official_badge": {
-      "icon": "officalBadgeIcon"
+      "icon": "officialBadgeIcon"
     },
     "social_home_page/my_communities/community_category_name": {},
     "social_home_page/my_communities/community_members_count": {},
@@ -223,7 +224,7 @@
       "icon": "lockIcon"
     },
     "social_global_search_page/community_search_result/community_official_badge": {
-      "icon": "officalBadgeIcon"
+      "icon": "officialBadgeIcon"
     },
     "social_global_search_page/community_search_result/community_category_name": {},
     "social_global_search_page/community_search_result/community_members_count": {}

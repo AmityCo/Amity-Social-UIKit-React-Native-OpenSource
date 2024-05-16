@@ -18,6 +18,7 @@ export const BehaviourProvider = ({
       AmitySocialHomeTopNavigationComponentBehaviour: {},
       AmityCommunitySearchResultComponent: {},
       AmityEmptyNewsFeedComponent: {},
+      AmityMyCommunitiesComponentBehaviour: {},
     }),
     []
   );

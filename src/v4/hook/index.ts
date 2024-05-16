@@ -10,3 +10,6 @@ export * from './useValidateConfig';
 export * from './useStoryTarget';
 export * from './useUiKitConfig';
 export * from './useAmityGlobalSearchViewModel';
+export * from './useCommunities';
+export * from './useCommunity';
+export * from './useCategory';

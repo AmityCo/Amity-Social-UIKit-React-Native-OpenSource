@@ -46,8 +46,8 @@ export const useConfigImageUri = ({
     if (fileUri === 'lockIcon') {
       image = require('../configAssets/icons/lockIcon.png');
     }
-    if (fileUri === 'officalBadgeIcon') {
-      image = require('../configAssets/icons/officalBadgeIcon.png');
+    if (fileUri === 'officialBadgeIcon') {
+      image = require('../configAssets/icons/officialBadgeIcon.png');
     }
     if (fileUri === 'emptyFeedIcon') {
       image = require('../configAssets/icons/emptyFeedIcon.png');

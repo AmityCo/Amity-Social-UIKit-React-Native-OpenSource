@@ -6,7 +6,6 @@ import useAuth from '../../../../hooks/useAuth';
 import Explore from '../../../../screens/Explore';
 import GlobalFeed from '../../../screen/GlobalFeed';
 import CustomSocialTab from '../../../component/CustomSocialTab/CustomSocialTab';
-import AllMyCommunity from '../../../../screens/AllMyCommunity';
 import { useDispatch } from 'react-redux';
 import uiSlice from '../../../../redux/slices/uiSlice';
 import { useUiKitConfig } from '../../../hook';
@@ -17,6 +16,7 @@ import { useBehaviour } from '../../../providers/BehaviourProvider';
 import AmitySocialHomeTopNavigationComponent from '../../Components/AmitySocialHomeTopNavigationComponent/AmitySocialHomeTopNavigationComponent';
 import AmityEmptyNewsFeedComponent from '../../Components/AmityEmptyNewsFeedComponent/AmityEmptyNewsFeedComponent';
 import { CommunityRepository } from '@amityco/ts-sdk-react-native';
+import AmityMyCommunitiesComponent from '../../Components/AmityMyCommunitiesComponent/AmityMyCommunitiesComponent';
 LogBox.ignoreAllLogs(true);
 const AmitySocialHomePage = () => {
   const { client } = useAuth();
@@ -94,7 +94,13 @@ const AmitySocialHomePage = () => {
         </>
       );
     }
-    if (activeTab === myCommunitiesTab) return <AllMyCommunity />;
+    if (activeTab === myCommunitiesTab)
+      return (
+        <AmityMyCommunitiesComponent
+          pageId={PageID.social_home_page}
+          componentId={ComponentID.my_communities}
+        />
+      );
     return null;
   };
 
