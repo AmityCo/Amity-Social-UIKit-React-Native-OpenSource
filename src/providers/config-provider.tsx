@@ -1,4 +1,5 @@
 import React, { createContext, ReactNode } from 'react';
+import defaultConfig from '../../uikit.config.json';
 import {
   IConfigRaw,
   IUIKitConfig,
@@ -11,15 +12,22 @@ interface IConfigProviderProps {
 }
 
 export const ConfigContext = createContext<IUIKitConfig>({
+  preferred_theme: 'default',
   globalTheme: {},
   excludes: [],
   getConfig: () => ({}),
   getUiKitConfig: () => ({}),
+  getDefaultConfig: () => ({}),
 });
 
 export const ConfigProvider = ({ children, configs }: IConfigProviderProps) => {
   const getConfig = (id: string) => {
     const value = configs.customizations[id];
+    return value;
+  };
+
+  const getDefaultConfig = (id: string) => {
+    const value = defaultConfig.customizations[id];
     return value;
   };
 
@@ -59,10 +67,21 @@ export const ConfigProvider = ({ children, configs }: IConfigProviderProps) => {
 
   const globalTheme = configs.theme;
   const excludes = configs.excludes;
+  const preferred_theme = configs.preferred_theme as
+    | 'light'
+    | 'dark'
+    | 'default';
 
   return (
     <ConfigContext.Provider
-      value={{ globalTheme, excludes, getConfig, getUiKitConfig }}
+      value={{
+        preferred_theme,
+        globalTheme,
+        excludes,
+        getConfig,
+        getUiKitConfig,
+        getDefaultConfig,
+      }}
     >
       {children}
     </ConfigContext.Provider>
