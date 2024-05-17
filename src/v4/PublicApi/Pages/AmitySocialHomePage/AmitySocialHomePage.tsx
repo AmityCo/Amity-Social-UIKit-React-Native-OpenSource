@@ -1,13 +1,8 @@
 import * as React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import { LogBox, SafeAreaView } from 'react-native';
-import FloatingButton from '../../../../components/FloatingButton';
-import useAuth from '../../../../hooks/useAuth';
 import Explore from '../../../../screens/Explore';
-import GlobalFeed from '../../../screen/GlobalFeed';
 import CustomSocialTab from '../../../component/CustomSocialTab/CustomSocialTab';
-import { useDispatch } from 'react-redux';
-import uiSlice from '../../../../redux/slices/uiSlice';
 import { useUiKitConfig } from '../../../hook';
 import { ComponentID, ElementID, PageID } from '../../../enum/enumUIKitID';
 import { MyMD3Theme } from '~/providers/amity-ui-kit-provider';
@@ -17,13 +12,12 @@ import AmitySocialHomeTopNavigationComponent from '../../Components/AmitySocialH
 import AmityEmptyNewsFeedComponent from '../../Components/AmityEmptyNewsFeedComponent/AmityEmptyNewsFeedComponent';
 import { CommunityRepository } from '@amityco/ts-sdk-react-native';
 import AmityMyCommunitiesComponent from '../../Components/AmityMyCommunitiesComponent/AmityMyCommunitiesComponent';
+import AmityNewsFeedComponent from '../../Components/AmityNewsFeedComponent/AmityNewsFeedComponent';
+import NewsFeedLoadingComponent from '../../../component/NewsFeedLoadingComponent/NewsFeedLoadingComponent';
 LogBox.ignoreAllLogs(true);
 const AmitySocialHomePage = () => {
-  const { client } = useAuth();
-  const dispatch = useDispatch();
   const theme = useTheme() as MyMD3Theme;
   const { AmitySocialHomePageBehaviour } = useBehaviour();
-  const { openPostTypeChoiceModal } = uiSlice.actions;
   const [newsFeedTab] = useUiKitConfig({
     page: PageID.social_home_page,
     component: ComponentID.WildCardComponent,
@@ -45,25 +39,18 @@ const AmitySocialHomePage = () => {
 
   const [activeTab, setActiveTab] = useState<string>(newsFeedTab);
   const [myCommunities, setMyCommunities] = useState<Amity.Community[]>(null);
-
+  const [pageLoading, setPageLoading] = useState(true);
   useEffect(() => {
     const unsubscribe = CommunityRepository.getCommunities(
       { membership: 'member', limit: 20 },
       ({ data, error, loading }) => {
         if (error) return;
+        setPageLoading(loading);
         if (!loading) setMyCommunities(data);
       }
     );
     return () => unsubscribe();
   }, []);
-
-  const openModal = () => {
-    dispatch(
-      openPostTypeChoiceModal({
-        userId: (client as Amity.Client).userId as string,
-      })
-    );
-  };
 
   const onTabChange = useCallback(
     (tabName: string) => {
@@ -79,20 +66,17 @@ const AmitySocialHomePage = () => {
   }, [exploreTab, onTabChange]);
 
   const renderNewsFeed = () => {
+    if (pageLoading) return <NewsFeedLoadingComponent />;
     if (activeTab === exploreTab) return <Explore />;
     if (!myCommunities?.length)
       return (
         <AmityEmptyNewsFeedComponent
+          pageId={PageID.social_home_page}
           onPressExploreCommunity={onPressExploreCommunity}
         />
       );
     if (activeTab === newsFeedTab) {
-      return (
-        <>
-          <GlobalFeed />
-          <FloatingButton onPress={openModal} />
-        </>
-      );
+      return <AmityNewsFeedComponent pageId={PageID.social_home_page} />;
     }
     if (activeTab === myCommunitiesTab)
       return (

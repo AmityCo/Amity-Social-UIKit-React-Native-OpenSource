@@ -8,7 +8,6 @@ export const useStyles = () => {
     container: {
       backgroundColor: theme.colors.background,
       width,
-      flex: 1,
     },
     skeletonContainer: {
       backgroundColor: theme.colors.background,

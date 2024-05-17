@@ -15,10 +15,6 @@ import globalFeedSlice from '../../../redux/slices/globalfeedSlice';
 import { RootState } from '../../../redux/store';
 import { useFocusEffect } from '@react-navigation/native';
 import { RefreshControl } from 'react-native';
-import { ComponentID } from '../../enum';
-import useConfig from '../../hook/useConfig';
-import AmityStoryTabComponent from '../../PublicApi/Components/AmityStoryTabComponent/AmityStoryTabComponent';
-import { AmityStoryTabComponentEnum } from '../../PublicApi/types/index';
 
 export default function GlobalFeed() {
   const { postList } = useSelector((state: RootState) => state.globalFeed);
@@ -26,8 +22,6 @@ export default function GlobalFeed() {
   const { updateGlobalFeed, deleteByPostId, clearFeed } =
     globalFeedSlice.actions;
   const dispatch = useDispatch();
-  const { excludes } = useConfig();
-  const isStoryExcluded = excludes.includes(`*/${ComponentID.StoryTab}/*`);
   const styles = useStyle();
   const { isConnected } = useAuth();
   const [postData, setPostData] = useState<IGlobalFeedRes>();
@@ -102,14 +96,6 @@ export default function GlobalFeed() {
               colors={['lightblue']}
               tintColor="lightblue"
             />
-          }
-          ListHeaderComponent={
-            !refreshing &&
-            !isStoryExcluded && (
-              <AmityStoryTabComponent
-                type={AmityStoryTabComponentEnum.globalFeed}
-              />
-            )
           }
           keyboardShouldPersistTaps="handled"
         />
