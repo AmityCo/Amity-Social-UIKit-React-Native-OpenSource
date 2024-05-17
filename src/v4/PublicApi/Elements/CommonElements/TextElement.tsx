@@ -7,7 +7,7 @@ type TextElementType = Partial<TextProps> & {
   pageID: PageID;
   componentID: ComponentID;
   elementID: ElementID;
-  text?: string;
+  text: string;
 };
 
 const TextElement: FC<TextElementType> = ({
@@ -17,14 +17,12 @@ const TextElement: FC<TextElementType> = ({
   text,
   ...props
 }) => {
-  const { excludes, getConfig } = useConfig();
+  const { excludes } = useConfig();
   const configId = `${pageID}/${componentID}/${elementID}`;
-  const config = getConfig(configId);
-  const configText = config?.text ?? config?.title ?? '';
   if (excludes.includes(configId)) return null;
   return (
     <Text testID={configId} accessibilityLabel={configId} {...props}>
-      {text ?? configText}
+      {text}
     </Text>
   );
 };

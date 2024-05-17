@@ -1,9 +1,11 @@
 import { DefaultConfigID } from '../enum';
 
 export interface IUIKitConfig {
+  preferred_theme: 'dark' | 'light' | 'default';
   globalTheme: Record<string, any>;
   excludes: string[];
   getConfig: (id: string) => any;
+  getDefaultConfig: (id: string) => any;
   getUiKitConfig?: ({
     element,
     page,
