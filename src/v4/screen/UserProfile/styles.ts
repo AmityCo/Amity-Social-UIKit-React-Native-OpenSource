@@ -25,6 +25,7 @@ export const useStyles = () => {
     dotIcon: {
       width: 16,
       height: 12,
+      tintColor: theme.colors.base,
     },
 
     followIcon: {

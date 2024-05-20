@@ -87,7 +87,7 @@ export default function UserProfile({ route }: any) {
           }}
         >
           <Image
-            source={require('../../../assets/icon/threeDot.png')}
+            source={require('../../assets/icon/threeDot.png')}
             style={styles.dotIcon}
           />
         </TouchableOpacity>
@@ -153,7 +153,7 @@ export default function UserProfile({ route }: any) {
     return (
       <TouchableOpacity style={styles.followButton} onPress={onFollowTap}>
         <Image
-          source={require('../../../assets/icon/followPlus.png')}
+          source={require('../../assets/icon/followPlus.png')}
           style={styles.followIcon}
         />
         <Text style={styles.followText}>Follow</Text>
@@ -245,7 +245,7 @@ export default function UserProfile({ route }: any) {
                         ? avatarFileURL(user.avatarFileId)
                         : user.avatarCustomUrl,
                     }
-                  : require('../../../assets/icon/Placeholder.png')
+                  : require('../../assets/icon/Placeholder.png')
               }
             />
             <View style={styles.userInfo}>
