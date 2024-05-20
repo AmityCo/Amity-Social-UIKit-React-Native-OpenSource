@@ -1,17 +1,17 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, useWindowDimensions } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
 
 export const useStyles = () => {
   const theme = useTheme() as MyMD3Theme;
+  const { height } = useWindowDimensions();
   const styles = StyleSheet.create({
     container: {
-      paddingBottom: 320,
       backgroundColor: theme.colors.baseShade4,
     },
     uploadContainer: {
       width: '100%',
-      height: '35%',
+      height: height * 0.35,
       alignItems: 'center',
       justifyContent: 'center',
       backgroundColor: '#f5f5f5',

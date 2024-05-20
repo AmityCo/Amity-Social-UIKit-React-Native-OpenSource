@@ -183,213 +183,210 @@ export default function CreateCommunity() {
       contentContainerStyle={styles.container}
       style={styles.container}
     >
-      <View>
-        <View style={styles.uploadContainer}>
-          {image ? (
-            <Image source={{ uri: image }} style={styles.image} />
-          ) : (
-            <View style={styles.defaultImage} />
-          )}
+      <View style={styles.uploadContainer}>
+        {image ? (
+          <Image source={{ uri: image }} style={styles.image} />
+        ) : (
+          <View style={styles.defaultImage} />
+        )}
 
-          <TouchableOpacity style={styles.button} onPress={pickImage}>
-            {/* You can use any icon library here or just text */}
-            {/* For example, you can use an icon like: <YourIconName size={24} color="white" /> */}
-            <Text style={styles.buttonText}>Upload Image</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.allInputContainer}>
-          <View style={styles.inputContainer}>
-            <View style={styles.titleRow}>
-              <Text style={styles.inputTitle}>
-                Community name<Text style={styles.requiredField}> *</Text>
-              </Text>
-              <Text style={styles.inputLengthMeasure}>
-                {communityName.length}/{MAX_COMMUNITY_NAME_LENGTH}
-              </Text>
-            </View>
-
-            <TextInput
-              style={styles.inputField}
-              placeholder="Name your community"
-              placeholderTextColor={theme.colors.baseShade3}
-              value={communityName}
-              onChangeText={(text) => setCommunityName(text)}
-              maxLength={MAX_COMMUNITY_NAME_LENGTH}
-            />
-          </View>
-
-          <View style={styles.inputContainer}>
-            <View style={styles.titleRow}>
-              <Text style={styles.inputTitle}>About</Text>
-              <Text style={styles.inputLengthMeasure}>
-                {aboutText.length}/{MAX_ABOUT_TEXT_LENGTH}
-              </Text>
-            </View>
-
-            <TextInput
-              style={styles.inputField}
-              placeholder="Enter description"
-              placeholderTextColor={theme.colors.baseShade3}
-              value={aboutText}
-              onChangeText={(text) => setAboutText(text)}
-              maxLength={MAX_ABOUT_TEXT_LENGTH}
-              multiline={true}
-            />
-          </View>
-          <View style={styles.inputContainer}>
-            <View style={styles.titleRow}>
-              <Text style={styles.inputTitle}>
-                Category<Text style={styles.requiredField}> *</Text>
-              </Text>
-            </View>
-            <Pressable
-              onPress={() => setCategoryModal(true)}
-              style={styles.categoryContainer}
-            >
-              <Text
-                style={
-                  !categoryName ? styles.placeHolderText : [styles.categoryText]
-                }
-              >
-                {categoryName.length > 0 ? categoryName : 'Select Category'}
-              </Text>
-              <SvgXml
-                style={styles.arrowIcon}
-                xml={arrowOutlined(theme.colors.base)}
-                width={15}
-                height={15}
-              />
-            </Pressable>
-          </View>
-          <View style={styles.radioGroup}>
-            <Pressable
-              onPress={() => setSelectedId(PrivacyState.public)}
-              style={styles.listItem}
-            >
-              <View style={styles.avatar}>
-                <SvgXml width={20} height={20} xml={publicIcon} />
-              </View>
-
-              <View style={styles.optionDescription}>
-                <Text style={styles.itemText}>Public</Text>
-                <Text style={styles.categoryText}>
-                  Anyone can join, view, and search the posts in this community.
-                </Text>
-              </View>
-              <RadioButton
-                id={PrivacyState.public}
-                onPress={(value) => setSelectedId(value)}
-                value={PrivacyState.public}
-                selected={selectedId === PrivacyState.public}
-                color={
-                  selectedId === PrivacyState.public
-                    ? theme.colors.primary
-                    : '#444'
-                }
-                size={17}
-              />
-            </Pressable>
-
-            <Pressable
-              onPress={() => setSelectedId(PrivacyState.private)}
-              style={styles.listItem}
-            >
-              <View style={styles.avatar}>
-                <SvgXml width={24} height={24} xml={privateIcon()} />
-              </View>
-
-              <View style={styles.optionDescription}>
-                <Text style={styles.itemText}>Private</Text>
-                <Text style={styles.categoryText}>
-                  Only members invited by the moderators can join, view, and
-                  search the posts in this community.
-                </Text>
-              </View>
-              <RadioButton
-                id={PrivacyState.private}
-                onPress={(value) => setSelectedId(value)}
-                value={PrivacyState.private}
-                selected={selectedId === PrivacyState.private}
-                color={selectedId === PrivacyState.private ? '#1054DE' : '#444'}
-                size={17}
-              />
-            </Pressable>
-          </View>
-          {selectedId === PrivacyState.private && (
-            <View style={styles.inputContainer}>
-              <View style={styles.titleRow}>
-                <Text style={styles.inputTitle}>
-                  Add members<Text style={styles.requiredField}> *</Text>
-                </Text>
-              </View>
-              <View style={styles.addUsersContainer}>
-                {selectedUserList.length > 0 && (
-                  <FlatList
-                    data={selectedUserList}
-                    renderItem={({ item }) => (
-                      <View style={styles.userItemWrap}>
-                        <View style={styles.avatarRow}>
-                          <View style={styles.avatarImageContainer}>
-                            <Image
-                              style={styles.avatarImage}
-                              source={
-                                item.avatarFileId
-                                  ? { uri: avatarFileURL(item.avatarFileId) }
-                                  : require('../../../assets/icon/Placeholder.png')
-                              }
-                            />
-                          </View>
-                          <Text>{displayName(item.displayName)}</Text>
-                        </View>
-                        <TouchableOpacity
-                          onPress={() => onDeleteUserPressed(item)}
-                        >
-                          <SvgXml
-                            xml={closeIcon(theme.colors.base)}
-                            width={12}
-                            height={12}
-                          />
-                        </TouchableOpacity>
-                      </View>
-                    )}
-                    keyExtractor={(item) => item.userId.toString()}
-                    numColumns={2}
-                  />
-                )}
-
-                <Pressable
-                  onPress={() => setAddMembersModal(true)}
-                  style={styles.addIcon}
-                >
-                  <View style={styles.avatar}>
-                    <SvgXml
-                      style={styles.arrowIcon}
-                      xml={plusIcon(theme.colors.base)}
-                      width={24}
-                      height={24}
-                    />
-                  </View>
-                </Pressable>
-              </View>
-            </View>
-          )}
-
-          <TouchableOpacity
-            disabled={isCreating && uploadingImage ? true : false}
-            onPress={onCreateCommunity}
-            style={styles.createButton}
-          >
-            <Text style={styles.createText}>Create community </Text>
-            {isCreating && uploadingImage && (
-              <ActivityIndicator
-                style={styles.loading}
-                animating={true}
-                color={'#FFF'}
-              />
-            )}
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity style={styles.button} onPress={pickImage}>
+          <Text style={styles.buttonText}>Upload Image</Text>
+        </TouchableOpacity>
       </View>
+      <View style={styles.allInputContainer}>
+        <View style={styles.inputContainer}>
+          <View style={styles.titleRow}>
+            <Text style={styles.inputTitle}>
+              Community name<Text style={styles.requiredField}> *</Text>
+            </Text>
+            <Text style={styles.inputLengthMeasure}>
+              {communityName.length}/{MAX_COMMUNITY_NAME_LENGTH}
+            </Text>
+          </View>
+
+          <TextInput
+            style={styles.inputField}
+            placeholder="Name your community"
+            placeholderTextColor={theme.colors.baseShade3}
+            value={communityName}
+            onChangeText={(text) => setCommunityName(text)}
+            maxLength={MAX_COMMUNITY_NAME_LENGTH}
+          />
+        </View>
+
+        <View style={styles.inputContainer}>
+          <View style={styles.titleRow}>
+            <Text style={styles.inputTitle}>About</Text>
+            <Text style={styles.inputLengthMeasure}>
+              {aboutText.length}/{MAX_ABOUT_TEXT_LENGTH}
+            </Text>
+          </View>
+
+          <TextInput
+            style={styles.inputField}
+            placeholder="Enter description"
+            placeholderTextColor={theme.colors.baseShade3}
+            value={aboutText}
+            onChangeText={(text) => setAboutText(text)}
+            maxLength={MAX_ABOUT_TEXT_LENGTH}
+            multiline={true}
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <View style={styles.titleRow}>
+            <Text style={styles.inputTitle}>
+              Category<Text style={styles.requiredField}> *</Text>
+            </Text>
+          </View>
+          <Pressable
+            onPress={() => setCategoryModal(true)}
+            style={styles.categoryContainer}
+          >
+            <Text
+              style={
+                !categoryName ? styles.placeHolderText : [styles.categoryText]
+              }
+            >
+              {categoryName.length > 0 ? categoryName : 'Select Category'}
+            </Text>
+            <SvgXml
+              style={styles.arrowIcon}
+              xml={arrowOutlined(theme.colors.base)}
+              width={15}
+              height={15}
+            />
+          </Pressable>
+        </View>
+        <View style={styles.radioGroup}>
+          <Pressable
+            onPress={() => setSelectedId(PrivacyState.public)}
+            style={styles.listItem}
+          >
+            <View style={styles.avatar}>
+              <SvgXml width={20} height={20} xml={publicIcon} />
+            </View>
+
+            <View style={styles.optionDescription}>
+              <Text style={styles.itemText}>Public</Text>
+              <Text style={styles.categoryText}>
+                Anyone can join, view, and search the posts in this community.
+              </Text>
+            </View>
+            <RadioButton
+              id={PrivacyState.public}
+              onPress={(value) => setSelectedId(value)}
+              value={PrivacyState.public}
+              selected={selectedId === PrivacyState.public}
+              color={
+                selectedId === PrivacyState.public
+                  ? theme.colors.primary
+                  : '#444'
+              }
+              size={17}
+            />
+          </Pressable>
+
+          <Pressable
+            onPress={() => setSelectedId(PrivacyState.private)}
+            style={styles.listItem}
+          >
+            <View style={styles.avatar}>
+              <SvgXml width={24} height={24} xml={privateIcon()} />
+            </View>
+
+            <View style={styles.optionDescription}>
+              <Text style={styles.itemText}>Private</Text>
+              <Text style={styles.categoryText}>
+                Only members invited by the moderators can join, view, and
+                search the posts in this community.
+              </Text>
+            </View>
+            <RadioButton
+              id={PrivacyState.private}
+              onPress={(value) => setSelectedId(value)}
+              value={PrivacyState.private}
+              selected={selectedId === PrivacyState.private}
+              color={selectedId === PrivacyState.private ? '#1054DE' : '#444'}
+              size={17}
+            />
+          </Pressable>
+        </View>
+        {selectedId === PrivacyState.private && (
+          <View style={styles.inputContainer}>
+            <View style={styles.titleRow}>
+              <Text style={styles.inputTitle}>
+                Add members<Text style={styles.requiredField}> *</Text>
+              </Text>
+            </View>
+            <View style={styles.addUsersContainer}>
+              {selectedUserList.length > 0 && (
+                <FlatList
+                  data={selectedUserList}
+                  renderItem={({ item }) => (
+                    <View style={styles.userItemWrap}>
+                      <View style={styles.avatarRow}>
+                        <View style={styles.avatarImageContainer}>
+                          <Image
+                            style={styles.avatarImage}
+                            source={
+                              item.avatarFileId
+                                ? { uri: avatarFileURL(item.avatarFileId) }
+                                : require('../../../assets/icon/Placeholder.png')
+                            }
+                          />
+                        </View>
+                        <Text>{displayName(item.displayName)}</Text>
+                      </View>
+                      <TouchableOpacity
+                        onPress={() => onDeleteUserPressed(item)}
+                      >
+                        <SvgXml
+                          xml={closeIcon(theme.colors.base)}
+                          width={12}
+                          height={12}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  )}
+                  keyExtractor={(item) => item.userId.toString()}
+                  numColumns={2}
+                />
+              )}
+
+              <Pressable
+                onPress={() => setAddMembersModal(true)}
+                style={styles.addIcon}
+              >
+                <View style={styles.avatar}>
+                  <SvgXml
+                    style={styles.arrowIcon}
+                    xml={plusIcon(theme.colors.base)}
+                    width={24}
+                    height={24}
+                  />
+                </View>
+              </Pressable>
+            </View>
+          </View>
+        )}
+
+        <TouchableOpacity
+          disabled={isCreating && uploadingImage ? true : false}
+          onPress={onCreateCommunity}
+          style={styles.createButton}
+        >
+          <Text style={styles.createText}>Create community </Text>
+          {isCreating && uploadingImage && (
+            <ActivityIndicator
+              style={styles.loading}
+              animating={true}
+              color={'#FFF'}
+            />
+          )}
+        </TouchableOpacity>
+      </View>
+
       <ChooseCategoryModal
         onSelect={handleSelectCategory}
         onClose={() => setCategoryModal(false)}
