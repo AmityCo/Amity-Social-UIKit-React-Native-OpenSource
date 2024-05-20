@@ -55,6 +55,9 @@ export const useStyles = () => {
     requiredField: {
       color: 'red',
     },
+    maxPollQuestionText: {
+      color: theme.colors.base,
+    },
     inputContainer: {
       margin: 16,
       borderBottomColor: theme.colors.baseShade4,
@@ -106,6 +109,7 @@ export const useStyles = () => {
       flex: 1,
       padding: 5,
       fontSize: 15,
+      color: theme.colors.base,
     },
     scrollContainer: {
       paddingVertical: 16,
@@ -134,6 +138,7 @@ export const useStyles = () => {
       fontSize: 18,
       alignSelf: 'flex-start',
       marginBottom: 20,
+      color: theme.colors.base,
     },
     scheduleInitValueTextStyle: {
       color: theme.colors.base,
