@@ -133,6 +133,9 @@ export const useStyles = () => {
       marginTop: 16,
       borderWidth: 0,
     },
+    selectedTimeFrame: {
+      color: theme.colors.base,
+    },
     scheduleTitleStyle: {
       fontWeight: 'bold',
       fontSize: 18,

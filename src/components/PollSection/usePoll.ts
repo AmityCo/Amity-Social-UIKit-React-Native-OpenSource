@@ -13,15 +13,9 @@ export const usePoll = (pollId: string, shouldFetch: boolean) => {
     if (pollData?.closedAt) {
       const endDate = dayjs(pollData.closedAt);
       const hoursRemaining = endDate.diff(now, 'hour');
-      const daysRemaining = Math.floor(hoursRemaining / 24);
-      const hourRemainders = Math.floor(hoursRemaining % 24);
-      if (daysRemaining > 0) {
-        const dayText = daysRemaining > 1 ? 'days' : 'day';
-        const hourText = hourRemainders > 1 ? 'hours' : 'hour';
-        return `${daysRemaining} ${dayText} ${hourRemainders} ${hourText}`;
-      }
-      const hourText = hoursRemaining > 1 ? 'hours' : 'hour';
-      return `${hoursRemaining} ${hourText}`;
+      const daysRemaining = Math.ceil(hoursRemaining / 24);
+      const dayText = daysRemaining > 1 ? 'days' : 'day';
+      return `${daysRemaining} ${dayText}`;
     }
     return null;
   }, [pollData]);

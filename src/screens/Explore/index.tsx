@@ -103,7 +103,13 @@ export default function Explore() {
                     : require('../../../assets/icon/Placeholder.png')
                 }
               />
-              <Text style={styles.columnText}>{category.name}</Text>
+              <Text
+                ellipsizeMode="tail"
+                numberOfLines={1}
+                style={styles.columnText}
+              >
+                {category.name}
+              </Text>
             </TouchableOpacity>
           );
         })}

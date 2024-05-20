@@ -314,6 +314,7 @@ const CreatePoll = ({ navigation, route }) => {
           </Text>
           <ModalSelector
             data={data}
+            selectTextStyle={styles.selectedTimeFrame}
             selectedKey={timeFrame?.key || null}
             onModalClose={setTimeFrame}
             initValue="Choose time frame"

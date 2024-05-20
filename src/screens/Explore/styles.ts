@@ -131,6 +131,7 @@ export const useStyles = () => {
       marginLeft: 10,
       marginBottom: 10,
       color: theme.colors.base,
+      width: '70%',
     },
     wrapContainer: {
       flexDirection: 'row',
