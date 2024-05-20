@@ -6,13 +6,15 @@ import {
 import MyStories from '../../../component/MyStories';
 import CommunityStories from '../../../component/CommunityStories';
 import { CommunityRepository } from '@amityco/ts-sdk-react-native';
+import useConfig from '../../../hook/useConfig';
+import { ComponentID } from '../../../enum';
 
 const AmityStoryTabComponent: FC<AmityStoryTabComponentType> = ({
   type,
   targetId,
 }) => {
   const [CommunityData, setCommunityData] = useState<Amity.Community>(null);
-
+  const { excludes } = useConfig();
   useEffect(() => {
     if (type === AmityStoryTabComponentEnum.communityFeed && targetId) {
       CommunityRepository.getCommunity(targetId, ({ error, loading, data }) => {
@@ -23,6 +25,8 @@ const AmityStoryTabComponent: FC<AmityStoryTabComponentType> = ({
       });
     }
   }, [targetId, type]);
+
+  if (excludes.includes(`*/${ComponentID.StoryTab}/*`)) return null;
 
   if (type === AmityStoryTabComponentEnum.globalFeed) {
     return <MyStories />;

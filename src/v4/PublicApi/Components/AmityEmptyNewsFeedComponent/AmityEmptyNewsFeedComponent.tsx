@@ -9,19 +9,28 @@ import {
   CreateCommunityButton,
 } from './Elements';
 import useConfig from '../../../hook/useConfig';
+import { ComponentID, PageID } from '../../../enum';
 
 type AmityEmptyNewsFeedComponentType = {
+  pageId: PageID;
   onPressExploreCommunity: () => void;
 };
 
 const AmityEmptyNewsFeedComponent: FC<AmityEmptyNewsFeedComponentType> = ({
   onPressExploreCommunity,
+  pageId = '*',
 }) => {
   const { excludes } = useConfig();
   const styles = useStyles();
-  if (excludes.includes('social_home_page/empty_newsfeed/*')) return null;
+  const componentId = ComponentID.empty_newsfeed;
+  const uiReference = `${pageId}/${componentId}/*}`;
+  if (excludes.includes(uiReference)) return null;
   return (
-    <View style={styles.container}>
+    <View
+      style={styles.container}
+      testID={uiReference}
+      accessibilityLabel={uiReference}
+    >
       <Illustration />
       <Title />
       <Description />
