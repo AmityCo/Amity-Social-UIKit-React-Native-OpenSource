@@ -23,7 +23,7 @@ export const usePoll = (pollId: string, shouldFetch: boolean) => {
       const hourText = hoursRemaining > 1 ? 'hours' : 'hour';
       return `${hoursRemaining} ${hourText}`;
     }
-    return 0;
+    return null;
   }, [pollData]);
 
   const isPollClosed = useMemo(() => {
