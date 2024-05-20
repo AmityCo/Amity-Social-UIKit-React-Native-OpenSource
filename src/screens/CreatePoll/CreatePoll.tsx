@@ -56,7 +56,7 @@ const CreatePoll = ({ navigation, route }) => {
   const MIN_OPTIONS = 2;
   const MAX_SCHEDULE_DAYS = 30;
   const MILLISECONDS_IN_DAY = 86400000;
-  const closedId = MILLISECONDS_IN_DAY * parseInt(timeFrame?.label, 10) || null;
+  const closedIn = MILLISECONDS_IN_DAY * parseInt(timeFrame?.label, 10) || null;
   const answerType = isMultipleOption ? 'multiple' : 'single';
   const data: { key: number; section?: boolean; label: string }[] = [
     {
@@ -81,7 +81,7 @@ const CreatePoll = ({ navigation, route }) => {
       question: optionQuestion,
       answerType: answerType,
       answers: pollOptions,
-      closedIn: closedId,
+      closedIn: closedIn,
     });
     if (!pollId) return;
     const mentionees = [
@@ -137,7 +137,7 @@ const CreatePoll = ({ navigation, route }) => {
     answerType,
     apiRegion,
     client,
-    closedId,
+    closedIn,
     goBack,
     mentionPosition,
     mentionUsers,
@@ -200,7 +200,7 @@ const CreatePoll = ({ navigation, route }) => {
               Poll question
               <Text style={styles.requiredField}>*</Text>
             </Text>
-            <Text>
+            <Text style={styles.maxPollQuestionText}>
               {`${optionQuestion.length}/${MAX_POLL_QUESRION_LENGTH}`}
             </Text>
           </View>
@@ -232,7 +232,9 @@ const CreatePoll = ({ navigation, route }) => {
               Options
               <Text style={styles.requiredField}>*</Text>
             </Text>
-            <Text>{`${pollOptions.length}/${MAX_OPTIONS}`}</Text>
+            <Text
+              style={styles.maxPollQuestionText}
+            >{`${pollOptions.length}/${MAX_OPTIONS}`}</Text>
           </View>
           <Text style={styles.subtitle}>
             Choose at least {MIN_OPTIONS} options

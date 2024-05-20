@@ -1,20 +1,29 @@
 import { useEffect, useMemo, useState } from 'react';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 import { PollRepository } from '@amityco/ts-sdk-react-native';
+
+dayjs.extend(utc);
 
 export const usePoll = (pollId: string, shouldFetch: boolean) => {
   const [pollData, setPollData] = useState<Amity.Poll | undefined>(undefined);
 
   const endDays = useMemo(() => {
+    const now = dayjs().utc();
     if (pollData?.closedAt) {
       const endDate = dayjs(pollData.closedAt);
-      const daysRemaining = endDate.diff(dayjs(), 'day');
-      if (daysRemaining > 0) return daysRemaining;
-      const hoursRemaining = endDate.diff(dayjs(), 'hour');
-      if (hoursRemaining > 0) return 1;
-      return 0;
+      const hoursRemaining = endDate.diff(now, 'hour');
+      const daysRemaining = Math.floor(hoursRemaining / 24);
+      const hourRemainders = Math.floor(hoursRemaining % 24);
+      if (daysRemaining > 0) {
+        const dayText = daysRemaining > 1 ? 'days' : 'day';
+        const hourText = hourRemainders > 1 ? 'hours' : 'hour';
+        return `${daysRemaining} ${dayText} ${hourRemainders} ${hourText}`;
+      }
+      const hourText = hoursRemaining > 1 ? 'hours' : 'hour';
+      return `${hoursRemaining} ${hourText}`;
     }
-    return 0;
+    return null;
   }, [pollData]);
 
   const isPollClosed = useMemo(() => {

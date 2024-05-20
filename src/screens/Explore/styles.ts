@@ -115,6 +115,7 @@ export const useStyles = () => {
       width: 10,
       height: 17,
       marginRight: 10,
+      tintColor: theme.colors.base,
     },
     rowContainer: {
       flexDirection: 'row',

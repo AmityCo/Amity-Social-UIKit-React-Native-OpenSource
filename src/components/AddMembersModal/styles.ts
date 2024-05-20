@@ -32,6 +32,7 @@ export const useStyle = () => {
       fontWeight: '600',
       fontSize: 17,
       textAlign: 'center',
+      color: theme.colors.base,
     },
     communityText: {
       marginLeft: 12,
@@ -80,7 +81,7 @@ export const useStyle = () => {
     },
     inputWrap: {
       marginHorizontal: 16,
-      backgroundColor: '#EBECEF',
+      backgroundColor: theme.colors.baseShade4,
       paddingHorizontal: 10,
       borderRadius: 4,
       flexDirection: 'row',
@@ -92,6 +93,7 @@ export const useStyle = () => {
       flex: 1,
       marginHorizontal: 6,
       paddingVertical: 10,
+      color: theme.colors.base,
     },
     cancelBtn: {
       marginRight: 16,
@@ -101,9 +103,10 @@ export const useStyle = () => {
       marginTop: 10,
     },
     doneText: {
-      color: '#1054DE',
+      color: theme.colors.primary,
     },
     disabledDone: {
+      color: theme.colors.primary,
       opacity: 0.5,
     },
   });
