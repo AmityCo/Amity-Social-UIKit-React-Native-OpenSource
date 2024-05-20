@@ -18,4 +18,10 @@ export interface IBehaviour {
     onPressCreateCommunity?: () => void;
     onPressExploreCommunity?: () => void;
   };
+  AmityMyCommunitiesComponentBehaviour?: {
+    onPressCommunity?: (arg?: {
+      communityId: string;
+      communityName: string;
+    }) => void;
+  };
 }

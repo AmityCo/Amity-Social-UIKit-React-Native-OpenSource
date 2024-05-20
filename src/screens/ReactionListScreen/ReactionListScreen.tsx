@@ -5,6 +5,7 @@ import ContentLoader, { Rect, Circle } from 'react-content-loader/native';
 import { useReaction } from '../../hooks/useReaction';
 import { SvgXml } from 'react-native-svg';
 import { fileSearch } from '../../svg/svg-xml-list';
+import { formatNumber } from '../../util/numberUtil';
 
 const ReactionListScreen = ({ navigation, route }) => {
   const { referenceId, referenceType } = route.params;
@@ -14,10 +15,7 @@ const ReactionListScreen = ({ navigation, route }) => {
     referenceType,
   });
   const isError = !reactions || !reactors || reactors?.length === 0;
-  const formatNumber = (num: number): string => {
-    const formatter = Intl.NumberFormat('en', { notation: 'compact' });
-    return formatter.format(num) || '0';
-  };
+
   const onPressReactor = useCallback(
     (userId: string) => {
       navigation.navigate('UserProfile', { userId });
