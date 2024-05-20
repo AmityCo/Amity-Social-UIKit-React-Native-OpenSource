@@ -40,9 +40,8 @@ const AddMembersModal = ({
 }: IModal) => {
   const styles = useStyle();
   const theme = useTheme() as MyMD3Theme;
-  const [sectionedGroupUserList, setSectionedGroupUserList] = useState<
-    SelectUserList[]
-  >([]);
+  const [sectionedGroupUserList, setSectionedGroupUserList] =
+    useState<SelectUserList[]>(null);
   const [selectedUserList, setSelectedUserList] =
     useState<UserInterface[]>(initUserList);
   const userNextPageRef = useRef<() => void>(null);
@@ -58,7 +57,7 @@ const AddMembersModal = ({
         { displayName: text, limit: 20 },
         ({ data, onNextPage }) => {
           userNextPageRef.current = onNextPage;
-          setSectionedGroupUserList([]);
+          setSectionedGroupUserList(null);
           const groupedUser = data.reduce((acc, item) => {
             const initial = item.displayName.charAt(0).toUpperCase();
             //exclude existing members
@@ -100,7 +99,7 @@ const AddMembersModal = ({
 
   const clearButton = () => {
     setSearchTerm('');
-    setSectionedGroupUserList([]);
+    setSectionedGroupUserList(null);
   };
 
   const renderSectionHeader = ({ section }: { section: SelectUserList }) => (
@@ -202,6 +201,8 @@ const AddMembersModal = ({
             />
           </TouchableOpacity>
           <TextInput
+            placeholder="Search"
+            placeholderTextColor={theme.colors.baseShade2}
             style={styles.input}
             value={searchTerm}
             onChangeText={handleChange}
@@ -218,15 +219,17 @@ const AddMembersModal = ({
         ) : (
           <View />
         )}
-        <SectionList
-          sections={sectionedGroupUserList}
-          renderItem={renderItem}
-          onScroll={handleScroll}
-          renderSectionHeader={renderSectionHeader}
-          onEndReached={handleLoadMore}
-          onEndReachedThreshold={0.8}
-          keyExtractor={(item) => item.userId.toString()}
-        />
+        {sectionedGroupUserList && (
+          <SectionList
+            sections={sectionedGroupUserList}
+            renderItem={renderItem}
+            onScroll={handleScroll}
+            renderSectionHeader={renderSectionHeader}
+            onEndReached={handleLoadMore}
+            onEndReachedThreshold={0.8}
+            keyExtractor={(item) => item.userId.toString()}
+          />
+        )}
       </View>
     </Modal>
   );

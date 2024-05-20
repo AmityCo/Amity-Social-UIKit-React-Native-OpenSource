@@ -16,9 +16,9 @@ import CommunityMemberDetail from '../screens/CommunityMemberDetail/CommunityMem
 import Home from '../v4/screen/Home';
 import PostDetail from '../screens/PostDetail';
 import CreatePost from '../screens/CreatePost';
-import UserProfile from '../screens/UserProfile/UserProfile';
+import UserProfile from '../v4/screen/UserProfile/UserProfile';
 import { EditProfile } from '../screens/EditProfile/EditProfile';
-import UserProfileSetting from '../screens/UserProfileSetting/UserProfileSetting';
+import UserProfileSetting from '../v4/screen/UserProfileSetting/UserProfileSetting';
 import CommunitySearch from '../screens/CommunitySearch';
 import AllMyCommunity from '../screens/AllMyCommunity';
 import CreateCommunity from '../screens/CreateCommunity';

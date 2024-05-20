@@ -36,14 +36,26 @@ export default function Explore() {
   };
 
   const loadTrendingCommunities = async () => {
-    const { data: communities } =
-      await CommunityRepository.getTopTrendingCommunities();
-    setTrendingCommunityList(communities);
+    CommunityRepository.getTrendingCommunities(
+      { limit: 5 },
+      ({ data, loading, error }) => {
+        if (error) return;
+        if (!loading) {
+          setTrendingCommunityList(data);
+        }
+      }
+    );
   };
   const loadCategories = async () => {
-    CategoryRepository.getCategories({}, ({ data: categories }) => {
-      setCategoryList(categories);
-    });
+    CategoryRepository.getCategories(
+      { sortBy: 'name', limit: 8 },
+      ({ data }) => {
+        if (data) {
+          data.sort((a, b) => b.name.localeCompare(a.name));
+          setCategoryList(data);
+        }
+      }
+    );
   };
   const handleCategoryListClick = () => {
     setTimeout(() => {
@@ -70,10 +82,9 @@ export default function Explore() {
   );
 
   const renderCategoryList = useCallback(() => {
-    const truncatedCategoryList = categoryList.slice(0, 8);
     return (
       <View style={styles.wrapContainer}>
-        {truncatedCategoryList.map((category) => {
+        {categoryList.map((category) => {
           return (
             <TouchableOpacity
               style={styles.rowContainer}
@@ -92,7 +103,13 @@ export default function Explore() {
                     : require('../../../assets/icon/Placeholder.png')
                 }
               />
-              <Text style={styles.columnText}>{category.name}</Text>
+              <Text
+                ellipsizeMode="tail"
+                numberOfLines={1}
+                style={styles.columnText}
+              >
+                {category.name}
+              </Text>
             </TouchableOpacity>
           );
         })}

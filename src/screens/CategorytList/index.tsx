@@ -33,13 +33,14 @@ export default function CategoryList({ navigation }: any) {
       setLoading(true);
       try {
         const unsubscribe = CategoryRepository.getCategories(
-          {},
-          ({ data: categories, onNextPage, hasNextPage, loading }) => {
+          { sortBy: 'name' },
+          ({ data, onNextPage, hasNextPage, loading }) => {
             if (!loading) {
-              setCategories((prevCategories) => [
-                ...prevCategories,
-                ...categories,
-              ]);
+              if (data) {
+                const oldData = [...categories, ...data];
+                oldData.sort((a, b) => b.name.localeCompare(a.name));
+                setCategories(oldData);
+              }
               setHasNextPage(hasNextPage);
               onNextPageRef.current = onNextPage;
               isFetchingRef.current = false;
@@ -56,6 +57,7 @@ export default function CategoryList({ navigation }: any) {
     };
 
     loadCategories();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const handleCategoryClick = (categoryId: string, categoryName: string) => {
     setTimeout(() => {
