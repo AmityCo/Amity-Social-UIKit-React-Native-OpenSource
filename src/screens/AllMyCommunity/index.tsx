@@ -25,12 +25,13 @@ import type { ISearchItem } from '../../components/SearchItem';
 import SearchItem from '../../components/SearchItem';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 export default function AllMyCommunity() {
   const theme = useTheme() as MyMD3Theme;
   const styles = useStyles();
+  const isFocused = useIsFocused();
   LogBox.ignoreAllLogs(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchType] = useState('community');
@@ -59,9 +60,15 @@ export default function AllMyCommunity() {
       onNextPage && onNextPage();
     }
   };
+
   useEffect(() => {
-    searchCommunities(searchTerm);
-  }, [searchTerm]);
+    if (isFocused) {
+      searchCommunities(searchTerm);
+    } else {
+      setSearchTerm('');
+      setSearchList([]);
+    }
+  }, [searchTerm, isFocused]);
 
   const searchCommunities = (text: string) => {
     const unsubscribe = CommunityRepository.getCommunities(
