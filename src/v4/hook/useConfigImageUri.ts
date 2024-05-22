@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import useConfig from './useConfig';
 import { IUIKitConfigOptions } from '../types/config.interface';
 import { UiKitConfigKeys } from '../enum';
+import { useDarkMode } from './useDarkMode';
 
 export const useConfigImageUri = ({
   configPath,
@@ -13,6 +14,7 @@ export const useConfigImageUri = ({
   configKey: keyof UiKitConfigKeys;
 }): ImageSourcePropType => {
   const { getUiKitConfig } = useConfig();
+  const { isDarkTheme } = useDarkMode();
   const configImageUri = useMemo(() => {
     if (!configPath || !configKey) return defaultAvatarUri;
     const fileUri = getUiKitConfig(configPath)?.[configKey] as string;
@@ -50,15 +52,20 @@ export const useConfigImageUri = ({
       image = require('../configAssets/icons/officialBadgeIcon.png');
     }
     if (fileUri === 'emptyFeedIcon') {
-      image = require('../configAssets/icons/emptyFeedIcon.png');
+      image = isDarkTheme
+        ? require('../configAssets/icons/emptyFeedIcon_dark.png')
+        : require('../configAssets/icons/emptyFeedIcon_light.png');
     }
     if (fileUri === 'exploreCommunityIcon') {
       image = require('../configAssets/icons/exploreCommunityIcon.png');
+    }
+    if (fileUri === 'badgeIcon') {
+      image = require('../configAssets/icons/badgeIcon.png');
     }
     if (typeof image === 'number') {
       return Image.resolveAssetSource(image)?.uri ?? defaultAvatarUri;
     }
     return image;
-  }, [configPath, configKey, getUiKitConfig]);
+  }, [configPath, configKey, getUiKitConfig, isDarkTheme]);
   return { uri: configImageUri };
 };

@@ -1,8 +1,6 @@
 import { StyleSheet } from 'react-native';
-import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
-export const useStyles = () => {
-  const theme = useTheme() as MyMD3Theme;
+export const useStyles = (theme: MyMD3Theme) => {
   const styles = StyleSheet.create({
     container: {
       backgroundColor: theme.colors.background,
@@ -21,6 +19,18 @@ export const useStyles = () => {
       justifyContent: 'center',
     },
     category: {
+      marginVertical: 2,
+      alignSelf: 'flex-start',
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      backgroundColor: theme.colors.baseShade4,
+      color: theme.colors.base,
+      borderRadius: 12,
+      overflow: 'hidden',
+      marginHorizontal: 2,
+      fontSize: 12,
+    },
+    memberCounts: {
       fontSize: 13,
       fontWeight: '400',
       color: theme.colors.baseShade1,

@@ -6,7 +6,7 @@ import { useConfigImageUri, useUiKitConfig } from '../../../../hook';
 import { useStyles } from './styles/styles';
 
 type ExploreCommunityButtonType = {
-  onPressExploreCommunity: () => void;
+  onPressExploreCommunity?: () => void;
 };
 
 const ExploreCommunityButton: FC<ExploreCommunityButtonType> = ({
@@ -41,7 +41,7 @@ const ExploreCommunityButton: FC<ExploreCommunityButtonType> = ({
   return (
     <TouchableOpacity
       style={styles.exploreBtn}
-      onPress={onPressExploreCommunity}
+      onPress={() => onPressExploreCommunity && onPressExploreCommunity()}
     >
       <Image source={icon} style={styles.exploreIcon} resizeMode="contain" />
       <Text style={styles.exploreText}>{text}</Text>

@@ -1,5 +1,4 @@
-import React, { FC } from 'react';
-import GlobalFeed from '../../../screen/GlobalFeed';
+import React, { FC, memo } from 'react';
 import FloatingButton from '../../../component/FloatingButton';
 import { useDispatch } from 'react-redux';
 import uiSlice from '../../../../redux/slices/uiSlice';
@@ -9,13 +8,14 @@ import AmityStoryTabComponent from '../AmityStoryTabComponent/AmityStoryTabCompo
 import { AmityStoryTabComponentEnum } from '../../types';
 import useConfig from '../../../hook/useConfig';
 import { ComponentID, PageID } from '../../../enum/enumUIKitID';
+import AmityGlobalFeedComponent from '../AmityGlobalFeedComponent/AmityGlobalFeedComponent';
 
 type AmityNewsFeedComponentType = {
-  pageId: PageID;
+  pageId?: PageID;
 };
 
 const AmityNewsFeedComponent: FC<AmityNewsFeedComponentType> = ({
-  pageId = '*',
+  pageId = PageID.WildCardPage,
 }) => {
   const { client } = useAuth();
   const dispatch = useDispatch();
@@ -36,10 +36,10 @@ const AmityNewsFeedComponent: FC<AmityNewsFeedComponentType> = ({
   return (
     <View testID={uiReference} accessibilityLabel={uiReference}>
       <AmityStoryTabComponent type={AmityStoryTabComponentEnum.globalFeed} />
-      <GlobalFeed />
+      <AmityGlobalFeedComponent pageId={pageId} />
       <FloatingButton onPress={openModal} />
     </View>
   );
 };
 
-export default AmityNewsFeedComponent;
+export default memo(AmityNewsFeedComponent);

@@ -1,3 +1,4 @@
+import { ComponentID, ElementID, PageID } from '../enum';
 import useConfig from './useConfig';
 import { useGenerateThemeStyles } from './useGenerateThemeStyles';
 
@@ -6,9 +7,9 @@ export const useAmityElement = ({
   componentId,
   elementId,
 }: {
-  pageId: string;
-  componentId: string;
-  elementId: string;
+  pageId: PageID;
+  componentId: ComponentID;
+  elementId: ElementID;
 }) => {
   const uiReference = `${pageId}/${componentId}/${elementId}`;
   const { excludes, getDefaultConfig, getUiKitConfig } = useConfig();
@@ -36,16 +37,16 @@ export const useAmityComponent = ({
   pageId,
   componentId,
 }: {
-  pageId: string;
-  componentId: string;
+  pageId: PageID;
+  componentId: ComponentID;
 }) => {
-  const elementId = '*';
+  const elementId = ElementID.WildCardElement;
   return useAmityElement({ pageId, componentId, elementId });
 };
 
-export const useAmityPage = ({ pageId }: { pageId: string }) => {
-  const componentId = '*';
-  const elementId = '*';
+export const useAmityPage = ({ pageId }: { pageId: PageID }) => {
+  const componentId = ComponentID.WildCardComponent;
+  const elementId = ElementID.WildCardElement;
 
   return useAmityElement({ pageId, componentId, elementId });
 };

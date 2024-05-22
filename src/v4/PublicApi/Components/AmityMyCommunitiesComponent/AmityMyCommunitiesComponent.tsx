@@ -91,7 +91,7 @@ const AmityMyCommunitiesComponent: FC<AmityMyCommunitiesComponentType> = ({
             )}
           </View>
           <View style={styles.communityCategoryContainer}>
-            {item.categoryIds.slice(0, 1).map((categoryId) => {
+            {item.categoryIds.slice(0, 3).map((categoryId) => {
               return (
                 <CategoryElement
                   style={styles.categoryName}
@@ -102,9 +102,9 @@ const AmityMyCommunitiesComponent: FC<AmityMyCommunitiesComponentType> = ({
                 />
               );
             })}
-            {item.categoryIds.length > 2 && (
+            {item.categoryIds.length > 3 && (
               <Text style={styles.categoryName}>
-                +{item.categoryIds.length - 2}
+                +{item.categoryIds.length - 3}
               </Text>
             )}
           </View>

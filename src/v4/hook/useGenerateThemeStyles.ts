@@ -1,29 +1,27 @@
-import { validateConfigColor } from '../../util/colorUtil';
+import { MyMD3Theme } from '~/providers/amity-ui-kit-provider';
 import { IConfigRaw } from '../types/config.interface';
-import useConfig from './useConfig';
-import { useColorScheme } from 'react-native';
+import { useDarkMode } from './useDarkMode';
+import { useTheme } from 'react-native-paper';
 
-export const useGenerateThemeStyles = (config: IConfigRaw) => {
-  const { preferred_theme } = useConfig();
-  const colorScheme = useColorScheme();
-  const isDarkTheme =
-    preferred_theme === 'dark' ||
-    (preferred_theme === 'default' && colorScheme === 'dark');
+export const mergeTheme = (obj1: MyMD3Theme['colors'], obj2: Object) => {
+  for (let key in obj2) {
+    if (obj2.hasOwnProperty(key) && obj1.hasOwnProperty(key)) {
+      obj1[key] = obj2[key];
+    }
+  }
+  return obj1;
+};
+
+export const useGenerateThemeStyles = (config: IConfigRaw): MyMD3Theme => {
+  const theme = useTheme() as MyMD3Theme;
+  const { isDarkTheme } = useDarkMode();
+  if (!config?.theme?.dark || !config?.theme.light) return theme;
   let themeColor: typeof config.theme.dark;
   if (isDarkTheme) {
     themeColor = config.theme.dark;
   } else {
     themeColor = config.theme.light;
   }
-  return {
-    primary: validateConfigColor(themeColor?.primary_color),
-    secondary: validateConfigColor(themeColor?.secondary_color),
-    background: validateConfigColor(themeColor?.background_color),
-    base: validateConfigColor(themeColor?.base_color),
-    baseShade1: validateConfigColor(themeColor?.base_shade1_color),
-    baseShade2: validateConfigColor(themeColor?.base_shade2_color),
-    baseShade3: validateConfigColor(themeColor?.base_shade3_color),
-    baseShade4: validateConfigColor(themeColor?.base_shade4_color),
-    alert: validateConfigColor(themeColor?.alert_color),
-  };
+  const mergedTheme = mergeTheme(theme.colors, themeColor);
+  return { colors: mergedTheme } as MyMD3Theme;
 };

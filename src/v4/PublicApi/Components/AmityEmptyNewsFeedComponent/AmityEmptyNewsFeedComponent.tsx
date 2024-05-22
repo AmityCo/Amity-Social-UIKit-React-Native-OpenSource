@@ -12,8 +12,8 @@ import useConfig from '../../../hook/useConfig';
 import { ComponentID, PageID } from '../../../enum';
 
 type AmityEmptyNewsFeedComponentType = {
-  pageId: PageID;
-  onPressExploreCommunity: () => void;
+  pageId?: PageID;
+  onPressExploreCommunity?: () => void;
 };
 
 const AmityEmptyNewsFeedComponent: FC<AmityEmptyNewsFeedComponentType> = ({
