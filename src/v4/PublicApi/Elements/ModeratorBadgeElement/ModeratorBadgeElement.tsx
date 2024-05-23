@@ -4,17 +4,23 @@ import { ComponentID, ElementID, PageID } from '../../../enum/enumUIKitID';
 import { useAmityElement } from '../../../hook';
 import ImageElement from '../CommonElements/ImageElement';
 import { useStyles } from './styles';
+import { useIsCommunityModerator } from '../../../hook';
 
 type ModeratorBadgeElementType = Partial<TextProps> & {
   pageID: PageID;
   componentID: ComponentID;
+  communityId?: Amity.Community['communityId'];
+  userId?: Amity.User['userId'];
 };
 
 const ModeratorBadgeElement: FC<ModeratorBadgeElementType> = ({
   pageID = PageID.WildCardPage,
   componentID = ComponentID.WildCardComponent,
+  userId,
+  communityId,
   ...props
 }) => {
+  const isModerator = useIsCommunityModerator({ communityId, userId });
   const elementID = ElementID.moderator_badge;
   const { isExcluded, config, accessibilityId, themeStyles } = useAmityElement({
     pageId: pageID,
@@ -22,7 +28,9 @@ const ModeratorBadgeElement: FC<ModeratorBadgeElementType> = ({
     elementId: elementID,
   });
   const styles = useStyles(themeStyles);
+
   if (isExcluded) return null;
+  if (!isModerator || !communityId || !userId) return null;
   const text = (config?.text as string) ?? '';
 
   return (

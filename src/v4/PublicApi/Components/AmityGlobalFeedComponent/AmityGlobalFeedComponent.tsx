@@ -15,6 +15,7 @@ import { RefreshControl } from 'react-native';
 import AmityPostContentComponent from '../AmityPostContentComponent/AmityPostContentComponent';
 import { ComponentID, PageID } from '../../../enum/enumUIKitID';
 import { useAmityComponent } from '../../../hook/useUiKitReference';
+import { AmityPostContentComponentStyleEnum } from '../../../enum/AmityPostContentComponentStyle';
 
 type AmityGlobalFeedComponentType = {
   pageId?: PageID;
@@ -87,7 +88,15 @@ const AmityGlobalFeedComponent: FC<AmityGlobalFeedComponentType> = ({
       <View style={styles.feedWrap}>
         <FlatList
           data={postList}
-          renderItem={({ item }) => <AmityPostContentComponent post={item} />}
+          renderItem={({ item }) => (
+            <AmityPostContentComponent
+              post={item}
+              pageId={pageId}
+              AmityPostContentComponentStyle={
+                AmityPostContentComponentStyleEnum.feed
+              }
+            />
+          )}
           keyExtractor={(item) => item.postId.toString()}
           onEndReachedThreshold={0.5}
           onEndReached={handleLoadMore}

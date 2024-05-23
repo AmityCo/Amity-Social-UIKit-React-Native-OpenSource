@@ -14,3 +14,4 @@ export * from './useCommunities';
 export * from './useCommunity';
 export * from './useCategory';
 export * from './useUiKitReference';
+export * from './useIsCommunityModerator';
