@@ -11,6 +11,7 @@ import useValidateConfig from '../v4/hook/useValidateConfig';
 import fallBackConfig from '../../uikit.config.json';
 import { BehaviourProvider } from '../v4/providers/BehaviourProvider';
 import { IBehaviour } from '../v4/types/behaviour.interface';
+import { lighten, parseToHsl, darken, hslToColorString } from 'polished';
 
 export type CusTomTheme = typeof DefaultTheme;
 export interface IAmityUIkitProvider {
@@ -27,7 +28,15 @@ export interface IAmityUIkitProvider {
 
 interface CustomColors {
   primary?: string;
+  primaryShade1?: string;
+  primaryShade2?: string;
+  primaryShade3?: string;
+  primaryShade4?: string;
   secondary?: string;
+  secondaryShade1?: string;
+  secondaryShade2?: string;
+  secondaryShade3?: string;
+  secondaryShade4?: string;
   background?: string;
   base?: string;
   baseShade1?: string;
@@ -51,6 +60,20 @@ export default function AmityUiKitProvider({
   behaviour,
 }: IAmityUIkitProvider) {
   const colorScheme = useColorScheme();
+  const SHADE_PERCENTAGES = [0.25, 0.4, 0.45, 0.6];
+
+  const generateShades = (hexColor?: string, isDarkMode = false): string[] => {
+    if (!hexColor) return Array(SHADE_PERCENTAGES.length).fill('');
+    const hslColor = parseToHsl(hexColor);
+    const shades = SHADE_PERCENTAGES.map((percentage) => {
+      if (isDarkMode) {
+        return lighten(percentage, hslToColorString(hslColor));
+      } else {
+        return darken(percentage, hslToColorString(hslColor));
+      }
+    });
+    return shades;
+  };
   const isValidConfig = useValidateConfig(configs);
   const configData = isValidConfig ? configs : (fallBackConfig as IConfigRaw);
   const isDarkTheme =
@@ -59,12 +82,25 @@ export default function AmityUiKitProvider({
   const themeColor = isDarkTheme
     ? configData.theme.dark
     : configData.theme.light;
+  const primaryShades = generateShades(themeColor.primary_color, isDarkTheme);
+  const secondaryShades = generateShades(
+    themeColor.secondary_color,
+    isDarkTheme
+  );
   const globalTheme: MyMD3Theme = {
     ...DefaultTheme,
     colors: {
       ...DefaultTheme.colors,
       primary: validateConfigColor(themeColor?.primary_color),
+      primaryShade1: validateConfigColor(primaryShades[0]),
+      primaryShade2: validateConfigColor(primaryShades[1]),
+      primaryShade3: validateConfigColor(primaryShades[2]),
+      primaryShade4: validateConfigColor(primaryShades[3]),
       secondary: validateConfigColor(themeColor?.secondary_color),
+      secondaryShade1: validateConfigColor(secondaryShades[0]),
+      secondaryShade2: validateConfigColor(secondaryShades[1]),
+      secondaryShade3: validateConfigColor(secondaryShades[2]),
+      secondaryShade4: validateConfigColor(secondaryShades[3]),
       background: validateConfigColor(themeColor?.background_color),
       base: validateConfigColor(themeColor?.base_color),
       baseShade1: validateConfigColor(themeColor?.base_shade1_color),
