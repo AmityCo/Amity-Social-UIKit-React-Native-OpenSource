@@ -3,15 +3,9 @@ import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
 
 export const useStyles = (theme: MyMD3Theme) => {
   const styles = StyleSheet.create({
-    feedActionSection: {
-      borderTopColor: theme.colors.baseShade4,
-      borderTopWidth: 1,
-      flexDirection: 'row',
-      marginTop: 8,
-      marginBottom: 4,
-      paddingVertical: 8,
-      alignItems: 'center',
-      justifyContent: 'space-between',
+    detailActionSection: {
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.baseShade4,
     },
     actionSection: {
       borderTopColor: theme.colors.baseShade4,
@@ -21,6 +15,7 @@ export const useStyles = (theme: MyMD3Theme) => {
       marginBottom: 4,
       paddingVertical: 8,
       alignItems: 'center',
+      justifyContent: 'space-between',
     },
     btnText: {
       color: theme.colors.baseShade2,
@@ -45,7 +40,7 @@ export const useStyles = (theme: MyMD3Theme) => {
       marginHorizontal: 4,
     },
     countSection: {
-      marginVertical: 8,
+      marginVertical: 4,
       flexDirection: 'row',
       justifyContent: 'space-between',
     },

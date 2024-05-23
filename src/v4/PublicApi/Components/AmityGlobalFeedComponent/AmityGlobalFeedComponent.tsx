@@ -91,7 +91,6 @@ const AmityGlobalFeedComponent: FC<AmityGlobalFeedComponentType> = ({
           renderItem={({ item }) => (
             <AmityPostContentComponent
               post={item}
-              pageId={pageId}
               AmityPostContentComponentStyle={
                 AmityPostContentComponentStyleEnum.feed
               }

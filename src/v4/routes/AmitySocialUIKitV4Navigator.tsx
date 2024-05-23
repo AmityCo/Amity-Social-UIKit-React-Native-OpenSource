@@ -14,7 +14,7 @@ import CommunityHome from '../screen/CommunityHome';
 import { CommunitySetting } from '../../screens/CommunitySetting/index';
 import CommunityMemberDetail from '../../screens/CommunityMemberDetail/CommunityMemberDetail';
 import AmitySocialHomePage from '../PublicApi/Pages/AmitySocialHomePage/AmitySocialHomePage';
-import PostDetail from '../../screens/PostDetail';
+import PostDetail from '../PublicApi/Pages/AmityPostDetailPage/AmityPostDetailPage';
 import CreatePost from '../../screens/CreatePost';
 import UserProfile from '../../screens/UserProfile/UserProfile';
 import { EditProfile } from '../../screens/EditProfile/EditProfile';
@@ -80,8 +80,7 @@ export default function AmitySocialUIKitV4Navigator() {
             name="PostDetail"
             component={PostDetail}
             options={{
-              headerLeft: () => <BackButton />,
-              title: '',
+              headerShown: false,
             }}
           />
           <Stack.Screen

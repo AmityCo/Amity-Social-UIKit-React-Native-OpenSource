@@ -9,7 +9,7 @@ import {
   Alert,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
-import { arrowForward, threeDots } from '../../../../svg/svg-xml-list';
+import { arrowForward } from '../../../../svg/svg-xml-list';
 import { useStyles } from './styles';
 import type { UserInterface } from '../../../../types/user.interface';
 import {
@@ -31,7 +31,6 @@ import globalFeedSlice from '../../../../redux/slices/globalfeedSlice';
 import { IMentionPosition } from '../../../types/type';
 import RenderTextWithMention from '../../../component/RenderTextWithMention/RenderTextWithMention';
 import { RootStackParamList } from '../../../routes/RouteParamList';
-import { useTimeDifference } from '../../../../hooks/useTimeDifference';
 import { ComponentID, ElementID, PageID } from '../../../enum';
 import AvatarElement from '../../Elements/CommonElements/AvatarElement';
 import { useAmityComponent } from '../../../hook';
@@ -39,6 +38,8 @@ import ModeratorBadgeElement from '../../Elements/ModeratorBadgeElement/Moderato
 import AmityPostEngagementActionsComponent from '../AmityPostEngagementActionsComponent/AmityPostEngagementActionsComponent';
 import { AmityPostContentComponentStyleEnum } from '../../../enum/AmityPostContentComponentStyle';
 import { PostTargetType } from '../../../../enum/postTargetType';
+import TimestampElement from '../../Elements/TimestampElement/TimestampElement';
+import MenuButtonIconElement from '../../Elements/MenuButtonIconElement/MenuButtonIconElement';
 export interface IPost {
   postId: string;
   data: Record<string, any>;
@@ -113,7 +114,6 @@ const AmityPostContentComponent = ({
     editedAt,
     mentionPosition,
   } = post ?? {};
-  const timeDifference = useTimeDifference(createdAt);
 
   useEffect(() => {
     if (mentionPosition) {
@@ -165,7 +165,7 @@ const AmityPostContentComponent = ({
   const handleDisplayNamePress = () => {
     if (user?.userId) {
       navigation.navigate('UserProfile', {
-        userId: user.userId,
+        userId: user?.userId,
       });
     }
   };
@@ -307,7 +307,7 @@ const AmityPostContentComponent = ({
         <View style={styles.user}>
           <AvatarElement
             style={styles.avatar}
-            avatarId={user.avatarFileId}
+            avatarId={user?.avatarFileId}
             pageID={pageId}
             elementID={ElementID.WildCardElement}
             componentID={componentId}
@@ -347,12 +347,17 @@ const AmityPostContentComponent = ({
                     pageID={pageId}
                     componentID={componentId}
                     communityId={targetType === 'community' && targetId}
-                    userId={user.userId}
+                    userId={user?.userId}
                   />
                   <Text style={styles.dot}>·</Text>
                 </View>
               )}
-              <Text style={styles.headerTextTime}>{timeDifference}</Text>
+              <TimestampElement
+                createdAt={createdAt}
+                style={styles.headerTextTime}
+                componentID={componentId}
+              />
+
               {(editedAt !== createdAt || isEdit) && (
                 <>
                   <Text style={styles.dot}>·</Text>
@@ -363,7 +368,13 @@ const AmityPostContentComponent = ({
           </View>
         </View>
         <TouchableOpacity onPress={openModal} style={styles.threeDots}>
-          <SvgXml xml={threeDots(theme.colors.base)} width="20" height="16" />
+          <MenuButtonIconElement
+            width={20}
+            height={20}
+            resizeMode="contain"
+            tintColor={themeStyles.colors.base}
+            componentID={componentId}
+          />
         </TouchableOpacity>
       </View>
       <View>
@@ -379,6 +390,8 @@ const AmityPostContentComponent = ({
           )}
         </View>
         <AmityPostEngagementActionsComponent
+          pageId={pageId}
+          componentId={componentId}
           AmityPostContentComponentStyle={AmityPostContentComponentStyle}
           targetType={targetType}
           targetId={targetId}

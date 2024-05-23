@@ -4,21 +4,21 @@ import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
 export const useStyles = (theme: MyMD3Theme) => {
   const styles = StyleSheet.create({
     moderatorTitle: {
-      fontSize: 12,
+      fontSize: 8,
       color: theme.colors.primary,
     },
     moderatorRow: {
+      alignSelf: 'flex-start',
       flexDirection: 'row',
-      paddingHorizontal: 8,
-      paddingVertical: 4,
+      padding: 4,
       backgroundColor: theme.colors.primaryShade3,
       borderRadius: 10,
       alignItems: 'center',
       justifyContent: 'center',
     },
     moderatorBadge: {
-      width: 10,
-      height: 10,
+      width: 8,
+      height: 8,
       marginRight: 4,
     },
   });

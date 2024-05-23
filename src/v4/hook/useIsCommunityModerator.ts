@@ -24,7 +24,7 @@ export const useIsCommunityModerator = async ({
         if (error) return setisCommunityModerator(false);
         if (!loading) {
           const userRoles = data[0]?.roles ?? [];
-          return setisCommunityModerator(isModerator(userRoles));
+          return setisCommunityModerator(() => isModerator(userRoles));
         }
         return setisCommunityModerator(false);
       }

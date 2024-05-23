@@ -62,6 +62,21 @@ export const useConfigImageUri = ({
     if (fileUri === 'badgeIcon') {
       image = require('../configAssets/icons/badgeIcon.png');
     }
+    if (fileUri === 'backButtonIcon') {
+      image = require('../configAssets/icons/backButtonIcon.png');
+    }
+    if (fileUri === 'menuIcon') {
+      image = require('../configAssets/icons/menuIcon.png');
+    }
+    if (fileUri === 'likeButtonIcon') {
+      image = require('../configAssets/icons/likeButtonIcon.png');
+    }
+    if (fileUri === 'commentButtonIcon') {
+      image = require('../configAssets/icons/commentButtonIcon.png');
+    }
+    if (fileUri === 'shareButtonIcon') {
+      image = require('../configAssets/icons/shareButtonIcon.png');
+    }
     if (typeof image === 'number') {
       return Image.resolveAssetSource(image)?.uri ?? defaultAvatarUri;
     }

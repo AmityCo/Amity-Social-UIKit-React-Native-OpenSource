@@ -41,6 +41,7 @@ export const useStyles = () => {
       color: theme.colors.base,
       fontSize: 15,
       padding: 0,
+      maxHeight: 200,
     },
     textInput: {
       marginTop: 12,
