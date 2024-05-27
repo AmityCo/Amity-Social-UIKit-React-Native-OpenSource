@@ -198,6 +198,7 @@
     "@amityco/ts-sdk-react-native": "^6.23.0",
     "@devvie/bottom-sheet": "^0.3.0",
     "@reduxjs/toolkit": "^1.9.7",
+    "@rntext/more-or-less": "^2.0.2",
     "@types/react-dom": "^18.2.15",
     "dayjs": "^1.11.10",
     "i18next": "22.4.10",

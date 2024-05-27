@@ -3,12 +3,15 @@ import { AmityPostContentComponentStyleEnum } from '../../../enum/AmityPostConte
 import { AmityPostEngagementActionsSubComponent } from './Components';
 import { PostTargetType } from '../../../../enum/postTargetType';
 import { CommunityRepository } from '@amityco/ts-sdk-react-native';
+import { ComponentID, PageID } from '../../../enum';
 
 type AmityPostEngagementActionsComponentType = {
   AmityPostContentComponentStyle?: AmityPostContentComponentStyleEnum;
   targetId: string;
   targetType: PostTargetType;
   postId: string;
+  pageId?: PageID;
+  componentId?: ComponentID;
 };
 
 const AmityPostEngagementActionsComponent: FC<
@@ -18,6 +21,8 @@ const AmityPostEngagementActionsComponent: FC<
   targetId,
   targetType,
   postId,
+  pageId = PageID.WildCardPage,
+  componentId = ComponentID.WildCardComponent,
 }) => {
   const [communityData, setCommunityData] = useState<Amity.Community>(null);
 
@@ -34,7 +39,13 @@ const AmityPostEngagementActionsComponent: FC<
   if (
     AmityPostContentComponentStyle === AmityPostContentComponentStyleEnum.feed
   )
-    return <AmityPostEngagementActionsSubComponent.FeedStyle postId={postId} />;
+    return (
+      <AmityPostEngagementActionsSubComponent.FeedStyle
+        pageId={pageId}
+        componentId={componentId}
+        postId={postId}
+      />
+    );
   if (
     AmityPostContentComponentStyle === AmityPostContentComponentStyleEnum.detail
   )
@@ -42,6 +53,8 @@ const AmityPostEngagementActionsComponent: FC<
       <AmityPostEngagementActionsSubComponent.DetailStyle
         community={communityData}
         postId={postId}
+        pageId={pageId}
+        componentId={componentId}
       />
     );
   return null;

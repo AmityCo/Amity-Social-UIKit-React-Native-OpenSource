@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { IMentionPosition } from '../../types/type';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../routes/RouteParamList';
+import { MoreOrLess } from '@rntext/more-or-less';
 
 interface IrenderTextWithMention {
   mentionPositionArr: IMentionPosition[];
@@ -19,7 +20,17 @@ const RenderTextWithMention: React.FC<IrenderTextWithMention> = ({
   const navigation =
     useNavigation() as NativeStackNavigationProp<RootStackParamList>;
   if (mentionPositionArr.length === 0) {
-    return <Text style={styles.inputText}>{textPost}</Text>;
+    return (
+      <MoreOrLess
+        moreText="See More"
+        textStyle={styles.inputText}
+        numberOfLines={7}
+        lessText="See Less"
+        textButtonStyle={{ color: '#1054DE' }}
+      >
+        {textPost}
+      </MoreOrLess>
+    );
   }
   const mentionClick = (userId: string) => {
     navigation.navigate('UserProfile', {
@@ -49,7 +60,17 @@ const RenderTextWithMention: React.FC<IrenderTextWithMention> = ({
       {remainingText}
     </Text>,
   ]);
-  return <Text style={styles.inputText}>{result.flat()}</Text>;
+  return (
+    <MoreOrLess
+      moreText="See More"
+      textStyle={styles.inputText}
+      numberOfLines={7}
+      lessText="See Less"
+      textButtonStyle={{ color: '#1054DE' }}
+    >
+      {result.flat() as unknown as string}
+    </MoreOrLess>
+  );
 };
 
 export default memo(RenderTextWithMention);

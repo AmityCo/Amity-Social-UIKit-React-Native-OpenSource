@@ -3,6 +3,7 @@ export { default as AmityDraftStoryPage } from './PublicApi/Pages/AmityDraftStor
 export { default as AmityViewStoryPage } from './PublicApi/Pages/AmityViewStoryPage/AmityViewStoryPage';
 export { default as AmitySocialHomePage } from './PublicApi/Pages/AmitySocialHomePage/AmitySocialHomePage';
 export { default as AmitySocialGlobalSearchPage } from './PublicApi/Pages/AmitySocialGlobalSearchPage/AmitySocialGlobalSearchPage';
+export { default as AmityPostDetailPage } from './PublicApi/Pages/AmityPostDetailPage/AmityPostDetailPage';
 
 export { default as AmityStoryTabComponent } from './PublicApi/Components/AmityStoryTabComponent/AmityStoryTabComponent';
 export { default as AmitySocialHomeTopNavigationComponent } from './PublicApi/Components/AmitySocialHomeTopNavigationComponent/AmitySocialHomeTopNavigationComponent';
