@@ -1,7 +1,6 @@
 import {
   Pressable,
   SafeAreaView,
-  ScrollView,
   View,
   Alert,
   Keyboard,
@@ -17,6 +16,7 @@ import React, {
   useEffect,
   useState,
   useMemo,
+  useLayoutEffect,
 } from 'react';
 import { ComponentID, PageID } from '../../../enum/';
 import { TSearchItem, useAmityPage } from '../../../hook';
@@ -66,7 +66,7 @@ const AmityPostDetailPage: FC<AmityPostDetailPageType> = ({ route }) => {
   const [mentionsPosition, setMentionsPosition] = useState<IMentionPosition[]>(
     []
   );
-  useEffect(() => {
+  useLayoutEffect(() => {
     let unsub: () => void;
     let hasSubscribed = false;
     PostRepository.getPost(postId, async ({ error, loading, data }) => {
@@ -223,22 +223,24 @@ const AmityPostDetailPage: FC<AmityPostDetailPageType> = ({ route }) => {
 
   return (
     <SafeAreaView testID={accessibilityId} style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <AmityPostContentComponent
-          post={postData}
-          AmityPostContentComponentStyle={
-            AmityPostContentComponentStyleEnum.detail
-          }
-          pageId={pageId}
-        />
+      <View style={styles.scrollContainer}>
         <AmityPostCommentComponent
           setReplyUserName={setReplyUserName}
           setReplyCommentId={setReplyCommentId}
           postId={postId}
           postType="post"
           disabledInteraction={false}
+          ListHeaderComponent={
+            <AmityPostContentComponent
+              post={postData}
+              AmityPostContentComponentStyle={
+                AmityPostContentComponentStyleEnum.detail
+              }
+              pageId={pageId}
+            />
+          }
         />
-      </ScrollView>
+      </View>
       <View style={styles.header}>
         <Pressable onPress={onPressBack}>
           <BackButtonIconElement

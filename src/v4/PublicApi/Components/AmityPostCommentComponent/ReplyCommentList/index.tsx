@@ -28,7 +28,7 @@ import {
 
 import { Pressable } from 'react-native';
 import useAuth from '../../../../../hooks/useAuth';
-import { useTimeDifference } from '../../../../../hooks/useTimeDifference';
+import { useTimeDifference } from '../../../../hook/useTimeDifference';
 import {
   isReportTarget,
   reportTargetById,
@@ -92,7 +92,7 @@ export default function ReplyCommentList({
 
   const theme = useTheme() as MyMD3Theme;
   const styles = useStyles();
-  const timeDifference = useTimeDifference(createdAt, true);
+  const timeDifference = useTimeDifference(createdAt);
   const [isLike, setIsLike] = useState<boolean>(
     myReactions ? myReactions.includes('like') : false
   );

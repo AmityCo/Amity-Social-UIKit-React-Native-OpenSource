@@ -41,7 +41,7 @@ import type { MyMD3Theme } from '../../../../providers/amity-ui-kit-provider';
 import { useNavigation } from '@react-navigation/native';
 import ReplyCommentList from '../../../../components/Social/ReplyCommentList';
 import { CommentRepository } from '@amityco/ts-sdk-react-native';
-import { useTimeDifference } from '../../../../hooks/useTimeDifference';
+import { useTimeDifference } from '../../../hook/useTimeDifference';
 import RenderTextWithMention from '../../../../components/Social/PostList/Components/RenderTextWithMention';
 export interface IComment {
   commentId: string;
@@ -93,7 +93,7 @@ const CommentListItem = ({
     childrenNumber,
     referenceId,
   } = commentDetail ?? {};
-  const timeDifference = useTimeDifference(createdAt, true);
+  const timeDifference = useTimeDifference(createdAt);
   const [isLike, setIsLike] = useState<boolean>(
     myReactions ? myReactions.includes('like') : false
   );

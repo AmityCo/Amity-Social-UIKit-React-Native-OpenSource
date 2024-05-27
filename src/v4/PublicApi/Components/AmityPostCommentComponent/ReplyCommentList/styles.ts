@@ -28,8 +28,8 @@ export const useStyles = () => {
     headerText: {
       fontWeight: '600',
       fontSize: 15,
-      marginTop: 3,
       color: theme.colors.base,
+      marginBottom: 4,
     },
     headerTextTime: {
       fontSize: 13,

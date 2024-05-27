@@ -11,7 +11,7 @@ import useValidateConfig from '../v4/hook/useValidateConfig';
 import fallBackConfig from '../../uikit.config.json';
 import { BehaviourProvider } from '../v4/providers/BehaviourProvider';
 import { IBehaviour } from '../v4/types/behaviour.interface';
-import { lighten, parseToHsl, darken, hslToColorString } from 'polished';
+import { lighten, parseToHsl, hslToColorString } from 'polished';
 
 export type CusTomTheme = typeof DefaultTheme;
 export interface IAmityUIkitProvider {
@@ -62,15 +62,11 @@ export default function AmityUiKitProvider({
   const colorScheme = useColorScheme();
   const SHADE_PERCENTAGES = [0.25, 0.4, 0.45, 0.6];
 
-  const generateShades = (hexColor?: string, isDarkMode = false): string[] => {
+  const generateShades = (hexColor?: string): string[] => {
     if (!hexColor) return Array(SHADE_PERCENTAGES.length).fill('');
     const hslColor = parseToHsl(hexColor);
     const shades = SHADE_PERCENTAGES.map((percentage) => {
-      if (isDarkMode) {
-        return lighten(percentage, hslToColorString(hslColor));
-      } else {
-        return darken(percentage, hslToColorString(hslColor));
-      }
+      return lighten(percentage, hslToColorString(hslColor));
     });
     return shades;
   };
@@ -82,11 +78,8 @@ export default function AmityUiKitProvider({
   const themeColor = isDarkTheme
     ? configData.theme.dark
     : configData.theme.light;
-  const primaryShades = generateShades(themeColor.primary_color, isDarkTheme);
-  const secondaryShades = generateShades(
-    themeColor.secondary_color,
-    isDarkTheme
-  );
+  const primaryShades = generateShades(themeColor.primary_color);
+  const secondaryShades = generateShades(themeColor.secondary_color);
   const globalTheme: MyMD3Theme = {
     ...DefaultTheme,
     colors: {

@@ -97,7 +97,7 @@ const CommentListItem = ({
     targetType,
     targetId,
   } = commentDetail ?? {};
-  const timeDifference = useTimeDifference(createdAt, true);
+  const timeDifference = useTimeDifference(createdAt);
   const [isLike, setIsLike] = useState<boolean>(
     myReactions ? myReactions.includes('like') : false
   );

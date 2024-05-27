@@ -109,7 +109,7 @@ export const useStyles = (theme: MyMD3Theme) => {
       flex: 1,
     },
     arrow: {
-      marginHorizontal: 4,
+      marginHorizontal: 8,
     },
     imageLargePost: {
       height: 350,
@@ -239,7 +239,7 @@ export const useStyles = (theme: MyMD3Theme) => {
       color: theme.colors.base,
     },
     timeRow: {
-      marginTop: 8,
+      marginTop: 4,
       flexDirection: 'row',
       alignItems: 'center',
     },

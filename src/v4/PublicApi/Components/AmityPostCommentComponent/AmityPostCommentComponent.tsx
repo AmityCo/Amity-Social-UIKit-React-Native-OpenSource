@@ -1,5 +1,5 @@
 import { FlatList, View } from 'react-native';
-import React, { FC, useEffect, useState, useRef, memo } from 'react';
+import React, { FC, useState, useRef, memo, useEffect } from 'react';
 import { UserInterface, IMentionPosition } from '../../../../types';
 import { getAmityUser } from '../../../../providers/user-provider';
 import { CommentRepository } from '@amityco/ts-sdk-react-native';
@@ -32,6 +32,7 @@ type AmityPostCommentComponentType = {
   disabledInteraction?: boolean;
   setReplyUserName?: (arg: string) => void;
   setReplyCommentId?: (arg: string) => void;
+  ListHeaderComponent?: JSX.Element;
 };
 
 const AmityPostCommentComponent: FC<AmityPostCommentComponentType> = ({
@@ -41,6 +42,7 @@ const AmityPostCommentComponent: FC<AmityPostCommentComponentType> = ({
   disabledInteraction,
   setReplyUserName,
   setReplyCommentId,
+  ListHeaderComponent,
 }) => {
   const componentId = ComponentID.CommentTray;
   const { isExcluded } = useAmityComponent({ pageId, componentId });
@@ -53,7 +55,7 @@ const AmityPostCommentComponent: FC<AmityPostCommentComponentType> = ({
         dataTypes: { matchType: 'any', values: ['text', 'image'] },
         referenceId: postId,
         referenceType: postType,
-        limit: 8,
+        limit: 3,
       },
       async ({ error, loading, data, hasNextPage, onNextPage }) => {
         if (error) return;
@@ -123,7 +125,7 @@ const AmityPostCommentComponent: FC<AmityPostCommentComponentType> = ({
   return (
     <View style={{ flex: 1, paddingBottom: 40 }}>
       <FlatList
-        scrollEnabled={false}
+        ListHeaderComponent={ListHeaderComponent}
         keyboardShouldPersistTaps="handled"
         data={commentList}
         renderItem={({ item }) => {
@@ -139,7 +141,9 @@ const AmityPostCommentComponent: FC<AmityPostCommentComponentType> = ({
         }}
         keyExtractor={(item, index) => item.commentId + index}
         onEndReachedThreshold={0.8}
-        onEndReached={() => onNextPageRef.current && onNextPageRef.current()}
+        onEndReached={() => {
+          onNextPageRef.current && onNextPageRef.current();
+        }}
       />
     </View>
   );
