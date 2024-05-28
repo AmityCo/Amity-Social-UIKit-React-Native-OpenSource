@@ -152,6 +152,44 @@ export const useStyles = () => {
       justifyContent: 'center',
       alignItems: 'center',
     },
+    pendingRequestContainer: {
+      marginTop: 10,
+      backgroundColor: theme.colors.baseShade4,
+      borderRadius: 4,
+      alignItems: 'center',
+      padding: 8,
+    },
+    rowContainer: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: 4,
+    },
+    pendingRequestText: {
+      color: theme.colors.base,
+      fontSize: 15,
+      fontWeight: '600',
+      marginLeft: 6,
+    },
+    pendingRequestSubText: {
+      color: theme.colors.baseShade1,
+      fontSize: 13,
+    },
+    privateProfileContainer: {
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingVertical: width * 0.3,
+    },
+    privateAccountTitle: {
+      fontSize: 17,
+      fontWeight: '600',
+      color: theme.colors.base,
+      marginVertical: 12,
+    },
+    privateAccountSubTitle: {
+      fontSize: 15,
+      color: theme.colors.baseShade3,
+    },
   });
 
   return styles;

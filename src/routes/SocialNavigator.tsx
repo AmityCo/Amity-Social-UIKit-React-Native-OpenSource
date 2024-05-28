@@ -38,6 +38,7 @@ import CreatePoll from '../screens/CreatePoll/CreatePoll';
 import ReactionListScreen from '../screens/ReactionListScreen/ReactionListScreen';
 import CreateStoryScreen from '../v4/screen/CreateStory/CreateStoryScreen';
 import Toast from '../components/Toast/Toast';
+import UserPendingRequest from '../v4/screen/UserPendingRequest/UserPendingRequest';
 
 export default function SocialNavigator() {
   const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -233,6 +234,14 @@ export default function SocialNavigator() {
             name="VideoPlayer"
             component={VideoPlayerFull}
             options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="UserPendingRequest"
+            component={UserPendingRequest}
+            options={{
+              title: 'Follow Requests',
+              headerLeft: () => <BackButton />,
+            }}
           />
 
           <Stack.Group

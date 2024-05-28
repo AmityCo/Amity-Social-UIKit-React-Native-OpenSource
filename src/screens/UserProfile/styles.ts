@@ -30,7 +30,6 @@ export const useStyles = () => {
     followIcon: {
       width: 18,
       height: 16,
-      color: 'white',
     },
     userDetail: {
       flexDirection: 'row',
