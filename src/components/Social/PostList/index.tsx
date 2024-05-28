@@ -82,7 +82,7 @@ export default function PostList({
   postDetail,
   postIndex,
   onDelete,
-  isGlobalfeed = true,
+  isGlobalfeed,
 }: IPostList) {
   const theme = useTheme() as MyMD3Theme;
   const { client, apiRegion } = useAuth();
@@ -197,41 +197,47 @@ export default function PostList({
     []
   );
 
-  const addReactionToPost = useCallback(async () => {
-    setIsLike((prev) => !prev);
-    setLikeReaction((prev) => (prev ? prev - 1 : prev + 1));
-    const updatedLikeReaction = isLike ? likeReaction - 1 : likeReaction + 1;
-    const updatedPost = {
-      ...postDetail,
-      reactionCount: { like: updatedLikeReaction },
-      myReactions: isLike ? [] : ['like'],
-    };
-    try {
-      if (isGlobalfeed) {
-        dispatch(
-          updateByPostIdGlobalFeed({ postId: postId, postDetail: updatedPost })
-        );
-      } else {
-        dispatch(updateByPostId({ postId: postId, postDetail: updatedPost }));
+  const addReactionToPost = useCallback(
+    async (isLiked) => {
+      setIsLike((prev) => !prev);
+      setLikeReaction((prev) => (isLiked ? prev - 1 : prev + 1));
+      const updatedLikeReaction = isLiked ? likeReaction - 1 : likeReaction + 1;
+      const updatedPost = {
+        ...postDetail,
+        reactionCount: { like: updatedLikeReaction },
+        myReactions: isLiked ? [] : ['like'],
+      };
+
+      try {
+        if (isGlobalfeed) {
+          dispatch(
+            updateByPostIdGlobalFeed({
+              postId: postId,
+              postDetail: updatedPost,
+            })
+          );
+        } else {
+          dispatch(updateByPostId({ postId: postId, postDetail: updatedPost }));
+        }
+        if (isLiked) {
+          await removePostReaction(postId, 'like');
+        } else {
+          await addPostReaction(postId, 'like');
+        }
+      } catch (error) {
+        setLikeReaction((prev) => prev);
       }
-      if (isLike) {
-        await removePostReaction(postId, 'like');
-      } else {
-        await addPostReaction(postId, 'like');
-      }
-    } catch (error) {
-      setLikeReaction((prev) => prev);
-    }
-  }, [
-    dispatch,
-    isGlobalfeed,
-    isLike,
-    likeReaction,
-    postDetail,
-    postId,
-    updateByPostId,
-    updateByPostIdGlobalFeed,
-  ]);
+    },
+    [
+      dispatch,
+      isGlobalfeed,
+      likeReaction,
+      postDetail,
+      postId,
+      updateByPostId,
+      updateByPostIdGlobalFeed,
+    ]
+  );
 
   async function getCommunityInfo(id: string) {
     const { data: community }: { data: Amity.LiveObject<Amity.Community> } =
@@ -488,7 +494,7 @@ export default function PostList({
         {targetType !== 'community' || isJoined ? (
           <View style={styles.actionSection}>
             <TouchableOpacity
-              onPress={addReactionToPost}
+              onPress={() => addReactionToPost(isLike)}
               style={styles.likeBtn}
             >
               {isLike ? (

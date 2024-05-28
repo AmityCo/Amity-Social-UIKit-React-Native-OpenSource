@@ -46,14 +46,16 @@ import { SvgXml } from 'react-native-svg';
 import { closeIcon } from '../../svg/svg-xml-list';
 import AmityMentionInput from '../../components/MentionInput/AmityMentionInput';
 import { TSearchItem } from '../../hooks/useSearch';
+import globalFeedSlice from '../../redux/slices/globalfeedSlice';
+import { useDispatch } from 'react-redux';
+import feedSlice from '../../redux/slices/feedSlice';
+import postDetailSlice from '../../redux/slices/postDetailSlice';
 
 const PostDetail = () => {
   const theme = useTheme() as MyMD3Theme;
   const styles = useStyles();
   const route = useRoute<RouteProp<RootStackParamList, 'PostDetail'>>();
-
   const { postId, postIndex, isFromGlobalfeed } = route.params;
-
   const [commentList, setCommentList] = useState<IComment[]>([]);
   const [commentCollection, setCommentCollection] =
     useState<Amity.LiveCollection<Amity.Comment>>();
@@ -68,6 +70,9 @@ const PostDetail = () => {
   const flatListRef = useRef(null);
   let isSubscribed = false;
   const disposers: Amity.Unsubscriber[] = [];
+  const dispatch = useDispatch();
+  const { updateByPostId: updateByPostIdGlobalFeed } = globalFeedSlice.actions;
+  const { updateByPostId } = feedSlice.actions;
 
   const [postCollection, setPostCollection] = useState<Amity.Post<any>>();
 
@@ -75,6 +80,7 @@ const PostDetail = () => {
   const { currentPostdetail } = useSelector(
     (state: RootState) => state.postDetail
   );
+  const { updatePostDetail } = postDetailSlice.actions;
 
   const { postList: postListGlobal } = useSelector(
     (state: RootState) => state.globalFeed
@@ -275,6 +281,24 @@ const PostDetail = () => {
     setMentionsPosition([]);
     onCloseReply();
     setResetValue(true);
+    const updatedPost = {
+      ...currentPostdetail,
+      commentsCount: isNaN(currentPostdetail.commentsCount)
+        ? 1
+        : currentPostdetail.commentsCount + 1,
+    };
+    dispatch(
+      updatePostDetail({
+        ...updatedPost,
+      })
+    );
+    if (isFromGlobalfeed) {
+      dispatch(
+        updateByPostIdGlobalFeed({ postId: postId, postDetail: updatedPost })
+      );
+    } else {
+      dispatch(updateByPostId({ postId: postId, postDetail: updatedPost }));
+    }
   };
   const onDeleteComment = async (commentId: string) => {
     const isDeleted = await deleteCommentById(commentId);
@@ -284,6 +308,22 @@ const PostDetail = () => {
         (item) => item.commentId !== commentId
       );
       setCommentList(updatedCommentList);
+      const updatedPost = {
+        ...currentPostdetail,
+        commentsCount: currentPostdetail.commentsCount - 1,
+      };
+      dispatch(
+        updatePostDetail({
+          ...updatedPost,
+        })
+      );
+      if (isFromGlobalfeed) {
+        dispatch(
+          updateByPostIdGlobalFeed({ postId: postId, postDetail: updatedPost })
+        );
+      } else {
+        dispatch(updateByPostId({ postId: postId, postDetail: updatedPost }));
+      }
     }
   };
 
