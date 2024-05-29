@@ -148,9 +148,11 @@ export default function CreateCommunity() {
   const onCreateCommunity = useCallback(async () => {
     setIsCreating(true);
     if (!uploadingImage) {
-      const userIds: string[] = selectedUserList.map((item) => item.userId);
       const isPublic: boolean =
         selectedId === PrivacyState.private ? false : true;
+      const userIds: string[] = isPublic
+        ? []
+        : selectedUserList.map((item) => item.userId);
       const communityParam: ICreateCommunity = {
         displayName: communityName,
         description: aboutText,

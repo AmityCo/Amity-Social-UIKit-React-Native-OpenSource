@@ -15,7 +15,6 @@ const UserPendingRequest = () => {
       ({ data, error, loading, onNextPage, hasNextPage }) => {
         if (error) return;
         if (!loading) {
-          console.log(data[0]);
           setPendingFollowers(data);
           onNextPageRef.current = hasNextPage ? onNextPage : null;
         }
