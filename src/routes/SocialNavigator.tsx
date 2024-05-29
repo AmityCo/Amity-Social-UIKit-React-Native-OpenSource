@@ -40,6 +40,7 @@ import CreateStoryScreen from '../v4/screen/CreateStory/CreateStoryScreen';
 import Toast from '../components/Toast/Toast';
 import UserPendingRequest from '../v4/screen/UserPendingRequest/UserPendingRequest';
 import FollowerList from '../v4/screen/FollowerList/FollowerList';
+import CreateLivestream from '../screens/CreateLivestream/CreateLivestream';
 
 export default function SocialNavigator() {
   const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -203,6 +204,11 @@ export default function SocialNavigator() {
           <Stack.Screen
             name="CreatePoll"
             component={CreatePoll}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="CreateLivestream"
+            component={CreateLivestream}
             options={{ headerShown: false }}
           />
           <Stack.Screen

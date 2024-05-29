@@ -57,6 +57,8 @@
     "registry": "https://registry.npmjs.org/"
   },
   "devDependencies": {
+    "@api.video/react-native-livestream": "^2.0.0",
+    "@amityco/video-broadcaster-react-native": "./amityco-video-broadcaster-react-native-0.0.1.tgz",
     "@commitlint/config-conventional": "^17.0.2",
     "@evilmartians/lefthook": "^1.2.2",
     "@react-native-community/eslint-config": "^3.0.2",
@@ -123,13 +125,14 @@
     "react-native-safe-area-context": "^4.7.2",
     "react-native-screens": "^3.25.0",
     "react-native-svg": "^14.1.0",
-    "react-native-video": "^6.0.0-beta.5",
-    "react-native-vision-camera": "^3.9.2"
+    "react-native-video": "^6.0.0-beta.6",
+    "react-native-vision-camera": "^3.9.2",
+    "@api.video/react-native-livestream": "^2.0.0"
   },
   "engines": {
     "node": ">= 18.0.0"
   },
-  "packageManager": "^yarn@1.22.15",
+  "packageManager": "yarn@1.22.15",
   "jest": {
     "preset": "react-native",
     "modulePathIgnorePatterns": [

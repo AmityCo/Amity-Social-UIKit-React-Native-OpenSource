@@ -47,6 +47,11 @@ export type RootStackParamList = {
     >;
     needApprovalOnPostCreation: boolean;
   };
+  CreateLivestream: {
+    targetId: string;
+    targetName: string;
+    targetType: string;
+  };
   PostDetail: {
     postId: string;
     postIndex: number;
