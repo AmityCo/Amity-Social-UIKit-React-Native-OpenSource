@@ -55,7 +55,8 @@ export default function UserProfile({ route }: any) {
   const [user, setUser] = useState<Amity.User>();
   const [followerCount, setFollowerCount] = useState<number>(0);
   const [followingCount, setFollowingCount] = useState<number>(0);
-  const [followStatus, setFollowStatus] = useState<string>(null);
+  const [followStatus, setFollowStatus] =
+    useState<Amity.FollowInfo['status']>(null);
   const [currentTab, setCurrentTab] = useState<TabName>(TabName.Timeline);
   const [socialSettings, setSocialSettings] =
     useState<Amity.SocialSettings>(null);
@@ -103,7 +104,7 @@ export default function UserProfile({ route }: any) {
           onPress={() => {
             navigation.navigate('UserProfileSetting', {
               user,
-              follow: followStatus !== 'loading' ? followStatus : 'loading',
+              follow: followStatus,
             });
           }}
         >
