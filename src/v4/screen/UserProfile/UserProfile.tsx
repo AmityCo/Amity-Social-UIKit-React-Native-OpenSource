@@ -3,6 +3,8 @@ import React, {
   useEffect,
   useRef,
   type MutableRefObject,
+  useLayoutEffect,
+  useCallback,
 } from 'react';
 import {
   View,
@@ -12,6 +14,7 @@ import {
   type NativeSyntheticEvent,
   type NativeScrollEvent,
   ScrollView,
+  Pressable,
 } from 'react-native';
 import { useStyles } from './styles';
 import { UserRepository } from '@amityco/ts-sdk-react-native';
@@ -22,7 +25,13 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import useAuth from '../../../hooks/useAuth';
 import { SvgXml } from 'react-native-svg';
-import { blockOrUnblock, editIcon } from '../../../svg/svg-xml-list';
+import {
+  blockOrUnblock,
+  cancelFollowRequest,
+  editIcon,
+  primaryDot,
+  privateUserProfile,
+} from '../../../svg/svg-xml-list';
 import type { MyMD3Theme } from '../../../providers/amity-ui-kit-provider';
 import { useTheme } from 'react-native-paper';
 import FloatingButton from '../../../components/FloatingButton';
@@ -31,11 +40,14 @@ import { useDispatch } from 'react-redux';
 import uiSlice from '../../../redux/slices/uiSlice';
 import { PostTargetType } from '../../../enum/postTargetType';
 import GalleryComponent from '../../component/Gallery/GalleryComponent';
+import { useFile } from '../../hook';
+import { defaultAvatarUri } from '../../assets';
+import { ImageSizeState } from '../../enum';
 
 export default function UserProfile({ route }: any) {
   const theme = useTheme() as MyMD3Theme;
   const styles = useStyles();
-  const { apiRegion, client } = useAuth();
+  const { client } = useAuth();
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const { userId } = route.params;
   const { openPostTypeChoiceModal } = uiSlice.actions;
@@ -43,20 +55,30 @@ export default function UserProfile({ route }: any) {
   const [user, setUser] = useState<Amity.User>();
   const [followerCount, setFollowerCount] = useState<number>(0);
   const [followingCount, setFollowingCount] = useState<number>(0);
-  const [followStatus, setFollowStatus] = useState<string>('loading');
+  const [followStatus, setFollowStatus] =
+    useState<Amity.FollowInfo['status']>(null);
   const [currentTab, setCurrentTab] = useState<TabName>(TabName.Timeline);
+  const [socialSettings, setSocialSettings] =
+    useState<Amity.SocialSettings>(null);
+  const [pendingCount, setPendingCount] = useState<number>(0);
+  const { getImage } = useFile();
+  const [avatar, setAvatar] = useState<string>(null);
   const isMyProfile = !followStatus;
   const isBlocked = followStatus === 'blocked';
   const isUnfollowed = followStatus === 'none';
+  const isPending = followStatus === 'pending';
+  const isAccepted = followStatus === 'accepted';
+  const shouldShowPrivateProfile =
+    !isMyProfile &&
+    !isAccepted &&
+    socialSettings?.userPrivacySetting === 'private';
+  const shouldShowPending = isMyProfile && pendingCount > 0;
   const feedRef: MutableRefObject<FeedRefType | null> =
     useRef<FeedRefType | null>(null);
   const galleryRef: MutableRefObject<FeedRefType | null> =
     useRef<FeedRefType | null>(null);
   const scrollViewRef = useRef(null);
 
-  const avatarFileURL = (fileId: string) => {
-    return `https://api.${apiRegion}.amity.co/api/v3/files/${fileId}/download?size=medium`;
-  };
   const onEditProfileTap = () => {
     navigation.navigate('EditProfile', {
       user: user,
@@ -74,7 +96,7 @@ export default function UserProfile({ route }: any) {
     await UserRepository.Relationship.unBlockUser(userId);
     setFollowStatus('none');
   };
-  React.useLayoutEffect(() => {
+  useLayoutEffect(() => {
     navigation.setOptions({
       // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () => (
@@ -82,7 +104,7 @@ export default function UserProfile({ route }: any) {
           onPress={() => {
             navigation.navigate('UserProfileSetting', {
               user,
-              follow: followStatus !== 'loading' ? followStatus : 'loading',
+              follow: followStatus,
             });
           }}
         >
@@ -94,40 +116,47 @@ export default function UserProfile({ route }: any) {
       ),
     });
   }, [followStatus, navigation, styles.dotIcon, user]);
+
   useEffect(() => {
-    const unsubscribeFollow = UserRepository.Relationship.getFollowInfo(
-      userId,
-      (value) => {
-        if (value && !value.loading) {
-          setFollowStatus(value.data.status!);
-          setFollowerCount(value.data.followerCount);
-          setFollowingCount(value.data.followingCount);
-        } else {
-          console.log('query follow error ' + JSON.stringify(value));
-        }
+    (async () => {
+      if (client) {
+        const settings = await (client as Amity.Client)?.getSocialSettings();
+        setSocialSettings(settings);
       }
-    );
-    const unsubscribeUser = UserRepository.getUser(userId, (value) => {
-      if (value && !value.loading) {
-        setUser(value.data);
-      } else {
-        console.log('user profile query error ' + JSON.stringify(value));
-      }
-    });
-    unsubscribeFollow();
-    unsubscribeUser();
-  }, [userId]);
-  React.useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      UserRepository.Relationship.getFollowInfo(userId, (value) => {
-        if (value && !value.loading) {
-          setFollowStatus(value.data.status!);
-          setFollowerCount(value.data.followerCount);
-          setFollowingCount(value.data.followingCount);
-        } else {
-        }
+    })();
+  }, [client]);
+
+  useEffect(() => {
+    if (!user?.avatarFileId) {
+      return setAvatar(defaultAvatarUri);
+    }
+    (async () => {
+      const avatarUrl = await getImage({
+        fileId: user.avatarFileId,
+        imageSize: ImageSizeState.small,
       });
-      UserRepository.getUser(userId, (value) => {
+      setAvatar(avatarUrl ?? defaultAvatarUri);
+    })();
+  }, [client, getImage, user?.avatarFileId]);
+
+  useEffect(() => {
+    let userUnsubscribe: () => void;
+    let userRsUnsubscribe: () => void;
+    const unsubscribe = navigation.addListener('focus', () => {
+      userRsUnsubscribe = UserRepository.Relationship.getFollowInfo(
+        userId,
+        (value) => {
+          if (value && !value.loading) {
+            setPendingCount(value.data.pendingCount);
+            setFollowStatus(value.data.status);
+            setFollowerCount(value.data.followerCount);
+            setFollowingCount(value.data.followingCount);
+          } else {
+          }
+        }
+      );
+
+      userUnsubscribe = UserRepository.getUser(userId, (value) => {
         if (value && !value.loading) {
           setUser(value.data);
         } else {
@@ -135,8 +164,11 @@ export default function UserProfile({ route }: any) {
       });
     });
 
-    // Return the function to unsubscribe from the event so it gets removed on unmount
-    return unsubscribe;
+    return () => {
+      unsubscribe();
+      userUnsubscribe && userUnsubscribe();
+      userRsUnsubscribe && userRsUnsubscribe();
+    };
   }, [navigation, userId]);
   const editProfileButton = () => {
     return (
@@ -176,6 +208,48 @@ export default function UserProfile({ route }: any) {
     );
   };
 
+  const cancelRequestButton = () => {
+    const onCancelRequest = async () => {
+      await UserRepository.Relationship.unfollow(userId);
+      setFollowStatus('none');
+    };
+    return (
+      <TouchableOpacity
+        style={styles.editProfileButton}
+        onPress={onCancelRequest}
+      >
+        <SvgXml
+          width={24}
+          height={20}
+          xml={cancelFollowRequest(theme.colors.base)}
+        />
+        <Text style={styles.editProfileText}>Cancel request</Text>
+      </TouchableOpacity>
+    );
+  };
+
+  const pendingCountButton = () => {
+    const onPressPending = () => {
+      navigation.navigate('UserPendingRequest');
+    };
+
+    return (
+      <TouchableOpacity
+        style={styles.pendingRequestContainer}
+        onPress={onPressPending}
+      >
+        <View style={styles.rowContainer}>
+          <SvgXml xml={primaryDot(theme.colors.primary)} />
+          <Text style={styles.pendingRequestText}>Pending requests</Text>
+        </View>
+
+        <Text style={styles.pendingRequestSubText}>
+          Your requests are waiting for review
+        </Text>
+      </TouchableOpacity>
+    );
+  };
+
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
 
@@ -208,11 +282,25 @@ export default function UserProfile({ route }: any) {
   const renderButtons = () => {
     if (isMyProfile) return editProfileButton();
     if (isUnfollowed) return followButton();
+    if (isPending) return cancelRequestButton();
     if (isBlocked) return unBlockButton();
     return null;
   };
 
+  const renderPrivateProfile = () => {
+    return (
+      <View style={styles.privateProfileContainer}>
+        <SvgXml width={40} height={40} xml={privateUserProfile()} />
+        <Text style={styles.privateAccountTitle}>This account is private</Text>
+        <Text style={styles.privateAccountSubTitle}>
+          Follow this user to see all posts
+        </Text>
+      </View>
+    );
+  };
+
   const renderTabs = () => {
+    if (shouldShowPrivateProfile) return renderPrivateProfile();
     if (currentTab === TabName.Timeline)
       return <Feed targetType="user" targetId={userId} ref={feedRef} />;
     if (currentTab === TabName.Gallery)
@@ -226,6 +314,9 @@ export default function UserProfile({ route }: any) {
     return null;
   };
 
+  const onPressFollowers = useCallback(() => {
+    if (isMyProfile || isAccepted) navigation.navigate('FollowerList', user);
+  }, [isAccepted, isMyProfile, navigation, user]);
   return (
     <View style={styles.container}>
       <ScrollView
@@ -236,28 +327,20 @@ export default function UserProfile({ route }: any) {
       >
         <View style={styles.profileContainer}>
           <View style={styles.userDetail}>
-            <Image
-              style={styles.avatar}
-              source={
-                user?.avatarFileId || user?.avatarCustomUrl
-                  ? {
-                      uri: user.avatarFileId
-                        ? avatarFileURL(user.avatarFileId)
-                        : user.avatarCustomUrl,
-                    }
-                  : require('../../assets/icon/Placeholder.png')
-              }
-            />
+            <Image style={styles.avatar} source={{ uri: avatar }} />
             <View style={styles.userInfo}>
               <Text style={styles.title}>{user?.displayName}</Text>
-              <View style={styles.horizontalText}>
+              <Pressable
+                style={styles.horizontalText}
+                onPress={onPressFollowers}
+              >
                 <Text style={styles.textComponent}>
                   {followingCount + ' Following '}
                 </Text>
                 <Text style={styles.textComponent}>
                   {followerCount + ' Follower'}
                 </Text>
-              </View>
+              </Pressable>
             </View>
           </View>
           <View style={styles.descriptionContainer}>
@@ -268,6 +351,7 @@ export default function UserProfile({ route }: any) {
             )}
           </View>
           {renderButtons()}
+          {shouldShowPending && pendingCountButton()}
         </View>
         {!isBlocked && (
           <>

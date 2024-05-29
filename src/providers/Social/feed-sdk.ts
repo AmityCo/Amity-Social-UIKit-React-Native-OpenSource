@@ -263,7 +263,7 @@ export async function reportTargetById(
   return isReport;
 }
 export async function isReportTarget(
-  targetType: 'post' | 'comment',
+  targetType: 'post' | 'comment' | 'user',
   targetId: string
 ): Promise<boolean> {
   const isReport: Promise<boolean> = new Promise(async (resolve, reject) => {
