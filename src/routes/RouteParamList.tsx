@@ -79,4 +79,5 @@ export type RootStackParamList = {
     targetType: Amity.StoryTargetType;
   };
   UserPendingRequest: undefined;
+  FollowerList: Amity.User;
 };

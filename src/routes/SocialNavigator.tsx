@@ -39,6 +39,7 @@ import ReactionListScreen from '../screens/ReactionListScreen/ReactionListScreen
 import CreateStoryScreen from '../v4/screen/CreateStory/CreateStoryScreen';
 import Toast from '../components/Toast/Toast';
 import UserPendingRequest from '../v4/screen/UserPendingRequest/UserPendingRequest';
+import FollowerList from '../v4/screen/FollowerList/FollowerList';
 
 export default function SocialNavigator() {
   const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -242,6 +243,18 @@ export default function SocialNavigator() {
               title: 'Follow Requests',
               headerLeft: () => <BackButton />,
             }}
+          />
+          <Stack.Screen
+            name="FollowerList"
+            component={FollowerList}
+            options={({
+              route: {
+                params: { displayName },
+              },
+            }: any) => ({
+              title: displayName,
+              headerLeft: () => <BackButton />,
+            })}
           />
 
           <Stack.Group

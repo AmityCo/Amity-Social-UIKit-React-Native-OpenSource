@@ -4,6 +4,7 @@ import React, {
   useRef,
   type MutableRefObject,
   useLayoutEffect,
+  useCallback,
 } from 'react';
 import {
   View,
@@ -13,6 +14,7 @@ import {
   type NativeSyntheticEvent,
   type NativeScrollEvent,
   ScrollView,
+  Pressable,
 } from 'react-native';
 import { useStyles } from './styles';
 import { UserRepository } from '@amityco/ts-sdk-react-native';
@@ -66,7 +68,9 @@ export default function UserProfile({ route }: any) {
   const isPending = followStatus === 'pending';
   const isAccepted = followStatus === 'accepted';
   const shouldShowPrivateProfile =
-    !isAccepted && socialSettings?.userPrivacySetting === 'private';
+    !isMyProfile &&
+    !isAccepted &&
+    socialSettings?.userPrivacySetting === 'private';
   const shouldShowPending = isMyProfile && pendingCount > 0;
   const feedRef: MutableRefObject<FeedRefType | null> =
     useRef<FeedRefType | null>(null);
@@ -296,7 +300,6 @@ export default function UserProfile({ route }: any) {
 
   const renderTabs = () => {
     if (shouldShowPrivateProfile) return renderPrivateProfile();
-
     if (currentTab === TabName.Timeline)
       return <Feed targetType="user" targetId={userId} ref={feedRef} />;
     if (currentTab === TabName.Gallery)
@@ -310,6 +313,9 @@ export default function UserProfile({ route }: any) {
     return null;
   };
 
+  const onPressFollowers = useCallback(() => {
+    if (isMyProfile || isAccepted) navigation.navigate('FollowerList', user);
+  }, [isAccepted, isMyProfile, navigation, user]);
   return (
     <View style={styles.container}>
       <ScrollView
@@ -323,14 +329,17 @@ export default function UserProfile({ route }: any) {
             <Image style={styles.avatar} source={{ uri: avatar }} />
             <View style={styles.userInfo}>
               <Text style={styles.title}>{user?.displayName}</Text>
-              <View style={styles.horizontalText}>
+              <Pressable
+                style={styles.horizontalText}
+                onPress={onPressFollowers}
+              >
                 <Text style={styles.textComponent}>
                   {followingCount + ' Following '}
                 </Text>
                 <Text style={styles.textComponent}>
                   {followerCount + ' Follower'}
                 </Text>
-              </View>
+              </Pressable>
             </View>
           </View>
           <View style={styles.descriptionContainer}>
