@@ -11,7 +11,7 @@ export const useStyles = () => {
       alignSelf: 'center',
       backgroundColor: theme.colors.background,
       padding: 12,
-      margin: 12,
+      paddingVertical: 24,
       borderBottomWidth: 5,
       borderBottomColor: theme.colors.baseShade4,
     },

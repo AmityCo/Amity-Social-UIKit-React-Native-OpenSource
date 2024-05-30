@@ -11,6 +11,7 @@ import React, {
   useState,
   useCallback,
   useMemo,
+  useEffect,
 } from 'react';
 import {
   View,
@@ -63,7 +64,7 @@ export default function CommunityHome({ route }: any) {
     communityId: string;
     communityName: string;
   };
-  const [isJoin, setIsJoin] = useState(false);
+  const [isJoin, setIsJoin] = useState(true);
   const [currentTab, setCurrentTab] = useState<TabName>(TabName.Timeline);
   const [communityData, setCommunityData] =
     useState<Amity.LiveObject<Amity.Community>>();
@@ -151,33 +152,29 @@ export default function CommunityHome({ route }: any) {
     }, [postSetting])
   );
 
-  const loadCommunity = useCallback(async () => {
-    try {
-      const unsubscribe = CommunityRepository.getCommunity(
-        communityId,
-        (community) => {
-          setCommunityData(community);
-          setPostSetting(community?.data?.postSetting);
-          if (community.data?.postSetting === 'ADMIN_REVIEW_POST_REQUIRED') {
-            setPostSetting('ADMIN_REVIEW_POST_REQUIRED');
-          }
-          setIsJoin(community?.data.isJoined || false); // Set isJoin to communityData?.data.isJoined value
+  useEffect(() => {
+    const unsubscribe = CommunityRepository.getCommunity(
+      communityId,
+      (community) => {
+        setCommunityData(community);
+        setPostSetting(community?.data?.postSetting);
+        if (community.data?.postSetting === 'ADMIN_REVIEW_POST_REQUIRED') {
+          setPostSetting('ADMIN_REVIEW_POST_REQUIRED');
         }
-      );
-      unsubscribe();
-    } catch (error) {
-      console.error('Failed to load communities:', error);
-    }
+        setIsJoin(community?.data?.isJoined || false); // Set isJoin to communityData?.data.isJoined value
+      }
+    );
+
+    return () => unsubscribe();
   }, [communityId]);
 
   useFocusEffect(
     useCallback(() => {
       getPendingPosts();
-      loadCommunity();
       return () => {
         disposers.forEach((fn) => fn());
       };
-    }, [disposers, getPendingPosts, loadCommunity])
+    }, [disposers, getPendingPosts])
   );
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -356,8 +353,8 @@ export default function CommunityHome({ route }: any) {
             <Text style={styles.editProfileText}>Edit Profile</Text>
           </TouchableOpacity>
         )}
-        {!isJoin && joinCommunityButton()}
-        {isJoin && isShowPendingArea && pendingPostArea()}
+        {isJoin === false && joinCommunityButton()}
+        {isJoin !== false && isShowPendingArea && pendingPostArea()}
         {!excludes.includes(`*/${ComponentID.StoryTab}/*`) &&
           shouldShowAmityStoryTab() && (
             <AmityStoryTabComponent
@@ -371,7 +368,7 @@ export default function CommunityHome({ route }: any) {
         />
         {renderTabs()}
       </ScrollView>
-      {isJoin && (
+      {isJoin !== false && (
         <FloatingButton onPress={handleOnPressPostBtn} isGlobalFeed={false} />
       )}
     </View>

@@ -7,6 +7,7 @@ export const useStyles = () => {
   const { width } = useWindowDimensions();
   const styles = StyleSheet.create({
     container: {
+      flex: 1,
       width: width,
       alignSelf: 'center',
       backgroundColor: theme.colors.background,

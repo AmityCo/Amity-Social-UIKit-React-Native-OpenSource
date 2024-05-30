@@ -1,5 +1,5 @@
 import { FlatList } from 'react-native';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { UserRepository } from '@amityco/ts-sdk-react-native';
 import { Client } from '@amityco/ts-sdk-react-native';
 import PendingFollowerListItem from './Components/PendingFollowerListItem';
@@ -30,10 +30,15 @@ const UserPendingRequest = () => {
     return <PendingFollowerListItem userId={item.from} />;
   };
 
+  const onEndReach = useCallback(() => {
+    return onNextPageRef?.current && onNextPageRef.current();
+  }, []);
+
   if (pendingFollowers?.length === 0) return null;
 
   return (
     <FlatList
+      onEndReached={onEndReach}
       data={pendingFollowers}
       renderItem={renderPendingFollowerListItem}
       extraData={(item) => item.from}

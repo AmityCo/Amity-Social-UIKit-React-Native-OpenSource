@@ -1,11 +1,12 @@
 import React, {
   forwardRef,
   useCallback,
+  useEffect,
   useImperativeHandle,
   useState,
 } from 'react';
 
-import { FlatList, RefreshControl, View } from 'react-native';
+import { FlatList, View } from 'react-native';
 import PostList from '../../../components/Social/PostList';
 import { useStyles } from './styles';
 import {
@@ -35,11 +36,8 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
     useState<Amity.LiveCollection<Amity.Post<any>>>();
   const { postList } = useSelector((state: RootState) => state.feed);
   const { clearFeed, updateFeed, deleteByPostId } = feedSlice.actions;
-  const [refreshing, setRefreshing] = useState(false);
   const { data: posts, onNextPage, hasNextPage } = postData ?? {};
-  const [unSubFunc, setUnSubPageFunc] = useState<() => void>();
   const dispatch = useDispatch();
-
   const disposers: Amity.Unsubscriber[] = [];
   let isSubscribed = false;
 
@@ -47,20 +45,17 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
     if (isSubscribed) return;
 
     if (type === 'user') {
-      let user = {} as Amity.User; // use getUser to get user by targetId
+      let user = {} as Amity.User;
       UserRepository.getUser(id, ({ data }) => {
         user = data;
       });
       disposers.push(
-        subscribeTopic(getUserTopic(user, SubscriptionLevels.POST), () => {
-          // use callback to handle errors with event subscription
-        })
+        subscribeTopic(getUserTopic(user, SubscriptionLevels.POST))
       );
       // eslint-disable-next-line react-hooks/exhaustive-deps
       isSubscribed = true;
       return;
     }
-
     if (type === 'community') {
       CommunityRepository.getCommunity(id, (data) => {
         if (data.data) {
@@ -83,29 +78,20 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
         subscribePostTopic(targetType, targetId);
       }
     );
-    setUnSubPageFunc(() => unsubscribe());
+    return unsubscribe;
   }, [subscribePostTopic, targetId, targetType]);
   const handleLoadMore = () => {
     if (hasNextPage) {
       onNextPage && onNextPage();
     }
   };
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
+  useEffect(() => {
     dispatch(clearFeed());
-    getFeed();
-    setRefreshing(false);
+    const unsub = getFeed();
+    return () => {
+      unsub();
+    };
   }, [clearFeed, dispatch, getFeed]);
-
-  useFocusEffect(
-    useCallback(() => {
-      getFeed();
-      return () => {
-        unSubFunc && unSubFunc();
-        dispatch(clearFeed());
-      };
-    }, [clearFeed, dispatch, getFeed, unSubFunc])
-  );
 
   const getPostList = useCallback(async () => {
     if (posts.length > 0) {
@@ -143,14 +129,6 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
             postIndex={index}
           />
         )}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            colors={['lightblue']}
-            tintColor="lightblue"
-          />
-        }
         keyExtractor={(_, index) => index.toString()}
         extraData={postList}
       />

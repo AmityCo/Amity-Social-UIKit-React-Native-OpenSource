@@ -17,7 +17,12 @@ import {
   Pressable,
 } from 'react-native';
 import { useStyles } from './styles';
-import { UserRepository } from '@amityco/ts-sdk-react-native';
+import {
+  UserRepository,
+  getMyFollowersTopic,
+  getMyFollowingsTopic,
+  subscribeTopic,
+} from '@amityco/ts-sdk-react-native';
 import Feed from '../Feed';
 import CustomTab from '../../../components/CustomTab';
 import type { FeedRefType } from '../CommunityHome';
@@ -142,6 +147,8 @@ export default function UserProfile({ route }: any) {
   useEffect(() => {
     let userUnsubscribe: () => void;
     let userRsUnsubscribe: () => void;
+    const unsubFollowing = subscribeTopic(getMyFollowingsTopic());
+    const unsubFollower = subscribeTopic(getMyFollowersTopic());
     const unsubscribe = navigation.addListener('focus', () => {
       userRsUnsubscribe = UserRepository.Relationship.getFollowInfo(
         userId,
@@ -156,9 +163,9 @@ export default function UserProfile({ route }: any) {
         }
       );
 
-      userUnsubscribe = UserRepository.getUser(userId, (value) => {
-        if (value && !value.loading) {
-          setUser(value.data);
+      userUnsubscribe = UserRepository.getUser(userId, ({ data, loading }) => {
+        if (!loading) {
+          setUser(data);
         } else {
         }
       });
@@ -168,6 +175,8 @@ export default function UserProfile({ route }: any) {
       unsubscribe();
       userUnsubscribe && userUnsubscribe();
       userRsUnsubscribe && userRsUnsubscribe();
+      unsubFollowing();
+      unsubFollower();
     };
   }, [navigation, userId]);
   const editProfileButton = () => {
