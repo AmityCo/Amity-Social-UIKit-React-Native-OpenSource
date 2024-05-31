@@ -31,7 +31,6 @@ const globalFeedSlice = createSlice({
       action: PayloadAction<{ postId: string; postDetail: IPost }>
     ) => {
       const { postId, postDetail } = action.payload;
-
       const index = state.postList.findIndex((item) => item.postId === postId);
       state.postList[index] = postDetail;
     },

@@ -7,6 +7,7 @@ export const useStyles = () => {
   const { width } = useWindowDimensions();
   const styles = StyleSheet.create({
     container: {
+      flex: 1,
       width: width,
       alignSelf: 'center',
       backgroundColor: theme.colors.background,
@@ -43,6 +44,7 @@ export const useStyles = () => {
       justifyContent: 'flex-end',
       backgroundColor: 'rgba(0, 0, 0, 0.5)',
       minHeight: 720,
+      paddingBottom: 40,
     },
     modalContent: {
       backgroundColor: theme.colors.background,

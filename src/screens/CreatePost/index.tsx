@@ -41,6 +41,7 @@ import { TSearchItem } from '../../hooks/useSearch';
 import globalFeedSlice from '../../redux/slices/globalfeedSlice';
 import { useDispatch } from 'react-redux';
 import { amityPostsFormatter } from '../../util/postDataFormatter';
+import feedSlice from '../../redux/slices/feedSlice';
 
 export interface IDisplayImage {
   url: string;
@@ -60,6 +61,7 @@ const CreatePost = ({ route }: any) => {
   const theme = useTheme() as MyMD3Theme;
   const styles = useStyles();
   const { addPostToGlobalFeed } = globalFeedSlice.actions;
+  const { addPostToFeed } = feedSlice.actions;
   const dispatch = useDispatch();
   const { targetId, targetType, targetName } = route.params;
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -112,6 +114,7 @@ const CreatePost = ({ route }: any) => {
       );
       if (response) {
         const formattedPost = await amityPostsFormatter([response]);
+        dispatch(addPostToFeed(formattedPost[0]));
         dispatch(addPostToGlobalFeed(formattedPost[0]));
         goBack();
       }

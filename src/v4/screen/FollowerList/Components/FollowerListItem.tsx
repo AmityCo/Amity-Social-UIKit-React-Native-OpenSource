@@ -8,7 +8,14 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  FC,
+  memo,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { useStyles } from '../styles';
 import {
   Client,
@@ -183,4 +190,4 @@ const FollowerListItem: FC<FollowerListItemType> = ({
   );
 };
 
-export default FollowerListItem;
+export default memo(FollowerListItem);
