@@ -1,4 +1,4 @@
-import { FlatList, View } from 'react-native';
+import { FlatList, SafeAreaView } from 'react-native';
 import React, {
   FC,
   memo,
@@ -55,7 +55,7 @@ const FollowerList: FC<FollowerListType> = ({ route }) => {
     );
 
     const unsubFollowing = UserRepository.Relationship.getFollowings(
-      { userId: userId, limit: 20, status: 'all' },
+      { userId: userId, limit: 20, status: 'accepted' },
       ({ data, error, loading, onNextPage, hasNextPage }) => {
         if (error) return;
         if (!loading) {
@@ -94,7 +94,7 @@ const FollowerList: FC<FollowerListType> = ({ route }) => {
   }, [activeTab]);
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <CustomTab
         tabName={[TabName.Following, TabName.Followers]}
         onTabChange={setActiveTab}
@@ -105,7 +105,7 @@ const FollowerList: FC<FollowerListType> = ({ route }) => {
         renderItem={renderFollowStatus}
         keyExtractor={(item) => item.userId}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 

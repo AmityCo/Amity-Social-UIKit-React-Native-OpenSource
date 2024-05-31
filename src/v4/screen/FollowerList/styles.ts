@@ -44,6 +44,7 @@ export const useStyles = () => {
       justifyContent: 'flex-end',
       backgroundColor: 'rgba(0, 0, 0, 0.5)',
       minHeight: 720,
+      paddingBottom: 40,
     },
     modalContent: {
       backgroundColor: theme.colors.background,
