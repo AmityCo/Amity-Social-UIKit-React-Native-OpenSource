@@ -85,4 +85,5 @@ export type RootStackParamList = {
   };
   UserPendingRequest: undefined;
   FollowerList: Amity.User;
+  LivestreamPlayer: { streamId: string };
 };
