@@ -466,7 +466,7 @@ export default function PostList({
               textPost={textPost}
             />
           )}
-          {childrenPosts?.length > 0 && (
+          {childrenPosts?.length > 0 && !editPostModalVisible && (
             <MediaSection childrenPosts={childrenPosts} />
           )}
         </View>

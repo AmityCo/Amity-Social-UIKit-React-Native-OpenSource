@@ -25,6 +25,7 @@ import { PostRepository, UserRepository } from '@amityco/ts-sdk-react-native';
 import { amityPostsFormatter } from '../../util/postDataFormatter';
 import postDetailSlice from '../../redux/slices/postDetailSlice';
 import globalFeedSlice from '../../redux/slices/globalfeedSlice';
+import feedSlice from '../../redux/slices/feedSlice';
 import { useDispatch } from 'react-redux';
 import MentionInput from '../MentionInput/AmityMentionInput';
 import { TSearchItem } from 'src/hooks/useSearch';
@@ -56,7 +57,6 @@ const EditPostModal = ({
     postDetail?.data?.text ?? ''
   );
 
-  const [videoPostList, setVideoPostList] = useState<IVideoPost[]>([]);
   const [displayImages, setDisplayImages] = useState<IDisplayImage[]>([]);
   const [displayVideos, setDisplayVideos] = useState<IDisplayImage[]>([]);
   const [mentionPosition, setMentionPosition] = useState<IMentionPosition[]>(
@@ -68,8 +68,9 @@ const EditPostModal = ({
 
   const [childrenPostArr, setChildrenPostArr] = useState<string[]>([]);
   const [initialText, setInitialText] = useState('');
-  const { updateByPostId } = globalFeedSlice.actions;
+  const { updateByPostId: updateByPostIdGlobalFeed } = globalFeedSlice.actions;
   const { updatePostDetail } = postDetailSlice.actions;
+  const { updateByPostId } = feedSlice.actions;
   const dispatch = useDispatch();
 
   const parsePostText = useCallback(
@@ -189,67 +190,54 @@ const EditPostModal = ({
 
   const handleEditPost = async () => {
     const mentionees = mentionUsers.map((user) => user.id);
-    if (displayImages.length > 0) {
-      const fileIdArr: (string | undefined)[] = displayImages.map(
-        (item) => item.fileId
+    const files =
+      displayImages.length > 0
+        ? displayImages
+        : displayVideos?.length > 0
+        ? displayVideos
+        : [];
+    const fileIds = files ? files.map((item) => item.fileId) : [];
+    const type =
+      displayImages.length > 0
+        ? 'image'
+        : displayVideos.length > 0
+        ? 'video'
+        : 'text';
+    const response = await editPost(
+      postDetail.postId,
+      {
+        text: inputMessage,
+        fileIds: fileIds as string[],
+      },
+      type,
+      mentionees,
+      mentionPosition
+    );
+    if (response) {
+      const formattedPost = await amityPostsFormatter([response]);
+      const updatedPost = { ...postDetail, ...formattedPost[0] };
+      dispatch(
+        updateByPostId({
+          postId: postDetail.postId,
+          postDetail: updatedPost,
+        })
       );
-
-      const imageUrls: string[] = displayImages.map((item) => item.url);
-      const type: string = displayImages.length > 0 ? 'image' : 'text';
-      const response = await editPost(
-        postDetail.postId,
-        {
-          text: inputMessage,
-          fileIds: fileIdArr as string[],
-        },
-        type,
-        mentionees,
-        mentionPosition
+      dispatch(
+        updateByPostIdGlobalFeed({
+          postId: postDetail.postId,
+          postDetail: updatedPost,
+        })
       );
-      if (response) {
-        const formattedPost = await amityPostsFormatter([response]);
-        dispatch(
-          updateByPostId({
-            postId: postDetail.postId,
-            postDetail: formattedPost[0],
-          })
+      dispatch(updatePostDetail(updatedPost));
+      onFinishEdit &&
+        onFinishEdit(
+          {
+            text: inputMessage,
+            mediaUrls: formattedPost[0].childrenPosts,
+          },
+          type
         );
-        dispatch(updatePostDetail(formattedPost[0]));
-        onFinishEdit &&
-          onFinishEdit(
-            {
-              text: inputMessage,
-              mediaUrls: imageUrls,
-            },
-            type
-          );
-      }
-    } else {
-      const fileIdArr: (string | undefined)[] = displayVideos.map(
-        (item) => item.fileId
-      );
-      const type: string = displayVideos.length > 0 ? 'video' : 'text';
-      const response = await editPost(
-        postDetail.postId,
-        {
-          text: inputMessage,
-          fileIds: fileIdArr as string[],
-        },
-        type,
-        mentionees,
-        mentionPosition
-      );
-      if (response) {
-        onFinishEdit &&
-          onFinishEdit(
-            {
-              text: inputMessage,
-              mediaUrls: videoPostList,
-            },
-            type
-          );
-        handleOnClose();
-      }
+      handleOnClose();
     }
   };
 
@@ -288,10 +276,7 @@ const EditPostModal = ({
   };
   useEffect(() => {
     processVideo();
-    if (videoPosts.length > 0) {
-      setVideoPostList(videoPosts);
-    }
-  }, [videoPosts]);
+  }, []);
 
   const handleOnCloseImage = (originalPath: string) => {
     setDisplayImages((prevData) => {
@@ -301,16 +286,10 @@ const EditPostModal = ({
       return newData; // Remove the element at the specified index
     });
   };
-  const handleOnCloseVideo = (originalPath: string, fileId: string) => {
+  const handleOnCloseVideo = (originalPath: string) => {
     setDisplayVideos((prevData) => {
       const newData = prevData.filter(
         (item: IDisplayImage) => item.url !== originalPath
-      ); // Filter out objects containing the desired value
-      return newData; // Remove the element at the specified index
-    });
-    setVideoPostList((prevData) => {
-      const newData = prevData.filter(
-        (item: IVideoPost) => item.videoFileId.original !== fileId
       ); // Filter out objects containing the desired value
       return newData; // Remove the element at the specified index
     });
