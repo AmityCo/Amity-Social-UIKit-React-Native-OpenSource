@@ -158,6 +158,7 @@ PODS:
   - hermes-engine/Pre-built (0.72.4)
   - libevent (2.1.12)
   - Logboard (2.4.2)
+  - MobileVLCKit (3.5.1)
   - nanopb (2.30910.0):
     - nanopb/decode (= 2.30910.0)
     - nanopb/encode (= 2.30910.0)
@@ -469,6 +470,8 @@ PODS:
     - glog
   - react-native-create-thumbnail (2.0.0):
     - React-Core
+  - react-native-get-random-values (1.11.0):
+    - React-Core
   - react-native-image-picker (7.1.2):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
@@ -488,6 +491,10 @@ PODS:
     - PromisesSwift
     - React-Core
     - SPTPersistentCache (~> 1.1.0)
+  - react-native-vlc-media-player (1.0.38):
+    - MobileVLCKit (= 3.5.1)
+    - React
+    - TVVLCKit (= 3.5.1)
   - React-NativeModulesApple (0.72.4):
     - hermes-engine
     - React-callinvoker
@@ -680,11 +687,13 @@ DEPENDENCIES:
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - react-native-create-thumbnail (from `../node_modules/react-native-create-thumbnail`)
+  - react-native-get-random-values (from `../node_modules/react-native-get-random-values`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - "react-native-livestream (from `../node_modules/@api.video/react-native-livestream`)"
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-video (from `../node_modules/react-native-video`)
+  - react-native-vlc-media-player (from `../node_modules/react-native-vlc-media-player`)
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
@@ -738,6 +747,7 @@ SPEC REPOS:
     - HaishinKit
     - libevent
     - Logboard
+    - MobileVLCKit
     - nanopb
     - OpenSSL-Universal
     - PromisesObjC
@@ -794,6 +804,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/logger"
   react-native-create-thumbnail:
     :path: "../node_modules/react-native-create-thumbnail"
+  react-native-get-random-values:
+    :path: "../node_modules/react-native-get-random-values"
   react-native-image-picker:
     :path: "../node_modules/react-native-image-picker"
   react-native-livestream:
@@ -804,6 +816,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-safe-area-context"
   react-native-video:
     :path: "../node_modules/react-native-video"
+  react-native-vlc-media-player:
+    :path: "../node_modules/react-native-vlc-media-player"
   React-NativeModulesApple:
     :path: "../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios"
   React-perflogger:
@@ -888,6 +902,7 @@ SPEC CHECKSUMS:
   hermes-engine: 81191603c4eaa01f5e4ae5737a9efcf64756c7b2
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   Logboard: 759d82599c439945d430d5a0958455b5a1974a0c
+  MobileVLCKit: 144d5f565512d1147d63b0fa1379231b3fd66535
   nanopb: 438bc412db1928dac798aa6fd75726007be04262
   OpenSSL-Universal: ebc357f1e6bc71fa463ccb2fe676756aff50e88c
   PromisesObjC: c50d2056b5253dadbd6c2bea79b0674bd5a52fa4
@@ -908,11 +923,13 @@ SPEC CHECKSUMS:
   React-jsinspector: aaed4cf551c4a1c98092436518c2d267b13a673f
   React-logger: da1ebe05ae06eb6db4b162202faeafac4b435e77
   react-native-create-thumbnail: ab55d24aea01723cf386f18b0b542aabb1982f27
+  react-native-get-random-values: 21325b2244dfa6b58878f51f9aa42821e7ba3d06
   react-native-image-picker: 51fdb07f7ef722988c8a219e1416153760a25e4d
   react-native-livestream: fc8ae79f3ae12060cdf38f563bce2c6295ad5df9
   react-native-netinfo: 076df4f9b07f6670acf4ce9a75aac8d34c2e2ccc
   react-native-safe-area-context: 399a5859f6acbdf67f671c69b53113f535f3b5b0
   react-native-video: 67dfeb21caa4b24629af4df1ff0b467c8174926f
+  react-native-vlc-media-player: 0f9860bded57cd6764ac55b5c0e97347069cb40a
   React-NativeModulesApple: edb5ace14f73f4969df6e7b1f3e41bef0012740f
   React-perflogger: 496a1a3dc6737f964107cb3ddae7f9e265ddda58
   React-RCTActionSheet: 02904b932b50e680f4e26e7a686b33ebf7ef3c00

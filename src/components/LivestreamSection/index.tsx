@@ -15,6 +15,7 @@ import { SvgXml } from 'react-native-svg';
 import { exclamationIcon, playBtn } from '../../svg/svg-xml-list';
 import LivestreamEndedView from './LivestreamEndedView';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import streamSlice from '../../redux/slices/streamSlice';
 
 interface ILivestreamSection {
   streamId: Amity.Stream['streamId'];
@@ -29,13 +30,16 @@ const LivestreamSection: React.FC<ILivestreamSection> = ({ streamId }) => {
     >();
 
   const dispatch = useDispatch();
+  const { updateCurrentStream } = streamSlice.actions;
 
   const [livestream, setLivestream] = useState<Amity.Stream>();
   const [thumbnailUrl, setThumbnailUrl] = useState<ImageSourcePropType>();
 
   const onPlayLivestream = useCallback(() => {
+    if (!livestream) return;
+    dispatch(updateCurrentStream(livestream));
     navigation.navigate('LivestreamPlayer', { streamId: livestream.streamId });
-  }, [livestream, navigation]);
+  }, [livestream, navigation, updateCurrentStream, dispatch]);
 
   const getLivestreamThumbnail = async (currentStream: Amity.Stream) => {
     const defaultThumbnail = require('../../../assets/images/default-livestream-thumbnail.png');

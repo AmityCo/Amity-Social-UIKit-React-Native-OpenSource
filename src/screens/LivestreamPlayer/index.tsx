@@ -1,53 +1,39 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
-// import { NodePlayer } from 'react-native-nodemediaclient';
+import React, { useRef, useState } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import { useStyles } from './styles';
-import { playIcon, pauseIcon } from '../../../src/svg/svg-xml-list';
-import { SvgXml } from 'react-native-svg';
-import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
-import { RootStackParamList } from '../../routes/RouteParamList';
-import { StreamRepository } from '@amityco/ts-sdk-react-native';
+
+import { AmityStreamPlayer } from '@amityco/video-player-react-native';
+import { useNavigation } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
+import { RootState } from '~/redux/store';
 import LivestreamEndedView from '../../components/LivestreamSection/LivestreamEndedView';
-import { closeIcon } from '../../svg/svg-xml-list';
-
-type LivestreamFormatWithRTMP = Pick<
-  Amity.Stream,
-  'watcherUrl'
->['watcherUrl'] & {
-  rtmp?: {
-    url: string;
-    components: {
-      origin: string;
-      appName: string;
-      streamName: string;
-      query: string;
-    };
-  };
-};
-
-type LivestreamWithRTMP = Omit<Amity.Stream, 'watcherUrl'> & {
-  watcherUrl: LivestreamFormatWithRTMP;
-};
+import { Animated } from 'react-native';
+import { SvgXml } from 'react-native-svg';
+import { closeIcon, pauseIcon, playIcon } from '../../svg/svg-xml-list';
 
 const LiveStreamPlayer = () => {
-  const ref = useRef(null);
+  const navigation = useNavigation();
+  const ref = useRef<any>(null);
   const styles = useStyles();
-  const route = useRoute<RouteProp<RootStackParamList, 'LivestreamPlayer'>>();
 
-  const { streamId } = route.params;
+  const showControlAnim = useRef(new Animated.Value(0)).current; // 0 for 'false', 1 for 'true'
 
-  const [stream, setStream] = useState<LivestreamWithRTMP>();
-  const [isPlaying, setIsPlaying] = useState<boolean>(true);
+  const [isPlaying, setIsPlaying] = useState(true);
 
-  const naviation = useNavigation();
+  const { data: stream } = useSelector((state: RootState) => state.stream);
 
   const onStopPlayer = () => {
-    ref.current.stop();
+    ref.current && ref.current.pause();
     setIsPlaying(false);
   };
 
   const onStartPlayer = () => {
-    ref.current.start();
+    ref.current && ref.current.play();
     setIsPlaying(true);
   };
 
@@ -55,27 +41,20 @@ const LiveStreamPlayer = () => {
     isPlaying ? onStopPlayer() : onStartPlayer();
   };
 
-  useEffect(() => {
-    const unsubscribe = StreamRepository.getStreamById(
-      streamId,
-      ({ data, loading }) => {
-        if (!loading && data) setStream(data);
-      }
-    );
-
-    return () => {
-      unsubscribe();
-    };
-  }, [streamId]);
+  const onToggleControl = () => {
+    Animated.timing(showControlAnim, {
+      toValue:
+        (showControlAnim as Animated.Value & { _value: number })._value === 0
+          ? 1
+          : 0, // toggle between 0 and 1
+      duration: 500, // duration of the animation
+      useNativeDriver: false, // change this to true if you're animating opacity or transform
+    }).start();
+  };
 
   return (
     <View style={styles.container}>
-      <View style={styles.closeButton}>
-        <TouchableOpacity style={styles.closeButton} onPress={naviation.goBack}>
-          <SvgXml xml={closeIcon('#FFFFFF')} width="16" height="16" />
-        </TouchableOpacity>
-      </View>
-      {stream && stream.status && stream.status === 'ended' ? (
+      {stream && stream.status === 'ended' ? (
         <>
           <View style={styles.streamEndedWrap}>
             <LivestreamEndedView />
@@ -83,33 +62,37 @@ const LiveStreamPlayer = () => {
         </>
       ) : (
         <>
+          <AmityStreamPlayer stream={stream} ref={ref} />
           <View style={styles.topSectionWrap}>
             <View style={styles.status}>
               <Text style={styles.statusText}>LIVE</Text>
             </View>
           </View>
-          {/* {stream && stream.watcherUrl && (
-            <NodePlayer
-              ref={ref}
-              style={{ flex: 1 }}
-              url={stream.watcherUrl.rtmp.url}
-              autoplay={true}
-              scaleMode={1}
-              bufferTime={500}
-            />
-          )} */}
-          <View style={styles.controller}>
-            <TouchableOpacity
-              onPress={onPressControlButton}
-              style={styles.controllerButton}
-            >
-              <SvgXml
-                xml={isPlaying ? pauseIcon() : playIcon()}
-                width={24}
-                height={60}
-              />
-            </TouchableOpacity>
-          </View>
+          <TouchableWithoutFeedback onPress={onToggleControl}>
+            <Animated.View style={{ opacity: showControlAnim }}>
+              <View style={styles.closeButton}>
+                <TouchableOpacity
+                  style={styles.closeButton}
+                  onPress={navigation.goBack}
+                >
+                  <SvgXml xml={closeIcon('#FFFFFF')} width="16" height="16" />
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.controller}>
+                <TouchableOpacity
+                  onPress={onPressControlButton}
+                  style={styles.controllerButton}
+                >
+                  <SvgXml
+                    xml={isPlaying ? pauseIcon() : playIcon()}
+                    width={24}
+                    height={60}
+                  />
+                </TouchableOpacity>
+              </View>
+            </Animated.View>
+          </TouchableWithoutFeedback>
         </>
       )}
     </View>
