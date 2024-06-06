@@ -77,17 +77,6 @@ export const AuthContextProvider: FC<IAmityUIkitProvider> = ({
     }
     const response = await Client.login(loginParam, sessionHandler);
     if (response && fcmToken) {
-      fetch(`${apiEndpoint}/api/v3/notification/setting?level=user`, {
-        method: 'GET',
-        headers: {
-          Authorization:
-            'Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IkQ4cVQzRHA5dlNvX0w5d2l4YmF1QlFkNHFLbk5neFhqWHJHakhlTGxVaDAifQ.eyJ1c2VyIjp7InVzZXJJZCI6IjY1YThiNTJlN2FlODYwNDhkZGM0OGY0ZSIsInB1YmxpY1VzZXJJZCI6IlJOLU5haW5nLTEiLCJkZXZpY2VJbmZvIjp7ImtpbmQiOiJ3ZWIiLCJtb2RlbCI6InJlYWN0bmF0aXZlI3Vua25vd25fYWdlbnQiLCJzZGtWZXJzaW9uIjoidjYuMjUuMS1janMifSwibmV0d29ya0lkIjoiNjMxZjE2YmUxZTQ0MDQwMGRhNTY2M2IwIiwiZGlzcGxheU5hbWUiOiJSTi1OYWluZy0xIiwicmVmcmVzaFRva2VuIjoiZWY5ZjhiOWE1OGY3MzAyM2EyZTgyZDU2MGZmYThmNTc3YjAwNTViNmM0NDRmNWRhNjNiODdiODc2MmE4OTU4ZjM1YTY2NTY4MWI2YTY1MWMifSwic3ViIjoiNjVhOGI1MmU3YWU4NjA0OGRkYzQ4ZjRlIiwiaXNzIjoiaHR0cHM6Ly9hcGkuc3RhZ2luZy5hbWl0eS5jbyIsImlhdCI6MTcxNzU4MDkwMiwiZXhwIjoxNzIwMTcyOTAyfQ.VAhxXI8N3zfmVNx1CG1Aac-LiCjklaMN8RxJIpztjowWLjqMgRVfhll4X7oen6DThcZmWslUM87JPSm6tAlHi1YKZFReICyB0fzhnQstdagxD-s3qlbUFD1UtjswXJdgL9fWFq9EgZSXbSpxdwP05HNoYrV5HosXenuvzwhZSwCZAkHL2zDt1-nRal4nbJlH9oXHbcuQWADe3CFnXSLAQIj_PeuorC3KdJasOJDMBfpRJgErzFtVkmC4fjFYNFAhG4XR3pES8YdFFB9OjS6uEEbh3OBIg0Gp6kIO9lChE9KDspTWdA8_YHKGUKQvG2pIUyhiGs4tI1Dqumw2gyWsPA',
-          Accept: 'application/json',
-        },
-      })
-        .then(async (res) => console.log(await res.text()))
-        .catch((er) => console.log(er));
-
       try {
         // await Client.registerPushNotification(fcmToken);
         // below is work around solution
