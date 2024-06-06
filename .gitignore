@@ -10,6 +10,8 @@
 jsconfig.json
 .eslintcache
 .yarn
+google-services.json
+GoogleService-Info.plist
 
 # Xcode
 #
