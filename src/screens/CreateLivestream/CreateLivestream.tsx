@@ -13,8 +13,11 @@ import {
 import { SvgXml } from 'react-native-svg';
 import { closeIcon, syncIcon, editThumbnailIcon } from '../../svg/svg-xml-list';
 import { useStyles } from './styles';
+import useImagePicker from '../../../src/hooks/useImagePicker';
+import { uploadImageFile } from '../../../src/providers/file-provider';
 
 import { StreamRepository, PostRepository } from '@amityco/ts-sdk-react-native';
+import BottomSheet, { BottomSheetMethods } from '@devvie/bottom-sheet';
 
 import {
   AmityVideoBroadcaster,
@@ -40,6 +43,7 @@ const CreateLivestream = ({ navigation, route }) => {
   const [androidPermission, setAndroidPermission] = useState<boolean>(false);
 
   const streamRef = useRef(null);
+  const sheetRef = useRef<BottomSheetMethods>(null);
 
   const requestPermission = async () => {
     try {
@@ -77,11 +81,11 @@ const CreateLivestream = ({ navigation, route }) => {
     }
   };
 
-  // const { imageUri, removeSelectedImage, openImageGallery } = useImagePicker({
-  //   selectionLimit: 1,
-  //   mediaType: 'photo',
-  //   includeBase64: false,
-  // });
+  const { imageUri, removeSelectedImage, openImageGallery } = useImagePicker({
+    selectionLimit: 1,
+    mediaType: 'photo',
+    includeBase64: false,
+  });
 
   const renderOptionIcon = (icon: string, onClick: () => void) => {
     return (
@@ -93,10 +97,10 @@ const CreateLivestream = ({ navigation, route }) => {
     );
   };
 
-  // const uploadFile = useCallback(async (uri: string) => {
-  //   const file: Amity.File<any>[] = await uploadImageFile(uri);
-  //   return file[0].fileId;
-  // }, []);
+  const uploadFile = useCallback(async (uri: string) => {
+    const file: Amity.File<any>[] = await uploadImageFile(uri);
+    return file[0].fileId;
+  }, []);
 
   const createStreamPost = useCallback(
     (newStream: Amity.Stream) => {
@@ -122,13 +126,14 @@ const CreateLivestream = ({ navigation, route }) => {
       setIsConnecting(true);
       setIsLive(true);
 
-      // let fileId: string | undefined;
+      let fileId: string | undefined;
 
-      // if (imageUri) fileId = await uploadFile(imageUri);
+      if (imageUri) fileId = await uploadFile(imageUri);
 
       const { data: newStream } = await StreamRepository.createStream({
         title,
         description: description || undefined,
+        thumbnailFileId: fileId,
       });
 
       if (newStream) {
@@ -139,7 +144,7 @@ const CreateLivestream = ({ navigation, route }) => {
         streamRef?.current.startPublish(newStream.streamId);
       }
     } else emptyTitleAlert();
-  }, [title, description, createStreamPost]);
+  }, [title, description, createStreamPost, imageUri, uploadFile]);
 
   const onStreamConnectionSuccess = () => {
     setIsConnecting(false);
@@ -259,25 +264,25 @@ const CreateLivestream = ({ navigation, route }) => {
                     <TouchableOpacity
                       style={styles.optionIcon}
                       onPress={() => {
-                        // if (imageUri && sheetRef.current)
-                        //   sheetRef.current?.open();
-                        // else openImageGallery();
+                        if (imageUri && sheetRef.current)
+                          sheetRef.current?.open();
+                        else openImageGallery();
                       }}
                     >
-                      {/* {imageUri ? (
+                      {imageUri ? (
                         <Image
                           source={{ uri: imageUri }}
                           style={styles.thumbnailImage}
                         />
-                      ) : ( */}
-                      <View style={styles.optionIconInner}>
-                        <SvgXml
-                          xml={editThumbnailIcon()}
-                          width={18}
-                          height={18}
-                        />
-                      </View>
-                      {/* )} */}
+                      ) : (
+                        <View style={styles.optionIconInner}>
+                          <SvgXml
+                            xml={editThumbnailIcon()}
+                            width={18}
+                            height={18}
+                          />
+                        </View>
+                      )}
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -330,7 +335,8 @@ const CreateLivestream = ({ navigation, route }) => {
           </View>
         )}
       </View>
-      {/* <BottomSheet
+
+      <BottomSheet
         ref={sheetRef}
         height={164}
         closeOnDragDown={false}
@@ -362,7 +368,7 @@ const CreateLivestream = ({ navigation, route }) => {
             </Text>
           </TouchableOpacity>
         </View>
-      </BottomSheet> */}
+      </BottomSheet>
     </>
   );
 };
