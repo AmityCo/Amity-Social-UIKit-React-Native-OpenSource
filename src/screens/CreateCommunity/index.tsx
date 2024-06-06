@@ -398,7 +398,7 @@ export default function CreateCommunity() {
         onSelect={handleAddMembers}
         onClose={() => setAddMembersModal(false)}
         visible={addMembersModal}
-        initUserList={selectedUserList}
+        initUserList={selectedUserList ?? []}
         excludeUserList={[]}
       />
     </ScrollView>
