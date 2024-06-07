@@ -258,7 +258,7 @@ const EditPostModal = ({
     }
   }, [imagePosts]);
 
-  const processVideo = async () => {
+  const processVideo = useCallback(async () => {
     if (videoPosts.length > 0) {
       const videosObject: IDisplayImage[] = await Promise.all(
         videoPosts.map(async (item: IVideoPost) => {
@@ -273,10 +273,11 @@ const EditPostModal = ({
       );
       setDisplayVideos(videosObject);
     }
-  };
+  }, [apiRegion, videoPosts]);
+
   useEffect(() => {
     processVideo();
-  }, []);
+  }, [processVideo]);
 
   const handleOnCloseImage = (originalPath: string) => {
     setDisplayImages((prevData) => {

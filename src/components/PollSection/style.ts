@@ -83,6 +83,15 @@ export const useStyles = () => {
       borderLeftWidth: 5,
       borderColor: theme.colors.primary,
     },
+    voteCount: {
+      fontSize: 13,
+      fontWeight: '400',
+      color: theme.colors.baseShade1,
+      marginTop: 8,
+    },
+    selectedVoteCount: {
+      color: theme.colors.primary,
+    },
   });
   return styles;
 };
