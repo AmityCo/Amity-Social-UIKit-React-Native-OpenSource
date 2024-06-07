@@ -2,7 +2,7 @@
 import React, { useCallback, useEffect, useState, type FC } from 'react';
 import { Client } from '@amityco/ts-sdk-react-native';
 import type { AuthContextInterface } from '../types/auth.interface';
-import { Alert, Platform, Clipboard } from 'react-native';
+import { Alert, Platform } from 'react-native';
 import type { IAmityUIkitProvider } from './amity-ui-kit-provider';
 
 export const AuthContext = React.createContext<AuthContextInterface>({
@@ -93,15 +93,7 @@ export const AuthContextProvider: FC<IAmityUIkitProvider> = ({
             userId: userId,
             token: fcmToken,
           }),
-        })
-          .then(async (res) => {
-            if ((await JSON.parse(await res.text()).status) === 'success') {
-              Alert.alert('Register Token Success', fcmToken, [
-                { text: 'Copy', onPress: () => Clipboard.setString(fcmToken) },
-              ]);
-            }
-          })
-          .catch((error) => console.error(error));
+        }).catch((err) => console.error(err));
       } catch (err) {
         console.log(err);
       }
