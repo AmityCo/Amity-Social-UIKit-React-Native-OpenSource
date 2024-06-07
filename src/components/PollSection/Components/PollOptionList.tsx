@@ -1,4 +1,10 @@
-import { Text, TouchableOpacity, View, ViewStyle } from 'react-native';
+import {
+  Text,
+  TextStyle,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from 'react-native';
 import React, {
   FC,
   memo,
@@ -100,6 +106,10 @@ const PollOptionList: FC<IPollOptionList> = ({
         const selectedIcon = selectedItem ? radioOn() : radioOff();
         const selectedOptionContainerStyle: ViewStyle =
           selectedItem && styles.selectedOptionContainer;
+        const selectedVoteCountStyle: TextStyle =
+          (isAlreadyVoted || isPollClosed) &&
+          option.isVotedByUser &&
+          styles.selectedVoteCount;
         const lengthPercentage = (option.voteCount / totalVote) * 100;
         const length = isNaN(lengthPercentage) ? 0 : lengthPercentage;
         const onResultOptionStyle: ViewStyle =
@@ -126,7 +136,9 @@ const PollOptionList: FC<IPollOptionList> = ({
             {(isPollClosed || isAlreadyVoted) && (
               <>
                 <PollBar myVote={option.isVotedByUser} length={length} />
-                <Text>{option.voteCount} votes</Text>
+                <Text style={[styles.voteCount, selectedVoteCountStyle]}>
+                  {option.voteCount} votes
+                </Text>
               </>
             )}
           </TouchableOpacity>

@@ -80,22 +80,8 @@ export default function CommunityHome({ route }: any) {
   const [isUserHasPermission, setIsUserHasPermission] =
     useState<boolean>(false);
   const disposers: Amity.Unsubscriber[] = useMemo(() => [], []);
-  const isSubscribed = useRef(false);
-  const subscribePostTopic = useCallback(
-    (targetType: string) => {
-      if (isSubscribed.current) return;
+  const unsubCommunity = useRef(null);
 
-      if (targetType === 'community') {
-        disposers.push(
-          subscribeTopic(
-            getCommunityTopic(communityData, SubscriptionLevels.COMMUNITY)
-          )
-        );
-        isSubscribed.current = true;
-      }
-    },
-    [communityData, disposers]
-  );
   const getPendingPosts = useCallback(async () => {
     const unsubscribe = PostRepository.getPosts(
       {
@@ -107,7 +93,6 @@ export default function CommunityHome({ route }: any) {
       async ({ data: posts }) => {
         const pendingPost = await amityPostsFormatter(posts);
         setPendingPosts(pendingPost);
-        subscribePostTopic('community');
       }
     );
     disposers.push(unsubscribe);
@@ -123,15 +108,7 @@ export default function CommunityHome({ route }: any) {
       setIsUserHasPermission(true);
       navigation.setParams({ isModerator: true, communityId, communityName });
     }
-  }, [
-    apiRegion,
-    client,
-    communityId,
-    communityName,
-    disposers,
-    navigation,
-    subscribePostTopic,
-  ]);
+  }, [apiRegion, client, communityId, communityName, disposers, navigation]);
 
   useEffect(() => {
     const unsubscribe = CommunityRepository.getCommunity(
@@ -139,12 +116,18 @@ export default function CommunityHome({ route }: any) {
       ({ error, loading, data }) => {
         if (error) return;
         if (!loading) {
+          unsubCommunity.current = subscribeTopic(
+            getCommunityTopic(data, SubscriptionLevels.COMMUNITY)
+          );
           setCommunityData(data);
         }
         setIsJoin(data.isJoined || false); // Set isJoin to communityData?.data.isJoined value
       }
     );
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+      unsubCommunity.current && unsubCommunity.current();
+    };
   }, [communityId]);
 
   useFocusEffect(

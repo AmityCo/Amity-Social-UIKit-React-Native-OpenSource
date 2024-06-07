@@ -8,4 +8,5 @@ export type AuthContextInterface = {
   sessionState: string;
   apiRegion: string;
   authToken?: string;
+  fcmToken?: string;
 };
