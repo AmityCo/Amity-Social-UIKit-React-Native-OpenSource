@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -8,16 +8,14 @@ import {
 import { useStyles } from './styles';
 
 import { AmityStreamPlayer } from '@amityco/video-player-react-native';
-import { useNavigation } from '@react-navigation/native';
-import { useSelector } from 'react-redux';
-import { RootState } from '~/redux/store';
+
 import LivestreamEndedView from '../../components/LivestreamSection/LivestreamEndedView';
 import { Animated } from 'react-native';
 import { SvgXml } from 'react-native-svg';
-import { closeIcon, pauseIcon, playIcon } from '../../svg/svg-xml-list';
+import { closeIcon, playIcon, stopIcon } from '../../svg/svg-xml-list';
+import { StreamRepository } from '@amityco/ts-sdk-react-native';
 
-const LiveStreamPlayer = () => {
-  const navigation = useNavigation();
+const LiveStreamPlayer = ({ navigation, route }) => {
   const ref = useRef<any>(null);
   const styles = useStyles();
 
@@ -25,7 +23,9 @@ const LiveStreamPlayer = () => {
 
   const [isPlaying, setIsPlaying] = useState(true);
 
-  const { data: stream } = useSelector((state: RootState) => state.stream);
+  const { streamId } = route.params;
+
+  const [livestream, setLivestream] = useState<Amity.Stream>();
 
   const onStopPlayer = () => {
     ref.current && ref.current.pause();
@@ -52,25 +52,36 @@ const LiveStreamPlayer = () => {
     }).start();
   };
 
+  useEffect(() => {
+    if (!streamId) return;
+
+    const getLivestream = () => {
+      return StreamRepository.getStreamById(
+        streamId,
+        ({ data, loading, error }) => {
+          if (error) console.error('Error fetching livestream', error);
+          if (!loading && data) {
+            setLivestream({ ...data });
+          }
+        }
+      );
+    };
+
+    const unsubscribe = getLivestream();
+
+    return () => {
+      unsubscribe();
+    };
+  }, [streamId]);
+
   return (
     <View style={styles.container}>
-      {stream && stream.status === 'ended' ? (
-        <>
-          <View style={styles.streamEndedWrap}>
-            <LivestreamEndedView />
-          </View>
-        </>
-      ) : (
-        <>
-          <AmityStreamPlayer stream={stream} ref={ref} />
-          <View style={styles.topSectionWrap}>
-            <View style={styles.status}>
-              <Text style={styles.statusText}>LIVE</Text>
-            </View>
-          </View>
-          <TouchableWithoutFeedback onPress={onToggleControl}>
-            <Animated.View style={{ opacity: showControlAnim }}>
-              <View style={styles.closeButton}>
+      <>
+        {livestream && (
+          <>
+            {livestream.status === 'ended' ? (
+              <View style={styles.streamEndedWrap}>
+                <LivestreamEndedView />
                 <TouchableOpacity
                   style={styles.closeButton}
                   onPress={navigation.goBack}
@@ -78,23 +89,67 @@ const LiveStreamPlayer = () => {
                   <SvgXml xml={closeIcon('#FFFFFF')} width="16" height="16" />
                 </TouchableOpacity>
               </View>
+            ) : (
+              <>
+                <AmityStreamPlayer
+                  stream={livestream}
+                  ref={ref}
+                  onVideoFullscreenPlayerWillDismiss={onClosePlayer}
+                />
+                {livestream.status === 'live' && (
+                  <>
+                    <View style={styles.topSectionWrap}>
+                      <View style={styles.status}>
+                        <Text style={styles.statusText}>LIVE JA</Text>
+                      </View>
+                    </View>
+                    <TouchableWithoutFeedback onPress={onToggleControl}>
+                      <Animated.View
+                        style={{
+                          ...styles.controlView,
+                          opacity: showControlAnim,
+                        }}
+                      >
+                        <TouchableOpacity
+                          style={styles.closeButton}
+                          onPress={navigation.goBack}
+                        >
+                          <SvgXml
+                            xml={closeIcon('#FFFFFF')}
+                            width="16"
+                            height="16"
+                          />
+                        </TouchableOpacity>
 
-              <View style={styles.controller}>
-                <TouchableOpacity
-                  onPress={onPressControlButton}
-                  style={styles.controllerButton}
-                >
-                  <SvgXml
-                    xml={isPlaying ? pauseIcon() : playIcon()}
-                    width={24}
-                    height={60}
-                  />
-                </TouchableOpacity>
-              </View>
-            </Animated.View>
-          </TouchableWithoutFeedback>
-        </>
-      )}
+                        <View style={styles.controller}>
+                          <TouchableOpacity
+                            onPress={onPressControlButton}
+                            style={styles.controllerButton}
+                          >
+                            {isPlaying ? (
+                              <SvgXml xml={stopIcon()} width={32} height={32} />
+                            ) : (
+                              <SvgXml xml={playIcon()} width={32} height={64} />
+                            )}
+                          </TouchableOpacity>
+                        </View>
+                      </Animated.View>
+                    </TouchableWithoutFeedback>
+                  </>
+                )}
+                {livestream.status === 'recorded' && (
+                  <TouchableOpacity
+                    style={styles.closeButton}
+                    onPress={onClosePlayer}
+                  >
+                    <SvgXml xml={closeIcon('#FFFFFF')} width="16" height="16" />
+                  </TouchableOpacity>
+                )}
+              </>
+            )}
+          </>
+        )}
+      </>
     </View>
   );
 };

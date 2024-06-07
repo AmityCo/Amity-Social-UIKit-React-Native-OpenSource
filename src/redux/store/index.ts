@@ -4,14 +4,13 @@ import globalFeedSlice from '../slices/globalfeedSlice';
 import feedSlice from '../slices/feedSlice';
 import postDetailSlice from '../slices/postDetailSlice';
 import uiSlice from '../slices/uiSlice';
-import streamSlice from '../slices/streamSlice';
+
 export const store: Store = configureStore({
   reducer: {
     globalFeed: globalFeedSlice.reducer,
     postDetail: postDetailSlice.reducer,
     feed: feedSlice.reducer,
     ui: uiSlice.reducer,
-    stream: streamSlice.reducer,
   },
 });
 
