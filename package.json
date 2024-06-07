@@ -211,7 +211,9 @@
     ]
   },
   "dependencies": {
-    "@amityco/ts-sdk-react-native": "^6.25.0",
+    "@amityco/ts-sdk-react-native": "^6.23.0",
+    "@amityco/video-player-react-native": "./amityco-video-player-react-native-0.0.1.tgz",
+    "@amityco/video-broadcaster-react-native": "./amityco-video-broadcaster-react-native-0.0.1.tgz",
     "@devvie/bottom-sheet": "^0.3.0",
     "@react-navigation/native": "6.1.6",
     "@react-navigation/native-stack": "6.9.10",

@@ -53,8 +53,6 @@ const LiveStreamPlayer = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    if (!streamId) return;
-
     const getLivestream = () => {
       return StreamRepository.getStreamById(
         streamId,
@@ -100,7 +98,7 @@ const LiveStreamPlayer = ({ navigation, route }) => {
                   <>
                     <View style={styles.topSectionWrap}>
                       <View style={styles.status}>
-                        <Text style={styles.statusText}>LIVE JA</Text>
+                        <Text style={styles.statusText}>LIVE</Text>
                       </View>
                     </View>
                     <TouchableWithoutFeedback onPress={onToggleControl}>
