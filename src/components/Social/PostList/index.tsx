@@ -383,15 +383,14 @@ export default function PostList({
     setEditPostModalVisible(true);
   };
 
-  const handleOnFinishEdit = (postData: {
-    text: string;
-    mediaUrls: string[] | IVideoPost[];
-  }) => {
-    setTextPost(postData.text);
-    setEditPostModalVisible(false);
-    setIsEdit(true);
-  };
-
+  const handleOnFinishEdit = useCallback(
+    (postData: { text: string; mediaUrls: string[] | IVideoPost[] }) => {
+      setTextPost(postData.text);
+      setEditPostModalVisible(false);
+      setIsEdit(true);
+    },
+    []
+  );
   const onClickReactions = useCallback(() => {
     navigation.navigate('ReactionList', {
       referenceId: postId,
@@ -466,7 +465,7 @@ export default function PostList({
               textPost={textPost}
             />
           )}
-          {childrenPosts?.length > 0 && (
+          {childrenPosts?.length > 0 && !editPostModalVisible && (
             <MediaSection childrenPosts={childrenPosts} />
           )}
         </View>
