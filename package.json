@@ -95,6 +95,8 @@
     "react-native-safe-area-context": "^4.7.2",
     "react-native-svg": "^14.1.0",
     "react-native-vision-camera": "^3.9.1",
+    "react-native-vlc-media-player": "^1.0.67",
+    "react-native-get-random-values": "^1.11.0",
     "release-it": "^15.0.0",
     "turbo": "^1.10.7",
     "typescript": "^5.2.2"
@@ -107,6 +109,8 @@
     "@types/react": "17.0.21"
   },
   "peerDependencies": {
+    "react-native-get-random-values": "^1.11.0",
+    "react-native-vlc-media-player": "^1.0.67",
     "@react-native-async-storage/async-storage": "^1.19.3",
     "@react-native-community/netinfo": "^11.3.1",
     "@react-native-community/push-notification-ios": "^1.11.0",

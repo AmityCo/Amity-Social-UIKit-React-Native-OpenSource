@@ -23,7 +23,15 @@
 
 "@amityco/video-broadcaster-react-native@./amityco-video-broadcaster-react-native-0.0.1.tgz":
   version "0.0.1"
-  resolved "./amityco-video-broadcaster-react-native-0.0.1.tgz#017b836e57bfbe80859baa2cb5219ccafbff2e93"
+  resolved "./amityco-video-broadcaster-react-native-0.0.1.tgz#f43ea2bbec528cb3f587440b431a0ddc20cf7244"
+
+"@amityco/video-player-react-native@./amityco-video-player-react-native-0.0.1.tgz":
+  version "0.0.1"
+  resolved "./amityco-video-player-react-native-0.0.1.tgz#865fd31a0c0b1bb161d5653d0b3149369a6da1ff"
+  dependencies:
+    react-native-get-random-values "^1.11.0"
+    react-native-rsa-native "^2.0.5"
+    uuid "^9.0.1"
 
 "@ampproject/remapping@^2.2.0":
   version "2.3.0"
