@@ -74,7 +74,10 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
         feedType: 'published',
       },
       (data) => {
-        setPostData(data);
+        const filterData: any[] = data.data.map((item) => {
+          if (item.dataType === 'text') return item;
+        });
+        setPostData({ ...data, data: filterData });
         subscribePostTopic(targetType, targetId);
       }
     );

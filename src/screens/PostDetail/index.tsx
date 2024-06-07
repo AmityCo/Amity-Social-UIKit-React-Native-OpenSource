@@ -1,6 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { type RouteProp, useRoute } from '@react-navigation/native';
-import React, { useEffect, useRef, useState } from 'react';
+import {
+  type RouteProp,
+  useRoute,
+  useNavigation,
+} from '@react-navigation/native';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -47,6 +51,7 @@ import globalFeedSlice from '../../redux/slices/globalfeedSlice';
 import { useDispatch } from 'react-redux';
 import feedSlice from '../../redux/slices/feedSlice';
 import postDetailSlice from '../../redux/slices/postDetailSlice';
+import { deletePostById } from '../../providers/Social/feed-sdk';
 
 const PostDetail = () => {
   const theme = useTheme() as MyMD3Theme;
@@ -65,8 +70,12 @@ const PostDetail = () => {
   const [resetValue, setResetValue] = useState(false);
   const flatListRef = useRef(null);
   const dispatch = useDispatch();
-  const { updateByPostId: updateByPostIdGlobalFeed } = globalFeedSlice.actions;
-  const { updateByPostId } = feedSlice.actions;
+  const navigation = useNavigation();
+  const {
+    updateByPostId: updateByPostIdGlobalFeed,
+    deleteByPostId: deleteByPostIdGlobalFeed,
+  } = globalFeedSlice.actions;
+  const { updateByPostId, deleteByPostId } = feedSlice.actions;
 
   const [postCollection, setPostCollection] = useState<Amity.Post<any>>();
 
@@ -274,6 +283,15 @@ const PostDetail = () => {
     }
   };
 
+  const onDeletePost = useCallback(async (postid) => {
+    const isDeleted = await deletePostById(postid);
+    if (isDeleted) {
+      dispatch(deleteByPostId({ postId: postid }));
+      dispatch(deleteByPostIdGlobalFeed({ postId: postid }));
+      navigation.goBack();
+    }
+  }, []);
+
   const handleClickReply = (user: UserInterface, commentId: string) => {
     setReplyUserName(user.displayName);
     setReplyCommentId(commentId);
@@ -293,7 +311,7 @@ const PostDetail = () => {
     >
       <ScrollView onScroll={handleScroll} style={styles.container}>
         <PostList
-          onChange={() => {}}
+          onDelete={onDeletePost}
           postDetail={currentPostdetail as IPost}
           isGlobalfeed={isFromGlobalfeed}
         />
