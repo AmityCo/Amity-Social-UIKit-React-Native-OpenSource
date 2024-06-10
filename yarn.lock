@@ -23,13 +23,12 @@
 
 "@amityco/video-broadcaster-react-native@./amityco-video-broadcaster-react-native-0.0.1.tgz":
   version "0.0.1"
-  resolved "./amityco-video-broadcaster-react-native-0.0.1.tgz#f43ea2bbec528cb3f587440b431a0ddc20cf7244"
+  resolved "./amityco-video-broadcaster-react-native-0.0.1.tgz#10b17bd876f056a138dc45fd686dd3226a723365"
 
 "@amityco/video-player-react-native@./amityco-video-player-react-native-0.0.1.tgz":
   version "0.0.1"
-  resolved "./amityco-video-player-react-native-0.0.1.tgz#72675f657a3602e64297bbd3dcd5ae3c69df7faa"
+  resolved "./amityco-video-player-react-native-0.0.1.tgz#55bdbdcd4a7e36a3bf02293d78369c6cf56cb00d"
   dependencies:
-    react-native-get-random-values "^1.11.0"
     react-native-rsa-native "^2.0.5"
     uuid "^9.0.1"
 
@@ -9649,6 +9648,11 @@ react-native-paper@^5.10.6:
     "@callstack/react-theme-provider" "^3.0.9"
     color "^3.1.2"
     use-latest-callback "^0.1.5"
+
+react-native-permissions@^4.1.5:
+  version "4.1.5"
+  resolved "https://registry.yarnpkg.com/react-native-permissions/-/react-native-permissions-4.1.5.tgz#db4d1ddbf076570043f4fd4168f54bb6020aec92"
+  integrity sha512-r6VMRacASmtRHS+GZ+5HQCp9p9kiE+UU9magHOZCXZLTJitdTuVHWZRrb4v4oqZGU+zAp3mZhTQftuMMv+WLUg==
 
 react-native-progress@^5.0.0:
   version "5.0.1"

@@ -23,6 +23,7 @@ import {
   AmityVideoBroadcaster,
   AmityStreamBroadcasterState,
 } from '@amityco/video-broadcaster-react-native';
+import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 
 const CreateLivestream = ({ navigation, route }) => {
   const styles = useStyles();
@@ -163,7 +164,6 @@ const CreateLivestream = ({ navigation, route }) => {
         console.log('disposeStream error', e);
       }
 
-      console.log('Stream disposed');
       streamRef?.current.stopPublish();
       setIsLive(false);
       setStream(null);
@@ -211,18 +211,50 @@ const CreateLivestream = ({ navigation, route }) => {
     ]);
   };
 
-  const onBroadcastStateChange = useCallback(
-    (state: AmityStreamBroadcasterState) => {
-      if (state === AmityStreamBroadcasterState.CONNECTED) {
-        onStreamConnectionSuccess();
+  const onBroadcastStateChange = (state: AmityStreamBroadcasterState) => {
+    console.log('onBroadcastStateChange', state);
+    if (state === AmityStreamBroadcasterState.CONNECTED) {
+      onStreamConnectionSuccess();
+    }
+  };
+
+  const checkPermission = useCallback(async () => {
+    try {
+      const resultCameraPermission = await request(PERMISSIONS.IOS.CAMERA);
+      const resultMicrophonePermission = await request(
+        PERMISSIONS.IOS.MICROPHONE
+      );
+
+      if (
+        resultCameraPermission !== RESULTS.GRANTED &&
+        resultMicrophonePermission !== RESULTS.GRANTED
+      ) {
+        Alert.alert(
+          'Permission Required!',
+          'Please grant permission in iOS setting.',
+          [
+            {
+              text: 'OK',
+              onPress: () => navigation.goBack(),
+            },
+          ]
+        );
       }
-    },
-    []
-  );
+    } catch (err) {
+      console.log('checkPermission error', err);
+      Alert.alert('Cannot access the premission', '', [
+        {
+          text: 'OK',
+          onPress: () => navigation.goBack(),
+        },
+      ]);
+    }
+  }, [navigation]);
 
   useEffect(() => {
     if (Platform.OS === 'android') requestPermission();
-  }, []);
+    else if (Platform.OS === 'ios') checkPermission();
+  }, [checkPermission]);
 
   return (
     <>
