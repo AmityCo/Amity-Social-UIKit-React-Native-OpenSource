@@ -21,7 +21,7 @@ export const useStyles = () => {
     },
     totalVote: {
       fontSize: 12,
-      color: theme.colors.baseShade3,
+      color: theme.colors.baseShade2,
     },
     pollOptionContainer: {
       borderWidth: 1,
@@ -82,6 +82,15 @@ export const useStyles = () => {
     onResultOption: {
       borderLeftWidth: 5,
       borderColor: theme.colors.primary,
+    },
+    voteCount: {
+      fontSize: 13,
+      fontWeight: '400',
+      color: theme.colors.baseShade1,
+      marginTop: 8,
+    },
+    selectedVoteCount: {
+      color: theme.colors.primary,
     },
   });
   return styles;

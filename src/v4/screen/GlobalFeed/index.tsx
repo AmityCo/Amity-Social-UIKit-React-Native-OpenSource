@@ -83,6 +83,7 @@ export default function GlobalFeed() {
               onDelete={onDeletePost}
               postDetail={item}
               postIndex={index}
+              isGlobalfeed={true}
             />
           )}
           keyExtractor={(item) => item.postId.toString()}

@@ -39,6 +39,8 @@ import ReactionListScreen from '../../screens/ReactionListScreen/ReactionListScr
 import CreateStoryScreen from '../screen/CreateStory/CreateStoryScreen';
 import Toast from '../../components/Toast/Toast';
 import AmitySocialGlobalSearchPage from '../PublicApi/Pages/AmitySocialGlobalSearchPage/AmitySocialGlobalSearchPage';
+import UserPendingRequest from '../screen/UserPendingRequest/UserPendingRequest';
+import FollowerList from '../screen/FollowerList/FollowerList';
 
 export default function AmitySocialUIKitV4Navigator() {
   const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -227,7 +229,26 @@ export default function AmitySocialUIKitV4Navigator() {
             component={VideoPlayerFull}
             options={{ headerShown: false }}
           />
-
+          <Stack.Screen
+            name="UserPendingRequest"
+            component={UserPendingRequest}
+            options={{
+              title: 'Follow Requests',
+              headerLeft: () => <BackButton />,
+            }}
+          />
+          <Stack.Screen
+            name="FollowerList"
+            component={FollowerList}
+            options={({
+              route: {
+                params: { displayName },
+              },
+            }: any) => ({
+              title: displayName,
+              headerLeft: () => <BackButton />,
+            })}
+          />
           <Stack.Group
             screenOptions={{
               headerShown: false,

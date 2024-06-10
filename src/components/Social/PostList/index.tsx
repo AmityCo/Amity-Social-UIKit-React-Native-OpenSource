@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-// import { useTranslation } from 'react-i18next';
 import {
   View,
   Text,
@@ -28,7 +27,6 @@ import {
   reportTargetById,
   unReportTargetById,
 } from '../../../providers/Social/feed-sdk';
-import { getCommunityById } from '../../../providers/Social/communities-sdk';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import useAuth from '../../../hooks/useAuth';
@@ -44,6 +42,7 @@ import feedSlice from '../../../redux/slices/feedSlice';
 import RenderTextWithMention from './Components/RenderTextWithMention';
 import { RootStackParamList } from '../../../routes/RouteParamList';
 import { useTimeDifference } from '../../../hooks/useTimeDifference';
+import { CommunityRepository } from '@amityco/ts-sdk-react-native';
 
 export interface IPost {
   postId: string;
@@ -82,7 +81,7 @@ export default function PostList({
   postDetail,
   postIndex,
   onDelete,
-  isGlobalfeed = true,
+  isGlobalfeed,
 }: IPostList) {
   const theme = useTheme() as MyMD3Theme;
   const { client, apiRegion } = useAuth();
@@ -90,7 +89,7 @@ export default function PostList({
   const [isLike, setIsLike] = useState<boolean>(false);
   const [likeReaction, setLikeReaction] = useState<number>(0);
   const [communityName, setCommunityName] = useState('');
-  const [isJoined, setIsJoined] = useState<boolean>(false);
+  const [isJoined, setIsJoined] = useState<boolean>(true);
   const [textPost, setTextPost] = useState<string>('');
   const [privateCommunityId, setPrivateCommunityId] = useState(null);
   const [isVisible, setIsVisible] = useState<boolean>(false);
@@ -168,15 +167,30 @@ export default function PostList({
   }, [checkIsReport]);
 
   useEffect(() => {
+    let unsubCommunity: () => void;
+    if (targetType === 'community' && targetId) {
+      unsubCommunity = CommunityRepository.getCommunity(
+        targetId,
+        ({ error, loading, data }) => {
+          if (error) return;
+          if (!loading) {
+            setCommunityName(data.displayName);
+            setIsJoined(data.isJoined);
+            !data.isPublic && setPrivateCommunityId(data.communityId);
+          }
+        }
+      );
+    }
+    return () => unsubCommunity && unsubCommunity();
+  }, [targetId, targetType]);
+
+  useEffect(() => {
     setTextPost(data?.text);
     if (myReactions.length > 0 && myReactions.includes('like')) {
       setIsLike(true);
     }
     if (reactionCount?.like) {
       setLikeReaction(reactionCount?.like);
-    }
-    if (targetType === 'community' && targetId) {
-      getCommunityInfo(targetId);
     }
   }, [data?.text, myReactions, reactionCount?.like, targetId, targetType]);
 
@@ -197,50 +211,44 @@ export default function PostList({
     []
   );
 
-  const addReactionToPost = useCallback(async () => {
-    setIsLike((prev) => !prev);
-    setLikeReaction((prev) => (prev ? prev - 1 : prev + 1));
-    const updatedLikeReaction = isLike ? likeReaction - 1 : likeReaction + 1;
-    const updatedPost = {
-      ...postDetail,
-      reactionCount: { like: updatedLikeReaction },
-      myReactions: isLike ? [] : ['like'],
-    };
-    try {
-      if (isGlobalfeed) {
-        dispatch(
-          updateByPostIdGlobalFeed({ postId: postId, postDetail: updatedPost })
-        );
-      } else {
-        dispatch(updateByPostId({ postId: postId, postDetail: updatedPost }));
-      }
-      if (isLike) {
-        await removePostReaction(postId, 'like');
-      } else {
-        await addPostReaction(postId, 'like');
-      }
-    } catch (error) {
-      setLikeReaction((prev) => prev);
-    }
-  }, [
-    dispatch,
-    isGlobalfeed,
-    isLike,
-    likeReaction,
-    postDetail,
-    postId,
-    updateByPostId,
-    updateByPostIdGlobalFeed,
-  ]);
+  const addReactionToPost = useCallback(
+    async (isLiked) => {
+      setIsLike((prev) => !prev);
+      setLikeReaction((prev) => (isLiked ? prev - 1 : prev + 1));
+      const updatedLikeReaction = isLiked ? likeReaction - 1 : likeReaction + 1;
+      const updatedPost = {
+        ...postDetail,
+        reactionCount: { like: updatedLikeReaction },
+        myReactions: isLiked ? [] : ['like'],
+      };
 
-  async function getCommunityInfo(id: string) {
-    const { data: community }: { data: Amity.LiveObject<Amity.Community> } =
-      await getCommunityById(id);
-    setCommunityName(community.data.displayName);
-    setIsJoined(community.data.isJoined);
-    !community.data.isPublic &&
-      setPrivateCommunityId(community.data.communityId);
-  }
+      try {
+        dispatch(
+          updateByPostIdGlobalFeed({
+            postId: postId,
+            postDetail: updatedPost,
+          })
+        );
+        dispatch(updateByPostId({ postId: postId, postDetail: updatedPost }));
+
+        if (isLiked) {
+          await removePostReaction(postId, 'like');
+        } else {
+          await addPostReaction(postId, 'like');
+        }
+      } catch (error) {
+        setLikeReaction((prev) => prev);
+      }
+    },
+    [
+      dispatch,
+      likeReaction,
+      postDetail,
+      postId,
+      updateByPostId,
+      updateByPostIdGlobalFeed,
+    ]
+  );
 
   function onClickComment() {
     dispatch(
@@ -375,15 +383,14 @@ export default function PostList({
     setEditPostModalVisible(true);
   };
 
-  const handleOnFinishEdit = (postData: {
-    text: string;
-    mediaUrls: string[] | IVideoPost[];
-  }) => {
-    setTextPost(postData.text);
-    setEditPostModalVisible(false);
-    setIsEdit(true);
-  };
-
+  const handleOnFinishEdit = useCallback(
+    (postData: { text: string; mediaUrls: string[] | IVideoPost[] }) => {
+      setTextPost(postData.text);
+      setEditPostModalVisible(false);
+      setIsEdit(true);
+    },
+    []
+  );
   const onClickReactions = useCallback(() => {
     navigation.navigate('ReactionList', {
       referenceId: postId,
@@ -458,7 +465,7 @@ export default function PostList({
               textPost={textPost}
             />
           )}
-          {childrenPosts?.length > 0 && (
+          {childrenPosts?.length > 0 && !editPostModalVisible && (
             <MediaSection childrenPosts={childrenPosts} />
           )}
         </View>
@@ -485,10 +492,10 @@ export default function PostList({
           </View>
         )}
 
-        {targetType !== 'community' || isJoined ? (
+        {targetType !== 'community' || isJoined !== false ? (
           <View style={styles.actionSection}>
             <TouchableOpacity
-              onPress={addReactionToPost}
+              onPress={() => addReactionToPost(isLike)}
               style={styles.likeBtn}
             >
               {isLike ? (

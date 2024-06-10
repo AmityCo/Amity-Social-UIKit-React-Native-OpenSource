@@ -1,6 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { type RouteProp, useRoute } from '@react-navigation/native';
-import React, { useEffect, useRef, useState } from 'react';
+import {
+  type RouteProp,
+  useRoute,
+  useNavigation,
+} from '@react-navigation/native';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -26,10 +30,7 @@ import {
   CommunityRepository,
   PostRepository,
   SubscriptionLevels,
-  UserRepository,
-  getCommunityTopic,
   getPostTopic,
-  getUserTopic,
   subscribeTopic,
 } from '@amityco/ts-sdk-react-native';
 import {
@@ -46,14 +47,17 @@ import { SvgXml } from 'react-native-svg';
 import { closeIcon } from '../../svg/svg-xml-list';
 import AmityMentionInput from '../../components/MentionInput/AmityMentionInput';
 import { TSearchItem } from '../../hooks/useSearch';
+import globalFeedSlice from '../../redux/slices/globalfeedSlice';
+import { useDispatch } from 'react-redux';
+import feedSlice from '../../redux/slices/feedSlice';
+import postDetailSlice from '../../redux/slices/postDetailSlice';
+import { deletePostById } from '../../providers/Social/feed-sdk';
 
 const PostDetail = () => {
   const theme = useTheme() as MyMD3Theme;
   const styles = useStyles();
   const route = useRoute<RouteProp<RootStackParamList, 'PostDetail'>>();
-
   const { postId, postIndex, isFromGlobalfeed } = route.params;
-
   const [commentList, setCommentList] = useState<IComment[]>([]);
   const [commentCollection, setCommentCollection] =
     useState<Amity.LiveCollection<Amity.Comment>>();
@@ -62,12 +66,16 @@ const PostDetail = () => {
   const [communityObject, setCommunityObject] = useState<Amity.Community>();
   const privateCommunityId =
     !communityObject?.isPublic && communityObject?.communityId;
-  const [userObject, setUserObject] = useState<Amity.User>();
   const [initialInputText, setInitialInputText] = useState('');
   const [resetValue, setResetValue] = useState(false);
   const flatListRef = useRef(null);
-  let isSubscribed = false;
-  const disposers: Amity.Unsubscriber[] = [];
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
+  const {
+    updateByPostId: updateByPostIdGlobalFeed,
+    deleteByPostId: deleteByPostIdGlobalFeed,
+  } = globalFeedSlice.actions;
+  const { updateByPostId, deleteByPostId } = feedSlice.actions;
 
   const [postCollection, setPostCollection] = useState<Amity.Post<any>>();
 
@@ -75,6 +83,7 @@ const PostDetail = () => {
   const { currentPostdetail } = useSelector(
     (state: RootState) => state.postDetail
   );
+  const { updatePostDetail } = postDetailSlice.actions;
 
   const { postList: postListGlobal } = useSelector(
     (state: RootState) => state.globalFeed
@@ -102,52 +111,25 @@ const PostDetail = () => {
     setMentionsPosition(checkMentionPosition);
   }, [inputMessage]);
 
-  const getPost = (postId: string) => {
-    PostRepository.getPost(postId, async ({ data }) => {
-      setPostCollection(data);
-    });
-  };
-
   useEffect(() => {
     setTimeout(() => {
       setLoading(false);
     }, 100);
-    getPost(postId);
+    const unsub =
+      postId &&
+      PostRepository.getPost(postId, async ({ data }) => {
+        setPostCollection(data);
+      });
+    return () => unsub && unsub();
   }, [postId]);
 
   useEffect(() => {
-    if (postCollection) {
-      subscribeTopic(getPostTopic(postCollection));
-    }
+    const unsub =
+      postCollection &&
+      subscribeTopic(getPostTopic(postCollection, SubscriptionLevels.COMMENT));
+    return () => unsub && unsub();
   }, [postCollection]);
 
-  const subscribeCommentTopic = (targetType: string) => {
-    if (isSubscribed) return;
-
-    if (targetType === 'user') {
-      const user = userObject as Amity.User; // use getUser to get user by targetId
-      disposers.push(
-        subscribeTopic(getUserTopic(user, SubscriptionLevels.COMMENT), () => {
-          // use callback to handle errors with event subscription
-        })
-      );
-      isSubscribed = true;
-      return;
-    }
-
-    if (targetType === 'community') {
-      const community = communityObject as Amity.Community; // use getCommunity to get community by targetId
-      disposers.push(
-        subscribeTopic(
-          getCommunityTopic(community, SubscriptionLevels.COMMENT),
-          () => {
-            // use callback to handle errors with event subscription
-          }
-        )
-      );
-      isSubscribed = true;
-    }
-  };
   function getCommentsByPostId(postId: string) {
     CommentRepository.getComments(
       {
@@ -167,13 +149,6 @@ const PostDetail = () => {
 
   useEffect(() => {
     const postList = isFromGlobalfeed ? postListGlobal : postListFeed;
-    if (communityObject || userObject) {
-      subscribeCommentTopic(postList[postIndex]?.targetType as string);
-    }
-  }, [communityObject, userObject]);
-
-  useEffect(() => {
-    const postList = isFromGlobalfeed ? postListGlobal : postListFeed;
     if (postList[postIndex] && postList[postIndex].targetType === 'community') {
       CommunityRepository.getCommunity(
         postList[postIndex].targetId,
@@ -181,13 +156,6 @@ const PostDetail = () => {
           setCommunityObject(community);
         }
       );
-    } else if (
-      postList[postIndex] &&
-      postList[postIndex].targetType === 'user'
-    ) {
-      UserRepository.getUser(postList[postIndex].targetId, ({ data: user }) => {
-        setUserObject(user);
-      });
     }
     getCommentsByPostId(postList[postIndex]?.postId);
   }, []);
@@ -275,6 +243,21 @@ const PostDetail = () => {
     setMentionsPosition([]);
     onCloseReply();
     setResetValue(true);
+    const updatedPost = {
+      ...currentPostdetail,
+      commentsCount: isNaN(currentPostdetail.commentsCount)
+        ? 1
+        : currentPostdetail.commentsCount + 1,
+    };
+    dispatch(
+      updatePostDetail({
+        ...updatedPost,
+      })
+    );
+    dispatch(
+      updateByPostIdGlobalFeed({ postId: postId, postDetail: updatedPost })
+    );
+    dispatch(updateByPostId({ postId: postId, postDetail: updatedPost }));
   };
   const onDeleteComment = async (commentId: string) => {
     const isDeleted = await deleteCommentById(commentId);
@@ -284,8 +267,30 @@ const PostDetail = () => {
         (item) => item.commentId !== commentId
       );
       setCommentList(updatedCommentList);
+      const updatedPost = {
+        ...currentPostdetail,
+        commentsCount: currentPostdetail.commentsCount - 1,
+      };
+      dispatch(
+        updatePostDetail({
+          ...updatedPost,
+        })
+      );
+      dispatch(
+        updateByPostIdGlobalFeed({ postId: postId, postDetail: updatedPost })
+      );
+      dispatch(updateByPostId({ postId: postId, postDetail: updatedPost }));
     }
   };
+
+  const onDeletePost = useCallback(async (postid) => {
+    const isDeleted = await deletePostById(postid);
+    if (isDeleted) {
+      dispatch(deleteByPostId({ postId: postid }));
+      dispatch(deleteByPostIdGlobalFeed({ postId: postid }));
+      navigation.goBack();
+    }
+  }, []);
 
   const handleClickReply = (user: UserInterface, commentId: string) => {
     setReplyUserName(user.displayName);
@@ -306,7 +311,7 @@ const PostDetail = () => {
     >
       <ScrollView onScroll={handleScroll} style={styles.container}>
         <PostList
-          onChange={() => {}}
+          onDelete={onDeletePost}
           postDetail={currentPostdetail as IPost}
           isGlobalfeed={isFromGlobalfeed}
         />

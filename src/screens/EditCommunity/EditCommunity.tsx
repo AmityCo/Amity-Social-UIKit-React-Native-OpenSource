@@ -37,9 +37,8 @@ import { useForm, Controller } from 'react-hook-form';
 const EditCommunity = ({ navigation, route }) => {
   const styles = useStyles();
   const theme = useTheme() as MyMD3Theme;
-  const {
-    communityData: { data },
-  }: { communityData: { data: Amity.RawCommunity } } = route.params;
+  const { communityData: data }: { communityData: Amity.RawCommunity } =
+    route.params;
   const { apiRegion } = useAuth();
   const {
     control,
@@ -419,7 +418,7 @@ const EditCommunity = ({ navigation, route }) => {
         onSelect={handleAddMembers}
         onClose={() => setAddMembersModal(false)}
         visible={addMembersModal}
-        initUserList={[]}
+        initUserList={selectedUserList ?? []}
         excludeUserList={[]}
       />
     </ScrollView>

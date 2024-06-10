@@ -11,6 +11,7 @@ import React, {
   useState,
   useCallback,
   useMemo,
+  useEffect,
 } from 'react';
 import {
   View,
@@ -63,49 +64,24 @@ export default function CommunityHome({ route }: any) {
     communityId: string;
     communityName: string;
   };
-  const [isJoin, setIsJoin] = useState(false);
+  const [isJoin, setIsJoin] = useState(true);
   const [currentTab, setCurrentTab] = useState<TabName>(TabName.Timeline);
-  const [communityData, setCommunityData] =
-    useState<Amity.LiveObject<Amity.Community>>();
+  const [communityData, setCommunityData] = useState<Amity.Community>();
   const shouldShowAmityStoryTab = () => {
-    if (communityData?.data.isPublic) return true;
-    if (communityData?.data.isJoined) return true;
+    if (communityData?.isPublic) return true;
+    if (communityData?.isJoined) return true;
     return false;
   };
-  const avatarUrl = useFile({ fileId: communityData?.data.avatarFileId });
+  const avatarUrl = useFile({ fileId: communityData?.avatarFileId });
   const feedRef: MutableRefObject<FeedRefType | null> =
     useRef<FeedRefType | null>(null);
   const scrollViewRef = useRef(null);
   const [pendingPosts, setPendingPosts] = useState<IPost[]>([]);
-  const [isShowPendingArea, setIsShowPendingArea] = useState<boolean>(false);
   const [isUserHasPermission, setIsUserHasPermission] =
     useState<boolean>(false);
-  const [postSetting, setPostSetting] = useState<
-    ValueOf<
-      Readonly<{
-        ONLY_ADMIN_CAN_POST: 'ONLY_ADMIN_CAN_POST';
-        ADMIN_REVIEW_POST_REQUIRED: 'ADMIN_REVIEW_POST_REQUIRED';
-        ANYONE_CAN_POST: 'ANYONE_CAN_POST';
-      }>
-    >
-  >(null);
   const disposers: Amity.Unsubscriber[] = useMemo(() => [], []);
-  const isSubscribed = useRef(false);
-  const subscribePostTopic = useCallback(
-    (targetType: string) => {
-      if (isSubscribed.current) return;
+  const unsubCommunity = useRef(null);
 
-      if (targetType === 'community') {
-        disposers.push(
-          subscribeTopic(
-            getCommunityTopic(communityData?.data, SubscriptionLevels.POST)
-          )
-        );
-        isSubscribed.current = true;
-      }
-    },
-    [communityData?.data, disposers]
-  );
   const getPendingPosts = useCallback(async () => {
     const unsubscribe = PostRepository.getPosts(
       {
@@ -117,7 +93,6 @@ export default function CommunityHome({ route }: any) {
       async ({ data: posts }) => {
         const pendingPost = await amityPostsFormatter(posts);
         setPendingPosts(pendingPost);
-        subscribePostTopic('community');
       }
     );
     disposers.push(unsubscribe);
@@ -133,51 +108,35 @@ export default function CommunityHome({ route }: any) {
       setIsUserHasPermission(true);
       navigation.setParams({ isModerator: true, communityId, communityName });
     }
-  }, [
-    apiRegion,
-    client,
-    communityId,
-    communityName,
-    disposers,
-    navigation,
-    subscribePostTopic,
-  ]);
+  }, [apiRegion, client, communityId, communityName, disposers, navigation]);
 
-  useFocusEffect(
-    useCallback(() => {
-      if (postSetting === 'ADMIN_REVIEW_POST_REQUIRED') {
-        setIsShowPendingArea(true);
-      }
-    }, [postSetting])
-  );
-
-  const loadCommunity = useCallback(async () => {
-    try {
-      const unsubscribe = CommunityRepository.getCommunity(
-        communityId,
-        (community) => {
-          setCommunityData(community);
-          setPostSetting(community?.data?.postSetting);
-          if (community.data?.postSetting === 'ADMIN_REVIEW_POST_REQUIRED') {
-            setPostSetting('ADMIN_REVIEW_POST_REQUIRED');
-          }
-          setIsJoin(community?.data.isJoined || false); // Set isJoin to communityData?.data.isJoined value
+  useEffect(() => {
+    const unsubscribe = CommunityRepository.getCommunity(
+      communityId,
+      ({ error, loading, data }) => {
+        if (error) return;
+        if (!loading) {
+          unsubCommunity.current = subscribeTopic(
+            getCommunityTopic(data, SubscriptionLevels.COMMUNITY)
+          );
+          setCommunityData(data);
         }
-      );
+        setIsJoin(data.isJoined || false); // Set isJoin to communityData?.data.isJoined value
+      }
+    );
+    return () => {
       unsubscribe();
-    } catch (error) {
-      console.error('Failed to load communities:', error);
-    }
+      unsubCommunity.current && unsubCommunity.current();
+    };
   }, [communityId]);
 
   useFocusEffect(
     useCallback(() => {
       getPendingPosts();
-      loadCommunity();
       return () => {
         disposers.forEach((fn) => fn());
       };
-    }, [disposers, getPendingPosts, loadCommunity])
+    }, [disposers, getPendingPosts])
   );
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -264,11 +223,11 @@ export default function CommunityHome({ route }: any) {
       openPostTypeChoiceModal({
         userId: (client as Amity.Client).userId as string,
         targetId: communityId,
-        isPublic: communityData?.data.isPublic,
+        isPublic: communityData?.isPublic,
         targetName: communityName,
         targetType: PostTargetType.community,
-        postSetting: postSetting,
-        needApprovalOnPostCreation: (communityData?.data as Record<string, any>)
+        postSetting: communityData?.postSetting,
+        needApprovalOnPostCreation: (communityData as Record<string, any>)
           ?.needApprovalOnPostCreation,
       })
     );
@@ -319,15 +278,13 @@ export default function CommunityHome({ route }: any) {
           <View style={styles.darkOverlay} />
           <View style={styles.overlay}>
             <Text style={styles.overlayCommunityText}>
-              {communityData?.data.displayName}
+              {communityData?.displayName}
             </Text>
           </View>
         </View>
         <View style={styles.row}>
           <View style={styles.rowItem}>
-            <Text style={styles.rowNumber}>
-              {communityData?.data.postsCount}
-            </Text>
+            <Text style={styles.rowNumber}>{communityData?.postsCount}</Text>
             <Text style={styles.rowLabel}>post</Text>
           </View>
 
@@ -338,15 +295,13 @@ export default function CommunityHome({ route }: any) {
               style={[styles.rowItem, { paddingLeft: 10 }]}
             >
               <Text style={styles.rowNumber}>
-                {communityData?.data.membersCount}
+                {communityData?.membersCount}
               </Text>
               <Text style={styles.rowLabel}>members</Text>
             </TouchableOpacity>
           </View>
         </View>
-        <Text style={styles.textComponent}>
-          {communityData?.data.description}
-        </Text>
+        <Text style={styles.textComponent}>{communityData?.description}</Text>
         {isUserHasPermission && (
           <TouchableOpacity
             style={styles.editProfileButton}
@@ -356,8 +311,8 @@ export default function CommunityHome({ route }: any) {
             <Text style={styles.editProfileText}>Edit Profile</Text>
           </TouchableOpacity>
         )}
-        {!isJoin && joinCommunityButton()}
-        {isJoin && isShowPendingArea && pendingPostArea()}
+        {isJoin === false && joinCommunityButton()}
+        {isJoin !== false && pendingPosts?.length > 0 && pendingPostArea()}
         {!excludes.includes(`*/${ComponentID.StoryTab}/*`) &&
           shouldShowAmityStoryTab() && (
             <AmityStoryTabComponent
@@ -371,7 +326,7 @@ export default function CommunityHome({ route }: any) {
         />
         {renderTabs()}
       </ScrollView>
-      {isJoin && (
+      {isJoin !== false && (
         <FloatingButton onPress={handleOnPressPostBtn} isGlobalFeed={false} />
       )}
     </View>

@@ -22,13 +22,14 @@ const feedSlice = createSlice({
         ...state.postList,
       ];
     },
-
+    addPostToFeed: (state, action: PayloadAction<IPost>) => {
+      state.postList = [action.payload, ...state.postList];
+    },
     updateByPostId: (
       state,
       action: PayloadAction<{ postId: string; postDetail: IPost }>
     ) => {
       const { postId, postDetail } = action.payload;
-
       const index = state.postList.findIndex((item) => item.postId === postId);
       state.postList[index] = postDetail;
     },
