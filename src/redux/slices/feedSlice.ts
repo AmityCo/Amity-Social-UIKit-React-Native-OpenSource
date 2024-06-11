@@ -18,8 +18,8 @@ const feedSlice = createSlice({
         return arr.filter((post) => !uniqueIds.has(post.postId));
       };
       state.postList = [
-        ...state.postList,
         ...getUniqueArrayById(action.payload),
+        ...state.postList,
       ];
     },
 

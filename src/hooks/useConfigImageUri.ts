@@ -1,10 +1,12 @@
 import { Image, ImageSourcePropType } from 'react-native';
-import { defaultAvatarUri } from '../assets';
+
 import { useMemo } from 'react';
 import useConfig from './useConfig';
 import { IUIKitConfigOptions } from '../types/config.interface';
 import { UiKitConfigKeys } from '../enum';
 import { useDarkMode } from './useDarkMode';
+import { defaultAvatarUri } from '../assets';
+
 
 export const useConfigImageUri = ({
   configPath,

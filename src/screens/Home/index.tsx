@@ -28,6 +28,7 @@ import { useBehaviour } from '../../providers/BehaviourProvider';
 import NewsFeedLoadingComponent from '../../components/NewsFeedLoadingComponent/NewsFeedLoadingComponent';
 import { CommunityRepository } from '@amityco/ts-sdk-react-native';
 import AmityEmptyNewsFeedComponent from '../../components/AmityEmptyNewsFeedComponent/AmityEmptyNewsFeedComponent';
+import AmityNewsFeedComponent from '../../components/AmityNewsFeedComponent/AmityNewsFeedComponent';
 LogBox.ignoreAllLogs(true);
 export default function Home() {
 

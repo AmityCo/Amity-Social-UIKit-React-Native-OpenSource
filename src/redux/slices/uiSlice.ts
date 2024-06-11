@@ -7,6 +7,7 @@ interface UIState {
   targetId?: string | null;
   targetType?: PostTargetType | '';
   targetName?: string;
+  isPublic?: boolean;
   postSetting?: ValueOf<
     Readonly<{
       ONLY_ADMIN_CAN_POST: 'ONLY_ADMIN_CAN_POST';
@@ -15,6 +16,8 @@ interface UIState {
     }>
   >;
   needApprovalOnPostCreation?: boolean;
+  showToastMessage?: boolean;
+  toastMessage?: string;
 }
 const initialState: UIState = {
   showPostTypeChoiceModal: false,
@@ -24,6 +27,7 @@ const initialState: UIState = {
   targetName: '',
   postSetting: null,
   needApprovalOnPostCreation: true,
+  isPublic: false,
 };
 
 const uiSlice = createSlice({
@@ -37,6 +41,7 @@ const uiSlice = createSlice({
         targetId?: string;
         targetName?: string;
         targetType?: PostTargetType;
+        isPublic?: boolean;
         postSetting?: ValueOf<
           Readonly<{
             ONLY_ADMIN_CAN_POST: 'ONLY_ADMIN_CAN_POST';
@@ -53,8 +58,9 @@ const uiSlice = createSlice({
       state.targetName = action.payload.targetName || '';
       state.targetType = action.payload.targetType || '';
       state.postSetting = action.payload.postSetting || null;
+      state.isPublic = action.payload.isPublic;
       state.needApprovalOnPostCreation =
-        action.payload.needApprovalOnPostCreation || true;
+        action.payload.needApprovalOnPostCreation;
     },
     closePostTypeChoiceModal: (state) => {
       state.showPostTypeChoiceModal = false;
@@ -64,6 +70,20 @@ const uiSlice = createSlice({
       state.targetName = '';
       state.postSetting = null;
       state.needApprovalOnPostCreation = true;
+      state.isPublic = false;
+    },
+    showToastMessage: (
+      state,
+      action: PayloadAction<{
+        toastMessage: string;
+      }>
+    ) => {
+      state.showToastMessage = true;
+      state.toastMessage = action.payload.toastMessage;
+    },
+    hideToastMessage: (state) => {
+      state.showToastMessage = false;
+      state.toastMessage = '';
     },
   },
 });

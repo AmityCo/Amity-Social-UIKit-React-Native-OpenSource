@@ -68,6 +68,7 @@ __metadata:
     "@react-navigation/stack": 6.3.16
     "@reduxjs/toolkit": ^1.9.7
     "@release-it/conventional-changelog": ^5.0.0
+    "@rntext/more-or-less": ^2.0.2
     "@types/jest": ^29.5.5
     "@types/react": ^18.2.44
     commitlint: ^17.0.2
@@ -5848,6 +5849,16 @@ __metadata:
   peerDependencies:
     release-it: ^15.4.1
   checksum: 15ade4ab88dabea7664b28494db035707eb84acc897b51472142abcac6c6acae0e90f9db7d8c93bb1de697678e7321d31192362565c538d4f62a4e7600bc30b2
+  languageName: node
+  linkType: hard
+
+"@rntext/more-or-less@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "@rntext/more-or-less@npm:2.0.2"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: a2522f3652a39056fd6d7cae5a8e2933c65bb813bc314255d7ac0cce928c09be58e0fa4a0811dbe0cf278669245b2c60cd4026d88871adbcba60dec8bbcce77f
   languageName: node
   linkType: hard
 
