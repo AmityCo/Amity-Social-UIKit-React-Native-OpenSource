@@ -10,6 +10,7 @@ const useRequestPermission = async () => {
     hasPermission: hasMicrophonePermission,
     requestPermission: requestMicrophonePermission,
   } = useMicrophonePermission();
+
   const cameraPermissionResult = !hasPermission && (await requestPermission());
   const microphonePermissionresult =
     !hasMicrophonePermission && (await requestMicrophonePermission());

@@ -27,6 +27,10 @@ const LiveStreamPlayer = ({ navigation, route }) => {
 
   const [livestream, setLivestream] = useState<Amity.Stream>();
 
+  const onClosePlayer = () => {
+    navigation.goBack();
+  };
+
   const onStopPlayer = () => {
     ref.current && ref.current.pause();
     setIsPlaying(false);
@@ -104,7 +108,6 @@ const LiveStreamPlayer = ({ navigation, route }) => {
                     <TouchableWithoutFeedback onPress={onToggleControl}>
                       <Animated.View
                         style={{
-                          ...styles.controlView,
                           opacity: showControlAnim,
                         }}
                       >

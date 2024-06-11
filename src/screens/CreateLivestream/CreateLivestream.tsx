@@ -23,6 +23,7 @@ import {
   AmityVideoBroadcaster,
   AmityStreamBroadcasterState,
 } from '@amityco/video-broadcaster-react-native';
+
 import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 
 const CreateLivestream = ({ navigation, route }) => {
@@ -46,7 +47,7 @@ const CreateLivestream = ({ navigation, route }) => {
   const streamRef = useRef(null);
   const sheetRef = useRef<BottomSheetMethods>(null);
 
-  const requestPermission = async () => {
+  const checkPermissionAndroid = useCallback(async () => {
     try {
       let granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.CAMERA,
@@ -59,8 +60,18 @@ const CreateLivestream = ({ navigation, route }) => {
         }
       );
 
-      if (granted !== PermissionsAndroid.RESULTS.GRANTED)
-        return console.log('Camera permission denied');
+      if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+        Alert.alert(
+          'Permission Required!',
+          'Please grant permission in iOS setting.',
+          [
+            {
+              text: 'OK',
+              onPress: () => navigation.goBack(),
+            },
+          ]
+        );
+      }
 
       granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
@@ -73,14 +84,57 @@ const CreateLivestream = ({ navigation, route }) => {
         }
       );
 
-      if (granted !== PermissionsAndroid.RESULTS.GRANTED)
-        return console.log('Record Audio permission denied');
+      if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+        Alert.alert(
+          'Permission Required!',
+          'Please grant permission in iOS setting.',
+          [
+            {
+              text: 'OK',
+              onPress: () => navigation.goBack(),
+            },
+          ]
+        );
+      }
 
       setAndroidPermission(true);
     } catch (err) {
       console.warn(err);
     }
-  };
+  }, [navigation]);
+
+  const checkPermissionIOS = useCallback(async () => {
+    try {
+      const resultCameraPermission = await request(PERMISSIONS.IOS.CAMERA);
+      const resultMicrophonePermission = await request(
+        PERMISSIONS.IOS.MICROPHONE
+      );
+
+      if (
+        resultCameraPermission !== RESULTS.GRANTED ||
+        resultMicrophonePermission !== RESULTS.GRANTED
+      ) {
+        Alert.alert(
+          'Permission Required!',
+          'Please grant permission in iOS setting.',
+          [
+            {
+              text: 'OK',
+              onPress: () => navigation.goBack(),
+            },
+          ]
+        );
+      }
+    } catch (err) {
+      console.log('checkPermission error', err);
+      Alert.alert('Cannot access the premission', '', [
+        {
+          text: 'OK',
+          onPress: () => navigation.goBack(),
+        },
+      ]);
+    }
+  }, [navigation]);
 
   const { imageUri, removeSelectedImage, openImageGallery } = useImagePicker({
     selectionLimit: 1,
@@ -212,49 +266,17 @@ const CreateLivestream = ({ navigation, route }) => {
   };
 
   const onBroadcastStateChange = (state: AmityStreamBroadcasterState) => {
-    console.log('onBroadcastStateChange', state);
     if (state === AmityStreamBroadcasterState.CONNECTED) {
       onStreamConnectionSuccess();
     }
   };
 
-  const checkPermission = useCallback(async () => {
-    try {
-      const resultCameraPermission = await request(PERMISSIONS.IOS.CAMERA);
-      const resultMicrophonePermission = await request(
-        PERMISSIONS.IOS.MICROPHONE
-      );
-
-      if (
-        resultCameraPermission !== RESULTS.GRANTED &&
-        resultMicrophonePermission !== RESULTS.GRANTED
-      ) {
-        Alert.alert(
-          'Permission Required!',
-          'Please grant permission in iOS setting.',
-          [
-            {
-              text: 'OK',
-              onPress: () => navigation.goBack(),
-            },
-          ]
-        );
-      }
-    } catch (err) {
-      console.log('checkPermission error', err);
-      Alert.alert('Cannot access the premission', '', [
-        {
-          text: 'OK',
-          onPress: () => navigation.goBack(),
-        },
-      ]);
-    }
-  }, [navigation]);
-
   useEffect(() => {
-    if (Platform.OS === 'android') requestPermission();
-    else if (Platform.OS === 'ios') checkPermission();
-  }, [checkPermission]);
+    setTimeout(() => {
+      if (Platform.OS === 'android') checkPermissionAndroid();
+      else if (Platform.OS === 'ios') checkPermissionIOS();
+    }, 500);
+  }, [checkPermissionAndroid, checkPermissionIOS]);
 
   return (
     <>
