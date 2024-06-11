@@ -35,8 +35,6 @@ export const AuthContextProvider: FC<IAmityUIkitProvider> = ({
     apiEndpoint: { http: apiEndpoint },
   });
 
-const currentIsConnected = Client.isConnected(); 
-console.log('currentIsConnected: ', currentIsConnected);
   const sessionHandler: Amity.SessionHandler = {
     sessionWillRenewAccessToken(renewal) {
       renewal.renew();

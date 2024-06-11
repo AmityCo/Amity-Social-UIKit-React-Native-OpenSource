@@ -1,8 +1,3 @@
-export interface IUIKitConfig {
-  globalTheme: Record<string, any>;
-  excludes: string[];
-  getConfig: (id: string) => any;
-}
 import { DefaultConfigID } from '../enum';
 
 export interface IUIKitConfig {

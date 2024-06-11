@@ -1,9 +1,19 @@
 import * as React from 'react';
+import { useColorScheme } from 'react-native';
 import { Provider } from 'react-redux';
 import AuthContextProvider from './auth-provider';
 import { DefaultTheme, PaperProvider, type MD3Theme } from 'react-native-paper';
 import { store } from '../redux/store';
 import { ConfigProvider } from './config-provider';
+import { IConfigRaw } from '../types/config.interface';
+import { validateConfigColor } from '../util/colorUtil';
+
+import fallBackConfig from '../../uikit.config.json';
+import { BehaviourProvider } from '../providers/BehaviourProvider';
+import { IBehaviour } from '../types/behaviour.interface';
+import { lighten, parseToHsl, hslToColorString } from 'polished';
+import useValidateConfig from '../hooks/useValidateConfig';
+
 export type CusTomTheme = typeof DefaultTheme;
 export interface IAmityUIkitProvider {
   userId: string;
@@ -12,22 +22,29 @@ export interface IAmityUIkitProvider {
   apiRegion?: string;
   apiEndpoint?: string;
   children: any;
-  theme?: CustomColors;
-  darkMode?: boolean;
   authToken?: string;
+  configs?: IConfigRaw;
+  behaviour?: IBehaviour;
 }
 
 interface CustomColors {
   primary?: string;
+  primaryShade1?: string;
+  primaryShade2?: string;
+  primaryShade3?: string;
+  primaryShade4?: string;
   secondary?: string;
+  secondaryShade1?: string;
+  secondaryShade2?: string;
+  secondaryShade3?: string;
+  secondaryShade4?: string;
   background?: string;
-  border?: string;
   base?: string;
   baseShade1?: string;
   baseShade2?: string;
   baseShade3?: string;
-  screenBackground?: string;
-  storiesRing?: { colorOne?: string; colorTwo?: string };
+  baseShade4?: string;
+  alert?: string;
 }
 export interface MyMD3Theme extends MD3Theme {
   colors: MD3Theme['colors'] & CustomColors;
@@ -39,44 +56,52 @@ export default function AmityUiKitProvider({
   apiRegion,
   apiEndpoint,
   children,
-  theme,
-  darkMode = true,
   authToken,
+  configs,
+  behaviour,
 }: IAmityUIkitProvider) {
-  const customizedTheme: MyMD3Theme = {
-    ...DefaultTheme,
-    colors: {
-      ...DefaultTheme.colors,
-      primary: theme?.primary ?? '#1054DE',
-      secondary: theme?.secondary ?? '#EBECEF',
-      background: theme?.background ?? '#FFFFFF',
-      border: theme?.border ?? '#EBECEF',
-      base: theme?.base ?? '#292B32',
-      baseShade1: theme?.baseShade1 ?? '#636878',
-      baseShade2: theme?.baseShade2 ?? '#898E9E',
-      baseShade3: theme?.baseShade3 ?? '#A5A9B5',
-      screenBackground: theme?.screenBackground ?? '#EBECEF',
-      storiesRing: {
-        colorOne: theme?.storiesRing?.colorOne ?? '#339AF9',
-        colorTwo: theme?.storiesRing?.colorTwo ?? '#78FA58',
-      },
-    },
-  };
+  const colorScheme = useColorScheme();
+  const SHADE_PERCENTAGES = [0.25, 0.4, 0.45, 0.6];
 
-  const defaultDarkTheme: MyMD3Theme = {
+  const generateShades = (hexColor?: string): string[] => {
+    if (!hexColor) return Array(SHADE_PERCENTAGES.length).fill('');
+    const hslColor = parseToHsl(hexColor);
+    const shades = SHADE_PERCENTAGES.map((percentage) => {
+      return lighten(percentage, hslToColorString(hslColor));
+    });
+    return shades;
+  };
+  const isValidConfig = useValidateConfig(configs);
+  const configData = isValidConfig ? configs : (fallBackConfig as IConfigRaw);
+  const isDarkTheme =
+    configData?.preferred_theme === 'dark' ||
+    (configData?.preferred_theme === 'default' && colorScheme === 'dark');
+  const themeColor = isDarkTheme
+    ? configData.theme.dark
+    : configData.theme.light;
+  const primaryShades = generateShades(themeColor.primary_color);
+  const secondaryShades = generateShades(themeColor.secondary_color);
+  const globalTheme: MyMD3Theme = {
     ...DefaultTheme,
     colors: {
       ...DefaultTheme.colors,
-      primary: theme?.primary ?? '#1054DE',      // Primary color for main elements
-      secondary: theme?.secondary ?? '#292B32',    // Secondary color UI elements e.g comment bubble, input bar 
-      background: theme?.background ?? '#191919',   // Background color for the overall theme
-      border: theme?.border ?? '#292B32',       // Border color for elements
-      base: theme?.base ?? '#FFFFFF',         // Base color for main text, Title, input text 
-      baseShade1: theme?.baseShade1 ?? '#EBECEF',   // Base color for Sub Text, Sub Title, TimeStamp Text
-      baseShade2: theme?.baseShade2 ?? '#EBECEF',   // Base color for comments, like text
-      baseShade3: theme?.baseShade3 ?? '#EBECEF',   // Base color for placeHolder
-      screenBackground: theme?.screenBackground ?? '#000000',
-      storiesRing: { colorOne: theme?.storiesRing?.colorOne ?? '#339AF9', colorTwo: theme?.storiesRing?.colorTwo ?? '#78FA58' },
+      primary: validateConfigColor(themeColor?.primary_color),
+      primaryShade1: validateConfigColor(primaryShades[0]),
+      primaryShade2: validateConfigColor(primaryShades[1]),
+      primaryShade3: validateConfigColor(primaryShades[2]),
+      primaryShade4: validateConfigColor(primaryShades[3]),
+      secondary: validateConfigColor(themeColor?.secondary_color),
+      secondaryShade1: validateConfigColor(secondaryShades[0]),
+      secondaryShade2: validateConfigColor(secondaryShades[1]),
+      secondaryShade3: validateConfigColor(secondaryShades[2]),
+      secondaryShade4: validateConfigColor(secondaryShades[3]),
+      background: validateConfigColor(themeColor?.background_color),
+      base: validateConfigColor(themeColor?.base_color),
+      baseShade1: validateConfigColor(themeColor?.base_shade1_color),
+      baseShade2: validateConfigColor(themeColor?.base_shade2_color),
+      baseShade3: validateConfigColor(themeColor?.base_shade3_color),
+      baseShade4: validateConfigColor(themeColor?.base_shade4_color),
+      alert: validateConfigColor(themeColor?.alert_color),
     },
   };
 
@@ -90,10 +115,10 @@ export default function AmityUiKitProvider({
         apiEndpoint={apiEndpoint}
         authToken={authToken}
       >
-        <ConfigProvider>
-          <PaperProvider theme={darkMode ? defaultDarkTheme : customizedTheme}>
-            {children}
-          </PaperProvider>
+        <ConfigProvider configs={configData}>
+          <BehaviourProvider behaviour={behaviour}>
+            <PaperProvider theme={globalTheme}>{children}</PaperProvider>
+          </BehaviourProvider>
         </ConfigProvider>
       </AuthContextProvider>
     </Provider>
