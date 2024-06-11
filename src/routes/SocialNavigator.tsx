@@ -58,9 +58,9 @@ export default function SocialNavigator() {
             },
           }}
         >
-          <Stack.Screen name="Home" component={Home} />
-          {/* <Stack.Screen name="Community" component={Home} /> */}
-          {/* <Stack.Screen name="Explore" component={Explore} />
+          <Stack.Screen name="Home" component={Home}  options={{ headerShown: false }}/>
+          <Stack.Screen name="Community" component={Home} />
+           <Stack.Screen name="Explore" component={Explore} />
           <Stack.Screen name="PostDetail" component={PostDetail} />
           <Stack.Screen
             name="CategoryList"
@@ -167,7 +167,7 @@ export default function SocialNavigator() {
           <Stack.Screen
             name="UserProfileSetting"
             component={UserProfileSetting}
-          /> */}
+          />
           {/* <Stack.Screen
             name="VideoPlayer"
             component={VideoPlayerFull}

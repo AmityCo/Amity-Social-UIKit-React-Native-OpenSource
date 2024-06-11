@@ -2,8 +2,7 @@
 import * as React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 // import { useTranslation } from 'react-i18next';
-
-import { View, TouchableOpacity, LogBox } from 'react-native';
+import { View, TouchableOpacity, LogBox, SafeAreaView } from 'react-native';
 import FloatingButton from '../../components/FloatingButton';
 import useAuth from '../../hooks/useAuth';
 import Explore from '../Explore';
@@ -29,6 +28,7 @@ import NewsFeedLoadingComponent from '../../components/NewsFeedLoadingComponent/
 import { CommunityRepository } from '@amityco/ts-sdk-react-native';
 import AmityEmptyNewsFeedComponent from '../../components/AmityEmptyNewsFeedComponent/AmityEmptyNewsFeedComponent';
 import AmityNewsFeedComponent from '../../components/AmityNewsFeedComponent/AmityNewsFeedComponent';
+import AmitySocialHomeTopNavigationComponent from '../../components/AmitySocialHomeTopNavigationComponent/AmitySocialHomeTopNavigationComponent';
 LogBox.ignoreAllLogs(true);
 export default function Home() {
 
@@ -59,6 +59,7 @@ export default function Home() {
   const { openPostTypeChoiceModal } = uiSlice.actions;
   const { excludes } = useConfig();
   const [activeTab, setActiveTab] = useState<string>(newsFeedTab);
+  console.log('activeTab: ', activeTab);
   const [myCommunities, setMyCommunities] = useState<Amity.Community[]>(null);
   const [pageLoading, setPageLoading] = useState(true);
 
@@ -84,24 +85,7 @@ export default function Home() {
     navigation.navigate('CreateCommunity');
   };
 
-  useEffect(() => {
-    navigation.setOptions({
-      headerRight: () =>
-        activeTab === TabName.MyCommunities ? (
-          <TouchableOpacity
-            onPress={onClickAddCommunity}
-            style={styles.btnWrap}
-          >
-            <PlusIcon color={theme.colors.base} />
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity onPress={onClickSearch} style={styles.btnWrap}>
-            <SearchIcon color={theme.colors.base} />
-          </TouchableOpacity>
-        ),
-      headerTitle: 'Community',
-    });
-  }, []);
+
 
   const openModal = () => {
     dispatch(
@@ -147,7 +131,15 @@ export default function Home() {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <SafeAreaView
+      testID="social_home_page"
+      accessibilityLabel="social_home_page"
+      id="social_home_page"
+      style={{
+        flex: 1,
+        backgroundColor: theme.colors.background,
+      }}
+    >
       {/* <CustomTab
         tabName={
           excludes.includes(ComponentID.StoryTab)
@@ -156,10 +148,11 @@ export default function Home() {
         }
         onTabChange={setActiveTab}
       /> */}
+      <AmitySocialHomeTopNavigationComponent />
       <CustomSocialTab
         tabNames={[newsFeedTab, exploreTab, myCommunitiesTab]}
         onTabChange={onTabChange}
-        activeTab={newsFeedTab}
+        activeTab={activeTab}
       />
       {renderNewsFeed()}
       {/* {activeTab === TabName.NewsFeed ? (
@@ -176,6 +169,6 @@ export default function Home() {
           <AllMyCommunity />
         </View>
       )} */}
-    </View>
+    </SafeAreaView>
   );
 }

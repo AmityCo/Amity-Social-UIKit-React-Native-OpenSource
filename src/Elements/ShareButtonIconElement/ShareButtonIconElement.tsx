@@ -8,6 +8,7 @@ import {
 } from '../../enum';
 import useConfig from '../../hooks/useConfig';
 import { useConfigImageUri } from '../../hooks/useConfigImageUri';
+import ShareIcon from '../../svg/ShareIcon';
 
 
 type ShareButtonIconElementType = Partial<ImageProps> & {
@@ -35,12 +36,13 @@ const ShareButtonIconElement: FC<ShareButtonIconElementType> = ({
   if (excludes.includes(configId)) return null;
 
   return (
-    <Image
-      testID={configId}
-      accessibilityLabel={configId}
-      source={props.source ?? imageSource}
-      {...props}
-    />
+    // <Image
+    //   testID={configId}
+    //   accessibilityLabel={configId}
+    //   source={props.source ?? imageSource}
+    //   {...props}
+    // />
+    <ShareIcon {...props}/>
   );
 };
 
