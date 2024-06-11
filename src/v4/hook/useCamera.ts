@@ -1,22 +1,32 @@
-import { Linking } from 'react-native';
+import { Platform } from 'react-native';
+
 import {
   useCameraPermission,
   useMicrophonePermission,
 } from 'react-native-vision-camera';
 
-const useRequestPermission = async () => {
+const useRequestPermission = async ({
+  onRequestPermissionFailed,
+}: {
+  onRequestPermissionFailed?: () => void;
+}) => {
   const { hasPermission, requestPermission } = useCameraPermission();
   const {
     hasPermission: hasMicrophonePermission,
     requestPermission: requestMicrophonePermission,
   } = useMicrophonePermission();
 
-  const cameraPermissionResult = !hasPermission && (await requestPermission());
+  if (Platform.OS === 'android') return;
+
+  const cameraPermissionResult =
+    (!hasPermission && (await requestPermission())) ?? false;
+  console.log('cameraPermissionResult', cameraPermissionResult);
   const microphonePermissionresult =
     !hasMicrophonePermission && (await requestMicrophonePermission());
-  !cameraPermissionResult ||
-    (!microphonePermissionresult && (await Linking.openSettings()));
-  return;
+  console.log('microphonePermissionresult', microphonePermissionresult);
+  if (!cameraPermissionResult || !microphonePermissionresult) {
+    onRequestPermissionFailed && onRequestPermissionFailed();
+  }
 };
 
 export { useRequestPermission };

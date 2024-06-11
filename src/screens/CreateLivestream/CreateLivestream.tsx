@@ -24,10 +24,27 @@ import {
   AmityStreamBroadcasterState,
 } from '@amityco/video-broadcaster-react-native';
 
-import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
+import { useRequestPermission } from '../../../src/v4/hook/useCamera';
 
 const CreateLivestream = ({ navigation, route }) => {
   const styles = useStyles();
+
+  useRequestPermission({
+    onRequestPermissionFailed: () => {
+      setTimeout(() => {
+        Alert.alert(
+          'Permission Required!',
+          'Please grant permission in the setting.',
+          [
+            {
+              text: 'OK',
+              onPress: () => navigation.goBack(),
+            },
+          ]
+        );
+      }, 700);
+    },
+  });
 
   const { targetId, targetType, targetName } = route.params;
 
@@ -49,7 +66,7 @@ const CreateLivestream = ({ navigation, route }) => {
 
   const checkPermissionAndroid = useCallback(async () => {
     try {
-      let granted = await PermissionsAndroid.request(
+      const cameraPermission = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.CAMERA,
         {
           title: 'Camera Permission',
@@ -60,20 +77,7 @@ const CreateLivestream = ({ navigation, route }) => {
         }
       );
 
-      if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-        Alert.alert(
-          'Permission Required!',
-          'Please grant permission in iOS setting.',
-          [
-            {
-              text: 'OK',
-              onPress: () => navigation.goBack(),
-            },
-          ]
-        );
-      }
-
-      granted = await PermissionsAndroid.request(
+      const microphonePermission = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
         {
           title: 'Record Audio Permission',
@@ -84,39 +88,13 @@ const CreateLivestream = ({ navigation, route }) => {
         }
       );
 
-      if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-        Alert.alert(
-          'Permission Required!',
-          'Please grant permission in iOS setting.',
-          [
-            {
-              text: 'OK',
-              onPress: () => navigation.goBack(),
-            },
-          ]
-        );
-      }
-
-      setAndroidPermission(true);
-    } catch (err) {
-      console.warn(err);
-    }
-  }, [navigation]);
-
-  const checkPermissionIOS = useCallback(async () => {
-    try {
-      const resultCameraPermission = await request(PERMISSIONS.IOS.CAMERA);
-      const resultMicrophonePermission = await request(
-        PERMISSIONS.IOS.MICROPHONE
-      );
-
       if (
-        resultCameraPermission !== RESULTS.GRANTED ||
-        resultMicrophonePermission !== RESULTS.GRANTED
+        cameraPermission !== PermissionsAndroid.RESULTS.GRANTED ||
+        microphonePermission !== PermissionsAndroid.RESULTS.GRANTED
       ) {
         Alert.alert(
           'Permission Required!',
-          'Please grant permission in iOS setting.',
+          'Please grant permission in the setting.',
           [
             {
               text: 'OK',
@@ -125,14 +103,14 @@ const CreateLivestream = ({ navigation, route }) => {
           ]
         );
       }
+
+      if (
+        cameraPermission === PermissionsAndroid.RESULTS.GRANTED &&
+        microphonePermission === PermissionsAndroid.RESULTS.GRANTED
+      )
+        setAndroidPermission(true);
     } catch (err) {
-      console.log('checkPermission error', err);
-      Alert.alert('Cannot access the premission', '', [
-        {
-          text: 'OK',
-          onPress: () => navigation.goBack(),
-        },
-      ]);
+      console.warn(err);
     }
   }, [navigation]);
 
@@ -272,11 +250,9 @@ const CreateLivestream = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    setTimeout(() => {
-      if (Platform.OS === 'android') checkPermissionAndroid();
-      else if (Platform.OS === 'ios') checkPermissionIOS();
-    }, 500);
-  }, [checkPermissionAndroid, checkPermissionIOS]);
+    if (Platform.OS === 'android') checkPermissionAndroid();
+    // else if (Platform.OS === 'ios') checkPermissionIOS();
+  }, [checkPermissionAndroid]);
 
   return (
     <>

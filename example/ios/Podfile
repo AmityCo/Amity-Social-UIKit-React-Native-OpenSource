@@ -1,17 +1,3 @@
-def node_require(script)
-  # Resolve script with node to allow for hoisting
-  require Pod::Executable.execute_command('node', ['-p',
-    "require.resolve(
-       '#{script}',
-       {paths: [process.argv[1]]},
-    )", __dir__]).strip
-end
-
-node_require('react-native/scripts/react_native_pods.rb')
-node_require('react-native-permissions/scripts/setup.rb')
-
-require_relative '../node_modules/react-native-permissions/scripts/setup'
-
 # Resolve react_native_pods.rb with node to allow for hoisting
 require Pod::Executable.execute_command('node', ['-p',
   'require.resolve(
@@ -21,8 +7,6 @@ require Pod::Executable.execute_command('node', ['-p',
 
 platform :ios, min_ios_version_supported
 prepare_react_native_project!
-
-setup_permissions(['Camera','Microphone'])
 
 # If you are using a `react-native-flipper` your iOS build will fail when `NO_FLIPPER=1` is set.
 # because `react-native-flipper` depends on (FlipperKit,...) that will be excluded
