@@ -68,21 +68,28 @@ const AmityPostDetailPage: FC<AmityPostDetailPageType> = ({ route }) => {
   );
   useLayoutEffect(() => {
     let unsub: () => void;
-    let hasSubscribed = false;
-    PostRepository.getPost(postId, async ({ error, loading, data }) => {
-      if (!error && !loading) {
-        if (!hasSubscribed) {
-          unsub = subscribeTopic(
-            getPostTopic(data, SubscriptionLevels.COMMENT)
-          );
-          hasSubscribed = true;
-        }
-        const posts = await amityPostsFormatter([data]);
-        setPostData(posts[0]);
-      }
-    });
 
-    return () => unsub && unsub();
+    let hasSubscribed = false;
+    const postUnsub = PostRepository.getPost(
+      postId,
+      async ({ error, loading, data }) => {
+        if (!error && !loading) {
+          if (!hasSubscribed) {
+            unsub = subscribeTopic(
+              getPostTopic(data, SubscriptionLevels.COMMENT)
+            );
+            hasSubscribed = true;
+          }
+          const posts = await amityPostsFormatter([data]);
+          setPostData(posts[0]);
+        }
+      }
+    );
+
+    return () => {
+      postUnsub();
+      unsub && unsub();
+    };
   }, [postId]);
 
   useEffect(() => {

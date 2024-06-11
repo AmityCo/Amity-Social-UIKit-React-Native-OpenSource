@@ -40,9 +40,9 @@ import { useNavigation } from '@react-navigation/native';
 import ReplyCommentList from '../ReplyCommentList/index';
 import { CommentRepository } from '@amityco/ts-sdk-react-native';
 import { useTimeDifference } from '../../../../hook';
-import RenderTextWithMention from '../../../../component/RenderTextWithMention/RenderTextWithMention';
 import ModeratorBadgeElement from '../../../../PublicApi/Elements/ModeratorBadgeElement/ModeratorBadgeElement';
 import { ComponentID, PageID } from '../../../../enum';
+import { LinkPreview } from '../../../../component/PreviewLink/LinkPreview';
 export interface IComment {
   commentId: string;
   data: Record<string, any>;
@@ -330,9 +330,9 @@ const CommentListItem = ({
               </View>
             )}
             {textComment && (
-              <RenderTextWithMention
+              <LinkPreview
                 mentionPositionArr={mentionPosition}
-                textPost={textComment}
+                text={textComment}
               />
             )}
           </View>

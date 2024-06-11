@@ -14,7 +14,8 @@ import useAuth from '../../../hooks/useAuth';
 import MediaSection from '../../../components/MediaSection';
 import { IMentionPosition } from '../../../screens/CreatePost';
 import { PostRepository } from '@amityco/ts-sdk-react-native';
-import RenderTextWithMention from '../PostList/Components/RenderTextWithMention';
+import { LinkPreview } from '../../../v4/component/PreviewLink/LinkPreview';
+import RenderTextWithMention from '../../../v4/component/RenderTextWithMention/RenderTextWithMention';
 
 export interface IPost {
   postId: string;
@@ -184,11 +185,16 @@ export default function PendingPostList({
       </View>
       <View>
         <View style={styles.bodySection}>
-          {/* {textPost && <Text style={styles.bodyText}>{textPost}</Text>} */}
-          {textPost && (
+          {textPost && childrenPosts?.length === 0 && (
+            <LinkPreview
+              text={textPost}
+              mentionPositionArr={[...mentionPositionArr]}
+            />
+          )}
+          {textPost && childrenPosts?.length > 0 && (
             <RenderTextWithMention
               textPost={textPost}
-              mentionPositionArr={mentionPositionArr}
+              mentionPositionArr={[...mentionPositionArr]}
             />
           )}
           {childrenPosts.length > 0 && (

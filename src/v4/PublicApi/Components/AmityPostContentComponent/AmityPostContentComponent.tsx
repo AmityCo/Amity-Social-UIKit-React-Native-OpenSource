@@ -29,7 +29,6 @@ import MediaSection from '../../../../components/MediaSection';
 import { useDispatch } from 'react-redux';
 import globalFeedSlice from '../../../../redux/slices/globalfeedSlice';
 import { IMentionPosition } from '../../../types/type';
-import RenderTextWithMention from '../../../component/RenderTextWithMention/RenderTextWithMention';
 import { RootStackParamList } from '../../../routes/RouteParamList';
 import { ComponentID, ElementID, PageID } from '../../../enum';
 import AvatarElement from '../../Elements/CommonElements/AvatarElement';
@@ -40,6 +39,8 @@ import { AmityPostContentComponentStyleEnum } from '../../../enum/AmityPostConte
 import { PostTargetType } from '../../../../enum/postTargetType';
 import TimestampElement from '../../Elements/TimestampElement/TimestampElement';
 import MenuButtonIconElement from '../../Elements/MenuButtonIconElement/MenuButtonIconElement';
+import { LinkPreview } from '../../../component/PreviewLink';
+import RenderTextWithMention from '../../../component/RenderTextWithMention/RenderTextWithMention';
 export interface IPost {
   postId: string;
   data: Record<string, any>;
@@ -379,10 +380,16 @@ const AmityPostContentComponent = ({
       </View>
       <View>
         <View style={styles.bodySection}>
-          {textPost && (
-            <RenderTextWithMention
+          {textPost && childrenPosts?.length === 0 && (
+            <LinkPreview
+              text={textPost}
               mentionPositionArr={[...mentionPositionArr]}
+            />
+          )}
+          {textPost && childrenPosts?.length > 0 && (
+            <RenderTextWithMention
               textPost={textPost}
+              mentionPositionArr={[...mentionPositionArr]}
             />
           )}
           {childrenPosts?.length > 0 && (

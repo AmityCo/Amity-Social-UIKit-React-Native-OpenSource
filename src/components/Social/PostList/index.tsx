@@ -39,10 +39,11 @@ import { useDispatch } from 'react-redux';
 import globalFeedSlice from '../../../redux/slices/globalfeedSlice';
 import { IMentionPosition } from '../../../screens/CreatePost';
 import feedSlice from '../../../redux/slices/feedSlice';
-import RenderTextWithMention from './Components/RenderTextWithMention';
 import { RootStackParamList } from '../../../routes/RouteParamList';
 import { useTimeDifference } from '../../../hooks/useTimeDifference';
 import { CommunityRepository } from '@amityco/ts-sdk-react-native';
+import { LinkPreview } from '../../../v4/component/PreviewLink/LinkPreview';
+import RenderTextWithMention from '../../../v4/component/RenderTextWithMention/RenderTextWithMention';
 
 export interface IPost {
   postId: string;
@@ -459,10 +460,16 @@ export default function PostList({
       </View>
       <View>
         <View style={styles.bodySection}>
-          {textPost && (
-            <RenderTextWithMention
+          {textPost && childrenPosts?.length === 0 && (
+            <LinkPreview
+              text={textPost}
               mentionPositionArr={[...mentionPositionArr]}
+            />
+          )}
+          {textPost && childrenPosts?.length > 0 && (
+            <RenderTextWithMention
               textPost={textPost}
+              mentionPositionArr={[...mentionPositionArr]}
             />
           )}
           {childrenPosts?.length > 0 && !editPostModalVisible && (

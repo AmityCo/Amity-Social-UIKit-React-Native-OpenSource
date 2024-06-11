@@ -209,6 +209,7 @@
     "@rntext/more-or-less": "^2.0.2",
     "@types/react-dom": "^18.2.15",
     "dayjs": "^1.11.10",
+    "html-entities": "^2.5.2",
     "i18next": "22.4.10",
     "polished": "^4.3.1",
     "react-content-loader": "^6.2.1",
