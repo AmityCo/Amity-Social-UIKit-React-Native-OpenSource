@@ -101,7 +101,8 @@ npx pod-install
 Build project gradle with your Android Studio
 
 In android/build.gradle, add kotlinVersion above 1.7.0 and compileSdkVersion above 34 in buildscript > ext
-<img width="545" alt="add kotlinVersion above 1.7.0" src="https://github.com/AmityCo/Amity-Social-UIKit-React-Native-CLI-OpenSource/assets/155952277/1a8618fa-6da3-4a37-8bb8-442119e0b536">
+![image](https://github.com/AmityCo/Amity-Social-UIKit-React-Native-CLI-OpenSource/assets/33589608/37f5a5a8-2c2c-4354-897f-1dbf77c9d2e9)
+
 
 ### Add Camera permission (iOS)
 
