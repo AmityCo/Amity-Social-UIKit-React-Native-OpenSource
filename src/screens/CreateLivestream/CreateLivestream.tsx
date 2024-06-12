@@ -30,7 +30,8 @@ const CreateLivestream = ({ navigation, route }) => {
   const styles = useStyles();
 
   useRequestPermission({
-    onRequestPermissionFailed: () => {
+    shouldCall: Platform.OS === 'ios',
+    onRequestPermissionFailed: (callback?: () => void) => {
       setTimeout(() => {
         Alert.alert(
           'Permission Required!',
@@ -38,7 +39,10 @@ const CreateLivestream = ({ navigation, route }) => {
           [
             {
               text: 'OK',
-              onPress: () => navigation.goBack(),
+              onPress: () => {
+                callback && callback();
+                navigation.goBack();
+              },
             },
           ]
         );
