@@ -95,9 +95,9 @@ const CreatePost = ({ route }: any) => {
 
   useEffect(() => {
     (async () => {
-      if (targetType === 'community') {
+      if (targetType === 'community' && community?.communityId) {
         const res = await checkCommunityPermission(
-          community.communityId,
+          community?.communityId,
           client as Amity.Client,
           apiRegion
         );

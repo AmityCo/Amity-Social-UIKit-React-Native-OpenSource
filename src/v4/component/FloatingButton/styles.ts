@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    bottom: 35,
+    bottom: 140,
     right: 10,
   },
   otherFeedContainer: {

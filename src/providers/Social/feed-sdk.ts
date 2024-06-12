@@ -235,8 +235,8 @@ export async function deletePostById(postId: string): Promise<boolean> {
   const isDeletedObject: Promise<boolean> = new Promise(
     async (resolve, reject) => {
       try {
-        const hardDelete = await PostRepository.deletePost(postId, true);
-        if (hardDelete) {
+        const softDeleted = await PostRepository.deletePost(postId, false);
+        if (softDeleted) {
           resolve(true);
         }
       } catch (error) {

@@ -1,33 +1,15 @@
-import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Modal,
-  Pressable,
-  Animated,
-  Alert,
-} from 'react-native';
+import React, { memo, useEffect, useState } from 'react';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { arrowForward } from '../../../../svg/svg-xml-list';
 import { useStyles } from './styles';
 import type { UserInterface } from '../../../../types/user.interface';
-import {
-  deletePostById,
-  isReportTarget,
-  reportTargetById,
-  unReportTargetById,
-} from '../../../../providers/Social/feed-sdk';
 import { getCommunityById } from '../../../../providers/Social/communities-sdk';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import useAuth from '../../../../hooks/useAuth';
-import EditPostModal from '../../../../components/EditPostModal';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../../../providers/amity-ui-kit-provider';
 import MediaSection from '../../../../components/MediaSection';
-import { useDispatch } from 'react-redux';
-import globalFeedSlice from '../../../../redux/slices/globalfeedSlice';
 import { IMentionPosition } from '../../../types/type';
 import { RootStackParamList } from '../../../routes/RouteParamList';
 import { ComponentID, ElementID, PageID } from '../../../enum';
@@ -38,7 +20,6 @@ import AmityPostEngagementActionsComponent from '../AmityPostEngagementActionsCo
 import { AmityPostContentComponentStyleEnum } from '../../../enum/AmityPostContentComponentStyle';
 import { PostTargetType } from '../../../../enum/postTargetType';
 import TimestampElement from '../../Elements/TimestampElement/TimestampElement';
-import MenuButtonIconElement from '../../Elements/MenuButtonIconElement/MenuButtonIconElement';
 import { LinkPreview } from '../../../component/PreviewLink';
 import RenderTextWithMention from '../../../component/RenderTextWithMention/RenderTextWithMention';
 export interface IPost {
@@ -83,21 +64,11 @@ const AmityPostContentComponent = ({
     pageId: pageId,
     componentId: componentId,
   });
-  const { client } = useAuth();
   const styles = useStyles(themeStyles);
-  const { deleteByPostId } = globalFeedSlice.actions;
   const [textPost, setTextPost] = useState<string>('');
-  const [privateCommunityId, setPrivateCommunityId] = useState(null);
-  const [isVisible, setIsVisible] = useState<boolean>(false);
-  const [isEdit, setIsEdit] = useState<boolean>(false);
-  const [isReportByMe, setIsReportByMe] = useState<boolean>(false);
   const [communityData, setCommunityData] = useState<Amity.Community>(null);
-  const [editPostModalVisible, setEditPostModalVisible] =
-    useState<boolean>(false);
-  const slideAnimation = useRef(new Animated.Value(0)).current;
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const dispatch = useDispatch();
 
   const [mentionPositionArr, setMentionsPositionArr] = useState<
     IMentionPosition[]
@@ -122,29 +93,6 @@ const AmityPostContentComponent = ({
     }
   }, [mentionPosition]);
 
-  const openModal = () => {
-    setIsVisible(true);
-  };
-
-  const closeModal = () => {
-    Animated.timing(slideAnimation, {
-      toValue: 0,
-      duration: 100,
-      useNativeDriver: true,
-    }).start(() => setIsVisible(false));
-  };
-
-  const checkIsReport = useCallback(async () => {
-    const isReport = await isReportTarget('post', postId);
-    if (isReport) {
-      setIsReportByMe(true);
-    }
-  }, [postId]);
-
-  useEffect(() => {
-    checkIsReport();
-  }, [checkIsReport]);
-
   useEffect(() => {
     setTextPost(data?.text);
     if (targetType === 'community' && targetId) {
@@ -158,8 +106,6 @@ const AmityPostContentComponent = ({
     if (community.error) return;
     if (!community.loading) {
       setCommunityData(community?.data);
-      !community.data.isPublic &&
-        setPrivateCommunityId(community.data.communityId);
     }
   }
 
@@ -179,123 +125,6 @@ const AmityPostContentComponent = ({
       });
     }
   };
-  const deletePostObject = () => {
-    Alert.alert(
-      'Delete this post',
-      `This post will be permanently deleted. You'll no longer see and find this post`,
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: () => onDeletePost(),
-        },
-      ]
-    );
-    setIsVisible(false);
-  };
-  const reportPostObject = async () => {
-    if (isReportByMe) {
-      const unReportPost = await unReportTargetById('post', postId);
-      if (unReportPost) {
-        Alert.alert('Undo Report sent');
-      }
-      setIsVisible(false);
-      setIsReportByMe(false);
-    } else {
-      const reportPost = await reportTargetById('post', postId);
-      if (reportPost) {
-        Alert.alert('Report sent');
-      }
-      setIsVisible(false);
-      setIsReportByMe(true);
-    }
-  };
-
-  const modalStyle = {
-    transform: [
-      {
-        translateY: slideAnimation.interpolate({
-          inputRange: [0, 1],
-          outputRange: [600, 0], // Adjust this value to control the sliding distance
-        }),
-      },
-    ],
-  };
-
-  const renderOptionModal = () => {
-    return (
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={isVisible}
-        onRequestClose={closeModal}
-      >
-        <Pressable onPress={closeModal} style={styles.modalContainer}>
-          <Animated.View
-            style={[
-              styles.modalContent,
-              modalStyle,
-              user?.userId === (client as Amity.Client).userId &&
-                styles.twoOptions,
-            ]}
-          >
-            {user?.userId === (client as Amity.Client).userId ? (
-              <View>
-                <TouchableOpacity
-                  onPress={openEditPostModal}
-                  style={styles.modalRow}
-                >
-                  <Text style={styles.deleteText}> Edit Post</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={deletePostObject}
-                  style={styles.modalRow}
-                >
-                  <Text style={styles.deleteText}> Delete Post</Text>
-                </TouchableOpacity>
-              </View>
-            ) : (
-              <TouchableOpacity
-                onPress={reportPostObject}
-                style={styles.modalRow}
-              >
-                <Text style={styles.deleteText}>
-                  {isReportByMe ? 'Undo Report' : 'Report'}
-                </Text>
-              </TouchableOpacity>
-            )}
-          </Animated.View>
-        </Pressable>
-      </Modal>
-    );
-  };
-  const closeEditPostModal = () => {
-    setEditPostModalVisible(false);
-  };
-  const openEditPostModal = () => {
-    setIsVisible(false);
-    setEditPostModalVisible(true);
-  };
-
-  const handleOnFinishEdit = (postData: {
-    text: string;
-    mediaUrls: string[] | IVideoPost[];
-  }) => {
-    setTextPost(postData.text);
-    setEditPostModalVisible(false);
-    setIsEdit(true);
-  };
-
-  const onDeletePost = useCallback(async () => {
-    const isDeleted = await deletePostById(postId);
-    if (isDeleted) {
-      dispatch(deleteByPostId({ postId }));
-    }
-  }, [deleteByPostId, dispatch, postId]);
 
   return (
     <View
@@ -359,7 +188,7 @@ const AmityPostContentComponent = ({
                 componentID={componentId}
               />
 
-              {(editedAt !== createdAt || isEdit) && (
+              {editedAt !== createdAt && (
                 <>
                   <Text style={styles.dot}>·</Text>
                   <Text style={styles.headerTextTime}>Edited</Text>
@@ -368,15 +197,7 @@ const AmityPostContentComponent = ({
             </View>
           </View>
         </View>
-        <TouchableOpacity onPress={openModal} style={styles.threeDots}>
-          <MenuButtonIconElement
-            width={20}
-            height={20}
-            resizeMode="contain"
-            tintColor={themeStyles.colors.base}
-            componentID={componentId}
-          />
-        </TouchableOpacity>
+        <View style={styles.threeDots} />
       </View>
       <View>
         <View style={styles.bodySection}>
@@ -405,16 +226,6 @@ const AmityPostContentComponent = ({
           postId={postId}
         />
       </View>
-      {renderOptionModal()}
-      {editPostModalVisible && (
-        <EditPostModal
-          privateCommunityId={privateCommunityId}
-          visible={editPostModalVisible}
-          onClose={closeEditPostModal}
-          postDetail={{ ...post, data: { ...data, text: textPost } }}
-          onFinishEdit={handleOnFinishEdit}
-        />
-      )}
     </View>
   );
 };

@@ -1,5 +1,12 @@
 import { FlatList, View } from 'react-native';
-import React, { FC, useState, useRef, memo, useEffect } from 'react';
+import React, {
+  FC,
+  useState,
+  useRef,
+  memo,
+  useEffect,
+  useCallback,
+} from 'react';
 import { UserInterface, IMentionPosition } from '../../../../types';
 import { getAmityUser } from '../../../../providers/user-provider';
 import { CommentRepository } from '@amityco/ts-sdk-react-native';
@@ -49,8 +56,9 @@ const AmityPostCommentComponent: FC<AmityPostCommentComponentType> = ({
   const onNextPageRef = useRef<() => void | null>(null);
   const [commentList, setCommentList] = useState<IComment[]>([]);
   useEffect(() => {
+    if (!postId) return () => {};
     let unsub;
-    CommentRepository.getComments(
+    const unsubComment = CommentRepository.getComments(
       {
         dataTypes: { matchType: 'any', values: ['text', 'image'] },
         referenceId: postId,
@@ -67,6 +75,7 @@ const AmityPostCommentComponent: FC<AmityPostCommentComponentType> = ({
     );
     return () => {
       setCommentList([]);
+      unsubComment();
       unsub && unsub();
     };
   }, [postId, postType]);
@@ -88,7 +97,7 @@ const AmityPostCommentComponent: FC<AmityPostCommentComponentType> = ({
           targetId: item.targetId,
           commentId: item.commentId,
           data: item.data as Record<string, any>,
-          dataType: item.dataType || 'text',
+          dataType: item?.dataType || 'text',
           myReactions: item.myReactions as string[],
           reactions: item.reactions as Record<string, number>,
           user: formattedUserObject as UserInterface,
@@ -105,22 +114,26 @@ const AmityPostCommentComponent: FC<AmityPostCommentComponentType> = ({
     setCommentList([...formattedCommentList]);
   };
 
-  const onDeleteComment = async (commentId: string) => {
-    const isDeleted = await deleteCommentById(commentId);
-    if (isDeleted) {
-      const prevCommentList: IComment[] = [...commentList];
-      const updatedCommentList: IComment[] = prevCommentList.filter(
-        (item) => item.commentId !== commentId
-      );
-      setCommentList(updatedCommentList);
-    }
-  };
-
-  const handleClickReply = (user: UserInterface, commentId: string) => {
-    setReplyUserName(user.displayName);
-    setReplyCommentId(commentId);
-  };
-
+  const onDeleteComment = useCallback(
+    async (commentId: string) => {
+      const isDeleted = await deleteCommentById(commentId);
+      if (isDeleted) {
+        const prevCommentList: IComment[] = [...commentList];
+        const updatedCommentList: IComment[] = prevCommentList.filter(
+          (item) => item.commentId !== commentId
+        );
+        setCommentList(updatedCommentList);
+      }
+    },
+    [commentList]
+  );
+  const handleClickReply = useCallback(
+    (user: UserInterface, commentId: string) => {
+      setReplyUserName(user.displayName);
+      setReplyCommentId(commentId);
+    },
+    [setReplyCommentId, setReplyUserName]
+  );
   if (isExcluded) return null;
   return (
     <View style={{ flex: 1, paddingBottom: 40 }}>

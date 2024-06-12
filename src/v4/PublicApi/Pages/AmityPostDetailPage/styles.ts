@@ -158,6 +158,32 @@ export const useStyles = (theme: MyMD3Theme) => {
       position: 'absolute',
       bottom: bottom,
     },
+    modalContainer: {
+      flex: 1,
+      justifyContent: 'flex-end',
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalContent: {
+      backgroundColor: theme.colors.background,
+      borderTopLeftRadius: 10,
+      borderTopRightRadius: 10,
+      padding: 10,
+      minHeight: 700,
+    },
+    twoOptions: {
+      minHeight: 720,
+    },
+    modalRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: 5,
+      marginVertical: 8,
+    },
+    deleteText: {
+      paddingLeft: 12,
+      fontWeight: '600',
+      color: theme.colors.base,
+    },
   });
 
   return styles;

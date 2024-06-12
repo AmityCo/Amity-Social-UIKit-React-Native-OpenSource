@@ -3,6 +3,7 @@ import React, {
   useCallback,
   useEffect,
   useImperativeHandle,
+  useMemo,
   useState,
 } from 'react';
 
@@ -21,9 +22,6 @@ import {
 import type { FeedRefType } from '../CommunityHome';
 import { deletePostById } from '../../../providers/Social/feed-sdk';
 import { amityPostsFormatter } from '../../../util/postDataFormatter';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../../redux/store';
-import feedSlice from '../../../redux/slices/feedSlice';
 import { useFocusEffect } from '@react-navigation/native';
 
 interface IFeed {
@@ -32,13 +30,9 @@ interface IFeed {
 }
 function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
   const styles = useStyles();
-  const [postData, setPostData] =
-    useState<Amity.LiveCollection<Amity.Post<any>>>();
-  const { postList } = useSelector((state: RootState) => state.feed);
-  const { clearFeed, updateFeed, deleteByPostId } = feedSlice.actions;
-  const { data: posts, onNextPage, hasNextPage } = postData ?? {};
-  const dispatch = useDispatch();
-  const disposers: Amity.Unsubscriber[] = [];
+  const [postData, setPostData] = useState<Amity.Post>(null);
+  const [onNextPage, setOnNextPage] = useState(null);
+  const disposers: Amity.Unsubscriber[] = useMemo(() => [], []);
   let isSubscribed = false;
 
   const subscribePostTopic = useCallback((type: string, id: string) => {
@@ -59,54 +53,54 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
     if (type === 'community') {
       CommunityRepository.getCommunity(id, (data) => {
         if (data.data) {
-          subscribeTopic(getCommunityTopic(data.data, SubscriptionLevels.POST));
+          disposers.push(
+            subscribeTopic(
+              getCommunityTopic(data.data, SubscriptionLevels.POST)
+            )
+          );
         }
       });
     }
   }, []);
-  const getFeed = useCallback(() => {
-    const unsubscribe = PostRepository.getPosts(
-      {
-        targetId,
-        targetType,
-        sortBy: 'lastCreated',
-        limit: 10,
-        feedType: 'published',
-      },
-      (data) => {
-        const filterData: any[] = data.data.map((item) => {
-          if (item.dataType === 'text') return item;
-        });
-        setPostData({ ...data, data: filterData });
-        subscribePostTopic(targetType, targetId);
-      }
-    );
-    return unsubscribe;
-  }, [subscribePostTopic, targetId, targetType]);
+
+  useEffect(() => {
+    return () => {
+      disposers.forEach((fn) => fn());
+    };
+  }, [disposers]);
+
   const handleLoadMore = () => {
-    if (hasNextPage) {
-      onNextPage && onNextPage();
+    if (onNextPage) {
+      onNextPage();
     }
   };
-  useEffect(() => {
-    dispatch(clearFeed());
-    const unsub = getFeed();
-    return () => {
-      unsub();
-    };
-  }, [clearFeed, dispatch, getFeed]);
-
-  const getPostList = useCallback(async () => {
-    if (posts.length > 0) {
-      const formattedPostList = await amityPostsFormatter(posts);
-      dispatch(updateFeed(formattedPostList));
-    }
-  }, [dispatch, posts, updateFeed]);
-
   useFocusEffect(
     useCallback(() => {
-      posts && getPostList();
-    }, [posts, getPostList])
+      const unsubscribe = PostRepository.getPosts(
+        {
+          targetId,
+          targetType,
+          sortBy: 'lastCreated',
+          limit: 10,
+          feedType: 'published',
+        },
+        async ({ data, error, loading, hasNextPage, onNextPage: nextPage }) => {
+          if (!error && !loading) {
+            const filterData: any[] = data.map((item) => {
+              if (item.dataType === 'text') return item;
+            });
+            console.log(data.length);
+            setOnNextPage(hasNextPage ? () => nextPage : null);
+            const formattedPostList = await amityPostsFormatter(filterData);
+            setPostData(formattedPostList);
+            subscribePostTopic(targetType, targetId);
+          }
+        }
+      );
+      return () => {
+        unsubscribe();
+      };
+    }, [subscribePostTopic, targetId, targetType])
   );
 
   useImperativeHandle(ref, () => ({
@@ -114,16 +108,13 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
   }));
 
   const onDeletePost = async (postId: string) => {
-    const isDeleted = await deletePostById(postId);
-    if (isDeleted) {
-      dispatch(deleteByPostId({ postId }));
-    }
+    await deletePostById(postId);
   };
   return (
     <View style={styles.feedWrap}>
       <FlatList
         scrollEnabled={false}
-        data={postList}
+        data={postData ?? []}
         renderItem={({ item, index }) => (
           <PostList
             onDelete={onDeletePost}
@@ -133,7 +124,7 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
           />
         )}
         keyExtractor={(_, index) => index.toString()}
-        extraData={postList}
+        extraData={postData}
       />
     </View>
   );

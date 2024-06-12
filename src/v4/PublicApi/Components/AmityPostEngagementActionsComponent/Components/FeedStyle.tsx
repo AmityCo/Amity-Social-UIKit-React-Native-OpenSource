@@ -28,7 +28,6 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../../../routes/RouteParamList';
 import LikeButtonIconElement from '../../../Elements/LikeButtonIconElement/LikeButtonIconElement';
 import CommentButtonIconElement from '../../../Elements/CommentButtonIconElement/CommentButtonIconElement';
-import ShareButtonIconElement from '../../../Elements/ShareButtonIconElement/ShareButtonIconElement';
 
 const FeedStyle: FC<AmityPostEngagementActionsSubComponentType> = ({
   postId,
@@ -116,7 +115,9 @@ const FeedStyle: FC<AmityPostEngagementActionsSubComponentType> = ({
           <Text style={styles.btnText}>{postData?.commentsCount}</Text>
         </TouchableOpacity>
       </View>
-      <TouchableOpacity style={styles.commentBtn}>
+      <View style={styles.commentBtn} />
+      {/* commented out now for later use */}
+      {/* <TouchableOpacity style={styles.commentBtn}>
         <ShareButtonIconElement
           pageID={pageId}
           componentID={componentId}
@@ -125,7 +126,7 @@ const FeedStyle: FC<AmityPostEngagementActionsSubComponentType> = ({
           resizeMode="contain"
         />
         <Text style={styles.btnText}>Share</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </View>
   );
 };
