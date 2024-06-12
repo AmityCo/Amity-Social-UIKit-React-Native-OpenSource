@@ -36,13 +36,14 @@ import {
 import EditCommentModal from '../../../../../components/EditCommentModal';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
-import { useNavigation } from '@react-navigation/native';
 import ReplyCommentList from '../ReplyCommentList/index';
 import { CommentRepository } from '@amityco/ts-sdk-react-native';
 import { useTimeDifference } from '../../../../hook';
-import ModeratorBadgeElement from '../../../../PublicApi/Elements/ModeratorBadgeElement/ModeratorBadgeElement';
+import ModeratorBadgeElement from '../../../Elements/ModeratorBadgeElement/ModeratorBadgeElement';
 import { ComponentID, PageID } from '../../../../enum';
 import { LinkPreview } from '../../../../component/PreviewLink/LinkPreview';
+import AmityReactionListComponent from '../../AmityReactionListComponent/AmityReactionListComponent';
+
 export interface IComment {
   commentId: string;
   data: Record<string, any>;
@@ -112,9 +113,7 @@ const CommentListItem = ({
   >([]);
   const [replyCommentCollection, setReplyCommentCollection] =
     useState<Amity.LiveCollection<Amity.InternalComment<any>>>();
-
   const { onNextPage, hasNextPage } = replyCommentCollection ?? {};
-
   const [isOpenReply, setIsOpenReply] = useState<boolean>(false);
   const [textComment, setTextComment] = useState<string>(data?.text);
   const [isVisible, setIsVisible] = useState(false);
@@ -122,7 +121,7 @@ const CommentListItem = ({
   const [editCommentModal, setEditCommentModal] = useState<boolean>(false);
   const [isEditComment, setIsEditComment] = useState<boolean>(false);
   const slideAnimation = useRef(new Animated.Value(0)).current;
-  const navigation = useNavigation<any>();
+  const [isReactionListVisible, setIsReactionListVisible] = useState(false);
 
   useEffect(() => {
     getReplyComments();
@@ -295,10 +294,7 @@ const CommentListItem = ({
 
   const onPressCommentReaction = () => {
     onNavigate && onNavigate();
-    navigation.navigate('ReactionList', {
-      referenceId: commentId,
-      referenceType: 'comment',
-    });
+    setIsReactionListVisible(true);
   };
 
   return (
@@ -487,6 +483,14 @@ const CommentListItem = ({
         onFinishEdit={onEditComment}
         onClose={onCloseEditCommentModal}
       />
+      {isReactionListVisible && (
+        <AmityReactionListComponent
+          referenceId={commentId}
+          referenceType="comment"
+          isModalVisible={isReactionListVisible}
+          onCloseModal={() => setIsReactionListVisible(false)}
+        />
+      )}
     </View>
   );
 };
