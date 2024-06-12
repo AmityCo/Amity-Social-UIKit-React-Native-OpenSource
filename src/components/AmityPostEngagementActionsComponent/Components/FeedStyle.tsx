@@ -29,7 +29,8 @@ import LikeButtonIconElement from '../../../Elements/LikeButtonIconElement/LikeB
 import CommentButtonIconElement from '../../../Elements/CommentButtonIconElement/CommentButtonIconElement';
 import ShareButtonIconElement from '../../../Elements/ShareButtonIconElement/ShareButtonIconElement';
 import { useAmityComponent } from '../../../hooks/useUiKitReference';
-import LikeReaction from '../../../svg/LikeReactionIcon';
+
+import LikeReactionIcon from '../../../svg/LikeReactionIcon';
 
 const FeedStyle: FC<AmityPostEngagementActionsSubComponentType> = ({
   postId,
@@ -93,7 +94,8 @@ const FeedStyle: FC<AmityPostEngagementActionsSubComponentType> = ({
             //   width="20"
             //   height="20"
             // />
-            <LikeReaction circleColor={themeStyles.colors.background} width={20} height={20}/>
+
+             <LikeReactionIcon circleColor={themeStyles.colors.background} width={20} height={20} />
           ) : (
             <LikeButtonIconElement
               pageID={pageId}

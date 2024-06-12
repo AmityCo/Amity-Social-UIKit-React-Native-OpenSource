@@ -3,6 +3,9 @@ import {
   ReactionRepository,
 } from '@amityco/ts-sdk-react-native';
 import { IMentionPosition } from '../../screens/CreatePost';
+import { Alert } from 'react-native';
+import { text_contain_blocked_word } from '../../util/constants';
+
 
 export interface ICommentRes {
   data: Amity.Comment[];
@@ -56,7 +59,8 @@ export async function createComment(
   text: string,
   postId: string,
   mentionUserIds: string[],
-  mentionPosition: IMentionPosition[]
+  mentionPosition: IMentionPosition[],
+  referenceType: Amity.CommentReferenceType
 ): Promise<Amity.InternalComment> {
   const createCommentObject: Promise<Amity.InternalComment> = new Promise(
     async (resolve, reject) => {
@@ -66,7 +70,7 @@ export async function createComment(
             text: text,
           },
           referenceId: postId,
-          referenceType: 'post' as Amity.CommentReferenceType,
+          referenceType: referenceType as Amity.CommentReferenceType,
           mentionees: [
             { type: 'user', userIds: mentionUserIds },
           ] as Amity.UserMention[],
@@ -78,6 +82,9 @@ export async function createComment(
         );
         resolve(comment);
       } catch (error) {
+        if (error.message.includes(text_contain_blocked_word)) {
+          Alert.alert('', text_contain_blocked_word);
+        }
         reject(error);
       }
     }
@@ -90,7 +97,8 @@ export async function createReplyComment(
   postId: string,
   parentId: string,
   mentionUserIds: string[],
-  mentionPosition: IMentionPosition[]
+  mentionPosition: IMentionPosition[],
+  referenceType: Amity.CommentReferenceType
 ): Promise<Amity.InternalComment> {
   const createCommentObject: Promise<Amity.InternalComment> = new Promise(
     async (resolve, reject) => {
@@ -100,7 +108,7 @@ export async function createReplyComment(
             text: text,
           },
           referenceId: postId,
-          referenceType: 'post' as Amity.CommentReferenceType,
+          referenceType: referenceType as Amity.CommentReferenceType,
           mentionees: [
             { type: 'user', userIds: mentionUserIds },
           ] as Amity.UserMention[],
@@ -113,6 +121,9 @@ export async function createReplyComment(
         );
         resolve(comment);
       } catch (error) {
+        if (error.message.includes(text_contain_blocked_word)) {
+          Alert.alert('', text_contain_blocked_word);
+        }
         reject(error);
       }
     }
@@ -121,7 +132,8 @@ export async function createReplyComment(
 }
 export async function editComment(
   text: string,
-  commentId: string
+  commentId: string,
+  referenceType: Amity.CommentReferenceType
 ): Promise<Amity.InternalComment> {
   const createCommentObject: Promise<Amity.InternalComment> = new Promise(
     async (resolve, reject) => {
@@ -130,7 +142,7 @@ export async function editComment(
           data: {
             text: text,
           },
-          referenceType: 'post' as Amity.CommentReferenceType,
+          referenceType: referenceType as Amity.CommentReferenceType,
         };
         const { data: comment } = await CommentRepository.updateComment(
           commentId,
@@ -138,6 +150,9 @@ export async function editComment(
         );
         resolve(comment);
       } catch (error) {
+        if (error.message.includes(text_contain_blocked_word)) {
+          Alert.alert('', text_contain_blocked_word);
+        }
         reject(error);
       }
     }
@@ -153,6 +168,9 @@ export async function getCommentsDataByIds(
         const { data } = await CommentRepository.getCommentByIds(commentIds);
         resolve(data);
       } catch (error) {
+        if (error.message.includes(text_contain_blocked_word)) {
+          Alert.alert('', text_contain_blocked_word);
+        }
         reject(error);
       }
     }
@@ -171,6 +189,9 @@ export async function deleteCommentById(commentId: string): Promise<boolean> {
           resolve(true);
         }
       } catch (error) {
+        if (error.message.includes(text_contain_blocked_word)) {
+          Alert.alert('', text_contain_blocked_word);
+        }
         reject(error);
       }
     }

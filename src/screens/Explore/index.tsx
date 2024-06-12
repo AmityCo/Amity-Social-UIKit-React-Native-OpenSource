@@ -12,8 +12,6 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import useAuth from '../../hooks/useAuth';
 import CommunityIcon from '../../svg/CommunityIcon';
-import ChevronLeftIcon from '../../svg/ChevronLeftcon';
-import CategoryIcon from '../../svg/CategoryIcon';
 
 export default function Explore() {
   const styles = useStyles();
@@ -37,14 +35,26 @@ export default function Explore() {
   };
 
   const loadTrendingCommunities = async () => {
-    const { data: communities } =
-      await CommunityRepository.getTopTrendingCommunities();
-    setTrendingCommunityList(communities);
+    CommunityRepository.getTrendingCommunities(
+      { limit: 5 },
+      ({ data, loading, error }) => {
+        if (error) return;
+        if (!loading) {
+          setTrendingCommunityList(data);
+        }
+      }
+    );
   };
   const loadCategories = async () => {
-    CategoryRepository.getCategories({}, ({ data: categories }) => {
-      setCategoryList(categories);
-    });
+    CategoryRepository.getCategories(
+      { sortBy: 'name', limit: 8 },
+      ({ data }) => {
+        if (data) {
+          data.sort((a, b) => b.name.localeCompare(a.name));
+          setCategoryList(data);
+        }
+      }
+    );
   };
   const handleCategoryListClick = () => {
     setTimeout(() => {
@@ -69,14 +79,11 @@ export default function Explore() {
     },
     [navigation]
   );
-  const avatarFileURL = (fileId: string) => {
-    return `https://api.${apiRegion}.amity.co/api/v3/files/${fileId}/download?size=medium`;
-  };
+
   const renderCategoryList = useCallback(() => {
-    const truncatedCategoryList = categoryList.slice(0, 8);
     return (
       <View style={styles.wrapContainer}>
-        {truncatedCategoryList.map((category) => {
+        {categoryList.map((category) => {
           return (
             <TouchableOpacity
               style={styles.rowContainer}
@@ -85,21 +92,23 @@ export default function Explore() {
                 handleCategoryClick(category.categoryId, category.name)
               }
             >
-              {
-                category?.avatarFileId ?
-                  <Image
-                    style={styles.avatar}
-                    source={
-                      {
-                        uri: category.avatarFileId && avatarFileURL(category.avatarFileId!),
+              <Image
+                style={styles.avatar}
+                source={
+                  category.avatarFileId
+                    ? {
+                        uri: `https://api.${apiRegion}.amity.co/api/v3/files/${category.avatarFileId}/download`,
                       }
-
-                    }
-                  /> : <View style={styles.avatar}> <CategoryIcon /></View>
-              }
-
-
-              <Text style={styles.columnText}>{category.name}</Text>
+                    : require('../../../assets/icon/Placeholder.png')
+                }
+              />
+              <Text
+                ellipsizeMode="tail"
+                numberOfLines={1}
+                style={styles.columnText}
+              >
+                {category.name}
+              </Text>
             </TouchableOpacity>
           );
         })}
@@ -131,11 +140,8 @@ export default function Explore() {
                   }}
                 />
               ) : (
-
-                <View style={styles.avatar}>
-                  <CommunityIcon width={40} height={40} />
-                </View>
-
+  
+                <CommunityIcon width={40} height={40}  style={styles.avatar}/>
               )}
 
               <Text style={styles.name}>{community.displayName}</Text>
@@ -165,17 +171,15 @@ export default function Explore() {
                 <Image
                   style={styles.avatar}
                   source={
-                    {
-                      uri: community.avatarFileId && avatarFileURL(community.avatarFileId!),
-                    }
-
+                    community.avatarFileId
+                      ? {
+                          uri: `https://api.${apiRegion}.amity.co/api/v3/files/${community.avatarFileId}/download`,
+                        }
+                      : require('../../../assets/icon/Placeholder.png')
                   }
                 />
               ) : (
-                <View style={styles.avatar}>
-                  <CommunityIcon width={40} height={40} />
-                </View>
-
+                <CommunityIcon width={40} height={40}  style={styles.avatar}/>
               )}
 
               <View style={styles.trendingTextContainer}>
@@ -199,7 +203,10 @@ export default function Explore() {
         <View style={styles.titleContainer}>
           <Text style={styles.titleText}>Categories</Text>
           <TouchableOpacity onPress={handleCategoryListClick}>
-            <ChevronLeftIcon style={styles.arrowIcon} />
+            <Image
+              source={require('../../../assets/icon/arrowRight.png')}
+              style={styles.arrowIcon}
+            />
           </TouchableOpacity>
         </View>
         {renderCategoryList()}

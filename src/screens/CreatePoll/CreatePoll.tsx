@@ -9,7 +9,6 @@ import {
   Alert,
   ActivityIndicator,
   ViewStyle,
-  Pressable,
 } from 'react-native';
 
 import { useStyles } from './styles';
@@ -20,10 +19,12 @@ import Header from './Components/Header';
 import { PollRepository, PostRepository } from '@amityco/ts-sdk-react-native';
 import { checkCommunityPermission } from '../../providers/Social/communities-sdk';
 import useAuth from '../../hooks/useAuth';
-import MentionInput from '../../components/MentionInput/MentionInput';
-import { ISearchItem } from '../../components/SearchItem';
-import { PlusIcon } from '../../svg/PlusIcon';
+import AmityMentionInput from '../../components/MentionInput/AmityMentionInput';
+import { TSearchItem } from '../../hooks/useSearch';
+import { text_contain_blocked_word } from '../../util/constants';
 import CircleCloseIcon from '../../svg/CircleCloseIcon';
+import { PlusIcon } from '../../svg/PlusIcon';
+
 
 const CreatePoll = ({ navigation, route }) => {
   const theme = useTheme() as MyMD3Theme;
@@ -35,8 +36,9 @@ const CreatePoll = ({ navigation, route }) => {
     Pick<Amity.PollAnswer, 'data' | 'dataType'>[]
   >([]);
   const [optionQuestion, setOptionQuestion] = useState('');
-  const [mentionUsers, setMentionUsers] = useState<ISearchItem[]>([]);
+  const [mentionUsers, setMentionUsers] = useState<TSearchItem[]>([]);
   const [mentionPosition, setMentionPosition] = useState([]);
+  const [isScrollEnabled, setIsScrollEnabled] = useState(true);
   const [timeFrame, setTimeFrame] = useState<{ key: number; label: string }>(
     null
   );
@@ -46,14 +48,17 @@ const CreatePoll = ({ navigation, route }) => {
     targetName,
     postSetting,
     needApprovalOnPostCreation,
+    isPublic,
   } = route.params;
+  const privateCommunityId =
+    targetType === 'community' && !isPublic && targetId;
   const MAX_POLL_QUESRION_LENGTH = 500;
   const MAX_POLL_ANSWER_LENGTH = 200;
   const MAX_OPTIONS = 10;
   const MIN_OPTIONS = 2;
   const MAX_SCHEDULE_DAYS = 30;
   const MILLISECONDS_IN_DAY = 86400000;
-  const closedId = MILLISECONDS_IN_DAY * parseInt(timeFrame?.label, 10) || null;
+  const closedIn = MILLISECONDS_IN_DAY * parseInt(timeFrame?.label, 10) || null;
   const answerType = isMultipleOption ? 'multiple' : 'single';
   const data: { key: number; section?: boolean; label: string }[] = [
     {
@@ -78,57 +83,63 @@ const CreatePoll = ({ navigation, route }) => {
       question: optionQuestion,
       answerType: answerType,
       answers: pollOptions,
-      closedIn: closedId,
+      closedIn: closedIn,
     });
     if (!pollId) return;
     const mentionees = [
       {
         type: 'user',
-        userIds: mentionUsers.map((user) => user.targetId),
+        userIds: mentionUsers.map((user) => user.id),
       },
     ];
-    const response = await PostRepository.createPost({
-      dataType: 'poll',
-      targetType,
-      targetId,
-      data: { pollId, text: optionQuestion },
-      mentionees,
-      metadata: { mentioned: mentionPosition },
-    });
-    setLoading(false);
-    if (targetType !== 'community') return goBack();
-    if (
-      !response ||
-      postSetting !== 'ADMIN_REVIEW_POST_REQUIRED' ||
-      !needApprovalOnPostCreation
-    )
-      return goBack();
-    const res = await checkCommunityPermission(
-      targetId,
-      client as Amity.Client,
-      apiRegion
-    );
-    if (
-      res.permissions.length > 0 &&
-      res.permissions.includes('Post/ManagePosts')
-    )
-      return goBack();
-    Alert.alert(
-      'Post submitted',
-      'Your post has been submitted to the pending list. It will be reviewed by community moderator',
-      [
-        {
-          text: 'OK',
-          onPress: () => goBack(),
-        },
-      ],
-      { cancelable: false }
-    );
+    try {
+      const response = await PostRepository.createPost({
+        dataType: 'poll',
+        targetType,
+        targetId,
+        data: { pollId, text: optionQuestion },
+        mentionees,
+        metadata: { mentioned: mentionPosition },
+      });
+      setLoading(false);
+      if (targetType !== 'community') return goBack();
+      if (
+        !response ||
+        postSetting !== 'ADMIN_REVIEW_POST_REQUIRED' ||
+        !needApprovalOnPostCreation
+      )
+        return goBack();
+      const res = await checkCommunityPermission(
+        targetId,
+        client as Amity.Client,
+        apiRegion
+      );
+      if (
+        res.permissions.length > 0 &&
+        res.permissions.includes('Post/ManagePosts')
+      )
+        return goBack();
+      Alert.alert(
+        'Post submitted',
+        'Your post has been submitted to the pending list. It will be reviewed by community moderator',
+        [
+          {
+            text: 'OK',
+            onPress: () => goBack(),
+          },
+        ],
+        { cancelable: false }
+      );
+    } catch (error) {
+      if (error.message.includes(text_contain_blocked_word)) {
+        Alert.alert('', text_contain_blocked_word);
+      }
+    }
   }, [
     answerType,
     apiRegion,
     client,
-    closedId,
+    closedIn,
     goBack,
     mentionPosition,
     mentionUsers,
@@ -177,7 +188,11 @@ const CreatePoll = ({ navigation, route }) => {
         isBtnDisable={isBtnDisable}
         handleCreatePost={handleCreatePost}
       />
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <ScrollView
+        scrollEnabled={isScrollEnabled}
+        contentContainerStyle={styles.scrollContainer}
+        keyboardShouldPersistTaps="handled"
+      >
         {loading && (
           <ActivityIndicator animating={loading} color={'black'} size="large" />
         )}
@@ -187,21 +202,31 @@ const CreatePoll = ({ navigation, route }) => {
               Poll question
               <Text style={styles.requiredField}>*</Text>
             </Text>
-            <Text>
+            <Text style={styles.maxPollQuestionText}>
               {`${optionQuestion.length}/${MAX_POLL_QUESRION_LENGTH}`}
             </Text>
           </View>
-          <MentionInput
-            placeholder="What's your poll question?"
-            inputMessage={optionQuestion}
-            setInputMessage={setOptionQuestion}
-            mentionUsers={mentionUsers}
-            setMentionUsers={setMentionUsers}
-            mentionsPosition={mentionPosition}
-            setMentionsPosition={setMentionPosition}
-            maxLength={MAX_POLL_QUESRION_LENGTH}
-            multiline
-          />
+          <View style={styles.mentionInputContainer}>
+            <AmityMentionInput
+              privateCommunityId={privateCommunityId}
+              isBottomMentionSuggestionsRender={true}
+              onFocus={() => {
+                setIsScrollEnabled(false);
+              }}
+              onBlur={() => {
+                setIsScrollEnabled(true);
+              }}
+              placeholder="What's your poll question?"
+              placeholderTextColor={theme.colors.baseShade3}
+              setInputMessage={setOptionQuestion}
+              mentionUsers={mentionUsers}
+              setMentionUsers={setMentionUsers}
+              mentionsPosition={mentionPosition}
+              setMentionsPosition={setMentionPosition}
+              maxLength={MAX_POLL_QUESRION_LENGTH}
+              multiline
+            />
+          </View>
         </View>
         <View style={styles.inputContainer}>
           <View style={styles.rowContainer}>
@@ -209,7 +234,9 @@ const CreatePoll = ({ navigation, route }) => {
               Options
               <Text style={styles.requiredField}>*</Text>
             </Text>
-            <Text>{`${pollOptions.length}/${MAX_OPTIONS}`}</Text>
+            <Text
+              style={styles.maxPollQuestionText}
+            >{`${pollOptions.length}/${MAX_OPTIONS}`}</Text>
           </View>
           <Text style={styles.subtitle}>
             Choose at least {MIN_OPTIONS} options
@@ -233,12 +260,14 @@ const CreatePoll = ({ navigation, route }) => {
                       value={pollOptions[index].data}
                       multiline
                       placeholder="Add option"
-                      style={styles.fillSpace}
+                      placeholderTextColor={theme.colors.baseShade3}
+                      style={styles.optionInput}
                       onChangeText={(text) => onChangeOptionText(text, index)}
                     />
-                    <Pressable  onPress={() => onPressRemoveOption(index)}>
+                    <TouchableOpacity onPress={() => onPressRemoveOption(index)}>
                       <CircleCloseIcon width={20} height={20} />
-                    </Pressable>
+                    </TouchableOpacity>
+
                   </View>
                 </View>
                 {onReachMaxChar && (
@@ -254,7 +283,7 @@ const CreatePoll = ({ navigation, route }) => {
               style={styles.addOptionBtn}
               onPress={onPressAddOption}
             >
-              <PlusIcon width={20} height={20} color={theme.colors.base} />
+              <PlusIcon color={theme.colors.base} />
               <Text style={styles.addOptionText}>Add option</Text>
             </TouchableOpacity>
           )}
@@ -281,6 +310,7 @@ const CreatePoll = ({ navigation, route }) => {
           </Text>
           <ModalSelector
             data={data}
+            selectTextStyle={styles.selectedTimeFrame}
             selectedKey={timeFrame?.key || null}
             onModalClose={setTimeFrame}
             initValue="Choose time frame"

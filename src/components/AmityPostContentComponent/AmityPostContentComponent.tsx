@@ -397,7 +397,7 @@ const AmityPostContentComponent = ({
         />
       </View>
       {renderOptionModal()}
-      {/* {editPostModalVisible && (
+      {editPostModalVisible && (
         <EditPostModal
           privateCommunityId={privateCommunityId}
           visible={editPostModalVisible}
@@ -405,7 +405,7 @@ const AmityPostContentComponent = ({
           postDetail={{ ...post, data: { ...data, text: textPost } }}
           onFinishEdit={handleOnFinishEdit}
         />
-      )} */}
+      )}
     </View>
   );
 };

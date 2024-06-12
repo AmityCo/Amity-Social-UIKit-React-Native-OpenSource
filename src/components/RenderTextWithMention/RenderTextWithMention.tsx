@@ -1,11 +1,11 @@
 import { Text } from 'react-native';
-import { useStyles } from './styles';
+
 import React, { memo } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { IMentionPosition } from '../../types/type';
+import { IMentionPosition } from '../../screens/CreatePost';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../routes/RouteParamList';
-import { MoreOrLess } from '@rntext/more-or-less';
+import { useStyles } from './styles';
 
 interface IrenderTextWithMention {
   mentionPositionArr: IMentionPosition[];
@@ -20,17 +20,7 @@ const RenderTextWithMention: React.FC<IrenderTextWithMention> = ({
   const navigation =
     useNavigation() as NativeStackNavigationProp<RootStackParamList>;
   if (mentionPositionArr.length === 0) {
-    return (
-      <MoreOrLess
-        moreText="See More"
-        textStyle={styles.inputText}
-        numberOfLines={7}
-        lessText="See Less"
-        textButtonStyle={{ color: '#1054DE' }}
-      >
-        {textPost}
-      </MoreOrLess>
-    );
+    return <Text style={styles.inputText}>{textPost}</Text>;
   }
   const mentionClick = (userId: string) => {
     navigation.navigate('UserProfile', {
@@ -40,7 +30,10 @@ const RenderTextWithMention: React.FC<IrenderTextWithMention> = ({
   let currentPosition = 0;
   const result: (string | JSX.Element)[][] = mentionPositionArr.map(
     ({ index, length, userId }, i) => {
+      // Add non-highlighted text before the mention
       const nonHighlightedText = textPost.slice(currentPosition, index);
+
+      // Add highlighted text
       const highlightedText = (
         <Text
           onPress={() => mentionClick(userId)}
@@ -50,27 +43,25 @@ const RenderTextWithMention: React.FC<IrenderTextWithMention> = ({
           {textPost.slice(index, index + length)}
         </Text>
       );
+
+      // Update currentPosition for the next iteration
       currentPosition = index + length;
+
+      // Return an array of non-highlighted and highlighted text
       return [nonHighlightedText, highlightedText];
     }
   );
+
+  // Add any remaining non-highlighted text after the mentions
   const remainingText = textPost.slice(currentPosition);
   result.push([
     <Text key="nonHighlighted-last" style={styles.inputText}>
       {remainingText}
     </Text>,
   ]);
-  return (
-    <MoreOrLess
-      moreText="See More"
-      textStyle={styles.inputText}
-      numberOfLines={7}
-      lessText="See Less"
-      textButtonStyle={{ color: '#1054DE' }}
-    >
-      {result.flat() as unknown as string}
-    </MoreOrLess>
-  );
+
+  // Flatten the array and render
+  return <Text style={styles.inputText}>{result.flat()}</Text>;
 };
 
 export default memo(RenderTextWithMention);

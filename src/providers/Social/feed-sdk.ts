@@ -8,6 +8,9 @@ import {
   ReactionRepository,
 } from '@amityco/ts-sdk-react-native';
 import { IMentionPosition } from '../../screens/CreatePost';
+import { Alert } from 'react-native';
+import { text_contain_blocked_word } from '../../util/constants';
+
 
 export interface IGlobalFeedRes {
   data: Amity.Post<any>[];
@@ -152,6 +155,9 @@ export async function createPostToFeed(
         const { data: post } = await PostRepository.createPost(postParam);
         resolve(post);
       } catch (error) {
+        if (error.message.includes(text_contain_blocked_word)) {
+          Alert.alert('', text_contain_blocked_word);
+        }
         reject(error);
       }
     }
@@ -162,15 +168,26 @@ export async function createPostToFeed(
 export async function editPost(
   postId: string,
   content: { text: string; fileIds: string[] },
-  postType: string
+  postType: string,
+  mentionees: string[],
+  mentionPosition: IMentionPosition[]
 ): Promise<Amity.Post<any>> {
-  let postParam = {};
+  let postParam = {
+    mentionees:
+      mentionees.length > 0
+        ? ([
+            { type: 'user', userIds: mentionees },
+          ] as Amity.MentionType['user'][])
+        : [],
+    metadata: { mentioned: mentionPosition },
+  };
   if (postType === 'text') {
     const newPostParam = {
       data: {
         text: content.text,
         attachments: [],
       },
+      ...postParam,
     };
     postParam = newPostParam;
   } else if (postType === 'image') {
@@ -183,6 +200,7 @@ export async function editPost(
         text: content.text,
       },
       attachments: formattedFileIds,
+      ...postParam,
     };
     postParam = newPostParam;
   } else if (postType === 'video') {
@@ -195,6 +213,7 @@ export async function editPost(
         text: content.text,
       },
       attachments: formattedFileIds,
+      ...postParam,
     };
     postParam = newPostParam;
   }
@@ -204,6 +223,9 @@ export async function editPost(
         const { data: post } = await PostRepository.editPost(postId, postParam);
         resolve(post);
       } catch (error) {
+        if (error.message.includes(text_contain_blocked_word)) {
+          Alert.alert('', text_contain_blocked_word);
+        }
         reject(error);
       }
     }

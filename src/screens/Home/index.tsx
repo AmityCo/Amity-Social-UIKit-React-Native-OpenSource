@@ -29,6 +29,7 @@ import { CommunityRepository } from '@amityco/ts-sdk-react-native';
 import AmityEmptyNewsFeedComponent from '../../components/AmityEmptyNewsFeedComponent/AmityEmptyNewsFeedComponent';
 import AmityNewsFeedComponent from '../../components/AmityNewsFeedComponent/AmityNewsFeedComponent';
 import AmitySocialHomeTopNavigationComponent from '../../components/AmitySocialHomeTopNavigationComponent/AmitySocialHomeTopNavigationComponent';
+import LikeReactionIcon from '../../svg/LikeReactionIcon';
 LogBox.ignoreAllLogs(true);
 export default function Home() {
 

@@ -11,6 +11,7 @@ import { useStyles } from './styles';
 import { TabName } from '../../enum/enumTabName';
 import { useTheme } from 'react-native-paper';
 import { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
+import LikeReactionIcon from '../../svg/LikeReactionIcon';
 
 type TCustomTab = {
   onTabChange: (tabName: TabName) => void;

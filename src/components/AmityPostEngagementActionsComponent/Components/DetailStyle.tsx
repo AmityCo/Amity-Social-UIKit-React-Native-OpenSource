@@ -10,8 +10,6 @@ import { AmityPostEngagementActionsSubComponentType } from './type';
 import { useStyles } from './styles';
 
 import { PageID, ComponentID } from '../../../enum';
-import { SvgXml } from 'react-native-svg';
-import { likeReaction } from '../../../svg/svg-xml-list';
 import {
   addPostReaction,
   removePostReaction,
@@ -24,6 +22,8 @@ import CommentButtonIconElement from '../../../Elements/CommentButtonIconElement
 import ShareButtonIconElement from '../../../Elements/ShareButtonIconElement/ShareButtonIconElement';
 import { useAmityComponent } from '../../../hooks/useUiKitReference';
 import LikeReaction from '../../../svg/LikeReactionIcon';
+import LikeReactionIcon from '../../../svg/LikeReactionIcon';
+import CommentIcon from '../../../svg/CommentIcon';
 
 const DetailStyle: FC<AmityPostEngagementActionsSubComponentType> = ({
   community,
@@ -112,13 +112,7 @@ const DetailStyle: FC<AmityPostEngagementActionsSubComponentType> = ({
         <View style={styles.countSection}>
           {totalReactions ? (
             <View style={styles.row}>
-              <SvgXml
-                style={{ marginRight: 4 }}
-                xml={likeReaction(themeStyles.colors.background)}
-                width="20"
-                height="16"
-              />
-              <LikeReaction  style={{ marginRight: 4 }} col/>
+              <LikeReaction circleColor={themeStyles.colors.background}  style={{ marginRight: 4 }} />
               <Text style={styles.likeCountText} onPress={onClickReactions}>
                 {totalReactions} {renderLikeText(totalReactions)}
               </Text>
@@ -139,11 +133,7 @@ const DetailStyle: FC<AmityPostEngagementActionsSubComponentType> = ({
         <View style={styles.row}>
           <TouchableOpacity onPress={addReactionToPost} style={styles.likeBtn}>
             {isLike ? (
-              <SvgXml
-                xml={likeReaction(themeStyles.colors.background)}
-                width="20"
-                height="16"
-              />
+              <LikeReaction/>
             ) : (
               <LikeButtonIconElement
                 pageID={pageId}

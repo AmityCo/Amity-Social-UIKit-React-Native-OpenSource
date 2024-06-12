@@ -14,7 +14,7 @@ import CommunityHome from '../screens/CommunityHome/index';
 import { CommunitySetting } from '../screens/CommunitySetting/index';
 import CommunityMemberDetail from '../screens/CommunityMemberDetail/CommunityMemberDetail';
 import Home from '../screens/Home';
-import PostDetail from '../screens/PostDetail';
+import PostDetail from '../screens/AmityPostDetailPage/AmityPostDetailPage';
 import CreatePost from '../screens/CreatePost';
 import UserProfile from '../screens/UserProfile/UserProfile';
 import { EditProfile } from '../screens/EditProfile/EditProfile';
@@ -58,10 +58,13 @@ export default function SocialNavigator() {
             },
           }}
         >
-          <Stack.Screen name="Home" component={Home}  options={{ headerShown: false }}/>
+          <Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />
           <Stack.Screen name="Community" component={Home} />
-           <Stack.Screen name="Explore" component={Explore} />
-          <Stack.Screen name="PostDetail" component={PostDetail} />
+          <Stack.Screen name="Explore" component={Explore} />
+          <Stack.Screen name="PostDetail" component={PostDetail}
+            options={{
+              headerShown: false,
+            }} />
           <Stack.Screen
             name="CategoryList"
             component={CategoryList}
@@ -91,7 +94,7 @@ export default function SocialNavigator() {
                     });
                   }}
                 >
-                  <ThreeDotsIcon style={styles.dotIcon}/>
+                  <ThreeDotsIcon style={styles.dotIcon} />
                 </TouchableOpacity>
               ),
             })}
