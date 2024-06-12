@@ -121,10 +121,8 @@ export const AuthContextProvider: FC<IAmityUIkitProvider> = ({
     }
   };
   useEffect(() => {
-    if (fcmToken) {
-      login();
-    }
-  }, [userId, fcmToken]);
+    login();
+  }, [userId]);
 
   // TODO
   const logout = async () => {
