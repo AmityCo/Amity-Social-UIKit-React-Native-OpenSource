@@ -55,7 +55,7 @@ const AmityPostCommentComponent: FC<AmityPostCommentComponentType> = ({
         dataTypes: { matchType: 'any', values: ['text', 'image'] },
         referenceId: postId,
         referenceType: postType,
-        limit: 3,
+        limit: 10,
       },
       async ({ error, loading, data, hasNextPage, onNextPage }) => {
         if (error) return;

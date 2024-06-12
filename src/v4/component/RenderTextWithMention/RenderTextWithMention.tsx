@@ -1,15 +1,20 @@
-import { Text } from 'react-native';
+import { Text, Linking } from 'react-native';
 import { useStyles } from './styles';
-import React, { memo } from 'react';
+import React, { memo, useCallback } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { IMentionPosition } from '../../types/type';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../routes/RouteParamList';
-import { MoreOrLess } from '@rntext/more-or-less';
 
 interface IrenderTextWithMention {
   mentionPositionArr: IMentionPosition[];
   textPost: string;
+}
+
+interface LinkInfo {
+  link: string;
+  index: number;
+  length: number;
 }
 
 const RenderTextWithMention: React.FC<IrenderTextWithMention> = ({
@@ -19,57 +24,87 @@ const RenderTextWithMention: React.FC<IrenderTextWithMention> = ({
   const styles = useStyles();
   const navigation =
     useNavigation() as NativeStackNavigationProp<RootStackParamList>;
-  if (mentionPositionArr.length === 0) {
-    return (
-      <MoreOrLess
-        moreText="See More"
-        textStyle={styles.inputText}
-        numberOfLines={7}
-        lessText="See Less"
-        textButtonStyle={{ color: '#1054DE' }}
-      >
-        {textPost}
-      </MoreOrLess>
-    );
+  const linkArr = useCallback((text: string): LinkInfo[] => {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const links: LinkInfo[] = [];
+    let match;
+    while ((match = urlRegex.exec(text)) !== null) {
+      links.push({
+        link: match[0],
+        index: match.index,
+        length: match[0].length,
+      });
+    }
+    return links;
+  }, []);
+
+  const heightlightTextPositions = [
+    ...linkArr(textPost),
+    ...mentionPositionArr,
+  ].sort((a, b) => a.index - b.index) as (IMentionPosition & LinkInfo)[];
+
+  const mentionClick = useCallback(
+    (userId: string) => {
+      navigation.navigate('UserProfile', {
+        userId: userId,
+      });
+    },
+    [navigation]
+  );
+  const handleLinkClick = useCallback((url: string) => {
+    Linking.openURL(url);
+  }, []);
+
+  const handleOnClick = useCallback(
+    (link: string, userId: string) => {
+      if (link) return handleLinkClick(link);
+      return mentionClick(userId);
+    },
+    [handleLinkClick, mentionClick]
+  );
+
+  if (heightlightTextPositions.length === 0) {
+    return <Text style={styles.inputText}>{textPost}</Text>;
   }
-  const mentionClick = (userId: string) => {
-    navigation.navigate('UserProfile', {
-      userId: userId,
-    });
-  };
+
   let currentPosition = 0;
-  const result: (string | JSX.Element)[][] = mentionPositionArr.map(
-    ({ index, length, userId }, i) => {
+  const result: (string | JSX.Element)[][] = heightlightTextPositions.map(
+    ({ index, length, userId, link }, i) => {
+      // Add non-highlighted text before the mention
       const nonHighlightedText = textPost.slice(currentPosition, index);
+      // Add highlighted text
       const highlightedText = (
         <Text
-          onPress={() => mentionClick(userId)}
+          selectable
+          onPress={() => handleOnClick(link, userId)}
           key={`highlighted-${i}`}
           style={styles.mentionText}
         >
           {textPost.slice(index, index + length)}
         </Text>
       );
+
+      // Update currentPosition for the next iteration
       currentPosition = index + length;
+
+      // Return an array of non-highlighted and highlighted text
       return [nonHighlightedText, highlightedText];
     }
   );
+
+  // Add any remaining non-highlighted text after the mentions
   const remainingText = textPost.slice(currentPosition);
   result.push([
-    <Text key="nonHighlighted-last" style={styles.inputText}>
+    <Text selectable key="nonHighlighted-last" style={styles.inputText}>
       {remainingText}
     </Text>,
   ]);
+
+  // Flatten the array and render
   return (
-    <MoreOrLess
-      moreText="See More"
-      textStyle={styles.inputText}
-      numberOfLines={7}
-      lessText="See Less"
-      textButtonStyle={{ color: '#1054DE' }}
-    >
-      {result.flat() as unknown as string}
-    </MoreOrLess>
+    <Text selectable style={styles.inputText}>
+      {result.flat()}
+    </Text>
   );
 };
 

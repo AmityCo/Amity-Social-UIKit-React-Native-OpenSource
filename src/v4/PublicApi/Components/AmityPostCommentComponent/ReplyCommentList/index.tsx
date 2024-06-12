@@ -38,12 +38,12 @@ import EditCommentModal from '../../../../../components/EditCommentModal';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
 import { IMentionPosition } from '../../../../types/type';
-import RenderTextWithMention from '../../../../component/RenderTextWithMention/RenderTextWithMention';
 import ModeratorBadgeElement from '../../../../PublicApi/Elements/ModeratorBadgeElement/ModeratorBadgeElement';
 import { ComponentID, PageID } from '../../../../enum';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../../../routes/RouteParamList';
+import { LinkPreview } from '../../../../component/PreviewLink/LinkPreview';
 
 export interface IComment {
   commentId: string;
@@ -251,8 +251,8 @@ export default function ReplyCommentList({
               </View>
             )}
             {textComment && (
-              <RenderTextWithMention
-                textPost={textComment}
+              <LinkPreview
+                text={textComment}
                 mentionPositionArr={commentMentionPosition}
               />
             )}

@@ -42,7 +42,7 @@ import { useNavigation } from '@react-navigation/native';
 import ReplyCommentList from '../../../../components/Social/ReplyCommentList';
 import { CommentRepository } from '@amityco/ts-sdk-react-native';
 import { useTimeDifference } from '../../../hook/useTimeDifference';
-import RenderTextWithMention from '../../../../components/Social/PostList/Components/RenderTextWithMention';
+import { LinkPreview } from '../../PreviewLink';
 export interface IComment {
   commentId: string;
   data: Record<string, any>;
@@ -318,9 +318,9 @@ const CommentListItem = ({
 
           <View style={styles.commentBubble}>
             {textComment && (
-              <RenderTextWithMention
+              <LinkPreview
                 mentionPositionArr={mentionPosition}
-                textPost={textComment}
+                text={textComment}
               />
             )}
           </View>
