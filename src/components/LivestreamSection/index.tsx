@@ -56,23 +56,19 @@ const LivestreamSection: React.FC<ILivestreamSection> = ({ streamId }) => {
   };
 
   useEffect(() => {
-    const getLivestream = () => {
-      return StreamRepository.getStreamById(
-        streamId,
-        ({ data, loading, error }) => {
-          if (error) console.error('Error fetching livestream', error);
-          if (!loading && data) {
-            setLivestream({ ...data });
-            getLivestreamThumbnail(data);
-          }
+    const unsub = StreamRepository.getStreamById(
+      streamId,
+      ({ data, loading, error }) => {
+        if (error) console.error('Error fetching livestream', error);
+        if (!loading && data) {
+          setLivestream({ ...data });
+          getLivestreamThumbnail(data);
         }
-      );
-    };
-
-    const unsubscribe = getLivestream();
+      }
+    );
 
     return () => {
-      unsubscribe();
+      unsub();
     };
   }, [streamId]);
 
