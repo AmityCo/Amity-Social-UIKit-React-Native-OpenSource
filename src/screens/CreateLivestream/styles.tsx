@@ -1,6 +1,9 @@
 import { StyleSheet } from 'react-native';
+import { useTheme } from 'react-native-paper';
+import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
 
 export const useStyles = () => {
+  const theme = useTheme() as MyMD3Theme;
   const styles = StyleSheet.create({
     container: {
       height: '100%',
@@ -87,7 +90,7 @@ export const useStyles = () => {
       height: 32,
       borderRadius: 4,
       borderWidth: 1,
-      borderColor: '#FFFFFF',
+      borderColor: theme.colors.base,
     },
     postTarget: {
       marginTop: 36,
@@ -109,14 +112,14 @@ export const useStyles = () => {
     seperator: {
       width: '100%',
       height: 1,
-      backgroundColor: 'rgba(255, 255, 255, 0.2)',
+      backgroundColor: theme.colors.baseShade3,
       marginTop: 16,
     },
     detailWrap: {
       marginTop: 28,
     },
     title: {
-      color: '#FFF',
+      color: '#FFFFFF',
       fontSize: 16,
       fontWeight: 'bold',
       height: 40,
@@ -129,7 +132,6 @@ export const useStyles = () => {
       padding: 0,
     },
     footer: {
-      backgroundColor: '#000000',
       height: '10%',
     },
     streamingFooter: {
@@ -141,7 +143,7 @@ export const useStyles = () => {
     },
     finishButton: {
       backgroundColor: 'transparent',
-      borderColor: '#FFFFFF',
+      borderColor: theme.colors.baseShade3,
       borderWidth: 1,
       flexDirection: 'row',
       justifyContent: 'center',
@@ -154,12 +156,12 @@ export const useStyles = () => {
       fontSize: 15,
       lineHeight: 20,
       fontWeight: '600',
-      color: '#FFFFFF',
+      color: theme.colors.base,
     },
     goLiveButton: {
       marginTop: 15,
-      backgroundColor: '#FFFFFF',
-      borderColor: '#A5A9B5',
+      backgroundColor: theme.colors.background,
+      borderColor: theme.colors.baseShade3,
       borderRadius: 4,
       height: 40,
       width: '90%',
@@ -172,7 +174,7 @@ export const useStyles = () => {
       fontSize: 15,
       lineHeight: 20,
       fontWeight: '600',
-      color: '#292B32',
+      color: theme.colors.base,
     },
     bottomSheetWrap: {
       marginTop: 16,
@@ -181,13 +183,13 @@ export const useStyles = () => {
       padding: 16,
     },
     bottomSheetButtonNormalText: {
-      color: '#292B32',
+      color: theme.colors.secondary,
       fontSize: 16,
       fontWeight: '600',
       lineHeight: 20,
     },
     bottomSheetButtonDeleteText: {
-      color: '#FA4D30',
+      color: theme.colors.alert,
       fontSize: 16,
       fontWeight: '600',
       lineHeight: 20,
