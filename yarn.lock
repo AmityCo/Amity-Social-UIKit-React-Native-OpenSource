@@ -21,15 +21,16 @@
     socket.io-client "2.2.0"
     ts-jest "^28.0.3"
 
-"@amityco/video-broadcaster-react-native@./amityco-video-broadcaster-react-native-0.0.1.tgz":
-  version "0.0.1"
-  resolved "./amityco-video-broadcaster-react-native-0.0.1.tgz#10b17bd876f056a138dc45fd686dd3226a723365"
+"@amityco/video-broadcaster-react-native@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@amityco/video-broadcaster-react-native/-/video-broadcaster-react-native-1.0.0.tgz#3a883673d236e5c793d2037561eabab6a89ceba3"
+  integrity sha512-vVCRIMWK/AckM5g8FKu4tOVAJsA3Gybh9JJL1gD8/x1E33E7EW6aEX+JsSDhMxjirsDlpfKVBIh2o2Z2/YOCOg==
 
-"@amityco/video-player-react-native@./amityco-video-player-react-native-0.0.1.tgz":
-  version "0.0.1"
-  resolved "./amityco-video-player-react-native-0.0.1.tgz#55bdbdcd4a7e36a3bf02293d78369c6cf56cb00d"
+"@amityco/video-player-react-native@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@amityco/video-player-react-native/-/video-player-react-native-1.0.0.tgz#85b58a3f2c3226a100a2b9c622083f937aa963b1"
+  integrity sha512-uqdX359letSrcKT5PrL3I/FsdVI3RDgkSYmDmEbbEq//T1WqC8CEUjO6u7FNOvHIk/2aXm6YA+BznYeDv9QfHg==
   dependencies:
-    react-native-rsa-native "^2.0.5"
     uuid "^9.0.1"
 
 "@ampproject/remapping@^2.2.0":
@@ -9677,11 +9678,6 @@ react-native-radio-buttons-group@^3.0.2:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/react-native-radio-buttons-group/-/react-native-radio-buttons-group-3.1.0.tgz#b19d383fc2dece17eba1ce37b9f357c47431aded"
   integrity sha512-DiNM1yI6WfRygUZ+Z/bsjggyLypXsxRNXPNYpPHXSEVbRD6uF5Aei+HMIwyeRbfMKPtHwLq7cGsmUDV01i+rOQ==
-
-react-native-rsa-native@^2.0.5:
-  version "2.0.5"
-  resolved "https://registry.yarnpkg.com/react-native-rsa-native/-/react-native-rsa-native-2.0.5.tgz#7db4aef49405bb5b5bcaea12b9dfd1b251c690ab"
-  integrity sha512-gwwvFSwGW5WKrpDyBQ/eTf1UrVABeAvMcT4YWemzPSUo6aHZs1kbBm2rXmwN5okhUzJsry5zjjz/qdx5GXRugQ==
 
 react-native-safe-area-context@^4.7.2:
   version "4.10.4"

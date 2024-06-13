@@ -95,8 +95,8 @@ const LiveStreamPlayer = ({ navigation, route }) => {
               <>
                 <AmityStreamPlayer
                   stream={livestream}
+                  status={livestream.status === 'live' ? 'live' : 'recorded'}
                   ref={ref}
-                  onVideoFullscreenPlayerWillDismiss={onClosePlayer}
                 />
                 {livestream.status === 'live' && (
                   <>
@@ -143,6 +143,7 @@ const LiveStreamPlayer = ({ navigation, route }) => {
                     style={styles.closeButton}
                     onPress={onClosePlayer}
                   >
+                    {/*  */}
                     <SvgXml xml={closeIcon('#FFFFFF')} width="16" height="16" />
                   </TouchableOpacity>
                 )}

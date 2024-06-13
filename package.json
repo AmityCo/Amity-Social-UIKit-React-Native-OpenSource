@@ -57,7 +57,6 @@
     "registry": "https://registry.npmjs.org/"
   },
   "devDependencies": {
-    "@amityco/video-broadcaster-react-native": "./amityco-video-broadcaster-react-native-0.0.1.tgz",
     "@api.video/react-native-livestream": "^2.0.0",
     "@commitlint/config-conventional": "^17.0.2",
     "@evilmartians/lefthook": "^1.2.2",
@@ -212,8 +211,8 @@
   },
   "dependencies": {
     "@amityco/ts-sdk-react-native": "^6.23.0",
-    "@amityco/video-broadcaster-react-native": "./amityco-video-broadcaster-react-native-0.0.1.tgz",
-    "@amityco/video-player-react-native": "./amityco-video-player-react-native-0.0.1.tgz",
+    "@amityco/video-broadcaster-react-native": "^1.0.0",
+    "@amityco/video-player-react-native": "^1.0.0",
     "@devvie/bottom-sheet": "^0.3.0",
     "@react-navigation/native": "6.1.6",
     "@react-navigation/native-stack": "6.9.10",
