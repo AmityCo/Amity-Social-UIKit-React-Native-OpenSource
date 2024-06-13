@@ -49,6 +49,9 @@ target 'AmityReactNativeSocialUiKitExample' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+
+
+
   target 'AmityReactNativeSocialUiKitExampleTests' do
     inherit! :complete
     # Pods for testing
