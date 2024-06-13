@@ -160,11 +160,17 @@ const CreatePost = ({ route }: any) => {
     return;
   };
 
-  const pickCamera = async () => {
-    // const permission = await ImagePicker();
+  const onPressCamera = async () => {
+    if (Platform.OS === 'ios') return pickCamera('mixed');
+    Alert.alert('Open Camera', null, [
+      { text: 'Photo', onPress: () => pickCamera('photo') },
+      { text: 'Video', onPress: () => pickCamera('video') },
+    ]);
+  };
 
+  const pickCamera = async (mediaType: 'mixed' | 'photo' | 'video') => {
     const result: ImagePicker.ImagePickerResponse = await launchCamera({
-      mediaType: 'mixed',
+      mediaType: mediaType,
       quality: 1,
       presentationStyle: 'fullScreen',
       videoQuality: 'high',
@@ -467,7 +473,7 @@ const CreatePost = ({ route }: any) => {
         <View style={styles.InputWrap}>
           <TouchableOpacity
             disabled={displayVideos.length > 0 ? true : false}
-            onPress={pickCamera}
+            onPress={onPressCamera}
           >
             <View style={styles.iconWrap}>
               <SvgXml xml={cameraIcon} width="27" height="27" />
