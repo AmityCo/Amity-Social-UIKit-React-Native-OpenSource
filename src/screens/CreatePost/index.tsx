@@ -42,6 +42,7 @@ import globalFeedSlice from '../../redux/slices/globalfeedSlice';
 import { useDispatch } from 'react-redux';
 import { amityPostsFormatter } from '../../util/postDataFormatter';
 import feedSlice from '../../redux/slices/feedSlice';
+import { useRequestPermission } from '../../v4/hook/useCamera';
 
 export interface IDisplayImage {
   url: string;
@@ -58,6 +59,7 @@ export interface IMentionPosition {
   displayName?: string;
 }
 const CreatePost = ({ route }: any) => {
+  useRequestPermission();
   const theme = useTheme() as MyMD3Theme;
   const styles = useStyles();
   const { addPostToGlobalFeed } = globalFeedSlice.actions;
@@ -163,8 +165,8 @@ const CreatePost = ({ route }: any) => {
   const onPressCamera = async () => {
     if (Platform.OS === 'ios') return pickCamera('mixed');
     Alert.alert('Open Camera', null, [
-      { text: 'Photo', onPress: () => pickCamera('photo') },
-      { text: 'Video', onPress: () => pickCamera('video') },
+      { text: 'Photo', onPress: async () => await pickCamera('photo') },
+      { text: 'Video', onPress: async () => await pickCamera('video') },
     ]);
   };
 
@@ -175,7 +177,6 @@ const CreatePost = ({ route }: any) => {
       presentationStyle: 'fullScreen',
       videoQuality: 'high',
     });
-
     if (
       result.assets &&
       result.assets.length > 0 &&
