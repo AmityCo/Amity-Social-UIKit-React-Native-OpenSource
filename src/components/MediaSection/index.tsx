@@ -17,6 +17,7 @@ import ImageView from '../../components/react-native-image-viewing/dist';
 import { RootState } from '../../redux/store';
 import { playBtn } from '../../svg/svg-xml-list';
 import PollSection from '../PollSection/PollSection';
+import LivestreamSection from '../LivestreamSection';
 
 interface IMediaSection {
   childrenPosts: string[];
@@ -26,6 +27,9 @@ const MediaSection: React.FC<IMediaSection> = ({ childrenPosts }) => {
   const [imagePosts, setImagePosts] = useState<string[]>([]);
   const [videoPosts, setVideoPosts] = useState<IVideoPost[]>([]);
   const [pollIds, setPollIds] = useState<{ pollId: string }[]>([]);
+  const [livestreamId, setLivestreamId] = useState<Amity.Stream['streamId'][]>(
+    []
+  );
 
   const [imagePostsFullSize, setImagePostsFullSize] = useState<MediaUri[]>([]);
   const [videoPostsFullSize, setVideoPostsFullSize] = useState<MediaUri[]>([]);
@@ -90,6 +94,12 @@ const MediaSection: React.FC<IMediaSection> = ({ childrenPosts }) => {
         } else if (item.dataType === 'poll') {
           setPollIds((prev) => {
             return !prev.includes(item.data) ? [...prev, item.data] : [...prev];
+          });
+        } else if (item.dataType === 'liveStream') {
+          setLivestreamId((prev) => {
+            return !prev.includes(item.data)
+              ? [...prev, item.data.streamId]
+              : [...prev];
           });
         }
       });
@@ -250,9 +260,12 @@ const MediaSection: React.FC<IMediaSection> = ({ childrenPosts }) => {
     <View>
       {pollIds.length > 0 ? (
         <PollSection pollId={pollIds[0].pollId} />
+      ) : livestreamId.length > 0 ? (
+        <LivestreamSection streamId={livestreamId[0]} />
       ) : (
         renderMediaPosts()
       )}
+
       <ImageView
         images={
           imagePostsFullSize.length > 0
