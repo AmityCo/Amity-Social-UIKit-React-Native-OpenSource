@@ -338,7 +338,9 @@ export default function CreateCommunity() {
                             }
                           />
                         </View>
-                        <Text>{displayName(item.displayName)}</Text>
+                        <Text style={styles.memberName}>
+                          {displayName(item.displayName)}
+                        </Text>
                       </View>
                       <TouchableOpacity
                         onPress={() => onDeleteUserPressed(item)}
@@ -362,8 +364,7 @@ export default function CreateCommunity() {
               >
                 <View style={styles.avatar}>
                   <SvgXml
-                    style={styles.arrowIcon}
-                    xml={plusIcon(theme.colors.base)}
+                    xml={plusIcon(theme.colors.baseShade4)}
                     width={24}
                     height={24}
                   />

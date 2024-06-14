@@ -93,9 +93,7 @@ export const useStyles = () => {
     addIcon: {
       marginHorizontal: 6,
     },
-    arrowIcon: {
-      opacity: 0.75,
-    },
+
     listItem: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -157,7 +155,7 @@ export const useStyles = () => {
     },
     userItemWrap: {
       flexDirection: 'row',
-      backgroundColor: '#EBECEF',
+      backgroundColor: theme.colors.baseShade4,
       borderRadius: 24,
       padding: 6,
       height: 40,
@@ -184,6 +182,10 @@ export const useStyles = () => {
     },
     loading: {
       marginLeft: 6,
+    },
+    memberName: {
+      color: theme.colors.base,
+      fontSize: 12,
     },
   });
 
