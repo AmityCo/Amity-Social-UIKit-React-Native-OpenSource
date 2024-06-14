@@ -5,7 +5,7 @@ import {
   Text,
   type GestureResponderEvent,
 } from 'react-native';
-import { styles } from './styles';
+import { useStyles } from './styles';
 export default function DoneButton({
   onDonePressed,
   buttonTxt,
@@ -15,6 +15,7 @@ export default function DoneButton({
   onDonePressed: { (event: GestureResponderEvent): void };
 }) {
   const buttonText = buttonTxt ?? 'Done';
+  const styles = useStyles();
   return (
     <TouchableOpacity onPress={onDonePressed}>
       <View style={styles.icon}>

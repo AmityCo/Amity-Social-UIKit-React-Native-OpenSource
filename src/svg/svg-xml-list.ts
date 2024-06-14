@@ -348,6 +348,18 @@ export const likeReaction = (
     <stop offset="1" stop-color="#0041BE" />
   </linearGradient>
 </defs>`;
+export const loveReaction = (
+  circleColor: string = '#fff'
+) => `<svg width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="10.8184" cy="10" r="10" fill="url(#paint0_linear_3447_19625)" />
+<path d="M14.8475 6.61469C13.7744 5.67128 12.1939 5.85193 11.1988 6.89571L10.8281 7.29716L10.4379 6.89571C9.46231 5.85193 7.86236 5.67128 6.78922 6.61469C5.55999 7.69861 5.50146 9.62557 6.5941 10.7898L10.3793 14.8043C10.6135 15.0652 11.0232 15.0652 11.2574 14.8043L15.0426 10.7898C16.1353 9.62557 16.0767 7.69861 14.8475 6.61469Z" fill="${circleColor}" />
+<defs>
+  <linearGradient id="paint0_linear_3447_19625" x1="5.31836" y1="4.5" x2="18.3184" y2="24.5" gradientUnits="userSpaceOnUse">
+    <stop stop-color="#F76E9F" />
+    <stop offset="0.833333" stop-color="#E82020" />
+  </linearGradient>
+</defs>
+</svg>`;
 
 export const cancelFollowRequest = (
   color: string = '#292B32'

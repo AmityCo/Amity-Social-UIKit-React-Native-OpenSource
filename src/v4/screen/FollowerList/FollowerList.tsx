@@ -12,7 +12,7 @@ import { UserRepository } from '@amityco/ts-sdk-react-native';
 import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../../../routes/RouteParamList';
 import CustomTab from '../../../components/CustomTab';
-import { TabName } from '../../enum';
+import { TabName } from '../../enum/tabNameState';
 import FollowerListItem from './Components/FollowerListItem';
 
 type FollowerListType = {

@@ -17,3 +17,4 @@ export * from './useUiKitReference';
 export * from './useIsCommunityModerator';
 export * from './useSearch';
 export * from './useTimeDifference';
+export * from './useReaction';

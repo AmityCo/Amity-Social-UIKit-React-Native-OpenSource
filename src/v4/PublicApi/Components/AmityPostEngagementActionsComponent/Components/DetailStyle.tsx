@@ -16,11 +16,9 @@ import {
   addPostReaction,
   removePostReaction,
 } from '../../../../../providers/Social/feed-sdk';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../../../routes/RouteParamList';
 import LikeButtonIconElement from '../../../Elements/LikeButtonIconElement/LikeButtonIconElement';
 import CommentButtonIconElement from '../../../Elements/CommentButtonIconElement/CommentButtonIconElement';
+import AmityReactionListComponent from '../../AmityReactionListComponent/AmityReactionListComponent';
 
 const DetailStyle: FC<AmityPostEngagementActionsSubComponentType> = ({
   community,
@@ -33,11 +31,10 @@ const DetailStyle: FC<AmityPostEngagementActionsSubComponentType> = ({
     componentId: ComponentID.post_content,
   });
   const styles = useStyles(themeStyles);
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [postData, setPostData] = useState<Amity.Post>(null);
   const [isLike, setIsLike] = useState(false);
   const [totalReactions, setTotalReactions] = useState(0);
+  const [isReactionListVisible, setIsReactionListVisible] = useState(false);
   useEffect(() => {
     if (postId) {
       let unsubscribe: () => void;
@@ -95,11 +92,8 @@ const DetailStyle: FC<AmityPostEngagementActionsSubComponentType> = ({
   }, [isLike, postId]);
 
   const onClickReactions = useCallback(() => {
-    navigation.navigate('ReactionList', {
-      referenceId: postId,
-      referenceType: 'post',
-    });
-  }, [navigation, postId]);
+    setIsReactionListVisible(true);
+  }, []);
 
   if (community && community.isJoined === false) {
     return (
@@ -183,6 +177,14 @@ const DetailStyle: FC<AmityPostEngagementActionsSubComponentType> = ({
         />
         <Text style={styles.btnText}>Share</Text>
       </TouchableOpacity> */}
+        {isReactionListVisible && (
+          <AmityReactionListComponent
+            referenceId={postId}
+            referenceType="post"
+            isModalVisible={isReactionListVisible}
+            onCloseModal={() => setIsReactionListVisible(false)}
+          />
+        )}
       </View>
     </>
   );
