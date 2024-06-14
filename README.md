@@ -119,7 +119,8 @@ kotlinVersion = 1.7.0 and above
 compileSdkVersion = 34
 buildToolsVersion = "34.0.0"  
 
-![1 photo added](https://github.com/AmityCo/Amity-Social-UIKit-React-Native-CLI-OpenSource/assets/155952277/3870258f-38cf-42a4-a926-ed745f599614)
+![Uploading Screenshot 2567-06-14 at 19.01.13.png…]()
+
 
 
 ### Add Camera permission (iOS)
