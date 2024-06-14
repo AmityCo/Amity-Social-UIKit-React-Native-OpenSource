@@ -13,6 +13,7 @@ export const useStyles = () => {
       backgroundColor: theme.colors.background,
     },
     avatarContainer: {
+      width: 50,
       marginRight: 10,
       alignItems: 'center',
     },
