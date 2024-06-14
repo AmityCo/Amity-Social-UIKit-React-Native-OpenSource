@@ -12,6 +12,7 @@ import {
   ScrollView,
   Keyboard,
   Alert,
+  Linking,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -59,7 +60,12 @@ export interface IMentionPosition {
   displayName?: string;
 }
 const CreatePost = ({ route }: any) => {
-  useRequestPermission();
+  useRequestPermission({
+    onRequestPermissionFailed: () => {
+      Linking.openSettings();
+    },
+    shouldCall: true,
+  });
   const theme = useTheme() as MyMD3Theme;
   const styles = useStyles();
   const { addPostToGlobalFeed } = globalFeedSlice.actions;
