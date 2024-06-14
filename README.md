@@ -119,7 +119,8 @@ kotlinVersion = 1.7.0 and above
 compileSdkVersion = 34
 buildToolsVersion = "34.0.0"  
 
-![Uploading Screenshot 2567-06-14 at 19.01.13.png…]()
+<img width="754" alt="Screenshot 2567-06-14 at 19 01 13" src="https://github.com/AmityCo/Amity-Social-UIKit-React-Native-CLI-OpenSource/assets/155952277/82f15d39-8fb0-4b98-b0ec-1dea49a093cf">
+
 
 
 
