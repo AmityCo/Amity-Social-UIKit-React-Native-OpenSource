@@ -8,7 +8,7 @@ let isFailedCalled = false;
 
 const useRequestPermission = async ({
   onRequestPermissionFailed,
-  shouldCall,
+  shouldCall = true,
 }: {
   onRequestPermissionFailed?: (callback?: () => void) => void;
   shouldCall?: boolean;
