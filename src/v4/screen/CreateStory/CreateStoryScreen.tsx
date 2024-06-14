@@ -14,6 +14,7 @@ const CreateStoryScreen = ({ navigation, route }) => {
     onRequestPermissionFailed: () => {
       Linking.openSettings();
     },
+    shouldCall: true,
   });
 
   const backCamera = useCameraDevice('back');
