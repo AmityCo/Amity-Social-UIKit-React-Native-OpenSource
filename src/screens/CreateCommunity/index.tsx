@@ -253,7 +253,6 @@ export default function CreateCommunity() {
               {categoryName.length > 0 ? categoryName : 'Select Category'}
             </Text>
             <SvgXml
-              style={styles.arrowIcon}
               xml={arrowOutlined(theme.colors.base)}
               width={15}
               height={15}
