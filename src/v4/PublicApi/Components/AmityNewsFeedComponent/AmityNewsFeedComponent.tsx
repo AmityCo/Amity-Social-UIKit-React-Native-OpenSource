@@ -37,7 +37,7 @@ const AmityNewsFeedComponent: FC<AmityNewsFeedComponentType> = ({
     <View testID={uiReference} accessibilityLabel={uiReference}>
       <AmityStoryTabComponent type={AmityStoryTabComponentEnum.globalFeed} />
       <AmityGlobalFeedComponent pageId={pageId} />
-      <FloatingButton onPress={openModal} />
+      <FloatingButton onPress={openModal} isGlobalFeed />
     </View>
   );
 };

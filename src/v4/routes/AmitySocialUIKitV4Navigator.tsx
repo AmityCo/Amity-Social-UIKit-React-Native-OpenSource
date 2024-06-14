@@ -16,7 +16,7 @@ import CommunityMemberDetail from '../../screens/CommunityMemberDetail/Community
 import AmitySocialHomePage from '../PublicApi/Pages/AmitySocialHomePage/AmitySocialHomePage';
 import PostDetail from '../PublicApi/Pages/AmityPostDetailPage/AmityPostDetailPage';
 import CreatePost from '../../screens/CreatePost';
-import UserProfile from '../../screens/UserProfile/UserProfile';
+import UserProfile from '../screen/UserProfile/UserProfile';
 import { EditProfile } from '../../screens/EditProfile/EditProfile';
 import UserProfileSetting from '../../screens/UserProfileSetting/UserProfileSetting';
 import CommunitySearch from '../../screens/CommunitySearch';

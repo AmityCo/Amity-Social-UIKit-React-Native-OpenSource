@@ -132,7 +132,7 @@ const AmityMyCommunitiesComponent: FC<AmityMyCommunitiesComponentType> = ({
         onEndReached={onNextCommunityPage}
         data={communities}
         renderItem={myCommunitiesListItem}
-        keyExtractor={(item) => item.communityId}
+        keyExtractor={(item, index) => item.communityId + index}
       />
     </View>
   );

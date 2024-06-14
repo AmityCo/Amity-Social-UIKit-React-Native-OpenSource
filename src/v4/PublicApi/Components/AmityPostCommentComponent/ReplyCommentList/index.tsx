@@ -18,14 +18,11 @@ import {
   personXml,
   threeDots,
 } from '../../../../../svg/svg-xml-list';
-
 import type { UserInterface } from '../../../../../types';
-
 import {
   addCommentReaction,
   removeCommentReaction,
 } from '../../../../../providers/Social/comment-sdk';
-
 import { Pressable } from 'react-native';
 import useAuth from '../../../../../hooks/useAuth';
 import { useTimeDifference } from '../../../../hook/useTimeDifference';
@@ -40,10 +37,8 @@ import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
 import { IMentionPosition } from '../../../../types/type';
 import ModeratorBadgeElement from '../../../../PublicApi/Elements/ModeratorBadgeElement/ModeratorBadgeElement';
 import { ComponentID, PageID } from '../../../../enum';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../../../routes/RouteParamList';
 import { LinkPreview } from '../../../../component/PreviewLink/LinkPreview';
+import AmityReactionListComponent from '../../AmityReactionListComponent/AmityReactionListComponent';
 
 export interface IComment {
   commentId: string;
@@ -101,10 +96,9 @@ export default function ReplyCommentList({
   );
 
   const { client, apiRegion } = useAuth();
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [textComment, setTextComment] = useState<string>(data.text);
   const [isVisible, setIsVisible] = useState(false);
+  const [isReactionListVisible, setIsReactionListVisible] = useState(false);
   const [isReportByMe, setIsReportByMe] = useState<boolean>(false);
   const [editCommentModal, setEditCommentModal] = useState<boolean>(false);
   const [isEditComment, setIsEditComment] = useState<boolean>(false);
@@ -212,10 +206,7 @@ export default function ReplyCommentList({
   };
 
   const onPressCommentReaction = () => {
-    navigation.navigate('ReactionList', {
-      referenceId: commentId,
-      referenceType: 'comment',
-    });
+    setIsReactionListVisible(true);
   };
 
   const onPressReply = () => {
@@ -364,6 +355,14 @@ export default function ReplyCommentList({
         onFinishEdit={onEditComment}
         onClose={onCloseEditCommentModal}
       />
+      {isReactionListVisible && (
+        <AmityReactionListComponent
+          referenceId={commentId}
+          referenceType="comment"
+          isModalVisible={isReactionListVisible}
+          onCloseModal={() => setIsReactionListVisible(false)}
+        />
+      )}
     </View>
   );
 }

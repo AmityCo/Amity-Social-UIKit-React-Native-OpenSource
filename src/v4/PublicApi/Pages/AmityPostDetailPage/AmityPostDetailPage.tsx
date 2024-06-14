@@ -8,6 +8,8 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
+  Animated,
+  Modal,
 } from 'react-native';
 import React, {
   FC,
@@ -17,6 +19,7 @@ import React, {
   useState,
   useMemo,
   useLayoutEffect,
+  useRef,
 } from 'react';
 import { ComponentID, PageID } from '../../../enum/';
 import { TSearchItem, useAmityPage } from '../../../hook';
@@ -44,6 +47,17 @@ import { closeIcon } from '../../../../svg/svg-xml-list';
 import { SvgXml } from 'react-native-svg';
 import { IMentionPosition } from '~/types';
 import AmityMentionInput from '../../../../components/MentionInput/AmityMentionInput';
+import {
+  deletePostById,
+  isReportTarget,
+  reportTargetById,
+  unReportTargetById,
+} from '../../../../providers/Social/feed-sdk';
+import globalFeedSlice from '../../../../redux/slices/globalfeedSlice';
+import { useDispatch } from 'react-redux';
+import useAuth from '../../../../hooks/useAuth';
+import EditPostModal from '../../../../components/EditPostModal';
+import { getCommunityById } from '../../../../providers/Social/communities-sdk';
 type AmityPostDetailPageType = {
   route: RouteProp<RootStackParamList, 'PostDetail'>;
 };
@@ -51,6 +65,9 @@ type AmityPostDetailPageType = {
 const AmityPostDetailPage: FC<AmityPostDetailPageType> = ({ route }) => {
   const pageId = PageID.post_detail_page;
   const { postId } = route.params;
+  const { client } = useAuth();
+  const { deleteByPostId } = globalFeedSlice.actions;
+  const dispatch = useDispatch();
   const componentId = ComponentID.WildCardComponent;
   const disabledInteraction = false;
   const navigation =
@@ -66,9 +83,171 @@ const AmityPostDetailPage: FC<AmityPostDetailPageType> = ({ route }) => {
   const [mentionsPosition, setMentionsPosition] = useState<IMentionPosition[]>(
     []
   );
-  useLayoutEffect(() => {
-    let unsub: () => void;
+  const [isVisible, setIsVisible] = useState<boolean>(false);
+  const [isReportByMe, setIsReportByMe] = useState<boolean>(false);
+  const [privateCommunityId, setPrivateCommunityId] = useState(null);
+  const [editPostModalVisible, setEditPostModalVisible] =
+    useState<boolean>(false);
 
+  const slideAnimation = useRef(new Animated.Value(0)).current;
+
+  const openModal = () => {
+    setIsVisible(true);
+  };
+
+  const closeModal = () => {
+    Animated.timing(slideAnimation, {
+      toValue: 0,
+      duration: 100,
+      useNativeDriver: true,
+    }).start(() => setIsVisible(false));
+  };
+
+  const checkIsReport = useCallback(async () => {
+    const isReport = await isReportTarget('post', postId);
+    if (isReport) {
+      setIsReportByMe(true);
+    }
+  }, [postId]);
+
+  useEffect(() => {
+    checkIsReport();
+  }, [checkIsReport]);
+
+  useEffect(() => {
+    if (postData?.targetType === 'community' && postData?.targetId) {
+      getCommunityInfo(postData?.targetId);
+    }
+  }, [postData?.targetId, postData?.targetType, postData?.text]);
+
+  async function getCommunityInfo(id: string) {
+    const { data: community }: { data: Amity.LiveObject<Amity.Community> } =
+      await getCommunityById(id);
+    if (community.error) return;
+    if (!community.loading) {
+      !community.data.isPublic &&
+        setPrivateCommunityId(community.data.communityId);
+    }
+  }
+
+  const onDeletePost = useCallback(async () => {
+    const deleted = await deletePostById(postId);
+    if (deleted) {
+      dispatch(deleteByPostId({ postId }));
+      navigation.pop();
+    }
+  }, [deleteByPostId, dispatch, navigation, postId]);
+
+  const deletePostObject = () => {
+    Alert.alert(
+      'Delete this post',
+      `This post will be permanently deleted. You'll no longer see and find this post`,
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => onDeletePost(),
+        },
+      ]
+    );
+    setIsVisible(false);
+  };
+  const reportPostObject = async () => {
+    if (isReportByMe) {
+      const unReportPost = await unReportTargetById('post', postId);
+      if (unReportPost) {
+        Alert.alert('Undo Report sent');
+      }
+      setIsVisible(false);
+      setIsReportByMe(false);
+    } else {
+      const reportPost = await reportTargetById('post', postId);
+      if (reportPost) {
+        Alert.alert('Report sent');
+      }
+      setIsVisible(false);
+      setIsReportByMe(true);
+    }
+  };
+
+  const modalStyle = {
+    transform: [
+      {
+        translateY: slideAnimation.interpolate({
+          inputRange: [0, 1],
+          outputRange: [600, 0], // Adjust this value to control the sliding distance
+        }),
+      },
+    ],
+  };
+
+  const closeEditPostModal = () => {
+    setEditPostModalVisible(false);
+  };
+  const openEditPostModal = () => {
+    setIsVisible(false);
+    setEditPostModalVisible(true);
+  };
+
+  const renderOptionModal = () => {
+    return (
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={isVisible}
+        onRequestClose={closeModal}
+      >
+        <Pressable onPress={closeModal} style={styles.modalContainer}>
+          <Animated.View
+            style={[
+              styles.modalContent,
+              modalStyle,
+              postData?.user?.userId === (client as Amity.Client).userId &&
+                styles.twoOptions,
+            ]}
+          >
+            {postData?.user?.userId === (client as Amity.Client).userId ? (
+              <View>
+                <TouchableOpacity
+                  onPress={openEditPostModal}
+                  style={styles.modalRow}
+                >
+                  <Text style={styles.deleteText}> Edit Post</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={deletePostObject}
+                  style={styles.modalRow}
+                >
+                  <Text style={styles.deleteText}> Delete Post</Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <TouchableOpacity
+                onPress={reportPostObject}
+                style={styles.modalRow}
+              >
+                <Text style={styles.deleteText}>
+                  {isReportByMe ? 'Undo Report' : 'Report'}
+                </Text>
+              </TouchableOpacity>
+            )}
+          </Animated.View>
+        </Pressable>
+      </Modal>
+    );
+  };
+
+  const handleOnFinishEdit = () => {
+    setEditPostModalVisible(false);
+  };
+
+  useLayoutEffect(() => {
+    if (!postId) return () => {};
+    let unsub: () => void;
     let hasSubscribed = false;
     const postUnsub = PostRepository.getPost(
       postId,
@@ -238,13 +417,15 @@ const AmityPostDetailPage: FC<AmityPostDetailPageType> = ({ route }) => {
           postType="post"
           disabledInteraction={false}
           ListHeaderComponent={
-            <AmityPostContentComponent
-              post={postData}
-              AmityPostContentComponentStyle={
-                AmityPostContentComponentStyleEnum.detail
-              }
-              pageId={pageId}
-            />
+            postData && (
+              <AmityPostContentComponent
+                post={postData}
+                AmityPostContentComponentStyle={
+                  AmityPostContentComponentStyleEnum.detail
+                }
+                pageId={pageId}
+              />
+            )
           }
         />
       </View>
@@ -257,7 +438,7 @@ const AmityPostDetailPage: FC<AmityPostDetailPageType> = ({ route }) => {
           />
         </Pressable>
         <Text style={styles.headerTitle}>Post</Text>
-        <Pressable>
+        <Pressable onPress={openModal}>
           <MenuButtonIconElement
             pageID={pageId}
             componentID={componentId}
@@ -266,6 +447,16 @@ const AmityPostDetailPage: FC<AmityPostDetailPageType> = ({ route }) => {
         </Pressable>
       </View>
       {renderFooterComponent}
+      {renderOptionModal()}
+      {editPostModalVisible && (
+        <EditPostModal
+          privateCommunityId={privateCommunityId}
+          visible={editPostModalVisible}
+          onClose={closeEditPostModal}
+          postDetail={postData}
+          onFinishEdit={handleOnFinishEdit}
+        />
+      )}
     </SafeAreaView>
   );
 };

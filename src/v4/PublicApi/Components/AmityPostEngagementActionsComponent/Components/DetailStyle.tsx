@@ -16,12 +16,9 @@ import {
   addPostReaction,
   removePostReaction,
 } from '../../../../../providers/Social/feed-sdk';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../../../routes/RouteParamList';
 import LikeButtonIconElement from '../../../Elements/LikeButtonIconElement/LikeButtonIconElement';
 import CommentButtonIconElement from '../../../Elements/CommentButtonIconElement/CommentButtonIconElement';
-import ShareButtonIconElement from '../../../Elements/ShareButtonIconElement/ShareButtonIconElement';
+import AmityReactionListComponent from '../../AmityReactionListComponent/AmityReactionListComponent';
 
 const DetailStyle: FC<AmityPostEngagementActionsSubComponentType> = ({
   community,
@@ -34,24 +31,31 @@ const DetailStyle: FC<AmityPostEngagementActionsSubComponentType> = ({
     componentId: ComponentID.post_content,
   });
   const styles = useStyles(themeStyles);
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [postData, setPostData] = useState<Amity.Post>(null);
   const [isLike, setIsLike] = useState(false);
   const [totalReactions, setTotalReactions] = useState(0);
+  const [isReactionListVisible, setIsReactionListVisible] = useState(false);
   useEffect(() => {
-    let unsubscribe: () => void;
-    PostRepository.getPost(postId, ({ error, loading, data }) => {
-      if (!error && !loading) {
-        unsubscribe = subscribeTopic(
-          getPostTopic(data, SubscriptionLevels.POST)
-        );
-        setPostData(data);
-        setTotalReactions(data.reactionsCount);
-        setIsLike(data.myReactions.length > 0);
-      }
-    });
-    return () => unsubscribe && unsubscribe();
+    if (postId) {
+      let unsubscribe: () => void;
+      const unsub = PostRepository.getPost(
+        postId,
+        ({ error, loading, data }) => {
+          if (!error && !loading) {
+            unsubscribe = subscribeTopic(
+              getPostTopic(data, SubscriptionLevels.POST)
+            );
+            setPostData(data);
+            setTotalReactions(data.reactionsCount);
+            setIsLike(data.myReactions?.length > 0);
+          }
+        }
+      );
+      return () => {
+        unsub();
+        unsubscribe && unsubscribe();
+      };
+    }
   }, [postId]);
 
   const renderLikeText = useCallback(
@@ -88,13 +92,10 @@ const DetailStyle: FC<AmityPostEngagementActionsSubComponentType> = ({
   }, [isLike, postId]);
 
   const onClickReactions = useCallback(() => {
-    navigation.navigate('ReactionList', {
-      referenceId: postId,
-      referenceType: 'post',
-    });
-  }, [navigation, postId]);
+    setIsReactionListVisible(true);
+  }, []);
 
-  if (community && !community.isJoined) {
+  if (community && community.isJoined === false) {
     return (
       <View style={styles.actionSection}>
         <Text style={styles.btnText}>
@@ -164,16 +165,26 @@ const DetailStyle: FC<AmityPostEngagementActionsSubComponentType> = ({
             <Text style={styles.btnText}>Comment</Text>
           </View>
         </View>
-        <TouchableOpacity style={styles.commentBtn}>
-          <ShareButtonIconElement
-            pageID={pageId}
-            componentID={componentId}
-            width={20}
-            height={20}
-            resizeMode="contain"
+        <View style={styles.commentBtn} />
+        {/* commented out now for later use */}
+        {/* <TouchableOpacity style={styles.commentBtn}>
+        <ShareButtonIconElement
+          pageID={pageId}
+          componentID={componentId}
+          width={20}
+          height={20}
+          resizeMode="contain"
+        />
+        <Text style={styles.btnText}>Share</Text>
+      </TouchableOpacity> */}
+        {isReactionListVisible && (
+          <AmityReactionListComponent
+            referenceId={postId}
+            referenceType="post"
+            isModalVisible={isReactionListVisible}
+            onCloseModal={() => setIsReactionListVisible(false)}
           />
-          <Text style={styles.btnText}>Share</Text>
-        </TouchableOpacity>
+        )}
       </View>
     </>
   );
