@@ -362,11 +362,7 @@ export default function CreateCommunity() {
                 style={styles.addIcon}
               >
                 <View style={styles.avatar}>
-                  <SvgXml
-                    xml={plusIcon(theme.colors.baseShade4)}
-                    width={24}
-                    height={24}
-                  />
+                  <SvgXml xml={plusIcon('#000')} width={24} height={24} />
                 </View>
               </Pressable>
             </View>
