@@ -147,7 +147,7 @@ export const useStyles = () => {
     seen: {
       marginLeft: 5,
       fontSize: 12,
-      color: theme.colors.background,
+      color: '#fff',
     },
     hyperlinkContainer: {
       flexDirection: 'row',
