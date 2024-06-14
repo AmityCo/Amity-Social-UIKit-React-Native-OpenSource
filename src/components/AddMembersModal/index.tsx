@@ -99,6 +99,7 @@ const AddMembersModal = ({
 
   const clearButton = () => {
     setSearchTerm('');
+    queryAccounts('');
     setSectionedGroupUserList(null);
   };
 
@@ -207,9 +208,11 @@ const AddMembersModal = ({
             value={searchTerm}
             onChangeText={handleChange}
           />
-          <TouchableOpacity onPress={clearButton}>
-            <SvgXml xml={circleCloseIcon} width="20" height="20" />
-          </TouchableOpacity>
+          {searchTerm.length > 0 && (
+            <TouchableOpacity onPress={clearButton}>
+              <SvgXml xml={circleCloseIcon} width="20" height="20" />
+            </TouchableOpacity>
+          )}
         </View>
         {selectedUserList.length > 0 ? (
           <SelectedUserHorizontal

@@ -13,6 +13,7 @@ export const useStyles = () => {
       backgroundColor: theme.colors.background,
     },
     avatarContainer: {
+      width: 50,
       marginRight: 10,
       alignItems: 'center',
     },
@@ -48,7 +49,6 @@ export const useStyles = () => {
       fontWeight: 'bold',
     },
     userName: {
-      maxWidth: 40,
       marginTop: 5,
       fontSize: 13,
       color: theme.colors.base,
