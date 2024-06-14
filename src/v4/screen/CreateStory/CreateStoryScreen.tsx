@@ -2,7 +2,7 @@ import React from 'react';
 import { useCameraDevice } from 'react-native-vision-camera';
 import { AmityCreateStoryPage } from '../../index';
 import { useRequestPermission } from '../../hook/useCamera';
-import { Alert } from 'react-native';
+import { Alert, Linking } from 'react-native';
 
 const CreateStoryScreen = ({ navigation, route }) => {
   const { targetId, targetType } = route.params as {
@@ -10,7 +10,12 @@ const CreateStoryScreen = ({ navigation, route }) => {
     targetType: Amity.StoryTargetType;
   };
 
-  useRequestPermission();
+  useRequestPermission({
+    onRequestPermissionFailed: () => {
+      Linking.openSettings();
+    },
+  });
+
   const backCamera = useCameraDevice('back');
   const frontCamera = useCameraDevice('front');
 
