@@ -284,8 +284,6 @@ const AmityViewStoryItem: FC<IAmityViewStoryItem> = ({
     sheetRef.current?.open();
   }, [progress]);
 
-  console.log(storyHyperLink);
-
   return (
     <View style={[styles.container]}>
       <SafeAreaView>
