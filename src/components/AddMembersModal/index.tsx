@@ -70,7 +70,13 @@ const AddMembersModal = ({
                 (group) => group.title === initial
               );
               if (existingGroup) {
-                existingGroup.data.push(item);
+                if (
+                  existingGroup.data.find(
+                    (groupData) => groupData.userId !== item.userId
+                  )
+                ) {
+                  existingGroup.data.push(item);
+                }
               } else {
                 acc.push({
                   title: initial,
@@ -99,46 +105,54 @@ const AddMembersModal = ({
 
   const clearButton = () => {
     setSearchTerm('');
+    queryAccounts('');
     setSectionedGroupUserList(null);
   };
 
-  const renderSectionHeader = ({ section }: { section: SelectUserList }) => (
-    <SectionHeader title={section.title} />
+  const renderSectionHeader = useCallback(
+    ({ section }: { section: SelectUserList }) => (
+      <SectionHeader title={section.title} />
+    ),
+    []
   );
-
-  const onUserPressed = (user: UserInterface) => {
-    const isIncluded = selectedUserList.some(
-      (item) => item.userId === user.userId
-    );
-
-    if (isIncluded) {
-      const removedUser = selectedUserList.filter(
-        (item) => item.userId !== user.userId
+  const onUserPressed = useCallback(
+    (user: UserInterface) => {
+      const isIncluded = selectedUserList.some(
+        (item) => item.userId === user.userId
       );
-      setSelectedUserList(removedUser);
-    } else {
-      setSelectedUserList((prev) => [...prev, user]);
-    }
-  };
 
-  const renderItem = ({ item }: ListRenderItemInfo<UserInterface>) => {
-    const selectedUser = selectedUserList.some(
-      (user) => user.userId === item.userId
-    );
-    const userObj: UserInterface = {
-      userId: item.userId,
-      displayName: item.displayName as string,
-      avatarFileId: item.avatarFileId as string,
-    };
-    return (
-      <UserItem
-        showThreeDot={false}
-        user={userObj}
-        isCheckmark={selectedUser}
-        onPress={onUserPressed}
-      />
-    );
-  };
+      if (isIncluded) {
+        const removedUser = selectedUserList.filter(
+          (item) => item.userId !== user.userId
+        );
+        setSelectedUserList(removedUser);
+      } else {
+        setSelectedUserList((prev) => [...prev, user]);
+      }
+    },
+    [selectedUserList]
+  );
+  const renderItem = useCallback(
+    ({ item }: ListRenderItemInfo<UserInterface>) => {
+      const selectedUser = selectedUserList.some(
+        (user) => user.userId === item.userId
+      );
+      const userObj: UserInterface = {
+        userId: item.userId,
+        displayName: item.displayName as string,
+        avatarFileId: item.avatarFileId as string,
+      };
+      return (
+        <UserItem
+          showThreeDot={false}
+          user={userObj}
+          isCheckmark={selectedUser}
+          onPress={onUserPressed}
+        />
+      );
+    },
+    [onUserPressed, selectedUserList]
+  );
   const handleScroll = ({
     nativeEvent,
   }: {
@@ -207,9 +221,11 @@ const AddMembersModal = ({
             value={searchTerm}
             onChangeText={handleChange}
           />
-          <TouchableOpacity onPress={clearButton}>
-            <SvgXml xml={circleCloseIcon} width="20" height="20" />
-          </TouchableOpacity>
+          {searchTerm.length > 0 && (
+            <TouchableOpacity onPress={clearButton}>
+              <SvgXml xml={circleCloseIcon} width="20" height="20" />
+            </TouchableOpacity>
+          )}
         </View>
         {selectedUserList.length > 0 ? (
           <SelectedUserHorizontal
@@ -227,7 +243,7 @@ const AddMembersModal = ({
             renderSectionHeader={renderSectionHeader}
             onEndReached={handleLoadMore}
             onEndReachedThreshold={0.8}
-            keyExtractor={(item) => item.userId.toString()}
+            keyExtractor={(item) => item.userId}
           />
         )}
       </View>

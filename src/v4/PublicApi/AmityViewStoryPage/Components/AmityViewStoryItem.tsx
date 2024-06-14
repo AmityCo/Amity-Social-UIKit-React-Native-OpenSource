@@ -441,7 +441,7 @@ const AmityViewStoryItem: FC<IAmityViewStoryItem> = ({
           >
             <SvgXml xml={storyHyperLinkIcon('blue')} width="25" height="25" />
             <Text style={styles.hyperlinkText}>
-              {storyHyperLink.customText}
+              {storyHyperLink.customText ?? storyHyperLink.url}
             </Text>
           </TouchableOpacity>
         )}

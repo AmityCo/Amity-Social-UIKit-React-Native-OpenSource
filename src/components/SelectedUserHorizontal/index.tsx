@@ -4,16 +4,6 @@ import { useStyles } from './styles';
 import type { UserInterface } from '../../types/user.interface';
 import useAuth from '../../hooks/useAuth';
 
-const maxLength = 10;
-const displayName = (user: UserInterface) => {
-  if (user.displayName) {
-    if (user.displayName!.length > maxLength) {
-      return user.displayName!.substring(0, maxLength) + '..';
-    }
-    return user.displayName!;
-  }
-  return 'Display name';
-};
 const AvatarListItem = ({
   user,
   onDelete,
@@ -43,7 +33,9 @@ const AvatarListItem = ({
           <Text style={styles.deleteButtonText}>✕</Text>
         </TouchableOpacity>
       </View>
-      <Text style={styles.userName}>{displayName(user)}</Text>
+      <Text numberOfLines={1} style={styles.userName}>
+        {user?.displayName ?? ''}
+      </Text>
     </View>
   );
 };
