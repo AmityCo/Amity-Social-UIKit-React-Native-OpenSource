@@ -43,7 +43,9 @@ const AvatarListItem = ({
           <Text style={styles.deleteButtonText}>✕</Text>
         </TouchableOpacity>
       </View>
-      <Text style={styles.userName}>{displayName(user)}</Text>
+      <Text numberOfLines={1} style={styles.userName}>
+        {displayName(user)}
+      </Text>
     </View>
   );
 };

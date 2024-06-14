@@ -6,7 +6,6 @@ export const useStyles = () => {
   const theme = useTheme() as MyMD3Theme;
   const styles = StyleSheet.create({
     container: {
-      flexGrow: 1,
       paddingLeft: 10,
       paddingTop: 12,
       paddingBottom: 16,
@@ -49,6 +48,7 @@ export const useStyles = () => {
       fontWeight: 'bold',
     },
     userName: {
+      maxWidth: 40,
       marginTop: 5,
       fontSize: 13,
       color: theme.colors.base,
