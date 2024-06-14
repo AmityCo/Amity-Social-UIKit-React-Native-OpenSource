@@ -13,6 +13,12 @@
 
 Our AmityUIKit include user interfaces to enable fast integration of standard Amity Social features into new or existing applications. Furthermore, our React Native UIKit supports integration with **React Native CLI**, providing you with a flexible experience to seamlessly integrate social features into your existing React Native application.
 
+#Minimum Requirements
+- node 16
+- JDK 17.0.10
+- ruby 3.2.0
+- XCode 15
+
 ### Try Sample app
 
 This repository also includes a built-in sample app which you can use to test your code while customizing it, or even explore our UIKit features with just a few installations!
@@ -35,7 +41,7 @@ yarn
 
 - Setup firebase project: https://console.firebase.google.com/ for react native android and ios.
 - Download google-services.json and GoogleService-Info.plist.
-- Copy and paste /example/android/app/google-services.json and /example/ios/GoogleService-Info.plist.
+- Copy and paste to /example/android/app/google-services.json and /example/ios/GoogleService-Info.plist.
 - More detail about push notification - https://docs.amity.co/amity-uikit/uikit-v4-beta/installation-guide/react-native#push-notification
 
 3. Configure your apiKey,apiRegion,apiEndpoint,userId,displayName,fcmToken in /example/src/App.tsx file(https://github.com/AmityCo/Amity-Social-UIKit-React-Native-CLI-OpenSource/blob/main/example/src/App.tsx) first before run the sample app
@@ -107,8 +113,14 @@ npx pod-install
 
 Build project gradle with your Android Studio
 
-In android/build.gradle, add kotlinVersion above 1.7.0 and compileSdkVersion above 34 in buildscript > ext
-![image](https://github.com/AmityCo/Amity-Social-UIKit-React-Native-CLI-OpenSource/assets/33589608/37f5a5a8-2c2c-4354-897f-1dbf77c9d2e9)
+In android/build.gradle, add belows in in buildscript > ext
+
+kotlinVersion = 1.7.0 and above
+compileSdkVersion = 34
+buildToolsVersion = "34.0.0"  
+
+![1 photo added](https://github.com/AmityCo/Amity-Social-UIKit-React-Native-CLI-OpenSource/assets/155952277/3870258f-38cf-42a4-a926-ed745f599614)
+
 
 ### Add Camera permission (iOS)
 
