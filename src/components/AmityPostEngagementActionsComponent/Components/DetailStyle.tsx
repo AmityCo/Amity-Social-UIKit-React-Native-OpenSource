@@ -22,8 +22,6 @@ import CommentButtonIconElement from '../../../Elements/CommentButtonIconElement
 import ShareButtonIconElement from '../../../Elements/ShareButtonIconElement/ShareButtonIconElement';
 import { useAmityComponent } from '../../../hooks/useUiKitReference';
 import LikeReaction from '../../../svg/LikeReactionIcon';
-import LikeReactionIcon from '../../../svg/LikeReactionIcon';
-import CommentIcon from '../../../svg/CommentIcon';
 import { useTheme } from 'react-native-paper';
 import { MyMD3Theme } from '../../../providers/amity-ui-kit-provider';
 

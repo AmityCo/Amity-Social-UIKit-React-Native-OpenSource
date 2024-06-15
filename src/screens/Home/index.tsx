@@ -1,25 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import * as React from 'react';
 import { useCallback, useEffect, useState } from 'react';
-// import { useTranslation } from 'react-i18next';
-import { View, TouchableOpacity, LogBox, SafeAreaView } from 'react-native';
-import FloatingButton from '../../components/FloatingButton';
-import useAuth from '../../hooks/useAuth';
+import { LogBox, SafeAreaView } from 'react-native';
 import Explore from '../Explore';
-import GlobalFeed from '../GlobalFeed';
-import { useStyles } from './styles';
-import CustomTab from '../../components/CustomTab';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
-import AllMyCommunity from '../AllMyCommunity';
-import useConfig from '../../hooks/useConfig';
-import { TabName } from '../../enum/tabNameState';
-import { useNavigation } from '@react-navigation/native';
-import { useDispatch } from 'react-redux';
-import uiSlice from '../../redux/slices/uiSlice';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { SearchIcon } from '../../svg/SearchIcon';
-import { PlusIcon } from '../../svg/PlusIcon';
 import { ComponentID, ElementID, PageID } from '../../enum/enumUIKitID';
 import { useUiKitConfig } from '../../hooks/useUiKitConfig';
 import CustomSocialTab from '../../components/CustomSocialTab/CustomSocialTab';
@@ -29,7 +14,6 @@ import { CommunityRepository } from '@amityco/ts-sdk-react-native';
 import AmityEmptyNewsFeedComponent from '../../components/AmityEmptyNewsFeedComponent/AmityEmptyNewsFeedComponent';
 import AmityNewsFeedComponent from '../../components/AmityNewsFeedComponent/AmityNewsFeedComponent';
 import AmitySocialHomeTopNavigationComponent from '../../components/AmitySocialHomeTopNavigationComponent/AmitySocialHomeTopNavigationComponent';
-import LikeReactionIcon from '../../svg/LikeReactionIcon';
 import AmityMyCommunitiesComponent from '../../components/AmityMyCommunitiesComponent/AmityMyCommunitiesComponent';
 LogBox.ignoreAllLogs(true);
 export default function Home() {
@@ -54,18 +38,18 @@ export default function Home() {
   }) as string[];
 
   const { AmitySocialHomePageBehaviour } = useBehaviour();
-  const styles = useStyles();
-  const { client } = useAuth();
+  // const styles = useStyles();
+  // const { client } = useAuth();
   const theme = useTheme() as MyMD3Theme;
-  const dispatch = useDispatch();
-  const { openPostTypeChoiceModal } = uiSlice.actions;
-  const { excludes } = useConfig();
+  // const dispatch = useDispatch();
+  // const { openPostTypeChoiceModal } = uiSlice.actions;
+  // const { excludes } = useConfig();
   const [activeTab, setActiveTab] = useState<string>(newsFeedTab);
   console.log('activeTab: ', activeTab);
   const [myCommunities, setMyCommunities] = useState<Amity.Community[]>(null);
   const [pageLoading, setPageLoading] = useState(true);
 
-  const navigation = useNavigation<NativeStackNavigationProp<any>>();
+  // const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
   useEffect(() => {
     const unsubscribe = CommunityRepository.getCommunities(
@@ -80,22 +64,8 @@ export default function Home() {
   }, []);
 
 
-  const onClickSearch = () => {
-    navigation.navigate('CommunitySearch');
-  };
-  const onClickAddCommunity = () => {
-    navigation.navigate('CreateCommunity');
-  };
 
 
-
-  const openModal = () => {
-    dispatch(
-      openPostTypeChoiceModal({
-        userId: (client as Amity.Client).userId as string,
-      })
-    );
-  };
   const onTabChange = useCallback(
     (tabName: string) => {
       if (AmitySocialHomePageBehaviour.onChooseTab)
@@ -157,20 +127,6 @@ export default function Home() {
         activeTab={activeTab}
       />
       {renderNewsFeed()}
-      {/* {activeTab === TabName.NewsFeed ? (
-        <View style={{ flex: 1 }}>
-          <GlobalFeed />
-          <FloatingButton onPress={openModal} />
-        </View>
-      ) : activeTab === TabName.Explore ? (
-        <View style={{ flex: 1 }}>
-          <Explore />
-        </View>
-      ) : (
-        <View style={{ flex: 1 }}>
-          <AllMyCommunity />
-        </View>
-      )} */}
     </SafeAreaView>
   );
 }

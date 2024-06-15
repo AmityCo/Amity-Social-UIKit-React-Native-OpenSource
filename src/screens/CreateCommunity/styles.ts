@@ -7,7 +7,7 @@ export const useStyles = () => {
   const styles = StyleSheet.create({
     container: {
       paddingBottom: 320,
-      backgroundColor: theme.colors.screenBackground,
+      backgroundColor: theme.colors.background,
     },
     uploadContainer: {
       width: '100%',

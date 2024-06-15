@@ -4,12 +4,11 @@ import {
   useRoute,
   useNavigation,
 } from '@react-navigation/native';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
   TouchableOpacity,
-  TextInput,
   KeyboardAvoidingView,
   Platform,
   Keyboard,
@@ -21,7 +20,6 @@ import {
 
 import type { RootStackParamList } from '../../routes/RouteParamList';
 import PostList, { IPost } from '../../components/Social/PostList';
-
 import { useStyles } from './styles';
 import type { IComment } from '../../components/Social/CommentList';
 import type { UserInterface } from '../../types/user.interface';
@@ -32,10 +30,7 @@ import {
   CommunityRepository,
   PostRepository,
   SubscriptionLevels,
-  UserRepository,
-  getCommunityTopic,
   getPostTopic,
-  getUserTopic,
   subscribeTopic,
 } from '@amityco/ts-sdk-react-native';
 import {
@@ -43,38 +38,44 @@ import {
   createReplyComment,
   deleteCommentById,
 } from '../../providers/Social/comment-sdk';
-
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import { useTheme } from 'react-native-paper';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import BackButton from '../../components/BackButton';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
-import { ISearchItem } from '../../components/SearchItem';
-import MentionPopup from '../../components/MentionPopup';
 import { IMentionPosition } from '../CreatePost';
-import CloseIcon from '../../svg/CloseIcon';
+import { SvgXml } from 'react-native-svg';
+import { closeIcon } from '../../svg/svg-xml-list';
+import AmityMentionInput from '../../components/MentionInput/AmityMentionInput';
+import { TSearchItem } from '../../hooks/useSearch';
+import globalFeedSlice from '../../redux/slices/globalfeedSlice';
+import { useDispatch } from 'react-redux';
+import feedSlice from '../../redux/slices/feedSlice';
+import postDetailSlice from '../../redux/slices/postDetailSlice';
+import { deletePostById } from '../../providers/Social/feed-sdk';
 
 const PostDetail = () => {
   const theme = useTheme() as MyMD3Theme;
   const styles = useStyles();
   const route = useRoute<RouteProp<RootStackParamList, 'PostDetail'>>();
-
   const { postId, postIndex, isFromGlobalfeed } = route.params;
-
-  const navigation = useNavigation<NativeStackNavigationProp<any>>();
-
   const [commentList, setCommentList] = useState<IComment[]>([]);
   const [commentCollection, setCommentCollection] =
     useState<Amity.LiveCollection<Amity.Comment>>();
   const { data: comments, hasNextPage, onNextPage } = commentCollection ?? {};
   const [inputMessage, setInputMessage] = useState('');
   const [communityObject, setCommunityObject] = useState<Amity.Community>();
-  const [userObject, setUserObject] = useState<Amity.User>();
-
+  const privateCommunityId =
+    !communityObject?.isPublic && communityObject?.communityId;
+  const [initialInputText, setInitialInputText] = useState('');
+  const [resetValue, setResetValue] = useState(false);
   const flatListRef = useRef(null);
-  let isSubscribed = false;
-  const disposers: Amity.Unsubscriber[] = [];
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
+  const {
+    updateByPostId: updateByPostIdGlobalFeed,
+    deleteByPostId: deleteByPostIdGlobalFeed,
+  } = globalFeedSlice.actions;
+  const { updateByPostId, deleteByPostId } = feedSlice.actions;
 
   const [postCollection, setPostCollection] = useState<Amity.Post<any>>();
 
@@ -82,6 +83,7 @@ const PostDetail = () => {
   const { currentPostdetail } = useSelector(
     (state: RootState) => state.postDetail
   );
+  const { updatePostDetail } = postDetailSlice.actions;
 
   const { postList: postListGlobal } = useSelector(
     (state: RootState) => state.globalFeed
@@ -90,11 +92,7 @@ const PostDetail = () => {
     (state: RootState) => state.feed
   );
 
-  const [isShowMention, setIsShowMention] = useState<boolean>(false);
-  const [mentionNames, setMentionNames] = useState<ISearchItem[]>([]);
-  const [currentSearchUserName, setCurrentSearchUserName] =
-    useState<string>('');
-  const [cursorIndex, setCursorIndex] = useState<number>(0);
+  const [mentionNames, setMentionNames] = useState<TSearchItem[]>([]);
   const [mentionsPosition, setMentionsPosition] = useState<IMentionPosition[]>(
     []
   );
@@ -113,63 +111,25 @@ const PostDetail = () => {
     setMentionsPosition(checkMentionPosition);
   }, [inputMessage]);
 
-  const onBackPress = () => {
-    // navigation.navigate('Home', { postIdCallBack: postData.postId })
-    // navigation.goBack()
-
-    navigation.goBack();
-  };
-  navigation.setOptions({
-    headerLeft: () => <BackButton onPress={onBackPress} goBack={false} />,
-    title: '',
-  });
-
-  const getPost = (postId: string) => {
-    PostRepository.getPost(postId, async ({ data }) => {
-      setPostCollection(data);
-    });
-  };
-
   useEffect(() => {
     setTimeout(() => {
       setLoading(false);
     }, 100);
-    getPost(postId);
+    const unsub =
+      postId &&
+      PostRepository.getPost(postId, async ({ data }) => {
+        setPostCollection(data);
+      });
+    return () => unsub && unsub();
   }, [postId]);
 
   useEffect(() => {
-    if (postCollection) {
-      subscribeTopic(getPostTopic(postCollection));
-    }
+    const unsub =
+      postCollection &&
+      subscribeTopic(getPostTopic(postCollection, SubscriptionLevels.COMMENT));
+    return () => unsub && unsub();
   }, [postCollection]);
 
-  const subscribeCommentTopic = (targetType: string) => {
-    if (isSubscribed) return;
-
-    if (targetType === 'user') {
-      const user = userObject as Amity.User; // use getUser to get user by targetId
-      disposers.push(
-        subscribeTopic(getUserTopic(user, SubscriptionLevels.COMMENT), () => {
-          // use callback to handle errors with event subscription
-        })
-      );
-      isSubscribed = true;
-      return;
-    }
-
-    if (targetType === 'community') {
-      const community = communityObject as Amity.Community; // use getCommunity to get community by targetId
-      disposers.push(
-        subscribeTopic(
-          getCommunityTopic(community, SubscriptionLevels.COMMENT),
-          () => {
-            // use callback to handle errors with event subscription
-          }
-        )
-      );
-      isSubscribed = true;
-    }
-  };
   function getCommentsByPostId(postId: string) {
     CommentRepository.getComments(
       {
@@ -189,13 +149,6 @@ const PostDetail = () => {
 
   useEffect(() => {
     const postList = isFromGlobalfeed ? postListGlobal : postListFeed;
-    if (communityObject || userObject) {
-      subscribeCommentTopic(postList[postIndex]?.targetType as string);
-    }
-  }, [communityObject, userObject]);
-
-  useEffect(() => {
-    const postList = isFromGlobalfeed ? postListGlobal : postListFeed;
     if (postList[postIndex] && postList[postIndex].targetType === 'community') {
       CommunityRepository.getCommunity(
         postList[postIndex].targetId,
@@ -203,13 +156,6 @@ const PostDetail = () => {
           setCommunityObject(community);
         }
       );
-    } else if (
-      postList[postIndex] &&
-      postList[postIndex].targetType === 'user'
-    ) {
-      UserRepository.getUser(postList[postIndex].targetId, ({ data: user }) => {
-        setUserObject(user);
-      });
     }
     getCommentsByPostId(postList[postIndex]?.postId);
   }, []);
@@ -267,6 +213,7 @@ const PostDetail = () => {
     }
   };
   const handleSend: () => Promise<void> = async () => {
+    setResetValue(false);
     if (inputMessage.trim() === '') {
       return;
     }
@@ -277,22 +224,40 @@ const PostDetail = () => {
         inputMessage,
         postId,
         replyCommentId,
-        mentionNames?.map((item) => item.targetId),
-        mentionsPosition
+        mentionNames?.map((item) => item.id),
+        mentionsPosition,
+        'post'
       );
     } else {
       await createComment(
         inputMessage,
         postId,
-        mentionNames?.map((item) => item.targetId),
-        mentionsPosition
+        mentionNames?.map((item) => item.id),
+        mentionsPosition,
+        'post'
       );
     }
-
+    setInitialInputText('');
     setInputMessage('');
     setMentionNames([]);
     setMentionsPosition([]);
     onCloseReply();
+    setResetValue(true);
+    const updatedPost = {
+      ...currentPostdetail,
+      commentsCount: isNaN(currentPostdetail.commentsCount)
+        ? 1
+        : currentPostdetail.commentsCount + 1,
+    };
+    dispatch(
+      updatePostDetail({
+        ...updatedPost,
+      })
+    );
+    dispatch(
+      updateByPostIdGlobalFeed({ postId: postId, postDetail: updatedPost })
+    );
+    dispatch(updateByPostId({ postId: postId, postDetail: updatedPost }));
   };
   const onDeleteComment = async (commentId: string) => {
     const isDeleted = await deleteCommentById(commentId);
@@ -302,113 +267,30 @@ const PostDetail = () => {
         (item) => item.commentId !== commentId
       );
       setCommentList(updatedCommentList);
+      const updatedPost = {
+        ...currentPostdetail,
+        commentsCount: currentPostdetail.commentsCount - 1,
+      };
+      dispatch(
+        updatePostDetail({
+          ...updatedPost,
+        })
+      );
+      dispatch(
+        updateByPostIdGlobalFeed({ postId: postId, postDetail: updatedPost })
+      );
+      dispatch(updateByPostId({ postId: postId, postDetail: updatedPost }));
     }
   };
 
-  const onPostChange = (post: IPost) => {
-    console.log('post:', post);
-  };
-
-  const handleSelectionChange = (event) => {
-    setCursorIndex(event.nativeEvent.selection.start);
-  };
-
-  const onSelectUserMention = (user: ISearchItem) => {
-    const textAfterCursor: string = inputMessage.substring(
-      cursorIndex,
-      inputMessage.length + 1
-    );
-    const newTextAfterReplacement =
-      inputMessage.slice(0, cursorIndex - currentSearchUserName.length) +
-      user.displayName +
-      inputMessage.slice(cursorIndex, inputMessage.length);
-    const newInputMessage = newTextAfterReplacement + textAfterCursor;
-    const position: IMentionPosition = {
-      type: 'user',
-      length: user.displayName.length + 1,
-      index: cursorIndex - 1 - currentSearchUserName.length,
-      userId: user.targetId,
-      displayName: user.displayName,
-    };
-
-    setInputMessage(newInputMessage);
-    setMentionNames((prev) => [...prev, user]);
-    setMentionsPosition((prev) => [...prev, position]);
-    setCurrentSearchUserName('');
-  };
-  useEffect(() => {
-    checkMention(inputMessage);
-  }, [inputMessage]);
-
-  const checkMention = (inputString: string) => {
-    // Check if "@" is at the first letter
-    const startsWithAt = /^@/.test(inputString);
-
-    // Check if "@" is inside the sentence without any letter before "@"
-    const insideWithoutLetterBefore = /[^a-zA-Z]@/.test(inputString);
-
-    const atSigns = inputString.match(/@/g);
-    const atSignsNumber = atSigns ? atSigns.length : 0;
-    if (
-      (startsWithAt || insideWithoutLetterBefore) &&
-      atSignsNumber > mentionNames.length
-    ) {
-      setIsShowMention(true);
-    } else {
-      setIsShowMention(false);
+  const onDeletePost = useCallback(async (postid) => {
+    const isDeleted = await deletePostById(postid);
+    if (isDeleted) {
+      dispatch(deleteByPostId({ postId: postid }));
+      dispatch(deleteByPostIdGlobalFeed({ postId: postid }));
+      navigation.goBack();
     }
-  };
-  useEffect(() => {
-    if (isShowMention) {
-      const substringBeforeCursor = inputMessage.substring(0, cursorIndex);
-      const lastAtsIndex = substringBeforeCursor.lastIndexOf('@');
-      if (lastAtsIndex !== -1) {
-        const searchText: string = inputMessage.substring(
-          lastAtsIndex + 1,
-          cursorIndex + 1
-        );
-        setCurrentSearchUserName(searchText);
-      }
-    }
-  }, [cursorIndex]);
-
-  const RenderTextWithMention = () => {
-    if (mentionsPosition.length === 0) {
-      return <Text style={styles.inputText}>{inputMessage}</Text>;
-    }
-
-    let currentPosition = 0;
-    const result: (string | JSX.Element)[][] = mentionsPosition.map(
-      ({ index, length }, i) => {
-        // Add non-highlighted text before the mention
-        const nonHighlightedText = inputMessage.slice(currentPosition, index);
-
-        // Add highlighted text
-        const highlightedText = (
-          <Text key={`highlighted-${i}`} style={styles.mentionText}>
-            {inputMessage.slice(index, index + length)}
-          </Text>
-        );
-
-        // Update currentPosition for the next iteration
-        currentPosition = index + length;
-
-        // Return an array of non-highlighted and highlighted text
-        return [nonHighlightedText, highlightedText];
-      }
-    );
-
-    // Add any remaining non-highlighted text after the mentions
-    const remainingText = inputMessage.slice(currentPosition);
-    result.push([
-      <Text key="nonHighlighted-last" style={styles.inputText}>
-        {remainingText}
-      </Text>,
-    ]);
-
-    // Flatten the array and render
-    return <Text style={styles.inputText}>{result.flat()}</Text>;
-  };
+  }, []);
 
   const handleClickReply = (user: UserInterface, commentId: string) => {
     setReplyUserName(user.displayName);
@@ -429,7 +311,7 @@ const PostDetail = () => {
     >
       <ScrollView onScroll={handleScroll} style={styles.container}>
         <PostList
-          onChange={onPostChange}
+          onDelete={onDeletePost}
           postDetail={currentPostdetail as IPost}
           isGlobalfeed={isFromGlobalfeed}
         />
@@ -451,12 +333,6 @@ const PostDetail = () => {
           />
         </View>
       </ScrollView>
-      {isShowMention && (
-        <MentionPopup
-          userName={currentSearchUserName}
-          onSelectMention={onSelectUserMention}
-        />
-      )}
       {replyUserName.length > 0 && (
         <View style={styles.replyLabelWrap}>
           <Text style={styles.replyLabel}>
@@ -465,7 +341,11 @@ const PostDetail = () => {
           </Text>
           <TouchableOpacity>
             <TouchableOpacity onPress={onCloseReply}>
-              <CloseIcon width={20} style={styles.closeIcon} color={theme.colors.baseShade2}/>
+              <SvgXml
+                style={styles.closeIcon}
+                xml={closeIcon(theme.colors.baseShade2)}
+                width={20}
+              />
             </TouchableOpacity>
           </TouchableOpacity>
         </View>
@@ -473,25 +353,20 @@ const PostDetail = () => {
 
       <View style={styles.InputWrap}>
         <View style={styles.inputContainer}>
-          <TextInput
+          <AmityMentionInput
+            resetValue={resetValue}
+            initialValue={initialInputText}
+            privateCommunityId={privateCommunityId}
             multiline
             placeholder="Say something nice..."
-            style={
-              mentionNames.length > 0
-                ? [styles.textInput, styles.transparentText]
-                : styles.textInput
-            }
-            value={inputMessage}
-            onChangeText={(text) => setInputMessage(text)}
             placeholderTextColor={theme.colors.baseShade3}
-            onSelectionChange={handleSelectionChange}
+            mentionUsers={mentionNames}
+            setInputMessage={setInputMessage}
+            setMentionUsers={setMentionNames}
+            mentionsPosition={mentionsPosition}
+            setMentionsPosition={setMentionsPosition}
+            isBottomMentionSuggestionsRender={false}
           />
-          {mentionNames.length > 0 && (
-            <View style={styles.overlay}>
-              {/* {renderTextWithMention()} */}
-              <RenderTextWithMention />
-            </View>
-          )}
         </View>
 
         <TouchableOpacity

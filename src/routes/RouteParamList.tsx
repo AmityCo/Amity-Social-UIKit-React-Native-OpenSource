@@ -1,7 +1,7 @@
 export type RootStackParamList = {
   Home: { postIdCallBack?: string };
+  AmitySocialUIKitV4Navigator: undefined;
   CommunitySearch: undefined;
-  AmitySocialGlobalSearchPage: undefined;
   CommunityMemberDetail: {
     communityId: string;
   };
@@ -24,6 +24,7 @@ export type RootStackParamList = {
     targetId: string;
     targetName: string;
     targetType: string;
+    isPublic?: boolean;
     postSetting?: ValueOf<
       Readonly<{
         ONLY_ADMIN_CAN_POST: 'ONLY_ADMIN_CAN_POST';
@@ -37,6 +38,7 @@ export type RootStackParamList = {
     targetId: string;
     targetName: string;
     targetType: string;
+    isPublic?: boolean;
     postSetting?: ValueOf<
       Readonly<{
         ONLY_ADMIN_CAN_POST: 'ONLY_ADMIN_CAN_POST';
@@ -48,7 +50,7 @@ export type RootStackParamList = {
   };
   PostDetail: {
     postId: string;
-    postIndex: number;
+    postIndex?: number;
     isFromGlobalfeed?: boolean;
     // initVideoPosts?: IVideoPost[];
     // initImagePosts?: string[];
@@ -72,4 +74,12 @@ export type RootStackParamList = {
   CreateCommunity: undefined;
   VideoPlayer: { source: string };
   PendingPosts: { communityId: string; isModerator: boolean };
+  ReactionList: { referenceId: string; referenceType: string };
+  CreateStory: {
+    targetId: string;
+    targetType: Amity.StoryTargetType;
+  };
+  UserPendingRequest: undefined;
+  FollowerList: Amity.User;
+  AmitySocialGlobalSearchPage: undefined;
 };

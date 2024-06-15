@@ -5,7 +5,7 @@ import { PreviewData, PreviewDataImage, Size } from './types';
 
 export const getActualImageUrl = (baseUrl: string, imageUrl?: string) => {
   let actualImageUrl = imageUrl?.trim();
-  if (!actualImageUrl || actualImageUrl.startsWith('data')) return;
+  if (!actualImageUrl || actualImageUrl.startsWith('data')) return null;
 
   if (actualImageUrl.startsWith('//'))
     actualImageUrl = `https:${actualImageUrl}`;
@@ -25,7 +25,7 @@ export const getActualImageUrl = (baseUrl: string, imageUrl?: string) => {
 
 export const getHtmlEntitiesDecodedText = (text?: string) => {
   const actualText = text?.trim();
-  if (!actualText) return;
+  if (!actualText) return null;
 
   return decode(actualText);
 };
@@ -120,7 +120,7 @@ export const getPreviewData = async (text: string, requestTimeout = 5000) => {
     let matches: RegExpMatchArray | null;
     const meta: RegExpMatchArray[] = [];
     while ((matches = REGEX_META.exec(head)) !== null) {
-      meta.push([...matches]);
+      meta.push([...matches] as RegExpMatchArray);
     }
 
     const metaPreviewData = meta.reduce<{
@@ -162,7 +162,7 @@ export const getPreviewData = async (text: string, requestTimeout = 5000) => {
       let imageMatches: RegExpMatchArray | null;
       const tags: RegExpMatchArray[] = [];
       while ((imageMatches = REGEX_IMAGE_TAG.exec(html)) !== null) {
-        tags.push([...imageMatches]);
+        tags.push([...imageMatches] as RegExpMatchArray);
       }
 
       let images: PreviewDataImage[] = [];
@@ -189,8 +189,8 @@ export const getPreviewData = async (text: string, requestTimeout = 5000) => {
 };
 
 /* istanbul ignore next */
-export const getPreviewDataImage = async (url?: string) => {
-  if (!url) return;
+export const getPreviewDataImage = async (url?: string): Promise<PreviewDataImage | null> => {
+  if (!url) return null;
 
   try {
     const { height, width } = await getImageSize(url);
@@ -200,8 +200,14 @@ export const getPreviewDataImage = async (url?: string) => {
       const image: PreviewDataImage = { height, url, width };
       return image;
     }
-  } catch {}
+  } catch {
+    // Handle error silently
+  }
+
+  // Return null if the conditions are not met or if an error occurs
+  return null;
 };
+
 
 export const oneOf =
   <T extends (...args: A) => any, U, A extends any[]>(

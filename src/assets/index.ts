@@ -1,4 +1,3 @@
-import { Image } from 'react-native';
 
 
 const defaultAvatar = require('./icon/Placeholder.png');

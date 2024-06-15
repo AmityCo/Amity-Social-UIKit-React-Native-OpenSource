@@ -175,6 +175,11 @@ export const useStyles = () => {
       fontWeight: '600',
       color: theme.colors.base,
     },
+    tabBackground:{
+      backgroundColor: theme.colors.baseShade4,
+      flex:1
+
+    }
   });
 
   return styles;

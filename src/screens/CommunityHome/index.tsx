@@ -22,12 +22,11 @@ import {
   type NativeScrollEvent,
   Pressable,
 } from 'react-native';
-import CustomTab from '../../components/CustomTab';
+import CustomTab from '../../components/CustomTabV3';
 import { useStyles } from './styles';
 import Feed from '../Feed';
 import useAuth from '../../hooks/useAuth';
 
-import { editIcon, plusIcon, primaryDot } from '../../../svg/svg-xml-list';
 import { useTheme } from 'react-native-paper';
 import { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import { IPost } from '../../components/Social/PostList';
@@ -41,14 +40,11 @@ import { useDispatch } from 'react-redux';
 import { TabName } from '../../enum/tabNameState';
 import uiSlice from '../../redux/slices/uiSlice';
 import { PostTargetType } from '../../enum/postTargetType';
-import useConfig from '../../hooks/useConfig';
-import { ComponentID } from '../../enum';
-
-// import GalleryComponent from '../../component/Gallery/GalleryComponent';
 import useFile from '../../hooks/useFile';
 import { PlusIcon } from '../../svg/PlusIcon';
 import PrimaryDot from '../../svg/PrimaryDotIcon';
 import EditIcon from '../../svg/EditIcon';
+import GalleryComponent from '../../components/Gallery/GalleryComponent';
 
 
 export type FeedRefType = {
@@ -58,7 +54,7 @@ export type FeedRefType = {
 export default function CommunityHome({ route }: any) {
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const theme = useTheme() as MyMD3Theme;
-  const { excludes } = useConfig();
+  // const { excludes } = useConfig();
   const styles = useStyles();
   const dispatch = useDispatch();
   const { openPostTypeChoiceModal } = uiSlice.actions;
@@ -71,11 +67,6 @@ export default function CommunityHome({ route }: any) {
   const [currentTab, setCurrentTab] = useState<TabName>(TabName.Timeline);
   const [communityData, setCommunityData] =
     useState<Amity.LiveObject<Amity.Community>>();
-  const shouldShowAmityStoryTab = () => {
-    if (communityData?.data.isPublic) return true;
-    if (communityData?.data.isJoined) return true;
-    return false;
-  };
   const avatarUrl = useFile({ fileId: communityData?.data.avatarFileId });
   const feedRef: MutableRefObject<FeedRefType | null> =
     useRef<FeedRefType | null>(null);
@@ -224,7 +215,7 @@ export default function CommunityHome({ route }: any) {
           style={styles.joinCommunityButton}
           onPress={onJoinCommunityTap}
         >
-          <PlusIcon color='#FFF' width={24}/>
+          <PlusIcon color='#FFF' width={24} />
           <Text style={styles.joinCommunityText}>Join</Text>
         </TouchableOpacity>
       </View>
@@ -247,15 +238,15 @@ export default function CommunityHome({ route }: any) {
         <View style={styles.pendingPostWrap}>
           <View style={styles.pendingPostArea}>
             <View style={styles.pendingRow}>
-              <PrimaryDot color={theme.colors.primary}/>
+              <PrimaryDot color={theme.colors.primary} />
               <Text style={styles.pendingText}>Pending posts</Text>
             </View>
 
             <Text style={styles.pendingDescriptionText}>
               {isUserHasPermission
                 ? (pendingPosts.length > 30 && 'More than ') +
-                  pendingPosts.length +
-                  ' posts need approval'
+                pendingPosts.length +
+                ' posts need approval'
                 : 'Your posts are pending for review'}
             </Text>
           </View>
@@ -289,14 +280,14 @@ export default function CommunityHome({ route }: any) {
       return (
         <Feed targetType="community" targetId={communityId} ref={feedRef} />
       );
-    // if (currentTab === TabName.Gallery)
-    //   return (
-    //     <GalleryComponent
-    //       targetId={communityId}
-    //       ref={feedRef}
-    //       targetType="community"
-    //     />
-    //   );
+    if (currentTab === TabName.Gallery)
+      return (
+        <GalleryComponent
+          targetId={communityId}
+          ref={feedRef}
+          targetType="community"
+        />
+      );
     return null;
   };
 
@@ -315,8 +306,8 @@ export default function CommunityHome({ route }: any) {
             source={
               avatarUrl
                 ? {
-                    uri: avatarUrl,
-                  }
+                  uri: avatarUrl,
+                }
                 : require('../../assets/icon/Placeholder.png')
             }
           />
@@ -356,7 +347,7 @@ export default function CommunityHome({ route }: any) {
             style={styles.editProfileButton}
             onPress={onEditProfileTap}
           >
-            <EditIcon width={24} height={20} color={theme.colors.base}/>
+            <EditIcon width={24} height={20} color={theme.colors.base} />
             <Text style={styles.editProfileText}>Edit Profile</Text>
           </TouchableOpacity>
         )}
@@ -366,7 +357,10 @@ export default function CommunityHome({ route }: any) {
           tabName={[TabName.Timeline, TabName.Gallery]}
           onTabChange={handleTab}
         />
-        {renderTabs()}
+        <View style={styles.tabBackground} >
+          {renderTabs()}
+        </View>
+
       </ScrollView>
       {isJoin && (
         <FloatingButton onPress={handleOnPressPostBtn} isGlobalFeed={false} />

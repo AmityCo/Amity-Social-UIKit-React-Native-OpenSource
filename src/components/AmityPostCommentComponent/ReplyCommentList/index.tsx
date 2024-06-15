@@ -39,7 +39,6 @@ import ModeratorBadgeElement from '../../../Elements/ModeratorBadgeElement/Moder
 import { IMentionPosition } from '../../../types/type';
 import { UserInterface } from '../../../types/user.interface';
 import PersonIcon from '../../../svg/PersonIcon';
-import LikeReaction from '../../../svg/LikeReactionIcon';
 import ExpandIcon from '../../../svg/ExpandIcon';
 import { ThreeDotsIcon } from '../../../svg/ThreeDotsIcon';
 import LikeReactionIcon from '../../../svg/LikeReactionIcon';

@@ -41,11 +41,10 @@ import { useTimeDifference } from '../../../hooks/useTimeDifference';
 import ModeratorBadgeElement from '../../../Elements/ModeratorBadgeElement/ModeratorBadgeElement';
 import PersonIcon from '../../../svg/PersonIcon';
 import { ThreeDotsIcon } from '../../../svg/ThreeDotsIcon';
-import LikeReaction from '../../../svg/LikeReactionIcon';
+
 import ExpandIcon from '../../../svg/ExpandIcon';
-import { LikedIcon } from '../../../svg/LikedIcon';
 import LikeReactionIcon from '../../../svg/LikeReactionIcon';
-import { useAmityComponent } from '../../../hooks/useUiKitReference';
+
 export interface IComment {
   commentId: string;
   data: Record<string, any>;
@@ -117,10 +116,10 @@ const CommentListItem = ({
     useState<Amity.LiveCollection<Amity.InternalComment<any>>>();
 
   const { onNextPage, hasNextPage } = replyCommentCollection ?? {};
-  const { themeStyles } = useAmityComponent({
-    pageId: PageID.post_detail_page,
-    componentId: ComponentID.post_content,
-  });
+  // const { themeStyles } = useAmityComponent({
+  //   pageId: PageID.post_detail_page,
+  //   componentId: ComponentID.post_content,
+  // });
   const [isOpenReply, setIsOpenReply] = useState<boolean>(false);
   const [textComment, setTextComment] = useState<string>(data?.text);
   const [isVisible, setIsVisible] = useState(false);

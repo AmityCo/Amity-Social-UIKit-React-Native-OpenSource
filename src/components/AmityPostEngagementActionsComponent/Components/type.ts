@@ -1,4 +1,4 @@
-import { ComponentID, PageID } from '../../../../enum';
+import { ComponentID, PageID } from '../../../enum';
 
 export type AmityPostEngagementActionsSubComponentType = {
   community?: Amity.Community;

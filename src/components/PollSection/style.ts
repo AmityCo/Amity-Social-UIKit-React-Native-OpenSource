@@ -71,7 +71,7 @@ export const useStyles = () => {
       width: '100%',
       height: 10,
       borderRadius: 20,
-      backgroundColor: theme.colors.screenBackground,
+      backgroundColor: theme.colors.background,
       marginTop: 10,
     },
     innerBar: {

@@ -19,7 +19,7 @@ export const useStyles = () => {
       color: theme.colors.base,
     },
     AllInputWrap: {
-      backgroundColor: theme.colors.screenBackground,
+      backgroundColor: theme.colors.background,
       flex: 1,
     },
     InputWrap: {

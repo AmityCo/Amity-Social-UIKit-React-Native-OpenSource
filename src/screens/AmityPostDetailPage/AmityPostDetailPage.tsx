@@ -49,7 +49,7 @@ import CloseIcon from '../../svg/CloseIcon';
 import { AmityPostContentComponentStyleEnum } from '../../enum/AmityPostContentComponentStyle';
 import AmityPostContentComponent from '../../components/AmityPostContentComponent/AmityPostContentComponent';
 import AmityPostCommentComponent from '../../components/AmityPostCommentComponent/AmityPostCommentComponent';
-import MentionInput from '../../components/MentionInput/MentionInput';
+
 type AmityPostDetailPageType = {
   route: RouteProp<RootStackParamList, 'PostDetail'>;
 };
