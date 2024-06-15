@@ -99,7 +99,7 @@ export default function Explore() {
                     ? {
                         uri: `https://api.${apiRegion}.amity.co/api/v3/files/${category.avatarFileId}/download`,
                       }
-                    : require('../../../assets/icon/Placeholder.png')
+                    : require('../../assets/icon/Placeholder.png')
                 }
               />
               <Text
@@ -175,7 +175,7 @@ export default function Explore() {
                       ? {
                           uri: `https://api.${apiRegion}.amity.co/api/v3/files/${community.avatarFileId}/download`,
                         }
-                      : require('../../../assets/icon/Placeholder.png')
+                      : require('../../assets/icon/Placeholder.png')
                   }
                 />
               ) : (
@@ -204,7 +204,7 @@ export default function Explore() {
           <Text style={styles.titleText}>Categories</Text>
           <TouchableOpacity onPress={handleCategoryListClick}>
             <Image
-              source={require('../../../assets/icon/arrowRight.png')}
+              source={require('../../assets/icon/arrowRight.png')}
               style={styles.arrowIcon}
             />
           </TouchableOpacity>

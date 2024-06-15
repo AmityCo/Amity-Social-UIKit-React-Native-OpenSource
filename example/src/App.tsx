@@ -2,7 +2,7 @@ import * as React from 'react';
 
 
 import { AmityUiKitProvider, AmityUiKitSocial } from '@amityco/react-native-social-ui-kit';
-import { Text } from 'react-native';
+
 import config from '../uikit.config.json';
 
 export default function App() {

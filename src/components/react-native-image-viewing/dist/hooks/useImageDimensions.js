@@ -17,11 +17,11 @@ const useImageDimensions = (image) => {
       if (typeof image === 'number') {
         const cacheKey = `${image}`;
         let imageDimensions = imageDimensionsCache.get(cacheKey);
-        if (!imageDimensions) {
-          const { width, height } = Image.resolveAssetSource(image);
-          imageDimensions = { width, height };
-          imageDimensionsCache.set(cacheKey, imageDimensions);
-        }
+        // if (!imageDimensions) {åå
+        //   const { width, height } = Image.resolveAssetSource(image);
+        //   imageDimensions = { width, height };
+        //   imageDimensionsCache.set(cacheKey, imageDimensions);
+        // }
         resolve(imageDimensions);
         return;
       }

@@ -1,4 +1,4 @@
-import { Image, ImageSourcePropType } from 'react-native';
+import {  ImageSourcePropType } from 'react-native';
 
 import { useMemo } from 'react';
 import useConfig from './useConfig';
@@ -79,9 +79,9 @@ export const useConfigImageUri = ({
     if (fileUri === 'shareButtonIcon') {
       image = require('../configAssets/icons/shareButtonIcon.png');
     }
-    if (typeof image === 'number') {
-      return Image.resolveAssetSource(image)?.uri ?? defaultAvatarUri;
-    }
+    // if (typeof image === 'number') {
+    //   return Image.resolveAssetSource(image)?.uri ?? defaultAvatarUri;
+    // }
     return image;
   }, [configPath, configKey, getUiKitConfig, isDarkTheme]);
   return { uri: configImageUri };
