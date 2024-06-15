@@ -1,6 +1,7 @@
 export type RootStackParamList = {
   Home: { postIdCallBack?: string };
   CommunitySearch: undefined;
+  AmitySocialGlobalSearchPage: undefined;
   CommunityMemberDetail: {
     communityId: string;
   };

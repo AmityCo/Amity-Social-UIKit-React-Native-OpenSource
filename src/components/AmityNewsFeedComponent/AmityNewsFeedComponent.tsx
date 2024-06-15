@@ -13,6 +13,7 @@ import useConfig from '../../hooks/useConfig';
 import useAuth from '../../hooks/useAuth';
 import AmityGlobalFeedComponent from '../AmityGlobalFeedComponent/AmityGlobalFeedComponent';
 import uiSlice from '../../redux/slices/uiSlice';
+import FloatingButton from '../FloatingButton';
 
 type AmityNewsFeedComponentType = {
   pageId?: PageID;
@@ -38,10 +39,10 @@ const AmityNewsFeedComponent: FC<AmityNewsFeedComponentType> = ({
   if (excludes.includes(uiReference)) return null;
 
   return (
-    <View testID={uiReference} accessibilityLabel={uiReference}>
+    <View style={{ flex: 1, height: '100%' }} testID={uiReference} accessibilityLabel={uiReference}>
       {/* <AmityStoryTabComponent type={AmityStoryTabComponentEnum.globalFeed} /> */}
       <AmityGlobalFeedComponent pageId={pageId} />
-      {/* <FloatingButton onPress={openModal} /> */}
+      <FloatingButton onPress={openModal} />
     </View>
   );
 };

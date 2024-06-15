@@ -109,7 +109,7 @@ export const useStyles = () => {
     verticalLine: {
       height: 40,
       width: 1,
-      backgroundColor: theme.colors.border,
+      backgroundColor: theme.colors.baseShade4,
       marginHorizontal: 5,
     },
     rowNumber: {

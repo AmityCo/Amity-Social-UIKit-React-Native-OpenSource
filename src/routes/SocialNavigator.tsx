@@ -34,6 +34,7 @@ import EditCommunity from '../screens/EditCommunity/EditCommunity';
 import PostTypeChoiceModal from '../components/PostTypeChoiceModal/PostTypeChoiceModal';
 import CreatePoll from '../screens/CreatePoll/CreatePoll';
 import { ThreeDotsIcon } from '../svg/ThreeDotsIcon';
+import AmitySocialGlobalSearchPage from '../screens/AmitySocialGlobalSearchPage/AmitySocialGlobalSearchPage';
 
 export default function SocialNavigator() {
   const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -131,6 +132,13 @@ export default function SocialNavigator() {
           />
           <Stack.Screen name="CreateCommunity" component={CreateCommunity} />
           <Stack.Screen name="CommunityList" component={CommunityList} />
+          <Stack.Screen
+            name="AmitySocialGlobalSearchPage"
+            component={AmitySocialGlobalSearchPage}
+            options={{
+              headerShown: false, // Remove the back button
+            }}
+          />
           <Stack.Screen
             name="AllMyCommunity"
             component={AllMyCommunity}

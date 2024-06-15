@@ -1,15 +1,48 @@
 import React from 'react';
 import { Svg, Defs, LinearGradient, Stop, Circle, Path } from 'react-native-svg';
 
-const LikeReactionIcon = ({ width = 20, height = 20, circleColor = '#ffffff', style = {} }) => {
+const hexToRgb = (hex: string): { r: number, g: number, b: number } => {
+  const bigint = parseInt(hex.slice(1), 16);
+  return {
+    r: (bigint >> 16) & 255,
+    g: (bigint >> 8) & 255,
+    b: bigint & 255
+  };
+};
+
+const rgbToHex = (r: number, g: number, b: number): string => {
+  return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+};
+
+const generateGradientColors = (hex: string): [string, string] => {
+  const { r, g, b } = hexToRgb(hex);
+
+  // Generate the first gradient color
+  const r1 = Math.min(255, r + 86);
+  const g1 = Math.min(255, g + 86);
+  const b1 = Math.min(255, b + 86);
+
+  // Generate the second gradient color
+  const r2 = Math.max(0, r - 22);
+  const g2 = Math.max(0, g - 22);
+  const b2 = Math.max(0, b - 22);
+
+  const color1 = rgbToHex(r1, g1, b1);
+  const color2 = rgbToHex(r2, g2, b2);
+
+  return [color1, color2];
+};
+
+const LikeReactionIcon = ({ width = 20, height = 20, circleColor = '#ffffff', style = {}, color = '#1054DE' }) => {
   const gradientId = `paint0_linear_${Math.random()}`;
+  const [gradientColor1, gradientColor2] = generateGradientColors(color);
 
   return (
     <Svg width={width} height={height} viewBox="0 0 20 20" fill="none" style={style}>
       <Defs>
         <LinearGradient id={gradientId} x1="7.5" y1="2" x2="16.5" y2="24.5" gradientUnits="userSpaceOnUse">
-          <Stop stopColor="#67A4FF" />
-          <Stop offset="1" stopColor="#0041BE" />
+          <Stop stopColor={gradientColor1} />
+          <Stop offset="1" stopColor={gradientColor2} />
         </LinearGradient>
       </Defs>
       <Circle cx="10" cy="10" r="9.5" fill={`url(#${gradientId})`} stroke={circleColor} />

@@ -8,7 +8,7 @@ export const useStyles = () => {
     container: {
       backgroundColor: theme.colors.background,
       paddingVertical: 16,
-      borderBottomColor: theme.colors.border,
+      borderBottomColor: theme.colors.baseShade4,
       borderBottomWidth: 1,
     },
     title: {

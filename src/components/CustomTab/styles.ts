@@ -12,11 +12,11 @@ export const useStyles = () => {
       height: 50,
       backgroundColor: theme.colors.background,
       borderBottomWidth: 1,
-      borderBottomColor: theme.colors.screenBackground,
+      borderBottomColor: theme.colors.baseShade4,
     },
     activeTab: {
       borderBottomWidth: 2,
-      borderBottomColor: theme.colors.border,
+      borderBottomColor: theme.colors.baseShade4,
     },
     tabText: {
       fontSize: 17,

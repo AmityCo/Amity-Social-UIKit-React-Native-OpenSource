@@ -1,6 +1,6 @@
 import React from 'react';
 import { Pressable, View } from 'react-native';
-import { useStyles } from './styles';
+import { styles } from './styles';
 import PostIcon from '../../svg/PostIcon';
 
 interface IBackBtn {
@@ -11,7 +11,6 @@ export default function FloatingButton({
   onPress,
   isGlobalFeed = true,
 }: IBackBtn) {
-  const styles = useStyles()
   return (
     <View style={!isGlobalFeed ? styles.otherFeedContainer : styles.container}>
       <Pressable
@@ -20,7 +19,7 @@ export default function FloatingButton({
         }}
         style={styles.button}
       >
-        <PostIcon color={'#FFFFFF'} />
+       <PostIcon color='#fff'/>
       </Pressable>
     </View>
   );

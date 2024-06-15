@@ -24,6 +24,8 @@ import { useAmityComponent } from '../../../hooks/useUiKitReference';
 import LikeReaction from '../../../svg/LikeReactionIcon';
 import LikeReactionIcon from '../../../svg/LikeReactionIcon';
 import CommentIcon from '../../../svg/CommentIcon';
+import { useTheme } from 'react-native-paper';
+import { MyMD3Theme } from '../../../providers/amity-ui-kit-provider';
 
 const DetailStyle: FC<AmityPostEngagementActionsSubComponentType> = ({
   community,
@@ -35,6 +37,8 @@ const DetailStyle: FC<AmityPostEngagementActionsSubComponentType> = ({
     pageId: PageID.post_detail_page,
     componentId: ComponentID.post_content,
   });
+
+  const theme = useTheme() as MyMD3Theme;
   const styles = useStyles(themeStyles);
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -112,7 +116,7 @@ const DetailStyle: FC<AmityPostEngagementActionsSubComponentType> = ({
         <View style={styles.countSection}>
           {totalReactions ? (
             <View style={styles.row}>
-              <LikeReaction circleColor={themeStyles.colors.background}  style={{ marginRight: 4 }} />
+              <LikeReaction color={theme.colors.primary} circleColor={themeStyles.colors.background} style={{ marginRight: 4 }} />
               <Text style={styles.likeCountText} onPress={onClickReactions}>
                 {totalReactions} {renderLikeText(totalReactions)}
               </Text>
@@ -133,7 +137,7 @@ const DetailStyle: FC<AmityPostEngagementActionsSubComponentType> = ({
         <View style={styles.row}>
           <TouchableOpacity onPress={addReactionToPost} style={styles.likeBtn}>
             {isLike ? (
-              <LikeReaction/>
+              <LikeReaction color={theme.colors.primary} />
             ) : (
               <LikeButtonIconElement
                 pageID={pageId}
