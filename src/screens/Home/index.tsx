@@ -30,6 +30,7 @@ import AmityEmptyNewsFeedComponent from '../../components/AmityEmptyNewsFeedComp
 import AmityNewsFeedComponent from '../../components/AmityNewsFeedComponent/AmityNewsFeedComponent';
 import AmitySocialHomeTopNavigationComponent from '../../components/AmitySocialHomeTopNavigationComponent/AmitySocialHomeTopNavigationComponent';
 import LikeReactionIcon from '../../svg/LikeReactionIcon';
+import AmityMyCommunitiesComponent from '../../components/AmityMyCommunitiesComponent/AmityMyCommunitiesComponent';
 LogBox.ignoreAllLogs(true);
 export default function Home() {
 
@@ -121,13 +122,13 @@ export default function Home() {
     if (activeTab === newsFeedTab) {
       return <AmityNewsFeedComponent pageId={PageID.social_home_page} />;
     }
-    // if (activeTab === myCommunitiesTab)
-    //   return (
-    //     <AmityMyCommunitiesComponent
-    //       pageId={PageID.social_home_page}
-    //       componentId={ComponentID.my_communities}
-    //     />
-    //   );
+    if (activeTab === myCommunitiesTab)
+      return (
+        <AmityMyCommunitiesComponent
+          pageId={PageID.social_home_page}
+          componentId={ComponentID.my_communities}
+        />
+      );
     return null;
   };
 

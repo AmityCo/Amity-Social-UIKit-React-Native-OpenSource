@@ -45,6 +45,7 @@ import { LikeIcon } from '../../../svg/LikeIcon';
 import CommentIcon from '../../../svg/CommentIcon';
 import { ChevronRightIcon } from '../../../svg/ChevronRightIcon';
 import EditPostModal from '../../EditPostModal';
+import { CommunityRepository } from '@amityco/ts-sdk-react-native';
 
 export interface IPost {
   postId: string;
@@ -90,9 +91,10 @@ export default function PostList({
   const styles = useStyles();
   const [isLike, setIsLike] = useState<boolean>(false);
   const [likeReaction, setLikeReaction] = useState<number>(0);
+  const [isJoined, setIsJoined] = useState<boolean>(true);
   const [communityName, setCommunityName] = useState('');
   const [textPost, setTextPost] = useState<string>('');
-
+  const [privateCommunityId, setPrivateCommunityId] = useState(null);
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [isReportByMe, setIsReportByMe] = useState<boolean>(false);
@@ -168,6 +170,24 @@ export default function PostList({
   }, [checkIsReport]);
 
   useEffect(() => {
+    let unsubCommunity: () => void;
+    if (targetType === 'community' && targetId) {
+      unsubCommunity = CommunityRepository.getCommunity(
+        targetId,
+        ({ error, loading, data }) => {
+          if (error) return;
+          if (!loading) {
+            setCommunityName(data.displayName);
+            setIsJoined(data.isJoined);
+            !data.isPublic && setPrivateCommunityId(data.communityId);
+          }
+        }
+      );
+    }
+    return () => unsubCommunity && unsubCommunity();
+  }, [targetId, targetType]);
+
+  useEffect(() => {
     setTextPost(data?.text);
     if (myReactions.length > 0 && myReactions.includes('like')) {
       setIsLike(true);
@@ -197,41 +217,45 @@ export default function PostList({
     []
   );
 
-  const addReactionToPost = useCallback(async () => {
-    setIsLike((prev) => !prev);
-    setLikeReaction((prev) => (prev ? prev - 1 : prev + 1));
-    const updatedLikeReaction = isLike ? likeReaction - 1 : likeReaction + 1;
-    const updatedPost = {
-      ...postDetail,
-      reactionCount: { like: updatedLikeReaction },
-      myReactions: isLike ? [] : ['like'],
-    };
-    try {
-      if (isGlobalfeed) {
+  const addReactionToPost = useCallback(
+    async (isLiked) => {
+      setIsLike((prev) => !prev);
+      setLikeReaction((prev) => (isLiked ? prev - 1 : prev + 1));
+      const updatedLikeReaction = isLiked ? likeReaction - 1 : likeReaction + 1;
+      const updatedPost = {
+        ...postDetail,
+        reactionCount: { like: updatedLikeReaction },
+        myReactions: isLiked ? [] : ['like'],
+      };
+
+      try {
         dispatch(
-          updateByPostIdGlobalFeed({ postId: postId, postDetail: updatedPost })
+          updateByPostIdGlobalFeed({
+            postId: postId,
+            postDetail: updatedPost,
+          })
         );
-      } else {
         dispatch(updateByPostId({ postId: postId, postDetail: updatedPost }));
+
+        if (isLiked) {
+          await removePostReaction(postId, 'like');
+        } else {
+          await addPostReaction(postId, 'like');
+        }
+      } catch (error) {
+        setLikeReaction((prev) => prev);
       }
-      if (isLike) {
-        await removePostReaction(postId, 'like');
-      } else {
-        await addPostReaction(postId, 'like');
-      }
-    } catch (error) {
-      setLikeReaction((prev) => prev);
-    }
-  }, [
-    dispatch,
-    isGlobalfeed,
-    isLike,
-    likeReaction,
-    postDetail,
-    postId,
-    updateByPostId,
-    updateByPostIdGlobalFeed,
-  ]);
+    },
+    [
+      dispatch,
+      likeReaction,
+      postDetail,
+      postId,
+      updateByPostId,
+      updateByPostIdGlobalFeed,
+    ]
+  );
+
 
   async function getCommunityInfo(id: string) {
     const { data: community } = await getCommunityById(id);
@@ -405,7 +429,7 @@ export default function PostList({
 
               {communityName && (
                 <>
-                  <ChevronRightIcon  style={styles.arrow}/>
+                  <ChevronRightIcon style={styles.arrow} />
                   <TouchableOpacity onPress={handleCommunityNamePress}>
                     <Text style={styles.headerText}>{communityName}</Text>
                   </TouchableOpacity>
@@ -435,10 +459,10 @@ export default function PostList({
               textPost={textPost}
             />
           )}
-        {childrenPosts?.length > 0 && (
+          {childrenPosts?.length > 0 && (
             <MediaSection childrenPosts={childrenPosts} />
           )}
-       
+
         </View>
 
         {likeReaction === 0 && commentsCount === 0 ? (
@@ -463,34 +487,46 @@ export default function PostList({
           </TouchableWithoutFeedback>
         )}
 
-        <View style={styles.actionSection}>
-          <TouchableOpacity
-            onPress={() => addReactionToPost()}
-            style={styles.likeBtn}
-          >
-            {isLike ? (
-              <LikedIcon color={theme.colors.primary} />
-            ) : (
-              <LikeIcon color={theme.colors.baseShade2}/>
-            )}
+  
+        {targetType !== 'community' || isJoined !== false ? (
+          <View style={styles.actionSection}>
+            <TouchableOpacity
+              onPress={() => addReactionToPost(isLike)}
+              style={styles.likeBtn}
+            >
+              {isLike ? (
+                <LikedIcon color={theme.colors.primary} />
+              ) : (
+                <LikeIcon color={theme.colors.baseShade2} />
+              )}
 
-            <Text style={isLike ? styles.likedText : styles.btnText}>Like</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => onClickComment()}
-            style={styles.commentBtn}
-          >
-            <CommentIcon color={theme.colors.baseShade2}/>
-            <Text style={styles.btnText}>Comment</Text>
-          </TouchableOpacity>
-        </View>
+              <Text style={isLike ? styles.likedText : styles.btnText}>
+                Like
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={onClickComment}
+              style={styles.commentBtn}
+            >
+              <CommentIcon color={theme.colors.baseShade2} />
+              <Text style={styles.btnText}>Comment</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <View style={styles.actionSection}>
+            <Text style={styles.btnText}>
+              Join community to interact with all posts
+            </Text>
+          </View>
+        )}
       </View>
       {renderOptionModal()}
       {editPostModalVisible && (
         <EditPostModal
+          privateCommunityId={privateCommunityId}
           visible={editPostModalVisible}
           onClose={closeEditPostModal}
-          postDetail={postDetail}
+          postDetail={{ ...postDetail, data: { ...data, text: textPost } }}
           onFinishEdit={handleOnFinishEdit}
         />
       )}

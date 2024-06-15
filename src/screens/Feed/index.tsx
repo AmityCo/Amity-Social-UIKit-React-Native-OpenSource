@@ -156,6 +156,7 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
         keyExtractor={(_, index) => index.toString()}
         extraData={postList}
       />
+      
     </View>
   );
 }

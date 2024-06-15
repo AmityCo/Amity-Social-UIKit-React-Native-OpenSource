@@ -26,6 +26,8 @@ import CustomTab from '../../components/CustomTab';
 import { useStyles } from './styles';
 import Feed from '../Feed';
 import useAuth from '../../hooks/useAuth';
+
+import { editIcon, plusIcon, primaryDot } from '../../../svg/svg-xml-list';
 import { useTheme } from 'react-native-paper';
 import { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import { IPost } from '../../components/Social/PostList';
@@ -35,10 +37,15 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import FloatingButton from '../../components/FloatingButton';
 import { useDispatch } from 'react-redux';
-import useFile from '../../hooks/useFile';
+
 import { TabName } from '../../enum/tabNameState';
 import uiSlice from '../../redux/slices/uiSlice';
 import { PostTargetType } from '../../enum/postTargetType';
+import useConfig from '../../hooks/useConfig';
+import { ComponentID } from '../../enum';
+
+// import GalleryComponent from '../../component/Gallery/GalleryComponent';
+import useFile from '../../hooks/useFile';
 import { PlusIcon } from '../../svg/PlusIcon';
 import PrimaryDot from '../../svg/PrimaryDotIcon';
 import EditIcon from '../../svg/EditIcon';
@@ -51,6 +58,7 @@ export type FeedRefType = {
 export default function CommunityHome({ route }: any) {
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const theme = useTheme() as MyMD3Theme;
+  const { excludes } = useConfig();
   const styles = useStyles();
   const dispatch = useDispatch();
   const { openPostTypeChoiceModal } = uiSlice.actions;
@@ -59,9 +67,15 @@ export default function CommunityHome({ route }: any) {
     communityId: string;
     communityName: string;
   };
-  const [isJoin, setIsJoin] = useState(true);
+  const [isJoin, setIsJoin] = useState(false);
+  const [currentTab, setCurrentTab] = useState<TabName>(TabName.Timeline);
   const [communityData, setCommunityData] =
     useState<Amity.LiveObject<Amity.Community>>();
+  const shouldShowAmityStoryTab = () => {
+    if (communityData?.data.isPublic) return true;
+    if (communityData?.data.isJoined) return true;
+    return false;
+  };
   const avatarUrl = useFile({ fileId: communityData?.data.avatarFileId });
   const feedRef: MutableRefObject<FeedRefType | null> =
     useRef<FeedRefType | null>(null);
@@ -88,10 +102,7 @@ export default function CommunityHome({ route }: any) {
       if (targetType === 'community') {
         disposers.push(
           subscribeTopic(
-            getCommunityTopic(communityData?.data, SubscriptionLevels.POST),
-            () => {
-              // use callback to handle errors with event subscription
-            }
+            getCommunityTopic(communityData?.data, SubscriptionLevels.POST)
           )
         );
         isSubscribed.current = true;
@@ -109,10 +120,8 @@ export default function CommunityHome({ route }: any) {
       },
       async ({ data: posts }) => {
         const pendingPost = await amityPostsFormatter(posts);
-
         setPendingPosts(pendingPost);
         subscribePostTopic('community');
-        setIsShowPendingArea(true);
       }
     );
     disposers.push(unsubscribe);
@@ -126,12 +135,13 @@ export default function CommunityHome({ route }: any) {
       res.permissions.includes('Post/ManagePosts')
     ) {
       setIsUserHasPermission(true);
-      navigation.setParams({ isModerator: true });
+      navigation.setParams({ isModerator: true, communityId, communityName });
     }
   }, [
     apiRegion,
     client,
     communityId,
+    communityName,
     disposers,
     navigation,
     subscribePostTopic,
@@ -149,13 +159,10 @@ export default function CommunityHome({ route }: any) {
     try {
       const unsubscribe = CommunityRepository.getCommunity(
         communityId,
-        // setCommunityData
         (community) => {
           setCommunityData(community);
           setPostSetting(community?.data?.postSetting);
-          if (
-            (community.data as Amity.RawCommunity).needApprovalOnPostCreation
-          ) {
+          if (community.data?.postSetting === 'ADMIN_REVIEW_POST_REQUIRED') {
             setPostSetting('ADMIN_REVIEW_POST_REQUIRED');
           }
           setIsJoin(community?.data.isJoined || false); // Set isJoin to communityData?.data.isJoined value
@@ -217,7 +224,7 @@ export default function CommunityHome({ route }: any) {
           style={styles.joinCommunityButton}
           onPress={onJoinCommunityTap}
         >
-          <PlusIcon color='#FFF' width={24} height={24} />
+          <PlusIcon color='#FFF' width={24}/>
           <Text style={styles.joinCommunityText}>Join</Text>
         </TouchableOpacity>
       </View>
@@ -225,7 +232,7 @@ export default function CommunityHome({ route }: any) {
   };
 
   const handleTab = (tabName: TabName) => {
-    console.log('index: ', tabName); //this func not implmented yet
+    setCurrentTab(tabName);
   };
 
   const handleClickPendingArea = () => {
@@ -240,15 +247,15 @@ export default function CommunityHome({ route }: any) {
         <View style={styles.pendingPostWrap}>
           <View style={styles.pendingPostArea}>
             <View style={styles.pendingRow}>
-              <PrimaryDot color={theme.colors.primary} />
+              <PrimaryDot color={theme.colors.primary}/>
               <Text style={styles.pendingText}>Pending posts</Text>
             </View>
 
             <Text style={styles.pendingDescriptionText}>
               {isUserHasPermission
                 ? (pendingPosts.length > 30 && 'More than ') +
-                pendingPosts.length +
-                ' posts need approval'
+                  pendingPosts.length +
+                  ' posts need approval'
                 : 'Your posts are pending for review'}
             </Text>
           </View>
@@ -257,15 +264,16 @@ export default function CommunityHome({ route }: any) {
     );
   };
   const handleOnPressPostBtn = () => {
-    dispatch(
+    return dispatch(
       openPostTypeChoiceModal({
         userId: (client as Amity.Client).userId as string,
         targetId: communityId,
+        isPublic: communityData?.data.isPublic,
         targetName: communityName,
         targetType: PostTargetType.community,
         postSetting: postSetting,
         needApprovalOnPostCreation: (communityData?.data as Record<string, any>)
-          .needApprovalOnPostCreation,
+          ?.needApprovalOnPostCreation,
       })
     );
   };
@@ -276,6 +284,22 @@ export default function CommunityHome({ route }: any) {
     });
   };
 
+  const renderTabs = () => {
+    if (currentTab === TabName.Timeline)
+      return (
+        <Feed targetType="community" targetId={communityId} ref={feedRef} />
+      );
+    // if (currentTab === TabName.Gallery)
+    //   return (
+    //     <GalleryComponent
+    //       targetId={communityId}
+    //       ref={feedRef}
+    //       targetType="community"
+    //     />
+    //   );
+    return null;
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView
@@ -283,24 +307,24 @@ export default function CommunityHome({ route }: any) {
         onScroll={handleScroll}
         scrollEventThrottle={20}
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
       >
         <View style={styles.imageContainer}>
-
-        <Image
-          style={styles.emptyImage}
-          source={
-            {
-              uri: avatarUrl,
+          <Image
+            style={styles.image}
+            source={
+              avatarUrl
+                ? {
+                    uri: avatarUrl,
+                  }
+                : require('../../assets/icon/Placeholder.png')
             }
-
-          }
-        /> 
+          />
           <View style={styles.darkOverlay} />
           <View style={styles.overlay}>
             <Text style={styles.overlayCommunityText}>
               {communityData?.data.displayName}
             </Text>
-            {/* <Text style={styles.overlayCategoryText}>{communityData?.data.}</Text> */}
           </View>
         </View>
         <View style={styles.row}>
@@ -332,20 +356,21 @@ export default function CommunityHome({ route }: any) {
             style={styles.editProfileButton}
             onPress={onEditProfileTap}
           >
-            <EditIcon width={24} height={20} color={theme.colors.base} />
+            <EditIcon width={24} height={20} color={theme.colors.base}/>
             <Text style={styles.editProfileText}>Edit Profile</Text>
           </TouchableOpacity>
         )}
-        {isJoin === false ? joinCommunityButton() : <View />}
-        {isJoin && isShowPendingArea ? pendingPostArea() : <View />}
+        {!isJoin && joinCommunityButton()}
+        {isJoin && isShowPendingArea && pendingPostArea()}
         <CustomTab
           tabName={[TabName.Timeline, TabName.Gallery]}
           onTabChange={handleTab}
         />
-        <Feed targetType="community" targetId={communityId} ref={feedRef} />
+        {renderTabs()}
       </ScrollView>
-
-      <FloatingButton onPress={handleOnPressPostBtn} isGlobalFeed={false} />
+      {isJoin && (
+        <FloatingButton onPress={handleOnPressPostBtn} isGlobalFeed={false} />
+      )}
     </View>
   );
 }

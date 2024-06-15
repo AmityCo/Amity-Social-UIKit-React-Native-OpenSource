@@ -4,9 +4,9 @@ import { defaultAvatarUri, defaultCommunityAvatarUri } from '../../assets';
 
 
 
-import { useFile } from '../../hooks/useFile';
 import useConfig from '../../hooks/useConfig';
 import { ComponentID, ElementID, ImageSizeState, PageID } from '../../enum';
+import { useFileV4 } from '../../hooks/useFilev4';
 
 
 type AvatarElementType = Partial<ImageProps> & {
@@ -30,7 +30,7 @@ const AvatarElement: FC<AvatarElementType> = ({
   const [avatarUrl, setAvatarUrl] = useState<string>(defaultAvatar);
   const { excludes } = useConfig();
   const configId = `${pageID}/${componentID}/${elementID}`;
-  const { getImage } = useFile();
+  const { getImage } = useFileV4();
 
   useLayoutEffect(() => {
     if (!avatarId) {

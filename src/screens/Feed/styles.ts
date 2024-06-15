@@ -6,7 +6,7 @@ export const useStyles = () => {
   const theme = useTheme() as MyMD3Theme;
   const styles = StyleSheet.create({
     feedWrap: {
-      backgroundColor: theme.colors.screenBackground,
+      backgroundColor: theme.colors.baseShade4,
       height: '100%',
     },
   });
