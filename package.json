@@ -32,7 +32,8 @@
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "clean": "del-cli lib",
     "prepare": "bob build",
-    "release": "release-it"
+    "release": "release-it",
+    "pack-no-lint": "npm pack"
   },
   "keywords": [
     "react-native",
@@ -192,7 +193,7 @@
     "react-native-screens": "3.20.0",
     "react-native-svg": "^14.1.0",
     "react-native-swipe-gestures": "^1.0.5",
-    "react-native-web": "^0.19.10",
+    "react-native-web": "^0.19.12",
     "react-redux": "^8.1.3",
     "react-scripts": "^5.0.1",
     "redux": "^4.2.1"
