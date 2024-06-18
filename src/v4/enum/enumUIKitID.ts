@@ -117,6 +117,7 @@ export interface UiKitConfigKeys {
   done_icon?: string;
   done_button_text?: string;
   icon?: string;
+  image?: string;
 }
 
 export enum DefaultConfigID {

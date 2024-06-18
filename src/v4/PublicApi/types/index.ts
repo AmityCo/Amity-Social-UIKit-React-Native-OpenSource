@@ -5,6 +5,19 @@ export const enum AmityStoryTabComponentEnum {
   communityFeed = 'communityFeed',
 }
 
+export const enum AmityPostComposerMode {
+  CREATE = 'create',
+  EDIT = 'edit',
+}
+
+export type AmityPostComposerPageType = {
+  mode: AmityPostComposerMode;
+  post?: Amity.Post;
+  targetId?: string;
+  targetType?: Amity.PostTargetType;
+  community?: Amity.Community;
+};
+
 export interface AmityStoryTabComponentType {
   type: AmityStoryTabComponentEnum;
   targetId?: string;
