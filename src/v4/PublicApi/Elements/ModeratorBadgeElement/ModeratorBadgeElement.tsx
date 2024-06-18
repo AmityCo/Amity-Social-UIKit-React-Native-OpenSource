@@ -28,7 +28,6 @@ const ModeratorBadgeElement: FC<ModeratorBadgeElementType> = ({
     elementId: elementID,
   });
   const styles = useStyles(themeStyles);
-
   if (isExcluded) return null;
   if (!isModerator || !communityId || !userId) return null;
   const text = (config?.text as string) ?? '';

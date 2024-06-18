@@ -6,23 +6,25 @@ import {
   PageID,
   UiKitConfigKeys,
 } from '../../../enum/enumUIKitID';
-import useConfig from '../../../hook/useConfig';
-import { useConfigImageUri } from '../../../hook';
+import { useAmityElement, useConfigImageUri } from '../../../hook';
 
-type BackButtonIconElementType = Partial<ImageProps> & {
+type CloseButtonIconElementType = Partial<ImageProps> & {
   pageID?: PageID;
   componentID?: ComponentID;
 };
 
-const CloseButtonIconElement: FC<BackButtonIconElementType> = ({
-  pageID = '*',
-  componentID = '*',
+const CloseButtonIconElement: FC<CloseButtonIconElementType> = ({
+  pageID = PageID.WildCardPage,
+  componentID = ComponentID.WildCardComponent,
   ...props
 }) => {
-  const { excludes } = useConfig();
   const elementID = ElementID.close_button;
   const configKey: keyof UiKitConfigKeys = 'image';
-  const configId = `${pageID}/${componentID}/${elementID}`;
+  const { accessibilityId, isExcluded } = useAmityElement({
+    pageId: pageID,
+    componentId: componentID,
+    elementId: elementID,
+  });
   const imageSource = useConfigImageUri({
     configPath: {
       page: pageID,
@@ -31,12 +33,12 @@ const CloseButtonIconElement: FC<BackButtonIconElementType> = ({
     },
     configKey: configKey,
   });
-  if (excludes.includes(configId)) return null;
+  if (isExcluded) return null;
 
   return (
     <Image
-      testID={configId}
-      accessibilityLabel={configId}
+      testID={accessibilityId}
+      accessibilityLabel={accessibilityId}
       source={props.source ?? imageSource}
       {...props}
     />
