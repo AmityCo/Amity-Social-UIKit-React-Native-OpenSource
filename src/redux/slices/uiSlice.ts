@@ -18,6 +18,7 @@ interface UIState {
   needApprovalOnPostCreation?: boolean;
   showToastMessage?: boolean;
   toastMessage?: string;
+  isLoadingToast?: boolean;
 }
 const initialState: UIState = {
   showPostTypeChoiceModal: false,
@@ -76,14 +77,17 @@ const uiSlice = createSlice({
       state,
       action: PayloadAction<{
         toastMessage: string;
+        isLoadingToast?: boolean;
       }>
     ) => {
       state.showToastMessage = true;
       state.toastMessage = action.payload.toastMessage;
+      state.isLoadingToast = true;
     },
     hideToastMessage: (state) => {
       state.showToastMessage = false;
       state.toastMessage = '';
+      state.isLoadingToast = false;
     },
   },
 });
