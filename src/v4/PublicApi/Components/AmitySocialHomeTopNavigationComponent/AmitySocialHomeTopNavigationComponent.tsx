@@ -1,5 +1,5 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React, { memo, useCallback } from 'react';
+import React, { memo, useCallback, useState } from 'react';
 import { useTheme } from 'react-native-paper';
 import { MyMD3Theme } from '~/providers/amity-ui-kit-provider';
 import { useNavigation } from '@react-navigation/native';
@@ -8,9 +8,14 @@ import { RootStackParamList } from '../../../routes/RouteParamList';
 import { useUiKitConfig, useConfigImageUri } from '../../../hook';
 import { ComponentID, ElementID, PageID } from '../../../enum/enumUIKitID';
 import { useBehaviour } from '../../../providers/BehaviourProvider';
+import { AmityCreatePostMenuComponent } from '../AmityCreatePostMenuComponent/AmityCreatePostMenuComponent';
+import Popup from '../../../component/PopupMenu/PopupMenu';
 
 const AmitySocialHomeTopNavigationComponent = () => {
   const theme = useTheme() as MyMD3Theme;
+
+  const [open, setOpen] = useState(false);
+
   const { AmitySocialHomeTopNavigationComponentBehaviour } = useBehaviour();
   const [headerTitle] = useUiKitConfig({
     keys: ['text'],
@@ -35,6 +40,7 @@ const AmitySocialHomeTopNavigationComponent = () => {
     },
     configKey: 'icon',
   });
+
   const navigation =
     useNavigation() as NativeStackNavigationProp<RootStackParamList>;
   const styles = StyleSheet.create({
@@ -47,6 +53,7 @@ const AmitySocialHomeTopNavigationComponent = () => {
       paddingHorizontal: 24,
       paddingVertical: 8,
       marginVertical: 8,
+      zIndex: 1,
     },
     title: {
       fontWeight: 'bold',
@@ -76,15 +83,20 @@ const AmitySocialHomeTopNavigationComponent = () => {
     navigation.navigate('AmitySocialGlobalSearchPage');
   }, [AmitySocialHomeTopNavigationComponentBehaviour, navigation]);
 
-  const onCreateCommunity = useCallback(() => {
-    navigation.navigate('CreateCommunity');
-  }, [navigation]);
+  const onToggleCreateComponent = useCallback(() => {
+    console.log('open', open);
+    setOpen(!open);
+  }, [open]);
+
+  // const onCreateCommunity = useCallback(() => {
+  //   navigation.navigate('CreateCommunity');
+  // }, [navigation]);
 
   const onPressCreate = useCallback(() => {
     if (AmitySocialHomeTopNavigationComponentBehaviour.onPressCreate)
       return AmitySocialHomeTopNavigationComponentBehaviour.onPressCreate();
-    return onCreateCommunity();
-  }, [AmitySocialHomeTopNavigationComponentBehaviour, onCreateCommunity]);
+    return onToggleCreateComponent();
+  }, [AmitySocialHomeTopNavigationComponentBehaviour, onToggleCreateComponent]);
 
   return (
     <View
@@ -116,6 +128,18 @@ const AmitySocialHomeTopNavigationComponent = () => {
         >
           <Image source={createIcon} style={styles.icon} />
         </TouchableOpacity>
+        <Popup
+          open={true}
+          position={{
+            top: 20,
+            right: 0,
+          }}
+        >
+          <AmityCreatePostMenuComponent
+            pageId={PageID.social_home_page}
+            componentId={ComponentID.create_post_menu}
+          />
+        </Popup>
       </View>
     </View>
   );

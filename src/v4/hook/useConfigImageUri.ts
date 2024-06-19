@@ -77,6 +77,12 @@ export const useConfigImageUri = ({
     if (fileUri === 'shareButtonIcon') {
       image = require('../configAssets/icons/shareButtonIcon.png');
     }
+    if (fileUri === 'create_post_button') {
+      image = require('../configAssets/icons/create_post_button.png');
+    }
+    if (fileUri === 'create_story_button') {
+      image = require('../configAssets/icons/create_story_button.png');
+    }
     if (typeof image === 'number') {
       return Image.resolveAssetSource(image)?.uri ?? defaultAvatarUri;
     }

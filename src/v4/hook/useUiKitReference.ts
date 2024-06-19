@@ -7,8 +7,8 @@ export const useAmityElement = ({
   componentId,
   elementId,
 }: {
-  pageId: PageID;
-  componentId: ComponentID;
+  pageId: PageID | '*';
+  componentId: ComponentID | '*';
   elementId: ElementID;
 }) => {
   const uiReference = `${pageId}/${componentId}/${elementId}`;

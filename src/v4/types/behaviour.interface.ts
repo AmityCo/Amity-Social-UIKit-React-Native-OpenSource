@@ -24,4 +24,7 @@ export interface IBehaviour {
       communityName: string;
     }) => void;
   };
+  AmityCreatePostMenuComponentBehavior?: {
+    goToSelectPostTargetPage?: () => void;
+  };
 }
