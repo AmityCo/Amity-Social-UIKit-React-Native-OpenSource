@@ -30,27 +30,41 @@ const Popup: React.FC<PopupProps> = ({ open, position, style, children }) => {
 
   // Animated value for opacity
   const opacity = useState(new Animated.Value(0))[0];
+  const translateY = useState(new Animated.Value(-10))[0]; // Initial position off-screen
 
   // Function to show the popup
   const showPopup = useCallback(() => {
-    // Set the popup to visible
     setVisible(true);
-    // Start the animation
-    Animated.timing(opacity, {
-      toValue: 1,
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
-  }, [opacity]);
+    // Animate both opacity and translateY
+    Animated.parallel([
+      Animated.timing(opacity, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.timing(translateY, {
+        toValue: 0, // Slide to original position
+        duration: 300,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [opacity, translateY]);
 
   const hidePopup = useCallback(() => {
-    // Start the animation
-    Animated.timing(opacity, {
-      toValue: 0,
-      duration: 300,
-      useNativeDriver: true,
-    }).start(() => setVisible(false)); // Hide the popup after the animation
-  }, [opacity]);
+    // Animate both opacity and translateY
+    Animated.parallel([
+      Animated.timing(opacity, {
+        toValue: 0,
+        duration: 150,
+        useNativeDriver: true,
+      }),
+      Animated.timing(translateY, {
+        toValue: -10, // Slide upwards
+        duration: 150,
+        useNativeDriver: true,
+      }),
+    ]).start(() => setVisible(false)); // Hide the popup after the animation
+  }, [opacity, translateY]);
 
   useEffect(() => {
     if (open) {
@@ -61,7 +75,13 @@ const Popup: React.FC<PopupProps> = ({ open, position, style, children }) => {
   if (!visible) return null;
 
   return (
-    <Animated.View style={[styles.container, style]}>
+    <Animated.View
+      style={[
+        styles.container,
+        { opacity, transform: [{ translateY }] },
+        style,
+      ]}
+    >
       <View style={styles.popupPosition}>{children}</View>
     </Animated.View>
   );
