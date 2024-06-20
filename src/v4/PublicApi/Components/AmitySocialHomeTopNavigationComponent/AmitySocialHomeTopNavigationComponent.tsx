@@ -1,5 +1,5 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React, { memo, useCallback, useState } from 'react';
+import React, { memo, useCallback } from 'react';
 import { useTheme } from 'react-native-paper';
 import { MyMD3Theme } from '~/providers/amity-ui-kit-provider';
 import { useNavigation } from '@react-navigation/native';
@@ -9,12 +9,12 @@ import { useUiKitConfig, useConfigImageUri } from '../../../hook';
 import { ComponentID, ElementID, PageID } from '../../../enum/enumUIKitID';
 import { useBehaviour } from '../../../providers/BehaviourProvider';
 import { AmityCreatePostMenuComponent } from '../AmityCreatePostMenuComponent/AmityCreatePostMenuComponent';
+import { usePopup } from '../../../hook/usePopup';
 import Popup from '../../../component/PopupMenu/PopupMenu';
 
 const AmitySocialHomeTopNavigationComponent = () => {
   const theme = useTheme() as MyMD3Theme;
-
-  const [open, setOpen] = useState(false);
+  const { isOpen, toggle } = usePopup();
 
   const { AmitySocialHomeTopNavigationComponentBehaviour } = useBehaviour();
   const [headerTitle] = useUiKitConfig({
@@ -84,9 +84,8 @@ const AmitySocialHomeTopNavigationComponent = () => {
   }, [AmitySocialHomeTopNavigationComponentBehaviour, navigation]);
 
   const onToggleCreateComponent = useCallback(() => {
-    console.log('open', open);
-    setOpen(!open);
-  }, [open]);
+    toggle();
+  }, [toggle]);
 
   // const onCreateCommunity = useCallback(() => {
   //   navigation.navigate('CreateCommunity');
@@ -129,7 +128,7 @@ const AmitySocialHomeTopNavigationComponent = () => {
           <Image source={createIcon} style={styles.icon} />
         </TouchableOpacity>
         <Popup
-          open={true}
+          open={isOpen}
           position={{
             top: 20,
             right: 0,
