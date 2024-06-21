@@ -82,6 +82,18 @@ export const useConfigImageUri = ({
         ? require('../configAssets/icons/close_button_dark.png')
         : require('../configAssets/icons/close_button_light.png');
     }
+    if (fileUri === 'image_button') {
+      image = require('../configAssets/icons/image_button.png');
+    }
+    if (fileUri === 'video_button') {
+      image = require('../configAssets/icons/video_button.png');
+    }
+    if (fileUri === 'camera_button') {
+      image = require('../configAssets/icons/camera_button.png');
+    }
+    if (fileUri === 'file_button') {
+      image = require('../configAssets/icons/file_button.png');
+    }
     if (typeof image === 'number') {
       return Image.resolveAssetSource(image)?.uri ?? defaultAvatarUri;
     }

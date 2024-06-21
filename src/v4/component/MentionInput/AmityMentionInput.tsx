@@ -135,6 +135,7 @@ const AmityMentionInput: FC<IMentionInput> = ({
   );
   return (
     <MentionTextInput
+      autoFocus
       inputRef={inputRef}
       containerStyle={styles.inputContainer}
       {...rest}

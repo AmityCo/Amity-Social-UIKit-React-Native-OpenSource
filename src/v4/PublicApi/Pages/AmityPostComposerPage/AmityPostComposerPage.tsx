@@ -2,6 +2,7 @@ import {
   Alert,
   Keyboard,
   KeyboardAvoidingView,
+  NativeTouchEvent,
   Platform,
   ScrollView,
   Text,
@@ -28,6 +29,7 @@ import useAuth from '../../../../hooks/useAuth';
 import globalfeedSlice from '../../../../redux/slices/globalfeedSlice';
 import { createPostToFeed } from '../../../../providers/Social/feed-sdk';
 import TextKeyElement from '../../Elements/TextKeyElement/TextKeyElement';
+import AmityMediaAttachmentComponent from '../../Components/AmityMediaAttachmentComponent/AmityMediaAttachmentComponent';
 
 const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
   targetId,
@@ -53,6 +55,8 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
   );
   const [mentionUsers, setMentionUsers] = useState<TSearchItem[]>([]);
   const [isShowingSuggestion, setIsShowingSuggestion] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [isSwipeup, setIsSwipeup] = useState(false); //will use in next PR
   const privateCommunityId = !community?.isPublic && community?.communityId;
   const title = community?.displayName ?? 'My Timeline';
   const isInputValid = inputMessage.trim().length > 0;
@@ -133,6 +137,11 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
     targetType,
   ]);
 
+  const onSwipe = (touchEvent: NativeTouchEvent) => {
+    const swipeUp = touchEvent.locationY < 0;
+    setIsSwipeup(swipeUp);
+  };
+
   if (isExcluded) return null;
   return (
     <View
@@ -179,6 +188,13 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
             isBottomMentionSuggestionsRender
           />
         </ScrollView>
+        <View
+          onTouchEndCapture={(a) => {
+            onSwipe(a?.nativeEvent?.changedTouches[0]);
+          }}
+        >
+          <AmityMediaAttachmentComponent />
+        </View>
       </KeyboardAvoidingView>
     </View>
   );
