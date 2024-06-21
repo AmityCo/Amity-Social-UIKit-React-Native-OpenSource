@@ -17,7 +17,7 @@ export const useStyle = (themeStyle: MyMD3Theme) => {
       height: 20,
     },
     label: {
-      color: themeStyle.colors.secondary,
+      color: themeStyle.colors.base,
       fontWeight: '600',
       fontSize: 15,
       lineHeight: 20,

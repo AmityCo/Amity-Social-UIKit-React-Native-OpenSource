@@ -4,14 +4,14 @@ import { useAmityElement, useConfigImageUri } from '../../../hook';
 import ButtonWithIconElement from '../ButtonWithIconElement/ButtonWithIconElement';
 
 interface CreateStoryButtonElementProps {
-  pageId?: PageID | '*';
-  componentId?: ComponentID | '*';
+  pageId?: PageID;
+  componentId?: ComponentID;
   onClick?: () => void;
 }
 
 const CreateStoryButtonElement = ({
-  pageId = '*',
-  componentId = '*',
+  pageId = PageID.WildCardPage,
+  componentId = ComponentID.WildCardComponent,
   onClick,
   ...props
 }: CreateStoryButtonElementProps) => {

@@ -4,14 +4,14 @@ import { useAmityElement, useConfigImageUri } from '../../../hook';
 import ButtonWithIconElement from '../ButtonWithIconElement/ButtonWithIconElement';
 
 interface CreatePostButtonElementProps {
-  pageId?: PageID | '*';
-  componentId?: ComponentID | '*';
+  pageId?: PageID;
+  componentId?: ComponentID;
   onClick?: () => void;
 }
 
 const CreatePostButtonElement = ({
-  pageId = '*',
-  componentId = '*',
+  pageId = PageID.WildCardPage,
+  componentId = ComponentID.WildCardComponent,
   onClick,
   ...props
 }: CreatePostButtonElementProps) => {
