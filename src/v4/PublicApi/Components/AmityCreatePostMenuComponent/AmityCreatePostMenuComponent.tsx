@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { ComponentID, PageID } from '../../../enum/enumUIKitID';
 import CreatePostButtonElement from '../../Elements/CreatePostButtonElement/CreatePostButtonElement';
@@ -6,6 +6,7 @@ import CreateStoryButtonElement from '../../Elements/CreateStoryButtonElement/Cr
 import { useTheme } from 'react-native-paper';
 import { MyMD3Theme } from '~/providers/amity-ui-kit-provider';
 import { useAmityComponent } from '../../../hook';
+import { useBehaviour } from '../../../providers/BehaviourProvider';
 
 interface AmityCreatePostMenuComponentProps {
   pageId?: PageID;
@@ -19,6 +20,8 @@ export const AmityCreatePostMenuComponent = ({
   const theme = useTheme() as MyMD3Theme;
   const { themeStyles } = useAmityComponent({ pageId, componentId });
 
+  const { AmityCreatePostMenuComponentBehavior } = useBehaviour();
+
   const styles = StyleSheet.create({
     container: {
       paddingVertical: 12,
@@ -29,17 +32,33 @@ export const AmityCreatePostMenuComponent = ({
       borderRadius: 12,
     },
   });
+
+  const onPressCreatePost = useCallback(
+    (postType: 'post' | 'story') => {
+      if (AmityCreatePostMenuComponentBehavior) {
+        return AmityCreatePostMenuComponentBehavior.goToSelectPostTargetPage({
+          postType,
+        });
+      }
+
+      return () => {
+        //TODO: implement default behavior
+      };
+    },
+    [AmityCreatePostMenuComponentBehavior]
+  );
+
   return (
     <View style={styles.container}>
       <CreatePostButtonElement
         pageId={pageId}
         componentId={componentId}
-        onClick={() => {}}
+        onClick={() => onPressCreatePost('post')}
       />
       <CreateStoryButtonElement
         pageId={pageId}
         componentId={componentId}
-        onClick={() => {}}
+        onClick={() => onPressCreatePost('story')}
       />
     </View>
   );

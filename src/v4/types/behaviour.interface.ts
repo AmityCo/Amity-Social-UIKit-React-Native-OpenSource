@@ -25,6 +25,6 @@ export interface IBehaviour {
     }) => void;
   };
   AmityCreatePostMenuComponentBehavior?: {
-    goToSelectPostTargetPage?: () => void;
+    goToSelectPostTargetPage?: (arg?: { postType: 'post' | 'story' }) => void;
   };
 }

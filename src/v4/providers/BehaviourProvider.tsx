@@ -19,6 +19,7 @@ export const BehaviourProvider = ({
       AmityCommunitySearchResultComponent: {},
       AmityEmptyNewsFeedComponent: {},
       AmityMyCommunitiesComponentBehaviour: {},
+      AmityCreatePostMenuComponentBehavior: {},
     }),
     []
   );
