@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import React, { FC, useCallback, useState } from 'react';
-import { PageID } from '../../../enum';
+import { ComponentID, ElementID, PageID } from '../../../enum';
 import {
   TSearchItem,
   useAmityPage,
@@ -27,6 +27,7 @@ import { amityPostsFormatter } from '../../../../util/postDataFormatter';
 import useAuth from '../../../../hooks/useAuth';
 import globalfeedSlice from '../../../../redux/slices/globalfeedSlice';
 import { createPostToFeed } from '../../../../providers/Social/feed-sdk';
+import TextKeyElement from '../../Elements/TextKeyElement/TextKeyElement';
 
 const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
   targetId,
@@ -145,11 +146,12 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
         </TouchableOpacity>
         <Text style={styles.title}>{title}</Text>
         <TouchableOpacity onPress={onPressPost}>
-          <Text
+          <TextKeyElement
+            pageID={pageId}
+            componentID={ComponentID.WildCardComponent}
+            elementID={ElementID.create_new_post_button}
             style={[styles.postBtnText, isInputValid && styles.activePostBtn]}
-          >
-            Post
-          </Text>
+          />
         </TouchableOpacity>
       </View>
       <KeyboardAvoidingView
