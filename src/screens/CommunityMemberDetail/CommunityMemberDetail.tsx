@@ -5,7 +5,7 @@ import type { UserInterface } from '../../types/user.interface';
 import AddMembersModal from '../../components/AddMembersModal';
 import { updateCommunityMember } from '../../providers/Social/communities-sdk';
 import MemberActionModal from './Components/MemberActionModal';
-import CustomTab from '../../components/CustomTab';
+import CustomTab from '../../components/CustomTabV3';
 import { TabName } from '../../enum/tabNameState';
 import CommunityMembersTab from './Components/CommunityMembersTab';
 import { PlusIcon } from '../../svg/PlusIcon';

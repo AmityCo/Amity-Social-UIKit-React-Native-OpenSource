@@ -31,8 +31,7 @@ import ShareButtonIconElement from '../../../Elements/ShareButtonIconElement/Sha
 import { useAmityComponent } from '../../../hooks/useUiKitReference';
 
 import LikeReactionIcon from '../../../svg/LikeReactionIcon';
-import { useTheme } from 'react-native-paper';
-import { MyMD3Theme } from '../../../providers/amity-ui-kit-provider';
+
 
 const FeedStyle: FC<AmityPostEngagementActionsSubComponentType> = ({
   postId,
@@ -44,7 +43,6 @@ const FeedStyle: FC<AmityPostEngagementActionsSubComponentType> = ({
     componentId: ComponentID.post_content,
   });
 
-  const theme = useTheme() as MyMD3Theme;
 
   const styles = useStyles(themeStyles);
   const navigation =
@@ -100,7 +98,7 @@ const FeedStyle: FC<AmityPostEngagementActionsSubComponentType> = ({
             //   height="20"
             // />
 
-            <LikeReactionIcon color={theme.colors.primary} circleColor={themeStyles.colors.background} width={20} height={20} />
+            <LikeReactionIcon circleColor={themeStyles.colors.background} width={20} height={20} />
           ) : (
             <LikeButtonIconElement
               pageID={pageId}

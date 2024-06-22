@@ -287,7 +287,7 @@ export default function ReplyCommentList({
                 style={styles.likeBtn}
               >
                 <Text style={styles.btnText}>{likeReaction}</Text>
-                <LikeReactionIcon color={theme.colors.primary}  width={20} height={16}/>
+                <LikeReactionIcon  width={20} height={16}/>
               </TouchableOpacity>
             )}
           </View>

@@ -16,7 +16,7 @@ import {
 import { useStyles } from './styles';
 import { UserRepository } from '@amityco/ts-sdk-react-native';
 import Feed from '../Feed';
-import CustomTab from '../../components/CustomTab';
+import CustomTab from '../../components/CustomTabV3';
 import type { FeedRefType } from '../CommunityHome';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';

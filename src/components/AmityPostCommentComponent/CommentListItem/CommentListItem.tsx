@@ -378,7 +378,7 @@ const CommentListItem = ({
                   style={styles.likeBtn}
                 >
                 <Text style={styles.btnText}>{likeReaction}</Text>
-               <LikeReactionIcon color={theme.colors.primary} width={20} height={16} style={{marginLeft: 4}} />
+               <LikeReactionIcon width={20} height={16} style={{marginLeft: 4}} />
                 </TouchableOpacity>
               )}
             </View>

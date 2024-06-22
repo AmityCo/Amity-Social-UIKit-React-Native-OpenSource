@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { useStyles } from './styles';
 import { useNavigation } from '@react-navigation/native';
-import CustomTab from '../../components/CustomTab';
+import CustomTab from '../../components/CustomTabV3';
 import {
   CommunityRepository,
   UserRepository,

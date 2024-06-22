@@ -22,8 +22,7 @@ import CommentButtonIconElement from '../../../Elements/CommentButtonIconElement
 import ShareButtonIconElement from '../../../Elements/ShareButtonIconElement/ShareButtonIconElement';
 import { useAmityComponent } from '../../../hooks/useUiKitReference';
 import LikeReaction from '../../../svg/LikeReactionIcon';
-import { useTheme } from 'react-native-paper';
-import { MyMD3Theme } from '../../../providers/amity-ui-kit-provider';
+
 
 const DetailStyle: FC<AmityPostEngagementActionsSubComponentType> = ({
   community,
@@ -36,7 +35,6 @@ const DetailStyle: FC<AmityPostEngagementActionsSubComponentType> = ({
     componentId: ComponentID.post_content,
   });
 
-  const theme = useTheme() as MyMD3Theme;
   const styles = useStyles(themeStyles);
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -114,7 +112,7 @@ const DetailStyle: FC<AmityPostEngagementActionsSubComponentType> = ({
         <View style={styles.countSection}>
           {totalReactions ? (
             <View style={styles.row}>
-              <LikeReaction color={theme.colors.primary} circleColor={themeStyles.colors.background} style={{ marginRight: 4 }} />
+              <LikeReaction  circleColor={themeStyles.colors.background} style={{ marginRight: 4 }} />
               <Text style={styles.likeCountText} onPress={onClickReactions}>
                 {totalReactions} {renderLikeText(totalReactions)}
               </Text>
@@ -135,7 +133,7 @@ const DetailStyle: FC<AmityPostEngagementActionsSubComponentType> = ({
         <View style={styles.row}>
           <TouchableOpacity onPress={addReactionToPost} style={styles.likeBtn}>
             {isLike ? (
-              <LikeReaction color={theme.colors.primary} />
+              <LikeReaction  />
             ) : (
               <LikeButtonIconElement
                 pageID={pageId}
