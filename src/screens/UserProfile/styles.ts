@@ -27,6 +27,7 @@ export const useStyles = () => {
     dotIcon: {
       width: 16,
       height: 12,
+      marginRight: 16
     },
 
     followIcon: {

@@ -2,11 +2,14 @@ import { TextProps, Text, View } from 'react-native';
 import React, { FC, memo } from 'react';
 import { ComponentID, ElementID, PageID } from '../../enum';
 
-import ImageElement from '../CommonElements/ImageElement';
+// import ImageElement from '../CommonElements/ImageElement';
 import { useStyles } from './styles';
 
 import { useAmityElement } from '../../hooks/useUiKitReference';
 import { useIsCommunityModerator } from '../../hooks/useIsCommunityModerator';
+import ShieldIcon from '../../svg/ShieldIcon';
+import { useTheme } from 'react-native-paper';
+import { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 
 type ModeratorBadgeElementType = Partial<TextProps> & {
   pageID: PageID;
@@ -30,6 +33,7 @@ const ModeratorBadgeElement: FC<ModeratorBadgeElementType> = ({
     elementId: elementID,
   });
   const styles = useStyles(themeStyles);
+  const theme = useTheme() as MyMD3Theme;
 
   if (isExcluded) return null;
   if (!isModerator || !communityId || !userId) return null;
@@ -37,13 +41,14 @@ const ModeratorBadgeElement: FC<ModeratorBadgeElementType> = ({
 
   return (
     <View style={styles.moderatorRow}>
-      <ImageElement
+      {/* <ImageElement
         configKey="icon"
         pageID={pageID}
         componentID={componentID}
         elementID={ElementID.moderator_badge}
         style={styles.moderatorBadge}
-      />
+      /> */}
+      <ShieldIcon width={12} height={9} color={theme.colors.primary}  style={styles.moderatorBadge}/>
       <Text
         style={styles.moderatorTitle}
         testID={accessibilityId}

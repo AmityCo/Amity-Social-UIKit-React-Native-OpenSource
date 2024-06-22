@@ -18,9 +18,7 @@ export const useStyles = (theme: MyMD3Theme) => {
       justifyContent: 'center',
     },
     moderatorBadge: {
-      width: 8,
-      height: 8,
-      marginRight: 4,
+      marginRight: 1,
     },
   });
 

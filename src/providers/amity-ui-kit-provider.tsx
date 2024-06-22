@@ -12,6 +12,7 @@ import fallBackConfig from '../../uikit.config.json';
 import { BehaviourProvider } from '../providers/BehaviourProvider';
 import { IBehaviour } from '../types/behaviour.interface';
 import { lighten, parseToHsl, hslToColorString } from 'polished';
+import { MenuProvider } from 'react-native-popup-menu';
 import useValidateConfig from '../hooks/useValidateConfig';
 
 export type CusTomTheme = typeof DefaultTheme;
@@ -107,20 +108,22 @@ export default function AmityUiKitProvider({
 
   return (
     <Provider store={store}>
-      <AuthContextProvider
-        userId={userId}
-        displayName={displayName || userId}
-        apiKey={apiKey}
-        apiRegion={apiRegion}
-        apiEndpoint={apiEndpoint}
-        authToken={authToken}
-      >
-        <ConfigProvider configs={configData}>
-          <BehaviourProvider behaviour={behaviour}>
-            <PaperProvider theme={globalTheme}>{children}</PaperProvider>
-          </BehaviourProvider>
-        </ConfigProvider>
-      </AuthContextProvider>
+      <MenuProvider>
+        <AuthContextProvider
+          userId={userId}
+          displayName={displayName || userId}
+          apiKey={apiKey}
+          apiRegion={apiRegion}
+          apiEndpoint={apiEndpoint}
+          authToken={authToken}
+        >
+          <ConfigProvider configs={configData}>
+            <BehaviourProvider behaviour={behaviour}>
+              <PaperProvider theme={globalTheme}>{children}</PaperProvider>
+            </BehaviourProvider>
+          </ConfigProvider>
+        </AuthContextProvider>
+      </MenuProvider>
     </Provider>
   );
 }

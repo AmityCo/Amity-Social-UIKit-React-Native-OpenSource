@@ -34,6 +34,8 @@ import PlayVideoIcon from '../../svg/PlayVideoIcon';
 import ArrowDownIcon from '../../svg/ArrowDownIcon';
 import CameraIcon from '../../svg/CameraIcon';
 
+import { Snackbar } from 'react-native-paper'
+
 export interface IDisplayImage {
   url: string;
   fileId: string | undefined;
@@ -60,6 +62,7 @@ const CreatePost = ({ route }: any) => {
   const [displayVideos, setDisplayVideos] = useState<IDisplayImage[]>([]);
   const [isShowMention, setIsShowMention] = useState<boolean>(false);
   const [mentionNames, setMentionNames] = useState<ISearchItem[]>([]);
+  const [snackBarVisible, setSnackBarVisible] = useState<boolean>(false);
 
   const [currentSearchUserName, setCurrentSearchUserName] =
     useState<string>('');
@@ -318,6 +321,10 @@ const CreatePost = ({ route }: any) => {
     }
   };
   const pickVideo = async () => {
+    if (Platform.OS === 'web') {
+      setSnackBarVisible(true)
+      return;
+    }
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Videos,
       allowsEditing: false,
@@ -488,8 +495,8 @@ const CreatePost = ({ route }: any) => {
           <TouchableOpacity
             disabled={
               inputMessage.length > 0 ||
-              displayImages.length > 0 ||
-              displayVideos.length > 0
+                displayImages.length > 0 ||
+                displayVideos.length > 0
                 ? false
                 : true
             }
@@ -498,8 +505,8 @@ const CreatePost = ({ route }: any) => {
             <Text
               style={
                 inputMessage.length > 0 ||
-                displayImages.length > 0 ||
-                displayVideos.length > 0
+                  displayImages.length > 0 ||
+                  displayVideos.length > 0
                   ? styles.postText
                   : [styles.postText, styles.disabled]
               }
@@ -583,7 +590,7 @@ const CreatePost = ({ route }: any) => {
             onPress={pickCamera}
           >
             <View style={styles.iconWrap}>
-              <CameraIcon/>
+              <CameraIcon />
             </View>
           </TouchableOpacity>
           <TouchableOpacity
@@ -591,7 +598,7 @@ const CreatePost = ({ route }: any) => {
             onPress={pickImage}
           >
             <View style={styles.iconWrap}>
-              <GalleryIcon/>
+              <GalleryIcon />
             </View>
           </TouchableOpacity>
           <TouchableOpacity
@@ -600,15 +607,27 @@ const CreatePost = ({ route }: any) => {
             style={displayImages.length > 0 ? styles.disabled : []}
           >
             <View style={styles.iconWrap}>
-              <PlayVideoIcon/>
+              <PlayVideoIcon />
             </View>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => Keyboard.dismiss()}>
-            <ArrowDownIcon color={theme.colors.base}/>
+            <ArrowDownIcon color={theme.colors.base} />
 
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
+      <Snackbar
+        visible={snackBarVisible}
+        onDismiss={() => setSnackBarVisible(false)}
+        action={{
+          label: 'Hide',
+          labelStyle: {color: theme.colors.primary},
+          onPress: () => {
+            // Do something
+          },
+        }}>
+         Video post creation isn't in the playground yet. Install UIkit to explore it 😊
+      </Snackbar>
     </View>
   );
 };

@@ -120,7 +120,7 @@ export default function Home() {
         }
         onTabChange={setActiveTab}
       /> */}
-      <AmitySocialHomeTopNavigationComponent />
+      <AmitySocialHomeTopNavigationComponent currentTab={activeTab} />
       <CustomSocialTab
         tabNames={[newsFeedTab, exploreTab, myCommunitiesTab]}
         onTabChange={onTabChange}

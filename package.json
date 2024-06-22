@@ -1,6 +1,6 @@
 {
   "name": "@amityco/react-native-social-ui-kit",
-  "version": "0.4.5",
+  "version": "0.4.9",
   "description": "Social UIKit",
   "main": "lib/commonjs/index.js",
   "module": "lib/module/index.js",
@@ -187,6 +187,7 @@
     "react-native-modalbox": "^2.0.2",
     "react-native-pager-view": "6.1.4",
     "react-native-paper": "5.10.6",
+    "react-native-popup-menu": "^0.16.1",
     "react-native-progress": "^5.0.1",
     "react-native-radio-buttons-group": "^3.0.2",
     "react-native-safe-area-context": "4.7.1",

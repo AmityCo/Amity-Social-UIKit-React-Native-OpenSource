@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   Image,
+  Platform,
   Text,
   TouchableWithoutFeedback,
   View,
@@ -14,11 +15,15 @@ import ImageView from '../../components/react-native-image-viewing/dist';
 import { RootState } from '../../redux/store';
 import PollSection from '../PollSection/PollSection';
 import PlayIcon from '../../svg/PlayIcon';
+import { Snackbar, useTheme } from 'react-native-paper';
+import { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 
 interface IMediaSection {
   childrenPosts: string[];
 }
 const MediaSection: React.FC<IMediaSection> = ({ childrenPosts }) => {
+
+  const theme = useTheme() as MyMD3Theme;
   const { apiRegion } = useAuth();
   const [imagePosts, setImagePosts] = useState<string[]>([]);
   const [videoPosts, setVideoPosts] = useState<IVideoPost[]>([]);
@@ -28,6 +33,7 @@ const MediaSection: React.FC<IMediaSection> = ({ childrenPosts }) => {
   const [videoPostsFullSize, setVideoPostsFullSize] = useState<MediaUri[]>([]);
   const [visibleFullImage, setIsVisibleFullImage] = useState<boolean>(false);
   const [imageIndex, setImageIndex] = useState<number>(0);
+  const [snackBarVisible, setSnackBarVisible] = useState<boolean>(false);
 
   const styles = useStyles();
   let imageStyle: any =
@@ -100,16 +106,21 @@ const MediaSection: React.FC<IMediaSection> = ({ childrenPosts }) => {
   }, [childrenPosts, currentPostdetail, postList, postListGlobal, getPostInfo]);
 
   function onClickImage(index: number): void {
-    setIsVisibleFullImage(true);
-    setImageIndex(index);
+    if (Platform.OS === 'web') {
+      setSnackBarVisible(true)
+    } else {
+      setIsVisibleFullImage(true);
+      setImageIndex(index);
+    }
+
   }
 
   function renderMediaPosts() {
     const thumbnailFileIds: string[] =
       videoPosts.length > 0
         ? videoPosts.map((item) => {
-            return `https://api.${apiRegion}.amity.co/api/v3/files/${item?.thumbnailFileId}/download?size=medium`;
-          })
+          return `https://api.${apiRegion}.amity.co/api/v3/files/${item?.thumbnailFileId}/download?size=medium`;
+        })
         : [];
     const mediaPosts =
       [...imagePosts].length > 0 ? [...imagePosts] : [...thumbnailFileIds];
@@ -202,9 +213,8 @@ const MediaSection: React.FC<IMediaSection> = ({ childrenPosts }) => {
               />
               {index === 3 && imagePosts.length > 4 && (
                 <View style={styles.overlay}>
-                  <Text style={styles.overlayText}>{`+ ${
-                    imagePosts.length - 3
-                  }`}</Text>
+                  <Text style={styles.overlayText}>{`+ ${imagePosts.length - 3
+                    }`}</Text>
                 </View>
               )}
             </View>
@@ -238,7 +248,7 @@ const MediaSection: React.FC<IMediaSection> = ({ childrenPosts }) => {
   function renderPlayButton() {
     return (
       <View style={styles.playButton}>
-        <PlayIcon/>
+        <PlayIcon />
       </View>
     );
   }
@@ -262,6 +272,18 @@ const MediaSection: React.FC<IMediaSection> = ({ childrenPosts }) => {
         isVideoButton={videoPosts.length > 0 ? true : false}
         videoPosts={videoPosts}
       />
+      <Snackbar
+        visible={snackBarVisible}
+        onDismiss={() => setSnackBarVisible(false)}
+        action={{
+          label: 'Hide',
+          labelStyle: { color: theme.colors.primary },
+          onPress: () => {
+            // Do something
+          },
+        }}>
+        Image Gallery View isn't in the playground yet. Install UIkit to explore it 😊
+      </Snackbar>
     </View>
   );
 };
