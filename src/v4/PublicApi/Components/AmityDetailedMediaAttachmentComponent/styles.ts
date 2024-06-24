@@ -33,16 +33,24 @@ export const useStyles = (theme: MyMD3Theme) => {
       borderRadius: 10,
     },
     buttonsContainer: {
-      flexDirection: 'row',
       paddingTop: 16,
       paddingHorizontal: 24,
-      width: '100%',
-      justifyContent: 'space-between',
     },
     iconBtn: {
       width: 24,
       height: 24,
       tintColor: theme.colors.base,
+      marginRight: 12,
+    },
+    iconText: {
+      color: theme.colors.base,
+      fontSize: 15,
+      fontWeight: 'bold',
+    },
+    mediaAttachmentBtn: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 12,
     },
   });
 

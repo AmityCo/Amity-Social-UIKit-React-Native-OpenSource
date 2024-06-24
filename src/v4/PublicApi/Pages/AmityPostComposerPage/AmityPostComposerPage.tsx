@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { FC, useCallback, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import { ComponentID, ElementID, PageID } from '../../../enum';
 import {
   TSearchItem,
@@ -30,6 +30,8 @@ import globalfeedSlice from '../../../../redux/slices/globalfeedSlice';
 import { createPostToFeed } from '../../../../providers/Social/feed-sdk';
 import TextKeyElement from '../../Elements/TextKeyElement/TextKeyElement';
 import AmityMediaAttachmentComponent from '../../Components/AmityMediaAttachmentComponent/AmityMediaAttachmentComponent';
+import AmityDetailedMediaAttachmentComponent from '../../Components/AmityDetailedMediaAttachmentComponent/AmityDetailedMediaAttachmentComponent';
+import { useKeyboardStatus } from '../../../hook';
 
 const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
   targetId,
@@ -39,6 +41,7 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
   const pageId = PageID.post_composer_page;
   const { isExcluded, themeStyles, accessibilityId } = useAmityPage({ pageId });
   const styles = useStyles(themeStyles);
+  const { isKayboardShowing } = useKeyboardStatus();
   const navigation = useNavigation();
   const { client } = useAuth();
   const dispatch = useDispatch();
@@ -55,7 +58,7 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
   );
   const [mentionUsers, setMentionUsers] = useState<TSearchItem[]>([]);
   const [isShowingSuggestion, setIsShowingSuggestion] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   const [isSwipeup, setIsSwipeup] = useState(false); //will use in next PR
   const privateCommunityId = !community?.isPublic && community?.communityId;
   const title = community?.displayName ?? 'My Timeline';
@@ -82,45 +85,50 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
       mentionUsers?.map((item) => item.id) ?? ([] as string[]);
     const type = 'text';
     const fileIds = [];
-    const response = await createPostToFeed(
-      targetType,
-      targetId,
-      {
-        text: inputMessage,
-        fileIds: fileIds as string[],
-      },
-      type,
-      mentionedUserIds.length > 0 ? mentionedUserIds : [],
-      mentionsPosition
-    );
-    if (!response) {
-      dispatch(showToastMessage({ toastMessage: 'Failed to create post' }));
+    try {
+      const response = await createPostToFeed(
+        targetType,
+        targetId,
+        {
+          text: inputMessage,
+          fileIds: fileIds as string[],
+        },
+        type,
+        mentionedUserIds.length > 0 ? mentionedUserIds : [],
+        mentionsPosition
+      );
+      if (!response) {
+        dispatch(showToastMessage({ toastMessage: 'Failed to create post' }));
+        onPressClose();
+        return;
+      }
+      dispatch(hideToastMessage());
+      if (
+        targetType === 'community' &&
+        (community?.postSetting === 'ADMIN_REVIEW_POST_REQUIRED' ||
+          (community as Record<string, any>)?.needApprovalOnPostCreation) &&
+        !isModerator
+      ) {
+        return Alert.alert(
+          'Post submitted',
+          'Your post has been submitted to the pending list. It will be reviewed by community moderator',
+          [
+            {
+              text: 'OK',
+              onPress: () => onPressClose(),
+            },
+          ],
+          { cancelable: false }
+        );
+      }
+      const formattedPost = await amityPostsFormatter([response]);
+      dispatch(addPostToGlobalFeed(formattedPost[0]));
       onPressClose();
       return;
+    } catch (error) {
+      dispatch(hideToastMessage());
+      dispatch(showToastMessage({ toastMessage: error.message }));
     }
-    dispatch(hideToastMessage());
-    if (
-      targetType === 'community' &&
-      (community?.postSetting === 'ADMIN_REVIEW_POST_REQUIRED' ||
-        (community as Record<string, any>)?.needApprovalOnPostCreation) &&
-      !isModerator
-    ) {
-      return Alert.alert(
-        'Post submitted',
-        'Your post has been submitted to the pending list. It will be reviewed by community moderator',
-        [
-          {
-            text: 'OK',
-            onPress: () => onPressClose(),
-          },
-        ],
-        { cancelable: false }
-      );
-    }
-    const formattedPost = await amityPostsFormatter([response]);
-    dispatch(addPostToGlobalFeed(formattedPost[0]));
-    onPressClose();
-    return;
   }, [
     addPostToGlobalFeed,
     community,
@@ -138,9 +146,20 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
   ]);
 
   const onSwipe = (touchEvent: NativeTouchEvent) => {
-    const swipeUp = touchEvent.locationY < 0;
-    setIsSwipeup(swipeUp);
+    const swipeUp = touchEvent.locationY < -50;
+    const swipeDown = touchEvent.locationY > 50;
+    setIsSwipeup((prev) => {
+      if (swipeUp && !isKayboardShowing) return true;
+      if (swipeDown) return false;
+      return prev;
+    });
   };
+
+  useEffect(() => {
+    isKayboardShowing && setIsSwipeup(false);
+  }, [isKayboardShowing]);
+
+  const shouldShowDetailAttachment = !isKayboardShowing && isSwipeup;
 
   if (isExcluded) return null;
   return (
@@ -193,7 +212,11 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
             onSwipe(a?.nativeEvent?.changedTouches[0]);
           }}
         >
-          <AmityMediaAttachmentComponent />
+          {shouldShowDetailAttachment ? (
+            <AmityDetailedMediaAttachmentComponent />
+          ) : (
+            <AmityMediaAttachmentComponent />
+          )}
         </View>
       </KeyboardAvoidingView>
     </View>

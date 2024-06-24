@@ -272,7 +272,7 @@
       "image": "video_button"
     },
     "post_composer_page/detailed_media_attachment/file_button": {
-      "textpost_composer_page": "Attachment",
+      "text": "Attachment",
       "image": "file_button"
     },
     "social_home_page/*/*": {},

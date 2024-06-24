@@ -2,11 +2,12 @@
 import React, { useEffect, useState } from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 import { useStyles } from './styles';
-import { SvgXml } from 'react-native-svg';
-import { communityIcon, userIcon } from '../../../svg/svg-xml-list';
 import { CategoryRepository } from '@amityco/ts-sdk-react-native';
 import { useNavigation } from '@react-navigation/native';
-import useAuth from '../../../hooks/useAuth';
+import { useFile } from '../../hook';
+import { ImageSizeState } from '../../enum';
+import { defaultAvatarUri, defaultCommunityAvatarUri } from '../../assets';
+
 export interface ISearchItem {
   targetId: string;
   targetType: string;
@@ -25,11 +26,11 @@ export default function SearchItem({
   userProfileNavigateEnabled?: boolean;
 }) {
   const styles = useStyles();
-  const { apiRegion } = useAuth();
+  const { getImage } = useFile();
   const [isChecked, setIsChecked] = useState<boolean>(false);
+  const [avatar, setAvatar] = useState(defaultAvatarUri);
   const [categoryName, setCategoryName] = useState<string>('');
   const navigation = useNavigation<any>();
-  const maxLength = 25;
   const handleToggle = () => {
     setIsChecked(!isChecked);
     if (onPress) {
@@ -48,6 +49,25 @@ export default function SearchItem({
       }
     }
   };
+
+  useEffect(() => {
+    if (!target?.avatarFileId) return;
+
+    (async () => {
+      const fileUrl = await getImage({
+        fileId: target?.avatarFileId,
+        imageSize: ImageSizeState.small,
+      });
+
+      const avatarUrl = fileUrl
+        ? fileUrl
+        : target?.targetType === 'community'
+        ? defaultCommunityAvatarUri
+        : defaultAvatarUri;
+      setAvatar(avatarUrl);
+    })();
+  }, [getImage, target?.avatarFileId, target?.targetType]);
+
   useEffect(() => {
     getCategory();
   }, [target.categoryIds]);
@@ -61,40 +81,16 @@ export default function SearchItem({
       category && setCategoryName(category.name);
     }
   }
-  const displayName = () => {
-    if (target.displayName) {
-      if (target.displayName!.length > maxLength) {
-        return target.displayName!.substring(0, maxLength) + '..';
-      }
-      return target.displayName!;
-    }
-    return 'Display name';
-  };
-  const avatarFileURL = (fileId: string) => {
-    return `https://api.${apiRegion}.amity.co/api/v3/files/${fileId}/download?size=medium`;
-  };
 
   return (
     <TouchableOpacity style={styles.listItem} onPress={handleToggle}>
       <View style={styles.leftContainer}>
-        {target.avatarFileId ? (
-          <Image
-            style={styles.avatar}
-            source={{
-              uri: target.avatarFileId && avatarFileURL(target.avatarFileId!),
-            }}
-          />
-        ) : (
-          <SvgXml
-            style={styles.avatar}
-            width={40}
-            height={40}
-            xml={target.targetType === 'user' ? userIcon() : communityIcon}
-          />
-        )}
+        <Image style={styles.avatar} source={{ uri: avatar }} />
         <View>
-          <Text style={styles.itemText}>{displayName()}</Text>
-          {target.targetType === 'community' && (
+          <Text numberOfLines={1} style={styles.itemText}>
+            {target?.displayName}
+          </Text>
+          {target?.targetType === 'community' && (
             <Text style={styles.categoryText}>{categoryName}</Text>
           )}
         </View>
