@@ -12,6 +12,9 @@ export const useAmityGlobalSearchViewModel = (
   const [onNextCommunityPage, setOnNextCommunityPage] = useState<
     (() => void) | null
   >(null);
+  const [onNextMyCommunityPage, setMyOnNextCommunityPage] = useState<
+    (() => void) | null
+  >(null);
   const [onNextUserPage, setOnNextUserPage] = useState<(() => void) | null>(
     null
   );
@@ -20,7 +23,25 @@ export const useAmityGlobalSearchViewModel = (
 
   useEffect(() => {
     if (searchValue?.length < 3) return setSearchResult(null);
-    if (searchType === TabName.Communities) {
+    if (searchType === TabName.MyCommunities) {
+      setSearchResult(null);
+      const unsubscribeCommunity = CommunityRepository.getCommunities(
+        {
+          displayName: searchValue,
+          membership: 'member',
+          limit: 20,
+          sortBy: 'displayName',
+        },
+        ({ error, loading, data, hasNextPage, onNextPage }) => {
+          if (error) return setSearchResult(null);
+          if (!loading) {
+            setMyOnNextCommunityPage(() => (hasNextPage ? onNextPage : null));
+            setSearchResult(data);
+          }
+        }
+      );
+      return () => unsubscribeCommunity();
+    } else if (searchType === TabName.Communities) {
       setSearchResult(null);
       const unsubscribeCommunity = CommunityRepository.getCommunities(
         {
@@ -56,5 +77,10 @@ export const useAmityGlobalSearchViewModel = (
     }
   }, [searchType, searchValue]);
 
-  return { searchResult, onNextCommunityPage, onNextUserPage };
+  return {
+    searchResult,
+    onNextCommunityPage,
+    onNextUserPage,
+    onNextMyCommunityPage,
+  };
 };
