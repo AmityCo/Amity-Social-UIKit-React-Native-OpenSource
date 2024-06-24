@@ -41,6 +41,8 @@ import Toast from '../../components/Toast/Toast';
 import AmitySocialGlobalSearchPage from '../PublicApi/Pages/AmitySocialGlobalSearchPage/AmitySocialGlobalSearchPage';
 import UserPendingRequest from '../screen/UserPendingRequest/UserPendingRequest';
 import FollowerList from '../screen/FollowerList/FollowerList';
+import AmityPostTargetSelectionPage from '../PublicApi/Pages/AmityPostTargetSelectionPage/AmityPostTargetSelectionPage';
+import CloseButtonIconElement from '../PublicApi/Elements/CloseButtonIconElement/CloseButtonIconElement';
 
 export default function AmitySocialUIKitV4Navigator() {
   const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -265,6 +267,15 @@ export default function AmitySocialUIKitV4Navigator() {
               }}
             />
             <Stack.Screen name="CreateStory" component={CreateStoryScreen} />
+            <Stack.Screen
+              name="PostTargetSelection"
+              component={AmityPostTargetSelectionPage}
+              options={{
+                headerShown: true,
+                title: 'Post to',
+                headerLeft: () => <CloseButtonIconElement />,
+              }}
+            />
           </Stack.Group>
         </Stack.Navigator>
       )}

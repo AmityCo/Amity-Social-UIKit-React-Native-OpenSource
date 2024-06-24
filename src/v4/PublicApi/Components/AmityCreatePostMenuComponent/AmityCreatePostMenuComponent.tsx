@@ -7,6 +7,9 @@ import { useTheme } from 'react-native-paper';
 import { MyMD3Theme } from '~/providers/amity-ui-kit-provider';
 import { useAmityComponent } from '../../../hook';
 import { useBehaviour } from '../../../providers/BehaviourProvider';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../../../../v4/routes/RouteParamList';
 
 interface AmityCreatePostMenuComponentProps {
   pageId?: PageID;
@@ -18,6 +21,7 @@ export const AmityCreatePostMenuComponent = ({
   componentId = ComponentID.WildCardComponent,
 }: AmityCreatePostMenuComponentProps): JSX.Element => {
   const theme = useTheme() as MyMD3Theme;
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const { themeStyles } = useAmityComponent({ pageId, componentId });
 
   const { AmityCreatePostMenuComponentBehavior } = useBehaviour();
@@ -35,17 +39,18 @@ export const AmityCreatePostMenuComponent = ({
 
   const onPressCreatePost = useCallback(
     (postType: 'post' | 'story') => {
-      if (AmityCreatePostMenuComponentBehavior) {
+      if (AmityCreatePostMenuComponentBehavior.goToSelectPostTargetPage) {
         return AmityCreatePostMenuComponentBehavior.goToSelectPostTargetPage({
           postType,
         });
       }
 
-      return () => {
-        //TODO: implement default behavior
-      };
+      console.log('Navigate to PostTargetSelection');
+      navigation.navigate('PostTargetSelection', {
+        postType,
+      });
     },
-    [AmityCreatePostMenuComponentBehavior]
+    [AmityCreatePostMenuComponentBehavior, navigation]
   );
 
   return (

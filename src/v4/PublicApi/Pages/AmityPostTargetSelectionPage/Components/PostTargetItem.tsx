@@ -1,7 +1,6 @@
 import React from 'react';
-import { StyleSheet, Image, Text, View } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import useFile from '~/hooks/useFile';
+import { StyleSheet, Image, Text, View, TouchableOpacity } from 'react-native';
+import useFile from '../../../../../hooks/useFile';
 
 interface IPostTargetItem {
   displayName: string;

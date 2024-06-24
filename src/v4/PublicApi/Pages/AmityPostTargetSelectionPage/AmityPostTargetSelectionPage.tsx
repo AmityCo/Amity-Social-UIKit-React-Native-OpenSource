@@ -1,10 +1,9 @@
 import React from 'react';
 import { View, Text, FlatList } from 'react-native';
-import { useCommunities, useUser } from '~/v4/hook';
-import CloseButtonIconElement from '../../Elements/CloseButtonIconElement/CloseButtonIconElement';
+import { useCommunities, useUser } from '../../../../v4/hook';
 import PostTargetItem from './Components/PostTargetItem';
 import { Divider } from 'react-native-paper';
-import useAuth from '~/hooks/useAuth';
+import useAuth from '../../../../hooks/useAuth';
 
 const AmityPostTargetSelectionPage = ({ route, navigation }) => {
   const { client } = useAuth();
@@ -70,10 +69,6 @@ const AmityPostTargetSelectionPage = ({ route, navigation }) => {
 
   return (
     <View>
-      <View>
-        <CloseButtonIconElement />
-        <Text>Post to</Text>
-      </View>
       <PostTargetItem
         displayName="My Timeline"
         onSelect={() =>
@@ -83,7 +78,7 @@ const AmityPostTargetSelectionPage = ({ route, navigation }) => {
             targetType: 'user',
           })
         }
-        avatarFileId={user.avatarFileId}
+        avatarFileId={user?.avatarFileId}
       />
       <Divider />
       <Text>My Communities</Text>
@@ -91,7 +86,6 @@ const AmityPostTargetSelectionPage = ({ route, navigation }) => {
         data={communities}
         renderItem={renderItem}
         onEndReached={onNextCommunityPage}
-        onEndReachedThreshold={0.8}
         keyExtractor={(item) => item.communityId.toString()}
       />
     </View>
