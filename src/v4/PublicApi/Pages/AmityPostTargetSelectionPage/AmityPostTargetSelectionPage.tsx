@@ -1,23 +1,64 @@
 import React from 'react';
-import { Text, FlatList, StyleSheet, View } from 'react-native';
-import { useCommunities, useUser } from '../../../../v4/hook';
+import {
+  Text,
+  FlatList,
+  StyleSheet,
+  View,
+  TouchableOpacity,
+} from 'react-native';
+import { useAmityElement, useCommunities, useUser } from '../../../../v4/hook';
 import PostTargetItem from './Components/PostTargetItem';
 import { Divider, useTheme } from 'react-native-paper';
 import useAuth from '../../../../hooks/useAuth';
 import type { MyMD3Theme } from '../../../../providers/amity-ui-kit-provider';
+import CloseButtonIconElement from '../../Elements/CloseButtonIconElement/CloseButtonIconElement';
+import { PageID, ComponentID, ElementID } from '../../../../v4/enum';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const AmityPostTargetSelectionPage = ({ route, navigation }) => {
   const { client } = useAuth();
   const user = useUser((client as Amity.Client).userId);
+
   const { communities, onNextCommunityPage } = useCommunities();
   const { postType } = route.params;
 
-  const theme = useTheme() as MyMD3Theme;
+  const pageId = PageID.select_post_target_page;
+  const { config: myTimelineConfig } = useAmityElement({
+    pageId,
+    componentId: ComponentID.WildCardComponent,
+    elementId: ElementID.my_timeline_text,
+  });
+  const { config: titleConfig } = useAmityElement({
+    pageId,
+    componentId: ComponentID.WildCardComponent,
+    elementId: ElementID.title,
+  });
 
+  const theme = useTheme() as MyMD3Theme;
   const styles = StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: theme.colors.background,
+    },
+    header: {
+      paddingVertical: 18,
+      alignItems: 'center',
+    },
+    closeIcon: {
+      width: 24,
+      height: 24,
+      tintColor: theme.colors.base,
+    },
+    closeButton: {
+      position: 'absolute',
+      left: 12,
+      top: 18,
+    },
+    title: {
+      fontSize: 17,
+      fontWeight: '600',
+      lineHeight: 22,
+      color: theme.colors.base,
     },
     communityHeader: {
       color: theme.colors.baseShade1,
@@ -93,13 +134,28 @@ const AmityPostTargetSelectionPage = ({ route, navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity
+          style={styles.closeButton}
+          onPress={() => navigation.goBack()}
+        >
+          <CloseButtonIconElement
+            style={styles.closeIcon}
+            pageID={PageID.select_post_target_page}
+          />
+        </TouchableOpacity>
+        <Text style={styles.title}>
+          {(titleConfig?.text as string) || 'Post to'}
+        </Text>
+      </View>
       <PostTargetItem
-        displayName="My Timeline"
+        pageId={pageId}
+        displayName={(myTimelineConfig?.text as string) || 'My Timeline'}
         onSelect={() =>
           onSelectFeed({
             targetId: user.userId,
-            targetName: 'My Timeline',
+            targetName: (myTimelineConfig?.text as string) || 'My Timeline',
             targetType: 'user',
           })
         }
@@ -117,7 +173,7 @@ const AmityPostTargetSelectionPage = ({ route, navigation }) => {
         onEndReached={onNextCommunityPage}
         keyExtractor={(item) => item.communityId.toString()}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 

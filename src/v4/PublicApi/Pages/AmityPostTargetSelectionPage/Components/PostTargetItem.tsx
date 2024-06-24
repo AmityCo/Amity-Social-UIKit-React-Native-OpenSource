@@ -1,10 +1,17 @@
 import React from 'react';
-import { StyleSheet, Text, Image, View, TouchableOpacity } from 'react-native';
-import useFile from '../../../../../hooks/useFile';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../../../../providers/amity-ui-kit-provider';
+import { ComponentID, PageID, ElementID } from '../../../../enum';
+import AvatarElement from '../../../../PublicApi/Elements/CommonElements/AvatarElement';
+import ImageElement from '../../../../PublicApi/Elements/CommonElements/ImageElement';
+import TextElement from '../../../../PublicApi/Elements/CommonElements/TextElement';
 
 interface IPostTargetItem {
+  pageId?: PageID;
+  componentId?: ComponentID;
+  avatarElementId?: ElementID;
+  displayNameElementId?: ElementID;
   displayName: string;
   avatarFileId?: string;
   isBadgeShow?: boolean;
@@ -13,16 +20,16 @@ interface IPostTargetItem {
 }
 
 const PostTargetItem = ({
+  pageId = PageID.WildCardPage,
+  componentId = ComponentID.WildCardComponent,
+  avatarElementId = ElementID.WildCardElement,
+  displayNameElementId = ElementID.WildCardElement,
   avatarFileId,
   displayName,
   isBadgeShow,
   isPrivate,
   onSelect,
 }: IPostTargetItem) => {
-  const file = useFile({
-    fileId: avatarFileId,
-  });
-
   const theme = useTheme() as MyMD3Theme;
 
   const styles = StyleSheet.create({
@@ -58,27 +65,30 @@ const PostTargetItem = ({
   return (
     <TouchableOpacity onPress={onSelect} style={styles.container}>
       <View>
-        <Image
+        <AvatarElement
           style={styles.avatar}
-          source={
-            // TODO: check default avatar
-            file
-              ? { uri: file }
-              : require('../../../../assets/icon/Placeholder.png')
-          }
+          pageID={pageId}
+          componentID={componentId}
+          elementID={avatarElementId}
+          avatarId={avatarFileId}
         />
       </View>
+      <TextElement pageID={pageId} elementID={displayNameElementId} text={''} />
       <Text style={styles.displayName}>{displayName}</Text>
       {isBadgeShow && (
-        <Image
+        <ImageElement
+          componentID={componentId}
+          elementID={ElementID.community_official_badge}
           style={styles.badgeIcon}
-          source={require('../../../../assets/icon/Badge.png')}
+          configKey="image"
         />
       )}
       {isPrivate && (
-        <Image
+        <ImageElement
+          componentID={componentId}
+          elementID={ElementID.community_private_badge}
           style={styles.lockIcon}
-          source={require('../../../../assets/icon/Private.png')}
+          configKey="image"
         />
       )}
     </TouchableOpacity>

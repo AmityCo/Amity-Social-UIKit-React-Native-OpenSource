@@ -9,6 +9,7 @@ export enum PageID {
   post_detail_page = 'post_detail_page',
   social_global_search_page = 'social_global_search_page',
   post_composer_page = 'post_composer_page',
+  select_post_target_page = 'select_post_target_page',
 }
 export enum ComponentID {
   EditComment = 'edit_comment_component',

@@ -269,27 +269,6 @@ export default function AmitySocialUIKitV4Navigator() {
             <Stack.Screen
               name="PostTargetSelection"
               component={AmityPostTargetSelectionPage}
-              options={({
-                navigation,
-              }: {
-                navigation: NativeStackNavigationProp<any>;
-              }) => ({
-                headerShown: true,
-                title: 'Post to',
-                headerLeft: () => (
-                  <TouchableOpacity
-                    onPress={() => {
-                      navigation.goBack();
-                    }}
-                    style={styles.btnWrap}
-                  >
-                    <Image
-                      source={require('../assets/icon/Close.png')}
-                      style={styles.closeIcon}
-                    />
-                  </TouchableOpacity>
-                ),
-              })}
             />
           </Stack.Group>
         </Stack.Navigator>
