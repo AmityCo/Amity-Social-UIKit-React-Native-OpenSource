@@ -3,6 +3,8 @@ import { StyleSheet, View } from 'react-native';
 import { ComponentID, PageID } from '../../../enum/enumUIKitID';
 import CreatePostButtonElement from '../../Elements/CreatePostButtonElement/CreatePostButtonElement';
 import CreateStoryButtonElement from '../../Elements/CreateStoryButtonElement/CreateStoryButtonElement';
+import CreatePollButtonElement from '../../Elements/CreatePollButtonElement/CreatePollButtonElement';
+import CreateLivestreamButtonElement from '../../Elements/CreateLivestreamButtonElement/CreateLivestreamButtonElement';
 import { useTheme } from 'react-native-paper';
 import { MyMD3Theme } from '~/providers/amity-ui-kit-provider';
 import { useAmityComponent } from '../../../hook';
@@ -34,8 +36,8 @@ export const AmityCreatePostMenuComponent = ({
   });
 
   const onPressCreatePost = useCallback(
-    (postType: 'post' | 'story') => {
-      if (AmityCreatePostMenuComponentBehavior) {
+    (postType: 'post' | 'story' | 'poll' | 'livestream') => {
+      if (AmityCreatePostMenuComponentBehavior.goToSelectPostTargetPage) {
         return AmityCreatePostMenuComponentBehavior.goToSelectPostTargetPage({
           postType,
         });
@@ -59,6 +61,16 @@ export const AmityCreatePostMenuComponent = ({
         pageId={pageId}
         componentId={componentId}
         onClick={() => onPressCreatePost('story')}
+      />
+      <CreatePollButtonElement
+        pageId={pageId}
+        componentId={componentId}
+        onClick={() => onPressCreatePost('poll')}
+      />
+      <CreateLivestreamButtonElement
+        pageId={pageId}
+        componentId={componentId}
+        onClick={() => onPressCreatePost('livestream')}
       />
     </View>
   );
