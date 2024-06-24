@@ -11,7 +11,7 @@ import { useKeyboardStatus } from '../../hook';
 
 export const useStyles = () => {
   const theme = useTheme() as MyMD3Theme;
-  const { isKayboardShowing } = useKeyboardStatus();
+  const { isKeyboardShowing } = useKeyboardStatus();
   const { width, height } = useWindowDimensions();
   const animatedMarginTop = useRef(
     new Animated.Value(height * 0.25 - 10)
@@ -30,9 +30,9 @@ export const useStyles = () => {
   );
 
   useEffect(() => {
-    const marginTop = isKayboardShowing ? height * 0.25 - 10 : height * 0.5;
+    const marginTop = isKeyboardShowing ? height * 0.25 - 10 : height * 0.5;
     animateMarginTop(marginTop);
-  }, [animateMarginTop, height, isKayboardShowing]);
+  }, [animateMarginTop, height, isKeyboardShowing]);
 
   const styles = StyleSheet.create({
     mentionListContainer: {

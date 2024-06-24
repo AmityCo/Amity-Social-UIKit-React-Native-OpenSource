@@ -2,18 +2,18 @@ import { useEffect, useState } from 'react';
 import { Keyboard } from 'react-native';
 
 export const useKeyboardStatus = () => {
-  const [isKayboardShowing, setIsKayboardShowing] = useState(false);
+  const [isKeyboardShowing, setIsKeyboardShowing] = useState(false);
   useEffect(() => {
     const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
-      setIsKayboardShowing(true);
+      setIsKeyboardShowing(true);
     });
     const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
-      setIsKayboardShowing(false);
+      setIsKeyboardShowing(false);
     });
     return () => {
       showSubscription.remove();
       hideSubscription.remove();
     };
   }, []);
-  return { isKayboardShowing };
+  return { isKeyboardShowing };
 };
