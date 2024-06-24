@@ -5,10 +5,9 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { FC, memo } from 'react';
+import React, { FC, memo, useCallback } from 'react';
 import { useStyles } from './styles';
-import { useCommunities } from '../../../hook/';
-import useConfig from '../../../hook/useConfig';
+import { useAmityComponent, useCommunities } from '../../../hook/';
 import { PageID, ComponentID, ElementID } from '../../../enum';
 import AvatarElement from '../../Elements/CommonElements/AvatarElement';
 import TextElement from '../../Elements/CommonElements/TextElement';
@@ -19,6 +18,7 @@ import { useBehaviour } from '../../../providers/BehaviourProvider';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../../routes/RouteParamList';
 import { formatNumber } from '../../../../util/numberUtil';
+import ContentLoader, { Circle, Rect } from 'react-content-loader/native';
 type AmityMyCommunitiesComponentType = {
   pageId?: PageID;
   componentId?: ComponentID;
@@ -28,12 +28,14 @@ const AmityMyCommunitiesComponent: FC<AmityMyCommunitiesComponentType> = ({
   pageId = PageID.WildCardPage,
   componentId = ComponentID.WildCardComponent,
 }) => {
-  const { excludes } = useConfig();
+  const { isExcluded, accessibilityId, themeStyles } = useAmityComponent({
+    pageId,
+    componentId,
+  });
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { AmityMyCommunitiesComponentBehaviour } = useBehaviour();
-  const configId = `${pageId}/${componentId}/*`;
-  const styles = useStyles();
+  const styles = useStyles(themeStyles);
   const { communities, onNextCommunityPage } = useCommunities();
   const myCommunitiesListItem = ({ item }: { item: Amity.Community }) => {
     const privateCommunityTextlength: TextStyle = !item.isPublic && {
@@ -120,20 +122,44 @@ const AmityMyCommunitiesComponent: FC<AmityMyCommunitiesComponentType> = ({
     );
   };
 
-  if (excludes.includes(configId)) return null;
+  const renderContentLoading = useCallback(() => {
+    return Array.from({ length: 8 }, (_, index) => {
+      return (
+        <ContentLoader
+          key={index}
+          height={70}
+          speed={1}
+          width={380}
+          backgroundColor={'#d2d2d2'}
+          foregroundColor={'#eee'}
+          viewBox="-10 -10 380 70"
+        >
+          <Rect x="48" y="8" rx="3" ry="3" width="188" height="6" />
+          <Rect x="48" y="26" rx="3" ry="3" width="152" height="6" />
+          <Circle cx="20" cy="20" r="20" />
+        </ContentLoader>
+      );
+    });
+  }, []);
+
+  if (isExcluded) return null;
 
   return (
     <View
       style={styles.container}
-      testID={`${pageId}/${componentId}/*`}
-      accessibilityLabel={`${pageId}/${componentId}/*`}
+      testID={accessibilityId}
+      accessibilityLabel={accessibilityId}
     >
-      <FlatList
-        onEndReached={onNextCommunityPage}
-        data={communities}
-        renderItem={myCommunitiesListItem}
-        keyExtractor={(item, index) => item.communityId + index}
-      />
+      {communities?.length ? (
+        <FlatList
+          onEndReached={onNextCommunityPage}
+          data={communities}
+          renderItem={myCommunitiesListItem}
+          keyExtractor={(item, index) => item.communityId + index}
+        />
+      ) : (
+        renderContentLoading()
+      )}
     </View>
   );
 };
