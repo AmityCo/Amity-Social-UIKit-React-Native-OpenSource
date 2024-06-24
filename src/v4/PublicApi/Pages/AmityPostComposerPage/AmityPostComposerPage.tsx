@@ -53,6 +53,7 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
   );
   const [mentionUsers, setMentionUsers] = useState<TSearchItem[]>([]);
   const [isShowingSuggestion, setIsShowingSuggestion] = useState(false);
+
   const privateCommunityId = !community?.isPublic && community?.communityId;
   const title = community?.displayName ?? 'My Timeline';
   const isInputValid = inputMessage.trim().length > 0;
@@ -78,45 +79,50 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
       mentionUsers?.map((item) => item.id) ?? ([] as string[]);
     const type = 'text';
     const fileIds = [];
-    const response = await createPostToFeed(
-      targetType,
-      targetId,
-      {
-        text: inputMessage,
-        fileIds: fileIds as string[],
-      },
-      type,
-      mentionedUserIds.length > 0 ? mentionedUserIds : [],
-      mentionsPosition
-    );
-    if (!response) {
-      dispatch(showToastMessage({ toastMessage: 'Failed to create post' }));
+    try {
+      const response = await createPostToFeed(
+        targetType,
+        targetId,
+        {
+          text: inputMessage,
+          fileIds: fileIds as string[],
+        },
+        type,
+        mentionedUserIds.length > 0 ? mentionedUserIds : [],
+        mentionsPosition
+      );
+      if (!response) {
+        dispatch(showToastMessage({ toastMessage: 'Failed to create post' }));
+        onPressClose();
+        return;
+      }
+      dispatch(hideToastMessage());
+      if (
+        targetType === 'community' &&
+        (community?.postSetting === 'ADMIN_REVIEW_POST_REQUIRED' ||
+          (community as Record<string, any>)?.needApprovalOnPostCreation) &&
+        !isModerator
+      ) {
+        return Alert.alert(
+          'Post submitted',
+          'Your post has been submitted to the pending list. It will be reviewed by community moderator',
+          [
+            {
+              text: 'OK',
+              onPress: () => onPressClose(),
+            },
+          ],
+          { cancelable: false }
+        );
+      }
+      const formattedPost = await amityPostsFormatter([response]);
+      dispatch(addPostToGlobalFeed(formattedPost[0]));
       onPressClose();
       return;
+    } catch (error) {
+      dispatch(hideToastMessage());
+      dispatch(showToastMessage({ toastMessage: error.message }));
     }
-    dispatch(hideToastMessage());
-    if (
-      targetType === 'community' &&
-      (community?.postSetting === 'ADMIN_REVIEW_POST_REQUIRED' ||
-        (community as Record<string, any>)?.needApprovalOnPostCreation) &&
-      !isModerator
-    ) {
-      return Alert.alert(
-        'Post submitted',
-        'Your post has been submitted to the pending list. It will be reviewed by community moderator',
-        [
-          {
-            text: 'OK',
-            onPress: () => onPressClose(),
-          },
-        ],
-        { cancelable: false }
-      );
-    }
-    const formattedPost = await amityPostsFormatter([response]);
-    dispatch(addPostToGlobalFeed(formattedPost[0]));
-    onPressClose();
-    return;
   }, [
     addPostToGlobalFeed,
     community,
