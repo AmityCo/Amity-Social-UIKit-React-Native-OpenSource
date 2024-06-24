@@ -5,7 +5,7 @@ import { PreviewData, PreviewDataImage, Size } from './types';
 
 export const getActualImageUrl = (baseUrl: string, imageUrl?: string) => {
   let actualImageUrl = imageUrl?.trim();
-  if (!actualImageUrl || actualImageUrl.startsWith('data')) return;
+  if (!actualImageUrl || actualImageUrl.startsWith('data')) return null;
 
   if (actualImageUrl.startsWith('//'))
     actualImageUrl = `https:${actualImageUrl}`;
@@ -25,7 +25,7 @@ export const getActualImageUrl = (baseUrl: string, imageUrl?: string) => {
 
 export const getHtmlEntitiesDecodedText = (text?: string) => {
   const actualText = text?.trim();
-  if (!actualText) return;
+  if (!actualText) return null;
 
   return decode(actualText);
 };
@@ -120,6 +120,7 @@ export const getPreviewData = async (text: string, requestTimeout = 5000) => {
     let matches: RegExpMatchArray | null;
     const meta: RegExpMatchArray[] = [];
     while ((matches = REGEX_META.exec(head)) !== null) {
+      // @ts-ignore
       meta.push([...matches]);
     }
 
@@ -162,6 +163,7 @@ export const getPreviewData = async (text: string, requestTimeout = 5000) => {
       let imageMatches: RegExpMatchArray | null;
       const tags: RegExpMatchArray[] = [];
       while ((imageMatches = REGEX_IMAGE_TAG.exec(html)) !== null) {
+        // @ts-ignore
         tags.push([...imageMatches]);
       }
 
@@ -190,7 +192,7 @@ export const getPreviewData = async (text: string, requestTimeout = 5000) => {
 
 /* istanbul ignore next */
 export const getPreviewDataImage = async (url?: string) => {
-  if (!url) return;
+  if (!url) return null;
 
   try {
     const { height, width } = await getImageSize(url);
@@ -199,8 +201,12 @@ export const getPreviewDataImage = async (url?: string) => {
     if (height > 100 && width > 100 && aspectRatio > 0.1 && aspectRatio < 10) {
       const image: PreviewDataImage = { height, url, width };
       return image;
+    } else {
+      return null;
     }
-  } catch {}
+  } catch {
+    return null;
+  }
 };
 
 export const oneOf =

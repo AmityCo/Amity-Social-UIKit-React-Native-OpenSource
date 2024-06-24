@@ -27,7 +27,7 @@ export interface IAmityUIkitProvider {
   fcmToken?: string;
 }
 
-interface CustomColors {
+export interface CustomColors {
   primary?: string;
   primaryShade1?: string;
   primaryShade2?: string;
