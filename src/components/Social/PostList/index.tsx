@@ -61,6 +61,7 @@ export interface IPost {
   childrenPosts: string[];
   mentionees: string[];
   mentionPosition?: IMentionPosition[];
+  path: string;
 }
 export interface IPostList {
   onDelete?: (postId: string) => void;

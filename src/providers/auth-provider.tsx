@@ -4,6 +4,7 @@ import { Client } from '@amityco/ts-sdk-react-native';
 import type { AuthContextInterface } from '../types/auth.interface';
 import { Alert, Platform } from 'react-native';
 import type { IAmityUIkitProvider } from './amity-ui-kit-provider';
+import { setupAmityVideoPlayer } from '@amityco/video-player-react-native';
 
 export const AuthContext = React.createContext<AuthContextInterface>({
   client: {},
@@ -76,7 +77,11 @@ export const AuthContextProvider: FC<IAmityUIkitProvider> = ({
       loginParam = { ...loginParam, authToken: authToken };
     }
     const response = await Client.login(loginParam, sessionHandler);
-    if (response && fcmToken) {
+    if (!response) return;
+
+    setupAmityVideoPlayer();
+
+    if (fcmToken) {
       try {
         // await Client.registerPushNotification(fcmToken);
         // below is work around solution

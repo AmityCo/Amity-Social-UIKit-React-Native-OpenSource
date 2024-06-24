@@ -50,7 +50,7 @@ const CommunityMembersTab: React.FC<ICommunityMembersTab> = ({
       limit: 10,
     };
 
-    const unsubscribe = CommunityRepository.Membership.getMembers(
+    CommunityRepository.Membership.getMembers(
       option,
       ({ data, onNextPage, hasNextPage, loading: fetching, error }) => {
         setLoading(fetching);
@@ -70,7 +70,6 @@ const CommunityMembersTab: React.FC<ICommunityMembersTab> = ({
         }
       }
     );
-    return unsubscribe();
   }, [communityId, setMember]);
 
   useFocusEffect(
@@ -116,25 +115,28 @@ const CommunityMembersTab: React.FC<ICommunityMembersTab> = ({
     getCommunityMemberList();
   };
 
-  return (
-    <FlatList
-      refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-          colors={['lightblue']}
-          tintColor="lightblue"
-        />
-      }
-      data={members}
-      renderItem={renderMember}
-      keyExtractor={(item) => item.userId.toString()}
-      ListFooterComponent={renderFooter}
-      onEndReachedThreshold={0.8}
-      onEndReached={handleLoadMore}
-      ref={flatListRef}
-    />
-  );
+  if (members) {
+    return (
+      <FlatList
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={['lightblue']}
+            tintColor="lightblue"
+          />
+        }
+        data={members}
+        renderItem={renderMember}
+        keyExtractor={(item) => item.userId.toString()}
+        ListFooterComponent={renderFooter}
+        onEndReachedThreshold={0.8}
+        onEndReached={handleLoadMore}
+        ref={flatListRef}
+      />
+    );
+  }
+  return null;
 };
 
 export default memo(CommunityMembersTab);

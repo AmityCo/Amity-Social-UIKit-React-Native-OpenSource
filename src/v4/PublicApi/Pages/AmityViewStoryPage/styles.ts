@@ -147,7 +147,7 @@ export const useStyles = () => {
     seen: {
       marginLeft: 5,
       fontSize: 12,
-      color: theme.colors.background,
+      color: '#fff',
     },
     hyperlinkContainer: {
       flexDirection: 'row',
@@ -162,7 +162,7 @@ export const useStyles = () => {
     },
     hyperlinkText: {
       marginLeft: 8,
-      color: theme.colors.base,
+      color: '#000',
     },
     error: {
       textAlign: 'center',
