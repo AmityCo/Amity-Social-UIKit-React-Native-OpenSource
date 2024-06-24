@@ -210,7 +210,10 @@ export const useStyles = (theme: MyMD3Theme) => {
       minHeight: 375,
     },
     threeDots: {
-      padding: 5,
+      width: 18,
+      height: 18,
+      tintColor: theme.colors.base,
+      resizeMode: 'contain',
     },
     modalContainer: {
       flex: 1,

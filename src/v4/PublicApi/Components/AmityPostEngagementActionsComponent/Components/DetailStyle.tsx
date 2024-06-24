@@ -36,26 +36,22 @@ const DetailStyle: FC<AmityPostEngagementActionsSubComponentType> = ({
   const [totalReactions, setTotalReactions] = useState(0);
   const [isReactionListVisible, setIsReactionListVisible] = useState(false);
   useEffect(() => {
-    if (postId) {
-      let unsubscribe: () => void;
-      const unsub = PostRepository.getPost(
-        postId,
-        ({ error, loading, data }) => {
-          if (!error && !loading) {
-            unsubscribe = subscribeTopic(
-              getPostTopic(data, SubscriptionLevels.POST)
-            );
-            setPostData(data);
-            setTotalReactions(data.reactionsCount);
-            setIsLike(data.myReactions?.length > 0);
-          }
-        }
-      );
-      return () => {
-        unsub();
-        unsubscribe && unsubscribe();
-      };
-    }
+    if (!postId) return null;
+    let unsubscribe: () => void;
+    const unsub = PostRepository.getPost(postId, ({ error, loading, data }) => {
+      if (!error && !loading) {
+        unsubscribe = subscribeTopic(
+          getPostTopic(data, SubscriptionLevels.POST)
+        );
+        setPostData(data);
+        setTotalReactions(data.reactionsCount);
+        setIsLike(data.myReactions?.length > 0);
+      }
+    });
+    return () => {
+      unsub();
+      unsubscribe && unsubscribe();
+    };
   }, [postId]);
 
   const renderLikeText = useCallback(

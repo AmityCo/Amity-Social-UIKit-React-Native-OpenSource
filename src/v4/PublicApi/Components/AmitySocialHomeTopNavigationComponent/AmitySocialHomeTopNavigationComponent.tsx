@@ -1,23 +1,38 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React, { memo, useCallback } from 'react';
-import { useTheme } from 'react-native-paper';
-import { MyMD3Theme } from '~/providers/amity-ui-kit-provider';
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import React, { FC, memo, useCallback } from 'react';
+
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../../routes/RouteParamList';
-import { useUiKitConfig, useConfigImageUri } from '../../../hook';
+import {
+  useConfigImageUri,
+  useAmityComponent,
+  useUiKitConfig,
+} from '../../../hook';
 import { ComponentID, ElementID, PageID } from '../../../enum/enumUIKitID';
 import { useBehaviour } from '../../../providers/BehaviourProvider';
+import TextKeyElement from '../../Elements/TextKeyElement/TextKeyElement';
 
-const AmitySocialHomeTopNavigationComponent = () => {
-  const theme = useTheme() as MyMD3Theme;
+type AmitySocialHomeTopNavigationComponentType = {
+  activeTab: string;
+};
+
+const AmitySocialHomeTopNavigationComponent: FC<
+  AmitySocialHomeTopNavigationComponentType
+> = ({ activeTab }) => {
+  const pageId = PageID.social_home_page;
+  const componentId = ComponentID.top_navigation;
+  const componentConfig = useAmityComponent({ pageId, componentId });
+  const theme = componentConfig.themeStyles;
   const { AmitySocialHomeTopNavigationComponentBehaviour } = useBehaviour();
-  const [headerTitle] = useUiKitConfig({
-    keys: ['text'],
+
+  const [myCommunitiesTab] = useUiKitConfig({
     page: PageID.social_home_page,
-    component: ComponentID.top_navigation,
-    element: ElementID.header_label,
+    component: ComponentID.WildCardComponent,
+    element: ElementID.my_communities_button,
+    keys: ['text'],
   }) as string[];
+
   const searchIcon = useConfigImageUri({
     configPath: {
       page: PageID.social_home_page,
@@ -26,7 +41,6 @@ const AmitySocialHomeTopNavigationComponent = () => {
     },
     configKey: 'icon',
   });
-
   const createIcon = useConfigImageUri({
     configPath: {
       page: PageID.social_home_page,
@@ -71,10 +85,24 @@ const AmitySocialHomeTopNavigationComponent = () => {
   });
 
   const onPressSearch = useCallback(() => {
-    if (AmitySocialHomeTopNavigationComponentBehaviour.onPressSearch)
-      return AmitySocialHomeTopNavigationComponentBehaviour.onPressSearch();
+    if (myCommunitiesTab === activeTab) {
+      if (
+        AmitySocialHomeTopNavigationComponentBehaviour.goToMyCommunitiesSearchPage
+      ) {
+        return AmitySocialHomeTopNavigationComponentBehaviour.goToMyCommunitiesSearchPage();
+      }
+      return navigation.navigate('AmityMyCommunitiesSearchPage');
+    }
+    if (AmitySocialHomeTopNavigationComponentBehaviour.goToGlobalSearchPage) {
+      return AmitySocialHomeTopNavigationComponentBehaviour.goToGlobalSearchPage();
+    }
     navigation.navigate('AmitySocialGlobalSearchPage');
-  }, [AmitySocialHomeTopNavigationComponentBehaviour, navigation]);
+  }, [
+    AmitySocialHomeTopNavigationComponentBehaviour,
+    activeTab,
+    myCommunitiesTab,
+    navigation,
+  ]);
 
   const onCreateCommunity = useCallback(() => {
     navigation.navigate('CreateCommunity');
@@ -86,19 +114,21 @@ const AmitySocialHomeTopNavigationComponent = () => {
     return onCreateCommunity();
   }, [AmitySocialHomeTopNavigationComponentBehaviour, onCreateCommunity]);
 
+  if (componentConfig?.isExcluded) return null;
+
   return (
     <View
       style={styles.headerContainer}
-      testID="top_navigation"
-      accessibilityLabel="top_navigation"
+      testID={componentConfig.accessibilityId}
+      accessibilityLabel={componentConfig.accessibilityId}
     >
-      <Text
+      <TextKeyElement
+        pageID={pageId}
+        componentID={componentId}
+        elementID={ElementID.header_label}
         style={styles.title}
-        testID="top_navigation/header_label"
-        accessibilityLabel="top_navigation/header_label"
-      >
-        {headerTitle}
-      </Text>
+      />
+
       <View style={styles.flexContainer}>
         <TouchableOpacity
           style={styles.iconBtn}
