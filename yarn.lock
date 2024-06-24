@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-"@amityco/ts-sdk-react-native@^6.23.0":
+"@amityco/ts-sdk-react-native@^6.25.0":
   version "6.27.0"
   resolved "https://registry.yarnpkg.com/@amityco/ts-sdk-react-native/-/ts-sdk-react-native-6.27.0.tgz#88f1d7560be090dbc13fc31fe31163f93a2b0031"
   integrity sha512-kiNMobpLIx/rU+iJjoGVHOR7ib8cMd1yptXsk6CI+578YX9Ji0PZxSUqKQGW1VwVO5nmA86J2MTso7mSgBiFVA==
