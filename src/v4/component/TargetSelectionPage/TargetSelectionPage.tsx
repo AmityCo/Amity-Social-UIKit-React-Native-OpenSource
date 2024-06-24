@@ -109,8 +109,7 @@ const TargetSelectionPage = ({
       <TargetItem
         key={item.communityId}
         displayName={item.displayName}
-        // TODO: add logic to check isBadgeShow
-        // isBadgeShow={true}
+        isBadgeShow={item.isOfficial}
         isPrivate={!item.isPublic}
         onSelect={() =>
           onSelectFeed({
