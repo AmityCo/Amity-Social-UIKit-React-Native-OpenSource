@@ -6,7 +6,12 @@ import {
   View,
   TouchableOpacity,
 } from 'react-native';
-import { useAmityElement, useCommunities, useUser } from '../../../v4/hook';
+import {
+  useAmityElement,
+  useAmityPage,
+  useCommunities,
+  useUser,
+} from '../../../v4/hook';
 import TargetItem from './TargetItem/TargetItem';
 import { Divider, useTheme } from 'react-native-paper';
 import useAuth from '../../../hooks/useAuth';
@@ -53,6 +58,11 @@ const TargetSelectionPage = ({
 
   const { communities, onNextCommunityPage } = useCommunities();
 
+  const { themeStyles, accessibilityId } = useAmityPage({ pageId });
+  const defaultTheme = useTheme() as MyMD3Theme;
+
+  const theme = themeStyles || defaultTheme;
+
   const { config: myTimelineConfig } = useAmityElement({
     pageId,
     componentId: ComponentID.WildCardComponent,
@@ -64,7 +74,6 @@ const TargetSelectionPage = ({
     elementId: ElementID.title,
   });
 
-  const theme = useTheme() as MyMD3Theme;
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -124,7 +133,7 @@ const TargetSelectionPage = ({
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} testID={accessibilityId}>
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.closeButton}
