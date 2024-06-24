@@ -17,7 +17,7 @@ const AmityPostTargetSelectionPage = ({ route, navigation }) => {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#fff',
+      backgroundColor: theme.colors.background,
     },
     communityHeader: {
       color: theme.colors.baseShade1,
@@ -28,7 +28,8 @@ const AmityPostTargetSelectionPage = ({ route, navigation }) => {
     },
     divider: {
       marginTop: 8,
-      marginBottom: 16,
+      marginBottom: 26,
+      paddingHorizontal: 16,
     },
   });
 
@@ -76,6 +77,9 @@ const AmityPostTargetSelectionPage = ({ route, navigation }) => {
       <PostTargetItem
         key={item.communityId}
         displayName={item.displayName}
+        // TODO: add logic to check isBadgeShow
+        // isBadgeShow={true}
+        isPrivate={!item.isPublic}
         onSelect={() =>
           onSelectFeed({
             targetId: item.communityId,
@@ -89,7 +93,7 @@ const AmityPostTargetSelectionPage = ({ route, navigation }) => {
   };
 
   return (
-    <>
+    <View style={styles.container}>
       <PostTargetItem
         displayName="My Timeline"
         onSelect={() =>
@@ -102,18 +106,18 @@ const AmityPostTargetSelectionPage = ({ route, navigation }) => {
         avatarFileId={user?.avatarFileId}
       />
       <View style={styles.divider}>
-        <Divider />
+        <Divider
+          theme={{ colors: { outlineVariant: theme.colors.baseShade4 } }}
+        />
       </View>
-      <View style={styles.communityHeader}>
-        <Text>My Communities</Text>
-      </View>
+      <Text style={styles.communityHeader}>My Communities</Text>
       <FlatList
         data={communities}
         renderItem={renderItem}
         onEndReached={onNextCommunityPage}
         keyExtractor={(item) => item.communityId.toString()}
       />
-    </>
+    </View>
   );
 };
 

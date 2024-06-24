@@ -1,6 +1,8 @@
 import React from 'react';
 import { StyleSheet, Text, Image, View, TouchableOpacity } from 'react-native';
 import useFile from '../../../../../hooks/useFile';
+import { useTheme } from 'react-native-paper';
+import type { MyMD3Theme } from '../../../../../providers/amity-ui-kit-provider';
 
 interface IPostTargetItem {
   displayName: string;
@@ -21,6 +23,8 @@ const PostTargetItem = ({
     fileId: avatarFileId,
   });
 
+  const theme = useTheme() as MyMD3Theme;
+
   const styles = StyleSheet.create({
     container: {
       display: 'flex',
@@ -36,6 +40,7 @@ const PostTargetItem = ({
       marginRight: 12,
     },
     displayName: {
+      color: theme.colors.base,
       fontSize: 15,
       fontWeight: '600',
     },
@@ -46,6 +51,7 @@ const PostTargetItem = ({
     lockIcon: {
       width: 20,
       height: 20,
+      tintColor: theme.colors.base,
     },
   });
 
@@ -66,13 +72,13 @@ const PostTargetItem = ({
       {isBadgeShow && (
         <Image
           style={styles.badgeIcon}
-          source={require('../../../../assets/icon/badge.svg')}
+          source={require('../../../../assets/icon/Badge.png')}
         />
       )}
       {isPrivate && (
         <Image
-          style={styles.badgeIcon}
-          source={require('../../../../assets/icon/Private.svg')}
+          style={styles.lockIcon}
+          source={require('../../../../assets/icon/Private.png')}
         />
       )}
     </TouchableOpacity>
