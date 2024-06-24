@@ -12,6 +12,7 @@ import {
   ScrollView,
   Keyboard,
   Alert,
+  Linking,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -42,6 +43,7 @@ import globalFeedSlice from '../../redux/slices/globalfeedSlice';
 import { useDispatch } from 'react-redux';
 import { amityPostsFormatter } from '../../util/postDataFormatter';
 import feedSlice from '../../redux/slices/feedSlice';
+import { useRequestPermission } from '../../v4/hook/useCamera';
 
 export interface IDisplayImage {
   url: string;
@@ -58,6 +60,12 @@ export interface IMentionPosition {
   displayName?: string;
 }
 const CreatePost = ({ route }: any) => {
+  useRequestPermission({
+    onRequestPermissionFailed: () => {
+      Linking.openSettings();
+    },
+    shouldCall: true,
+  });
   const theme = useTheme() as MyMD3Theme;
   const styles = useStyles();
   const { addPostToGlobalFeed } = globalFeedSlice.actions;
@@ -160,16 +168,21 @@ const CreatePost = ({ route }: any) => {
     return;
   };
 
-  const pickCamera = async () => {
-    // const permission = await ImagePicker();
+  const onPressCamera = async () => {
+    if (Platform.OS === 'ios') return pickCamera('mixed');
+    Alert.alert('Open Camera', null, [
+      { text: 'Photo', onPress: async () => await pickCamera('photo') },
+      { text: 'Video', onPress: async () => await pickCamera('video') },
+    ]);
+  };
 
+  const pickCamera = async (mediaType: 'mixed' | 'photo' | 'video') => {
     const result: ImagePicker.ImagePickerResponse = await launchCamera({
-      mediaType: 'mixed',
+      mediaType: mediaType,
       quality: 1,
       presentationStyle: 'fullScreen',
       videoQuality: 'high',
     });
-
     if (
       result.assets &&
       result.assets.length > 0 &&
@@ -467,7 +480,7 @@ const CreatePost = ({ route }: any) => {
         <View style={styles.InputWrap}>
           <TouchableOpacity
             disabled={displayVideos.length > 0 ? true : false}
-            onPress={pickCamera}
+            onPress={onPressCamera}
           >
             <View style={styles.iconWrap}>
               <SvgXml xml={cameraIcon} width="27" height="27" />
