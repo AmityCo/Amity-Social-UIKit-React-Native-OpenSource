@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Image, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, Image, View, TouchableOpacity } from 'react-native';
 import useFile from '../../../../../hooks/useFile';
 
 interface IPostTargetItem {
@@ -28,16 +28,14 @@ const PostTargetItem = ({
       alignItems: 'center',
       paddingHorizontal: 16,
       paddingVertical: 8,
-      gap: 12,
     },
     avatar: {
       width: 40,
       height: 40,
       borderRadius: 20,
-      marginBottom: 10,
+      marginRight: 12,
     },
     displayName: {
-      lineHeight: 20,
       fontSize: 15,
       fontWeight: '600',
     },
@@ -53,30 +51,30 @@ const PostTargetItem = ({
 
   return (
     <TouchableOpacity onPress={onSelect} style={styles.container}>
-      <Image
-        style={styles.avatar}
-        source={
-          // TODO: check default avatar
-          file
-            ? { uri: file }
-            : require('../../../../assets/icon/Placeholder.png')
-        }
-      />
       <View>
-        <Text style={styles.displayName}>{displayName}</Text>
-        {isBadgeShow && (
-          <Image
-            style={styles.badgeIcon}
-            source={require('../../../../assets/icon/badge.svg')}
-          />
-        )}
-        {isPrivate && (
-          <Image
-            style={styles.badgeIcon}
-            source={require('../../../../assets/icon/Private.svg')}
-          />
-        )}
+        <Image
+          style={styles.avatar}
+          source={
+            // TODO: check default avatar
+            file
+              ? { uri: file }
+              : require('../../../../assets/icon/Placeholder.png')
+          }
+        />
       </View>
+      <Text style={styles.displayName}>{displayName}</Text>
+      {isBadgeShow && (
+        <Image
+          style={styles.badgeIcon}
+          source={require('../../../../assets/icon/badge.svg')}
+        />
+      )}
+      {isPrivate && (
+        <Image
+          style={styles.badgeIcon}
+          source={require('../../../../assets/icon/Private.svg')}
+        />
+      )}
     </TouchableOpacity>
   );
 };

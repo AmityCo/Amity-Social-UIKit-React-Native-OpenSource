@@ -1,15 +1,36 @@
 import React from 'react';
-import { View, Text, FlatList } from 'react-native';
+import { Text, FlatList, StyleSheet, View } from 'react-native';
 import { useCommunities, useUser } from '../../../../v4/hook';
 import PostTargetItem from './Components/PostTargetItem';
-import { Divider } from 'react-native-paper';
+import { Divider, useTheme } from 'react-native-paper';
 import useAuth from '../../../../hooks/useAuth';
+import type { MyMD3Theme } from '../../../../providers/amity-ui-kit-provider';
 
 const AmityPostTargetSelectionPage = ({ route, navigation }) => {
   const { client } = useAuth();
   const user = useUser((client as Amity.Client).userId);
   const { communities, onNextCommunityPage } = useCommunities();
   const { postType } = route.params;
+
+  const theme = useTheme() as MyMD3Theme;
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: '#fff',
+    },
+    communityHeader: {
+      color: theme.colors.baseShade1,
+      fontSize: 15,
+      lineHeight: 20,
+      marginBottom: 8,
+      marginHorizontal: 16,
+    },
+    divider: {
+      marginTop: 8,
+      marginBottom: 16,
+    },
+  });
 
   const onSelectFeed = ({
     targetId,
@@ -68,7 +89,7 @@ const AmityPostTargetSelectionPage = ({ route, navigation }) => {
   };
 
   return (
-    <View>
+    <>
       <PostTargetItem
         displayName="My Timeline"
         onSelect={() =>
@@ -80,15 +101,19 @@ const AmityPostTargetSelectionPage = ({ route, navigation }) => {
         }
         avatarFileId={user?.avatarFileId}
       />
-      <Divider />
-      <Text>My Communities</Text>
+      <View style={styles.divider}>
+        <Divider />
+      </View>
+      <View style={styles.communityHeader}>
+        <Text>My Communities</Text>
+      </View>
       <FlatList
         data={communities}
         renderItem={renderItem}
         onEndReached={onNextCommunityPage}
         keyExtractor={(item) => item.communityId.toString()}
       />
-    </View>
+    </>
   );
 };
 
