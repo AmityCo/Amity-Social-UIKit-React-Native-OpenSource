@@ -40,7 +40,7 @@ import Toast from '../../components/Toast/Toast';
 import AmitySocialGlobalSearchPage from '../PublicApi/Pages/AmitySocialGlobalSearchPage/AmitySocialGlobalSearchPage';
 import UserPendingRequest from '../screen/UserPendingRequest/UserPendingRequest';
 import FollowerList from '../screen/FollowerList/FollowerList';
-import CancelButton from '../../components/CancelButton';
+import CancelButton from '../component/CancelButton';
 
 export default function AmitySocialUIKitV4Navigator() {
   const Stack = createNativeStackNavigator<RootStackParamList>();
