@@ -253,7 +253,6 @@ export default function CreateCommunity() {
               {categoryName.length > 0 ? categoryName : 'Select Category'}
             </Text>
             <SvgXml
-              style={styles.arrowIcon}
               xml={arrowOutlined(theme.colors.base)}
               width={15}
               height={15}
@@ -338,7 +337,9 @@ export default function CreateCommunity() {
                             }
                           />
                         </View>
-                        <Text>{displayName(item.displayName)}</Text>
+                        <Text style={styles.memberName}>
+                          {displayName(item.displayName)}
+                        </Text>
                       </View>
                       <TouchableOpacity
                         onPress={() => onDeleteUserPressed(item)}
@@ -361,12 +362,7 @@ export default function CreateCommunity() {
                 style={styles.addIcon}
               >
                 <View style={styles.avatar}>
-                  <SvgXml
-                    style={styles.arrowIcon}
-                    xml={plusIcon(theme.colors.base)}
-                    width={24}
-                    height={24}
-                  />
+                  <SvgXml xml={plusIcon('#000')} width={24} height={24} />
                 </View>
               </Pressable>
             </View>

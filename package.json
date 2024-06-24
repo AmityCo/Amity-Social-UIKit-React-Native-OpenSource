@@ -1,6 +1,6 @@
 {
   "name": "amity-react-native-social-ui-kit",
-  "version": "4.0.0-beta-6",
+  "version": "4.0.0-beta-10",
   "description": "Social UIKit",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -57,6 +57,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "devDependencies": {
+    "@api.video/react-native-livestream": "^2.0.0",
     "@commitlint/config-conventional": "^17.0.2",
     "@evilmartians/lefthook": "^1.2.2",
     "@react-native-community/eslint-config": "^3.0.2",
@@ -87,11 +88,13 @@
     "react-native-builder-bob": "^0.20.0",
     "react-native-create-thumbnail": "^2.0.0",
     "react-native-gesture-handler": "^2.15.0",
+    "react-native-get-random-values": "^1.11.0",
     "react-native-image-picker": "^7.0.0",
     "react-native-push-notification": "^8.1.1",
     "react-native-safe-area-context": "^4.7.2",
     "react-native-svg": "^14.1.0",
     "react-native-vision-camera": "^3.9.1",
+    "react-native-vlc-media-player": "^1.0.67",
     "release-it": "^15.0.0",
     "turbo": "^1.10.7",
     "typescript": "^5.2.2"
@@ -104,6 +107,7 @@
     "@types/react": "17.0.21"
   },
   "peerDependencies": {
+    "@api.video/react-native-livestream": "^2.0.0",
     "@react-native-async-storage/async-storage": "^1.19.3",
     "@react-native-community/netinfo": "^11.3.1",
     "@react-native-community/push-notification-ios": "^1.11.0",
@@ -116,6 +120,7 @@
     "react-native": "*",
     "react-native-create-thumbnail": "^2.0.0",
     "react-native-gesture-handler": "^2.16.0",
+    "react-native-get-random-values": "^1.11.0",
     "react-native-image-picker": "^7.0.0",
     "react-native-netinfo": "^1.1.0",
     "react-native-push-notification": "^8.1.1",
@@ -123,7 +128,8 @@
     "react-native-screens": "^3.25.0",
     "react-native-svg": "^14.1.0",
     "react-native-video": "^6.0.0-beta.6",
-    "react-native-vision-camera": "^3.9.2"
+    "react-native-vision-camera": "^3.9.2",
+    "react-native-vlc-media-player": "^1.0.67"
   },
   "engines": {
     "node": ">= 18.0.0"
@@ -203,7 +209,9 @@
     ]
   },
   "dependencies": {
-    "@amityco/ts-sdk-react-native": "^6.25.0",
+    "@amityco/ts-sdk-react-native": "^6.23.0",
+    "@amityco/video-broadcaster-react-native": "^1.0.0",
+    "@amityco/video-player-react-native": "^1.0.0",
     "@devvie/bottom-sheet": "^0.3.0",
     "@reduxjs/toolkit": "^1.9.7",
     "@rntext/more-or-less": "^2.0.2",
