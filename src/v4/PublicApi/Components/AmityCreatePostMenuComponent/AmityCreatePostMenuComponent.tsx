@@ -45,7 +45,6 @@ export const AmityCreatePostMenuComponent = ({
         });
       }
 
-      console.log('Navigate to PostTargetSelection');
       navigation.navigate('PostTargetSelection', {
         postType,
       });
