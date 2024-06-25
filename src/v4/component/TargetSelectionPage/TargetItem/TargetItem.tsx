@@ -1,10 +1,11 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../../../providers/amity-ui-kit-provider';
 import { ComponentID, PageID, ElementID } from '../../../enum';
 import AvatarElement from '../../../PublicApi/Elements/CommonElements/AvatarElement';
 import ImageElement from '../../../PublicApi/Elements/CommonElements/ImageElement';
+import TextKeyElement from '../../../PublicApi/Elements/TextKeyElement/TextKeyElement';
 import TextElement from '../../../PublicApi/Elements/CommonElements/TextElement';
 
 interface ITargetItem {
@@ -23,7 +24,7 @@ const TargetItem = ({
   pageId = PageID.WildCardPage,
   componentId = ComponentID.WildCardComponent,
   avatarElementId = ElementID.WildCardElement,
-  displayNameElementId = ElementID.WildCardElement,
+  displayNameElementId,
   avatarFileId,
   displayName,
   isBadgeShow,
@@ -64,17 +65,30 @@ const TargetItem = ({
 
   return (
     <TouchableOpacity onPress={onSelect} style={styles.container}>
-      <View>
-        <AvatarElement
-          style={styles.avatar}
+      <AvatarElement
+        style={styles.avatar}
+        pageID={pageId}
+        componentID={componentId}
+        elementID={avatarElementId}
+        avatarId={avatarFileId}
+      />
+      {displayNameElementId ? (
+        <TextKeyElement
           pageID={pageId}
           componentID={componentId}
-          elementID={avatarElementId}
-          avatarId={avatarFileId}
+          elementID={displayNameElementId}
+          style={styles.displayName}
         />
-      </View>
-      <TextElement pageID={pageId} elementID={displayNameElementId} text={''} />
-      <Text style={styles.displayName}>{displayName}</Text>
+      ) : (
+        <TextElement
+          pageID={pageId}
+          componentID={componentId}
+          elementID={ElementID.community_display_name}
+          style={styles.displayName}
+          text={displayName}
+        />
+      )}
+
       {isBadgeShow && (
         <ImageElement
           componentID={componentId}

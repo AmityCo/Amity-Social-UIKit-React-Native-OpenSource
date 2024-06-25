@@ -131,13 +131,18 @@ const TargetSelectionPage = ({
             community: item,
           })
         }
+        avatarElementId={ElementID.community_avatar}
         avatarFileId={item.avatarFileId}
       />
     );
   };
 
   return (
-    <SafeAreaView style={styles.container} testID={accessibilityId}>
+    <SafeAreaView
+      style={styles.container}
+      testID={accessibilityId}
+      accessibilityLabel={accessibilityId}
+    >
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.closeButton}
@@ -157,7 +162,9 @@ const TargetSelectionPage = ({
       </View>
       <TargetItem
         pageId={pageId}
+        displayNameElementId={ElementID.my_timeline_text}
         displayName={(myTimelineConfig?.text as string) || 'My Timeline'}
+        avatarElementId={ElementID.my_timeline_avatar}
         onSelect={() =>
           onSelectFeed({
             targetId: user.userId,

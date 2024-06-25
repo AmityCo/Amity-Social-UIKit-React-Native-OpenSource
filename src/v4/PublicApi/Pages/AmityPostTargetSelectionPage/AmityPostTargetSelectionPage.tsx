@@ -59,14 +59,11 @@ const AmityPostTargetSelectionPage = ({ navigation, route }) => {
     }
 
     if (postType === 'livestream') {
-      if (AmityPostTargetSelectionPageBehavior.goToPollComposerPage) {
-        return AmityPostTargetSelectionPageBehavior.goToPollComposerPage({
+      if (AmityPostTargetSelectionPageBehavior.goToLivestreamComposerPage) {
+        return AmityPostTargetSelectionPageBehavior.goToLivestreamComposerPage({
           targetId,
           targetType,
           targetName,
-          postSetting,
-          needApprovalOnPostCreation,
-          isPublic,
         });
       }
 
