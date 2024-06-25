@@ -42,6 +42,7 @@ import AmitySocialGlobalSearchPage from '../PublicApi/Pages/AmitySocialGlobalSea
 import UserPendingRequest from '../screen/UserPendingRequest/UserPendingRequest';
 import FollowerList from '../screen/FollowerList/FollowerList';
 import AmityPostTargetSelectionPage from '../PublicApi/Pages/AmityPostTargetSelectionPage/AmityPostTargetSelectionPage';
+import AmityStoryTargetSelectionPage from '../PublicApi/Pages/AmityStoryTargetSelectionPage/AmityStoryTargetSelectionPage';
 
 export default function AmitySocialUIKitV4Navigator() {
   const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -269,6 +270,10 @@ export default function AmitySocialUIKitV4Navigator() {
             <Stack.Screen
               name="PostTargetSelection"
               component={AmityPostTargetSelectionPage}
+            />
+            <Stack.Screen
+              name="StoryTargetSelection"
+              component={AmityStoryTargetSelectionPage}
             />
           </Stack.Group>
         </Stack.Navigator>

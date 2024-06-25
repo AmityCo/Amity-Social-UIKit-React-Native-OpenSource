@@ -28,6 +28,7 @@ export interface IBehaviour {
     goToSelectPostTargetPage?: (arg?: {
       postType: 'post' | 'story' | 'poll' | 'livestream';
     }) => void;
+    goToSelectStoryTargetPage?: () => void;
   };
   AmityPostTargetSelectionPageBehavior?: {
     goToPostComposerPage?: (arg?: {

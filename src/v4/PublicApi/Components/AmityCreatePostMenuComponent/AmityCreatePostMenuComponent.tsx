@@ -41,15 +41,23 @@ export const AmityCreatePostMenuComponent = ({
 
   const onPressCreatePost = useCallback(
     (postType: 'post' | 'story' | 'poll' | 'livestream') => {
-      if (AmityCreatePostMenuComponentBehavior.goToSelectPostTargetPage) {
-        return AmityCreatePostMenuComponentBehavior.goToSelectPostTargetPage({
+      if (postType !== 'story') {
+        if (AmityCreatePostMenuComponentBehavior.goToSelectPostTargetPage) {
+          return AmityCreatePostMenuComponentBehavior.goToSelectPostTargetPage({
+            postType,
+          });
+        }
+
+        return navigation.navigate('PostTargetSelection', {
           postType,
         });
       }
 
-      navigation.navigate('PostTargetSelection', {
-        postType,
-      });
+      if (AmityCreatePostMenuComponentBehavior.goToSelectStoryTargetPage) {
+        return AmityCreatePostMenuComponentBehavior.goToSelectStoryTargetPage();
+      }
+
+      navigation.navigate('StoryTargetSelection');
     },
     [AmityCreatePostMenuComponentBehavior, navigation]
   );

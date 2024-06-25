@@ -1,15 +1,22 @@
 import React from 'react';
 import { PageID } from '../../../../v4/enum';
+import { useBehaviour } from '../../../providers/BehaviourProvider';
 
 import TargetSelectionPage, {
   FeedParams,
 } from '../../../component/TargetSelectionPage/TargetSelectionPage';
 
 const AmityStoryTargetSelectionPage = ({ navigation }) => {
-  const onSelectFeed = ({ targetId, targetName, targetType }: FeedParams) => {
+  const { AmityStoryTargetSelectionPageBehavior } = useBehaviour();
+  const onSelectFeed = ({ targetId, targetType }: FeedParams) => {
+    if (AmityStoryTargetSelectionPageBehavior.goToStoryComposerPage) {
+      return AmityStoryTargetSelectionPageBehavior.goToStoryComposerPage({
+        targetId,
+        targetType,
+      });
+    }
     navigation.navigate('CreateStory', {
       targetId,
-      targetName,
       targetType,
     });
   };

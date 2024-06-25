@@ -65,4 +65,5 @@ export type RootStackParamList = {
   UserPendingRequest: undefined;
   FollowerList: Amity.User;
   PostTargetSelection: { postType: 'post' | 'story' | 'poll' | 'livestream' };
+  StoryTargetSelection: undefined;
 };
