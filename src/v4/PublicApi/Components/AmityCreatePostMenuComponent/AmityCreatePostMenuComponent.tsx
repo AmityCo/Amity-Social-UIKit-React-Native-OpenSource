@@ -3,6 +3,9 @@ import { StyleSheet, View } from 'react-native';
 import { ComponentID, ElementID, PageID } from '../../../enum/enumUIKitID';
 import { useAmityComponent } from '../../../hook';
 import { useBehaviour } from '../../../providers/BehaviourProvider';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../../../../v4/routes/RouteParamList';
 import ButtonWithIconElement from '../../Elements/ButtonWithIconElement/ButtonWithIconElement';
 
 interface AmityCreatePostMenuComponentProps {
@@ -14,6 +17,7 @@ export const AmityCreatePostMenuComponent = ({
   pageId = PageID.WildCardPage,
   componentId = ComponentID.WildCardComponent,
 }: AmityCreatePostMenuComponentProps): JSX.Element => {
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const { themeStyles } = useAmityComponent({ pageId, componentId });
 
   const { AmityCreatePostMenuComponentBehavior } = useBehaviour();
@@ -29,17 +33,25 @@ export const AmityCreatePostMenuComponent = ({
 
   const onPressCreatePost = useCallback(
     (postType: 'post' | 'story' | 'poll' | 'livestream') => {
-      if (AmityCreatePostMenuComponentBehavior.goToSelectPostTargetPage) {
-        return AmityCreatePostMenuComponentBehavior.goToSelectPostTargetPage({
+      if (postType !== 'story') {
+        if (AmityCreatePostMenuComponentBehavior.goToSelectPostTargetPage) {
+          return AmityCreatePostMenuComponentBehavior.goToSelectPostTargetPage({
+            postType,
+          });
+        }
+
+        return navigation.navigate('PostTargetSelection', {
           postType,
         });
       }
 
-      return () => {
-        //TODO: implement default behavior
-      };
+      if (AmityCreatePostMenuComponentBehavior.goToSelectStoryTargetPage) {
+        return AmityCreatePostMenuComponentBehavior.goToSelectStoryTargetPage();
+      }
+
+      navigation.navigate('StoryTargetSelection');
     },
-    [AmityCreatePostMenuComponentBehavior]
+    [AmityCreatePostMenuComponentBehavior, navigation]
   );
 
   return (

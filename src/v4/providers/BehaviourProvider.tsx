@@ -20,6 +20,8 @@ export const BehaviourProvider = ({
       AmityEmptyNewsFeedComponent: {},
       AmityMyCommunitiesComponentBehaviour: {},
       AmityCreatePostMenuComponentBehavior: {},
+      AmityPostTargetSelectionPageBehavior: {},
+      AmityStoryTargetSelectionPageBehavior: {},
     }),
     []
   );

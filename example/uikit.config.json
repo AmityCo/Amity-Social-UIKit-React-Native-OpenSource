@@ -304,10 +304,10 @@
       "text": "My Timeline"
     },
     "*/*/community_official_badge": {
-      "image": "community_official_badge"
+      "image": "officialBadgeIcon"
     },
     "*/*/community_private_badge": {
-      "image": "community_private_badge"
+      "image": "lockIcon"
     }
   }
 }

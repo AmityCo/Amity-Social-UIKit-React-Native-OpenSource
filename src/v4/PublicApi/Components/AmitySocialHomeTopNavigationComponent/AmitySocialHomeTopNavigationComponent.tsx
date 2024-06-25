@@ -1,7 +1,7 @@
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import React, { FC, memo, useCallback } from 'react';
 
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../../routes/RouteParamList';
 import {
@@ -90,6 +90,12 @@ const AmitySocialHomeTopNavigationComponent: FC<
       tintColor: theme.colors.base,
     },
   });
+
+  useFocusEffect(
+    useCallback(() => {
+      return () => setIsOpen(false);
+    }, [setIsOpen])
+  );
 
   const onPressSearch = useCallback(() => {
     if (myCommunitiesTab === activeTab) {
