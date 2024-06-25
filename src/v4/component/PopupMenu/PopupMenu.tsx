@@ -1,5 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Animated, StyleSheet, View, ViewStyle } from 'react-native';
+import {
+  Animated,
+  StyleSheet,
+  ViewStyle,
+  Dimensions,
+  Pressable,
+} from 'react-native';
 
 interface PopupProps {
   children: React.ReactNode;
@@ -11,18 +17,28 @@ interface PopupProps {
     left?: number;
     bottom?: number;
   };
+  setOpen: (open: boolean) => void;
 }
 
-const Popup: React.FC<PopupProps> = ({ open, position, style, children }) => {
+const Popup: React.FC<PopupProps> = ({
+  open,
+  setOpen,
+  position,
+  style,
+  children,
+}) => {
   const [visible, setVisible] = useState(true);
+  const { width, height } = Dimensions.get('screen');
 
   const styles = StyleSheet.create({
-    container: {
-      position: 'relative',
-      width: 0,
-      height: 0,
+    outer: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      width,
+      height,
     },
-    popupPosition: {
+    container: {
       position: 'absolute',
       ...position,
     },
@@ -75,15 +91,18 @@ const Popup: React.FC<PopupProps> = ({ open, position, style, children }) => {
   if (!visible) return null;
 
   return (
-    <Animated.View
-      style={[
-        styles.container,
-        { opacity, transform: [{ translateY }] },
-        style,
-      ]}
-    >
-      <View style={styles.popupPosition}>{children}</View>
-    </Animated.View>
+    <>
+      <Pressable style={styles.outer} onPress={() => setOpen(false)} />
+      <Animated.View
+        style={[
+          styles.container,
+          { opacity, transform: [{ translateY }] },
+          style,
+        ]}
+      >
+        {children}
+      </Animated.View>
+    </>
   );
 };
 
