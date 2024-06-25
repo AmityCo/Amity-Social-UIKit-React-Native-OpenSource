@@ -23,8 +23,8 @@ const NewsFeedLoadingComponent = () => {
             height={70}
             speed={0.5}
             width={70}
-            backgroundColor={theme.colors.base}
-            foregroundColor={theme.colors.baseShade4}
+            backgroundColor={theme.colors.baseShade4}
+            foregroundColor={theme.colors.baseShade2}
             viewBox="0 0 70 70"
           >
             <Circle cx="25" cy="25" r="25" />
@@ -36,8 +36,8 @@ const NewsFeedLoadingComponent = () => {
         height={70}
         speed={0.5}
         width={width}
-        backgroundColor={theme.colors.base}
-        foregroundColor={theme.colors.baseShade4}
+        backgroundColor={theme.colors.baseShade4}
+        foregroundColor={theme.colors.baseShade2}
         viewBox={`0 0 ${width} 70`}
       >
         <Rect x="0" y="34" rx="4" ry="4" width="300" height="13" />
@@ -46,10 +46,11 @@ const NewsFeedLoadingComponent = () => {
         <View key={i}>
           <Facebook
             width={width}
-            foregroundColor={theme.colors.baseShade4}
+            backgroundColor={theme.colors.baseShade4}
+            foregroundColor={theme.colors.baseShade2}
             speed={0.5}
           />
-          <Divider />
+          <Divider style={{ backgroundColor: theme.colors.baseShade2 }} />
         </View>
       ))}
     </View>

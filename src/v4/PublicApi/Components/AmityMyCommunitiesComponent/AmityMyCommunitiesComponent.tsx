@@ -131,8 +131,8 @@ const AmityMyCommunitiesComponent: FC<AmityMyCommunitiesComponentType> = ({
             height={70}
             speed={0.5}
             width={380}
-            backgroundColor={'#d2d2d2'}
-            foregroundColor={'#eee'}
+            backgroundColor={themeStyles.colors.baseShade4}
+            foregroundColor={themeStyles.colors.baseShade2}
             viewBox="-10 -10 380 70"
           >
             <Rect x="48" y="8" rx="3" ry="3" width="188" height="6" />
@@ -142,7 +142,7 @@ const AmityMyCommunitiesComponent: FC<AmityMyCommunitiesComponentType> = ({
         </View>
       );
     });
-  }, [styles.skeletonLoadingContainer]);
+  }, [styles.skeletonLoadingContainer, themeStyles]);
 
   if (isExcluded) return null;
 

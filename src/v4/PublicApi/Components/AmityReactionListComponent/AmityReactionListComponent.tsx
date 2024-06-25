@@ -30,6 +30,8 @@ import { RootStackParamList } from '../../../routes/RouteParamList';
 import { defaultAvatarUri } from '../../../assets';
 import { UserRepository } from '@amityco/ts-sdk-react-native';
 import { formatNumber } from '../../../../util/numberUtil';
+import { useTheme } from 'react-native-paper';
+import { MyMD3Theme } from '~/providers/amity-ui-kit-provider';
 
 type AmityReactionListComponentType = {
   referenceId: string;
@@ -47,6 +49,7 @@ const AmityReactionListComponent: FC<AmityReactionListComponentType> = ({
   onCloseModal,
 }) => {
   const styles = useStyles();
+  const theme = useTheme() as MyMD3Theme;
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const [reactors, setReactors] = useState<ReactionListType[]>([]);
   const [selectedReactionIndex, setSelectedReactionIndex] = useState<number>(0);
@@ -126,8 +129,8 @@ const AmityReactionListComponent: FC<AmityReactionListComponentType> = ({
           height={70}
           speed={1}
           width={380}
-          backgroundColor={'#d2d2d2'}
-          foregroundColor={'#eee'}
+          backgroundColor={theme.colors.baseShade4}
+          foregroundColor={theme.colors.baseShade2}
           viewBox="-10 -10 380 70"
         >
           <Rect x="48" y="8" rx="3" ry="3" width="188" height="6" />
@@ -136,7 +139,7 @@ const AmityReactionListComponent: FC<AmityReactionListComponentType> = ({
         </ContentLoader>
       );
     });
-  }, []);
+  }, [theme]);
 
   const onPressReactor = useCallback(
     (userId: string) => {
