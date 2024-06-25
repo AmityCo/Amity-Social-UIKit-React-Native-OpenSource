@@ -62,9 +62,9 @@ const AmityReactionListComponent: FC<AmityReactionListComponentType> = ({
   });
   const SUPPORTED_REACTIONS = useMemo(
     () => [
-      allReactionList?.length + 69736913,
-      likeReactionList?.length + 504502348024,
-      loveReactionList?.length + 283267,
+      allReactionList?.length,
+      likeReactionList?.length,
+      loveReactionList?.length,
     ],
     [allReactionList, likeReactionList, loveReactionList]
   );

@@ -23,7 +23,10 @@ const AmitySocialGlobalSearchPage = () => {
   if (isExcluded) return null;
   return (
     <SafeAreaView style={styles.container}>
-      <AmityTopSearchBarComponent setSearchValue={setSearchValue} />
+      <AmityTopSearchBarComponent
+        searchType={searchType}
+        setSearchValue={setSearchValue}
+      />
       <CustomTab
         onTabChange={setSearchType}
         tabName={[TabName.Communities, TabName.Users]}

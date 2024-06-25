@@ -3,14 +3,16 @@ import React, { memo, useCallback, useState } from 'react';
 import { useStyles } from './styles';
 import { useNavigation } from '@react-navigation/native';
 import { useUiKitConfig, useConfigImageUri } from '../../../hook';
-import { ComponentID, ElementID, PageID } from '../../../enum';
+import { ComponentID, ElementID, PageID, TabName } from '../../../enum';
 
 type AmityTopSearchBarComponentType = {
   setSearchValue: (arg: string) => void;
+  searchType: TabName;
 };
 
 const AmityTopSearchBarComponent = ({
   setSearchValue,
+  searchType,
 }: AmityTopSearchBarComponentType) => {
   const styles = useStyles();
   const navigation = useNavigation();
@@ -68,7 +70,11 @@ const AmityTopSearchBarComponent = ({
           value={inputValue}
           style={styles.input}
           onChangeText={onChangeText}
-          placeholder="Search community and user"
+          placeholder={
+            searchType === TabName.MyCommunities
+              ? 'Search my community'
+              : 'Search community and user'
+          }
           placeholderTextColor="grey"
         />
         {inputValue?.length > 0 && (

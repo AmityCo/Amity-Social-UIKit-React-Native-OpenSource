@@ -23,7 +23,10 @@ const AmityMyCommunitiesSearchPage = () => {
   if (isExcluded) return null;
   return (
     <SafeAreaView style={styles.container}>
-      <AmityTopSearchBarComponent setSearchValue={setSearchValue} />
+      <AmityTopSearchBarComponent
+        searchType={searchType}
+        setSearchValue={setSearchValue}
+      />
       {searchValue && searchResult?.length === 0 ? (
         <NoSearchResult />
       ) : (
