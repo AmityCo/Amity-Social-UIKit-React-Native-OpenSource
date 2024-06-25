@@ -135,7 +135,7 @@ const AmitySocialHomeTopNavigationComponent = () => {
           open={isOpen}
           position={{
             top: 45,
-            right: 10,
+            right: 15,
           }}
         >
           <AmityCreatePostMenuComponent

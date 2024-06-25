@@ -40,6 +40,14 @@ const Popup: React.FC<PopupProps> = ({
     },
     container: {
       position: 'absolute',
+      shadowColor: '#000',
+      shadowOffset: {
+        width: 0,
+        height: 6,
+      },
+      shadowOpacity: 0.16,
+      shadowRadius: 16,
+      elevation: 8, // for android
       ...position,
     },
   });
