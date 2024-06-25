@@ -94,6 +94,8 @@ const TargetSelectionPage = ({
       position: 'absolute',
       left: 18,
       top: 30,
+      width: 24,
+      height: 24,
     },
     title: {
       fontSize: 17,
@@ -139,7 +141,10 @@ const TargetSelectionPage = ({
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.closeButton}
-          onPress={() => navigation.goBack()}
+          onPress={() => {
+            console.log('navigation');
+            navigation.goBack();
+          }}
         >
           <CloseButtonIconElement
             style={styles.closeIcon}
