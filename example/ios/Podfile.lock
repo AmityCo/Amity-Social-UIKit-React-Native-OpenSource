@@ -1,7 +1,9 @@
 PODS:
-  - amity-react-native-social-ui-kit (4.0.0-beta-6):
+  - amity-react-native-social-ui-kit (4.0.0-beta-11):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
+  - ApiVideoLiveStream (1.4.1):
+    - HaishinKit (= 1.7.3)
   - boost (1.76.0)
   - CocoaAsyncSocket (7.6.5)
   - DoubleConversion (1.1.6)
@@ -149,10 +151,14 @@ PODS:
   - GoogleUtilities/UserDefaults (7.13.3):
     - GoogleUtilities/Logger
     - GoogleUtilities/Privacy
+  - HaishinKit (1.7.3):
+    - Logboard (~> 2.4.1)
   - hermes-engine (0.72.4):
     - hermes-engine/Pre-built (= 0.72.4)
   - hermes-engine/Pre-built (0.72.4)
   - libevent (2.1.12)
+  - Logboard (2.4.2)
+  - MobileVLCKit (3.5.1)
   - nanopb (2.30910.0):
     - nanopb/decode (= 2.30910.0)
     - nanopb/encode (= 2.30910.0)
@@ -464,12 +470,20 @@ PODS:
     - glog
   - react-native-create-thumbnail (2.0.0):
     - React-Core
+  - react-native-get-random-values (1.11.0):
+    - React-Core
   - react-native-image-picker (7.1.2):
+    - RCT-Folly (= 2021.07.22.00)
+    - React-Core
+  - react-native-livestream (2.0.0):
+    - ApiVideoLiveStream (= 1.4.1)
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
   - react-native-netinfo (11.3.2):
     - React-Core
-  - react-native-safe-area-context (4.10.4):
+  - react-native-rsa-native (2.0.5):
+    - React
+  - react-native-safe-area-context (4.10.5):
     - React-Core
   - react-native-video (6.0.0-beta.6):
     - React-Core
@@ -479,6 +493,10 @@ PODS:
     - PromisesSwift
     - React-Core
     - SPTPersistentCache (~> 1.1.0)
+  - react-native-vlc-media-player (1.0.38):
+    - MobileVLCKit (= 3.5.1)
+    - React
+    - TVVLCKit (= 3.5.1)
   - React-NativeModulesApple (0.72.4):
     - hermes-engine
     - React-callinvoker
@@ -601,10 +619,10 @@ PODS:
     - FirebaseCoreExtension
     - React-Core
     - RNFBApp
-  - RNGestureHandler (2.16.2):
+  - RNGestureHandler (2.17.1):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
-  - RNScreens (3.31.1):
+  - RNScreens (3.32.0):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
     - React-RCTImage
@@ -671,10 +689,14 @@ DEPENDENCIES:
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - react-native-create-thumbnail (from `../node_modules/react-native-create-thumbnail`)
+  - react-native-get-random-values (from `../node_modules/react-native-get-random-values`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
+  - "react-native-livestream (from `../node_modules/@api.video/react-native-livestream`)"
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
+  - react-native-rsa-native (from `../node_modules/react-native-rsa-native`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-video (from `../node_modules/react-native-video`)
+  - react-native-vlc-media-player (from `../node_modules/react-native-vlc-media-player`)
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
@@ -705,6 +727,7 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
+    - ApiVideoLiveStream
     - CocoaAsyncSocket
     - DVAssetLoaderDelegate
     - Firebase
@@ -724,7 +747,10 @@ SPEC REPOS:
     - fmt
     - GoogleDataTransport
     - GoogleUtilities
+    - HaishinKit
     - libevent
+    - Logboard
+    - MobileVLCKit
     - nanopb
     - OpenSSL-Universal
     - PromisesObjC
@@ -781,14 +807,22 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/logger"
   react-native-create-thumbnail:
     :path: "../node_modules/react-native-create-thumbnail"
+  react-native-get-random-values:
+    :path: "../node_modules/react-native-get-random-values"
   react-native-image-picker:
     :path: "../node_modules/react-native-image-picker"
+  react-native-livestream:
+    :path: "../node_modules/@api.video/react-native-livestream"
   react-native-netinfo:
     :path: "../node_modules/@react-native-community/netinfo"
+  react-native-rsa-native:
+    :path: "../node_modules/react-native-rsa-native"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
   react-native-video:
     :path: "../node_modules/react-native-video"
+  react-native-vlc-media-player:
+    :path: "../node_modules/react-native-vlc-media-player"
   React-NativeModulesApple:
     :path: "../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios"
   React-perflogger:
@@ -843,7 +877,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
-  amity-react-native-social-ui-kit: 1e3874790b66cca48d6eae9733cba01d047abfa2
+  amity-react-native-social-ui-kit: c8ff24d2425870bea86d214ed22765ec3426c232
+  ApiVideoLiveStream: 8f9dce7f6d15d5e4bb3c7a25e406bf2a36337a5a
   boost: 57d2868c099736d80fcd648bf211b4431e51a558
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
   DoubleConversion: 5189b271737e1565bdce30deb4a08d647e3f5f54
@@ -868,8 +903,11 @@ SPEC CHECKSUMS:
   glog: 04b94705f318337d7ead9e6d17c019bd9b1f6b1b
   GoogleDataTransport: 6c09b596d841063d76d4288cc2d2f42cc36e1e2a
   GoogleUtilities: ea963c370a38a8069cc5f7ba4ca849a60b6d7d15
+  HaishinKit: 326e27c4d06427ba53bffc68e516a92033293051
   hermes-engine: 81191603c4eaa01f5e4ae5737a9efcf64756c7b2
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
+  Logboard: 759d82599c439945d430d5a0958455b5a1974a0c
+  MobileVLCKit: 144d5f565512d1147d63b0fa1379231b3fd66535
   nanopb: 438bc412db1928dac798aa6fd75726007be04262
   OpenSSL-Universal: ebc357f1e6bc71fa463ccb2fe676756aff50e88c
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
@@ -890,10 +928,14 @@ SPEC CHECKSUMS:
   React-jsinspector: aaed4cf551c4a1c98092436518c2d267b13a673f
   React-logger: da1ebe05ae06eb6db4b162202faeafac4b435e77
   react-native-create-thumbnail: ab55d24aea01723cf386f18b0b542aabb1982f27
+  react-native-get-random-values: 21325b2244dfa6b58878f51f9aa42821e7ba3d06
   react-native-image-picker: 51fdb07f7ef722988c8a219e1416153760a25e4d
+  react-native-livestream: fc8ae79f3ae12060cdf38f563bce2c6295ad5df9
   react-native-netinfo: 076df4f9b07f6670acf4ce9a75aac8d34c2e2ccc
-  react-native-safe-area-context: 399a5859f6acbdf67f671c69b53113f535f3b5b0
+  react-native-rsa-native: 12132eb627797529fdb1f0d22fd0f8f9678df64a
+  react-native-safe-area-context: a240ad4b683349e48b1d51fed1611138d1bdad97
   react-native-video: 67dfeb21caa4b24629af4df1ff0b467c8174926f
+  react-native-vlc-media-player: 0f9860bded57cd6764ac55b5c0e97347069cb40a
   React-NativeModulesApple: edb5ace14f73f4969df6e7b1f3e41bef0012740f
   React-perflogger: 496a1a3dc6737f964107cb3ddae7f9e265ddda58
   React-RCTActionSheet: 02904b932b50e680f4e26e7a686b33ebf7ef3c00
@@ -915,8 +957,8 @@ SPEC CHECKSUMS:
   RNCPushNotificationIOS: 64218f3c776c03d7408284a819b2abfda1834bc8
   RNFBApp: dd35ba8340b89c36e42c4c137915c01d3c792143
   RNFBMessaging: c8d34d9ad44a3258a77e548bba6dc3561af7cf2d
-  RNGestureHandler: d678f94a8f74de70ce3d9f5d23eb0f97b686e943
-  RNScreens: 93ae3be2f119d955620f9bbb39ad372adb53b7a9
+  RNGestureHandler: bbb8e17b10afdafc5cc5746e8f60772236e7e2ca
+  RNScreens: 0bd9eec783bed1032e02a4db9976dae1664a5c7b
   RNSVG: 963a95f1f5d512a13d11ffd50d351c87fb5c6890
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   SPTPersistentCache: df36ea46762d7cf026502bbb86a8b79d0080dff4
@@ -924,6 +966,6 @@ SPEC CHECKSUMS:
   Yoga: 3efc43e0d48686ce2e8c60f99d4e6bd349aff981
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 874773ba342acc62f865fea5b7d7334d9b1fd55b
+PODFILE CHECKSUM: 4e971a0072a3c891d69e19bbda67877f709879a9
 
 COCOAPODS: 1.14.3

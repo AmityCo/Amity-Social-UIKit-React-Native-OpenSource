@@ -35,34 +35,40 @@ const SearchResultItem: FC<SearchResultItemType> = ({
     useNavigation() as NativeStackNavigationProp<RootStackParamList>;
   const [communityCategory, setCommunityCategory] =
     useState<Amity.Category>(null);
-  const isCommunity = searchType === TabName.Communities;
+  const isCommunity =
+    searchType === TabName.Communities || searchType === TabName.MyCommunities;
   const showPrivateIcon = isCommunity && !item.isPublic;
   const showOfficialBadgeIcon = isCommunity && item.isOfficial;
   const memberText = item?.membersCount > 1 ? 'members' : 'member';
 
   const onPressSearchResultItem = useCallback(() => {
-    if (AmityCommunitySearchResultComponent.onPressSearchResultItem)
-      return AmityCommunitySearchResultComponent.onPressSearchResultItem({
-        targetId: item.communityId ?? item.userId,
-        targetType: searchType as TabName.Communities | TabName.Users,
-      });
-    if (searchType === TabName.Communities) {
-      navigation.navigate('CommunityHome', {
+    if (isCommunity) {
+      if (AmityCommunitySearchResultComponent.goToCommunityProfilePage) {
+        return AmityCommunitySearchResultComponent.goToCommunityProfilePage({
+          targetId: item.communityId,
+          targetType: TabName.Communities,
+        });
+      }
+      return navigation.navigate('CommunityHome', {
         communityId: item.communityId,
         communityName: item.displayName,
       });
-    } else {
-      navigation.navigate('UserProfile', {
-        userId: item.userId,
-      });
     }
+    if (AmityCommunitySearchResultComponent.goToUserProfilePage)
+      return AmityCommunitySearchResultComponent.goToUserProfilePage({
+        targetId: item.communityId ?? item.userId,
+        targetType: TabName.Users,
+      });
+    return navigation.navigate('UserProfile', {
+      userId: item.userId,
+    });
   }, [
     AmityCommunitySearchResultComponent,
+    isCommunity,
     item.communityId,
     item.displayName,
     item.userId,
     navigation,
-    searchType,
   ]);
 
   useEffect(() => {

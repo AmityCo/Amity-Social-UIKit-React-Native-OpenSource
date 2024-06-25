@@ -33,6 +33,7 @@ export interface IPost {
   childrenPosts: string[];
   mentionees: string[];
   mentionPosition?: IMentionPosition[];
+  path: string;
 }
 export interface IPendingPostList {
   onAcceptDecline?: (postId: string) => void;

@@ -3,7 +3,7 @@ import { IConfigRaw } from '../types/config.interface';
 import { useDarkMode } from './useDarkMode';
 import { useTheme } from 'react-native-paper';
 
-export const mergeTheme = (obj1: MyMD3Theme['colors'], obj2: Object) => {
+const mergeTheme = (obj1: MyMD3Theme['colors'], obj2: Object) => {
   for (let key in obj2) {
     if (obj2.hasOwnProperty(key) && obj1.hasOwnProperty(key)) {
       obj1[key] = obj2[key];
