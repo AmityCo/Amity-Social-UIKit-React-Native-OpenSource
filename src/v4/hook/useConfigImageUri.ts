@@ -90,7 +90,9 @@ export const useConfigImageUri = ({
       image = require('../configAssets/icons/create_livestream_button.png');
     }
     if (fileUri === 'close_button') {
-      image = require('../configAssets/icons/close_button.png');
+      image = isDarkTheme
+        ? require('../configAssets/icons/close_button_dark.png')
+        : require('../configAssets/icons/close_button_light.png');
     }
     if (typeof image === 'number') {
       return Image.resolveAssetSource(image)?.uri ?? defaultAvatarUri;

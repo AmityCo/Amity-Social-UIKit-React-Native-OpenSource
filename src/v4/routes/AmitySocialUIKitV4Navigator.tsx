@@ -30,7 +30,6 @@ import { SvgXml } from 'react-native-svg';
 import { closeIcon } from '../../svg/svg-xml-list';
 import { useStyles } from '../../routes/style';
 import BackButton from '../../components/BackButton';
-import CloseButton from '../../components/CloseButton';
 import EditCommunity from '../../screens/EditCommunity/EditCommunity';
 import VideoPlayerFull from '../../screens/VideoPlayerFullScreen';
 import PostTypeChoiceModal from '../../components/PostTypeChoiceModal/PostTypeChoiceModal';
@@ -43,6 +42,8 @@ import UserPendingRequest from '../screen/UserPendingRequest/UserPendingRequest'
 import FollowerList from '../screen/FollowerList/FollowerList';
 import AmityPostTargetSelectionPage from '../PublicApi/Pages/AmityPostTargetSelectionPage/AmityPostTargetSelectionPage';
 import AmityStoryTargetSelectionPage from '../PublicApi/Pages/AmityStoryTargetSelectionPage/AmityStoryTargetSelectionPage';
+import CancelButton from '../component/CancelButton';
+import AmityMyCommunitiesSearchPage from '../PublicApi/Pages/AmityMyCommunitiesSearchPage/AmityMyCommunitiesSearchPage';
 
 export default function AmitySocialUIKitV4Navigator() {
   const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -77,6 +78,13 @@ export default function AmitySocialUIKitV4Navigator() {
             component={AmitySocialGlobalSearchPage}
             options={{
               headerShown: false, // Remove the back button
+            }}
+          />
+          <Stack.Screen
+            name="AmityMyCommunitiesSearchPage"
+            component={AmityMyCommunitiesSearchPage}
+            options={{
+              headerShown: false,
             }}
           />
           <Stack.Screen name="Explore" component={Explore} />
@@ -212,12 +220,8 @@ export default function AmitySocialUIKitV4Navigator() {
           <Stack.Screen
             name="EditCommunity"
             component={EditCommunity}
-            options={({
-              navigation,
-            }: {
-              navigation: NativeStackNavigationProp<any>;
-            }) => ({
-              headerLeft: () => <CloseButton navigation={navigation} />,
+            options={() => ({
+              headerLeft: () => <CancelButton />,
               title: 'Edit Profile',
               headerTitleAlign: 'center',
             })}

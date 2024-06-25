@@ -5,13 +5,18 @@ export interface IBehaviour {
     onChooseTab?: (arg?: string) => void;
   };
   AmitySocialHomeTopNavigationComponentBehaviour?: {
-    onPressSearch?: () => void;
+    goToGlobalSearchPage?: () => void;
+    goToMyCommunitiesSearchPage?: () => void;
     onPressCreate?: () => void;
   };
   AmityCommunitySearchResultComponent?: {
-    onPressSearchResultItem?: (arg?: {
+    goToCommunityProfilePage?: (arg?: {
       targetId: string;
-      targetType: TabName.Communities | TabName.Users;
+      targetType: TabName.Communities;
+    }) => void;
+    goToUserProfilePage?: (arg?: {
+      targetId: string;
+      targetType: TabName.Users;
     }) => void;
   };
   AmityEmptyNewsFeedComponent?: {

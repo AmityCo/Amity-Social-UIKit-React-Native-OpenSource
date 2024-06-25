@@ -6,8 +6,7 @@ import {
   PageID,
   UiKitConfigKeys,
 } from '../../../enum/enumUIKitID';
-import useConfig from '../../../hook/useConfig';
-import { useConfigImageUri } from '../../../hook';
+import { useAmityElement, useConfigImageUri } from '../../../hook';
 
 type ImageElementType = Partial<ImageProps> & {
   pageID?: PageID;
@@ -17,14 +16,17 @@ type ImageElementType = Partial<ImageProps> & {
 };
 
 const ImageElement: FC<ImageElementType> = ({
-  pageID = '*',
-  componentID = '*',
+  pageID = PageID.WildCardPage,
+  componentID = ComponentID.WildCardComponent,
   elementID,
   configKey,
   ...props
 }) => {
-  const { excludes } = useConfig();
-  const configId = `${pageID}/${componentID}/${elementID}`;
+  const { accessibilityId, isExcluded } = useAmityElement({
+    pageId: pageID,
+    componentId: componentID,
+    elementId: elementID,
+  });
   const imageSource = useConfigImageUri({
     configPath: {
       page: pageID,
@@ -33,12 +35,12 @@ const ImageElement: FC<ImageElementType> = ({
     },
     configKey: configKey,
   });
-  if (excludes.includes(configId)) return null;
+  if (isExcluded) return null;
 
   return (
     <Image
-      testID={configId}
-      accessibilityLabel={configId}
+      testID={accessibilityId}
+      accessibilityLabel={accessibilityId}
       source={props.source ?? imageSource}
       {...props}
     />

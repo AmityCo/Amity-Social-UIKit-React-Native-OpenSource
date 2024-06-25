@@ -8,6 +8,8 @@ import CustomTab from '../../../component/CustomTab';
 import AmityCommunitySearchResultComponent from '../../Components/AmityCommunitySearchResultComponent/AmityCommunitySearchResultComponent';
 import { PageID } from '../../../enum';
 import { useAmityPage } from '../../../hook';
+import AmityUserSearchResultComponent from '../../Components/AmityUserSearchResultComponent/AmityUserSearchResultComponent';
+import NoSearchResult from '../../../component/NoSearchResult/NoSearchResult';
 
 const AmitySocialGlobalSearchPage = () => {
   const pageId = PageID.social_global_search_page;
@@ -17,8 +19,7 @@ const AmitySocialGlobalSearchPage = () => {
   const [searchType, setSearchType] = useState(TabName.Communities);
   const { searchResult, onNextCommunityPage, onNextUserPage } =
     useAmityGlobalSearchViewModel(searchValue, searchType);
-  const onNextPage =
-    searchType === TabName.Communities ? onNextCommunityPage : onNextUserPage;
+  const isCommunity = searchType === TabName.Communities;
   if (isExcluded) return null;
   return (
     <SafeAreaView style={styles.container}>
@@ -27,12 +28,22 @@ const AmitySocialGlobalSearchPage = () => {
         onTabChange={setSearchType}
         tabName={[TabName.Communities, TabName.Users]}
       />
-      <AmityCommunitySearchResultComponent
-        pageId={pageId}
-        searchType={searchType}
-        searchResult={searchResult}
-        onNextPage={onNextPage}
-      />
+      {searchValue && searchResult?.length === 0 ? (
+        <NoSearchResult />
+      ) : isCommunity ? (
+        <AmityCommunitySearchResultComponent
+          pageId={pageId}
+          searchType={searchType}
+          searchResult={searchResult}
+          onNextPage={onNextCommunityPage}
+        />
+      ) : (
+        <AmityUserSearchResultComponent
+          pageId={pageId}
+          searchResult={searchResult}
+          onNextPage={onNextUserPage}
+        />
+      )}
     </SafeAreaView>
   );
 };

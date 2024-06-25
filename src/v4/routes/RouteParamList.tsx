@@ -3,6 +3,7 @@ import { AmityPostComposerPageType } from '../PublicApi/types';
 export type RootStackParamList = {
   Home: { postIdCallBack?: string };
   AmitySocialGlobalSearchPage: undefined;
+  AmityMyCommunitiesSearchPage: undefined;
   CommunitySearch: undefined;
   CommunityMemberDetail: {
     communityId: string;
