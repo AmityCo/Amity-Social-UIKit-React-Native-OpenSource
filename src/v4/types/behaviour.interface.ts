@@ -9,6 +9,17 @@ export interface IBehaviour {
     goToMyCommunitiesSearchPage?: () => void;
     onPressCreate?: () => void;
   };
+  AmityGlobalFeedComponentBehavior?: {
+    goToPostDetailPage?: (arg?: string) => void;
+  };
+  AmityPostContentComponentBehavior?: {
+    goToCommunityProfilePage?: (arg?: {
+      communityId?: string;
+      communityName?: string;
+    }) => void;
+    goToUserProfilePage?: (arg?: { userId?: string }) => void;
+    goToPostComposerPage?: () => void;
+  };
   AmityCommunitySearchResultComponent?: {
     goToCommunityProfilePage?: (arg?: {
       targetId: string;
