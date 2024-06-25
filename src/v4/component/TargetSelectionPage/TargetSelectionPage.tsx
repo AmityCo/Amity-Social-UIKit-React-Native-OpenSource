@@ -86,14 +86,14 @@ const TargetSelectionPage = ({
       alignItems: 'center',
     },
     closeIcon: {
-      width: 24,
-      height: 24,
+      width: 12,
+      height: 12,
       tintColor: theme.colors.base,
     },
     closeButton: {
       position: 'absolute',
-      left: 12,
-      top: 18,
+      left: 18,
+      top: 30,
     },
     title: {
       fontSize: 17,
