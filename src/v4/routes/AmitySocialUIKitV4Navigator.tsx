@@ -41,6 +41,7 @@ import AmitySocialGlobalSearchPage from '../PublicApi/Pages/AmitySocialGlobalSea
 import UserPendingRequest from '../screen/UserPendingRequest/UserPendingRequest';
 import FollowerList from '../screen/FollowerList/FollowerList';
 import CancelButton from '../component/CancelButton';
+import AmityMyCommunitiesSearchPage from '../PublicApi/Pages/AmityMyCommunitiesSearchPage/AmityMyCommunitiesSearchPage';
 
 export default function AmitySocialUIKitV4Navigator() {
   const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -75,6 +76,13 @@ export default function AmitySocialUIKitV4Navigator() {
             component={AmitySocialGlobalSearchPage}
             options={{
               headerShown: false, // Remove the back button
+            }}
+          />
+          <Stack.Screen
+            name="AmityMyCommunitiesSearchPage"
+            component={AmityMyCommunitiesSearchPage}
+            options={{
+              headerShown: false,
             }}
           />
           <Stack.Screen name="Explore" component={Explore} />

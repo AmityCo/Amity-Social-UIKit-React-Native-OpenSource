@@ -98,7 +98,7 @@ const AmitySocialHomePage = () => {
         backgroundColor: theme.colors.background,
       }}
     >
-      <AmitySocialHomeTopNavigationComponent />
+      <AmitySocialHomeTopNavigationComponent activeTab={activeTab} />
       <CustomSocialTab
         tabNames={[newsFeedTab, exploreTab, myCommunitiesTab]}
         onTabChange={onTabChange}
