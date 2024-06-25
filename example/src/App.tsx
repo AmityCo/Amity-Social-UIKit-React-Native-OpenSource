@@ -1,9 +1,10 @@
 import * as React from 'react';
 
 
-import { AmityUiKitProvider, AmityUiKitSocial, ExplorePage, MyCommunityPage, Newsfeed, UserProfile, CommunityHome } from '@amityco/react-native-social-ui-kit';
+import { AmityUiKitProvider, AmityUiKitSocial, ExplorePage, MyCommunityPage, Newsfeed, UserProfile, CommunityHome, MyUserProfile } from '@amityco/react-native-social-ui-kit';
 
 import config from '../uikit.config.json';
+
 
 export default function App() {
 
@@ -16,7 +17,7 @@ export default function App() {
       displayName="topAmity"
       apiEndpoint="https://api.sg.amity.co"
     >
-      <CommunityHome />
+      <MyUserProfile />
     </AmityUiKitProvider>
   );
 }

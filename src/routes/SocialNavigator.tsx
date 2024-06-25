@@ -20,7 +20,7 @@ import UserProfile from '../screens/UserProfile/UserProfile';
 import { EditProfile } from '../screens/EditProfile/EditProfile';
 import UserProfileSetting from '../screens/UserProfileSetting/UserProfileSetting';
 import CommunitySearch from '../screens/CommunitySearch';
-import AllMyCommunity from '../screens/AllMyCommunity';
+
 import CreateCommunity from '../screens/CreateCommunity';
 import PendingPosts from '../screens/PendingPosts';
 import type { MyMD3Theme } from '../providers/amity-ui-kit-provider';
@@ -37,9 +37,9 @@ import { ThreeDotsIcon } from '../svg/ThreeDotsIcon';
 import AmitySocialGlobalSearchPage from '../screens/AmitySocialGlobalSearchPage/AmitySocialGlobalSearchPage';
 import AmityMyCommunitiesComponent from '../components/AmityMyCommunitiesComponent/AmityMyCommunitiesComponent';
 import AmityNewsFeedComponent from '../components/AmityNewsFeedComponent/AmityNewsFeedComponent';
-import { useCommunities } from '../hooks/useCommunities';
-import { CommunityRepository } from '@amityco/ts-sdk-react-native';
-import { useEffect, useState } from 'react';
+
+import PreloadCommunityHome from '../screens/PreloadCommunityHome';
+import MyUserprofile from '../screens/MyUserProfile';
 
 
 interface INavigator {
@@ -49,26 +49,10 @@ interface INavigator {
 export default function SocialNavigator({ screen = 'Home' }: INavigator) {
   const Stack = createNativeStackNavigator<RootStackParamList>();
   const { isConnected, client } = useAuth();
-  const [defaultCommunityId, setDefaultCommunityId] = useState<string>("")
-  console.log('defaultCommunityId: ', defaultCommunityId);
-  const [defaultCommunityName, setDefaultCommunityName] = useState<string>("")
-  console.log('defaultCommunityName: ', defaultCommunityName);
+
   const theme = useTheme() as MyMD3Theme;
 
-  useEffect(() => {
-    if (isConnected) {
-      CommunityRepository.getCommunities(
-        { membership: 'member', limit: 1 },
-        ({ data }) => {
-          setDefaultCommunityId(data[0].communityId)
-          setDefaultCommunityName(data[0].displayName)
 
-        }
-
-      )
-    }
-
-  }, [isConnected])
 
 
 
@@ -94,6 +78,13 @@ export default function SocialNavigator({ screen = 'Home' }: INavigator) {
           <Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />
           <Stack.Screen name="Community" component={Home} />
           <Stack.Screen name="Explore" component={Explore} options={{ headerShown: false }} />
+          <Stack.Screen
+            name="PreloadCommunityHome"
+            component={PreloadCommunityHome}
+            options={{
+              headerShown: false,
+            }}
+          />
           <Stack.Screen name="PostDetail" component={PostDetail}
             options={{
               headerShown: false,
@@ -111,10 +102,10 @@ export default function SocialNavigator({ screen = 'Home' }: INavigator) {
             options={({
               navigation,
               route: {
-                params: { communityName, communityId, isModerator },
+                params: { communityName, communityId, isModerator, isBackEnabled = true },
               },
             }: any) => ({
-              headerLeft: () => <BackButton />,
+              headerLeft: () => isBackEnabled && <BackButton />,
               title: communityName,
               headerRight: () => (
                 <TouchableOpacity
@@ -131,7 +122,6 @@ export default function SocialNavigator({ screen = 'Home' }: INavigator) {
                 </TouchableOpacity>
               ),
             })}
-            initialParams={{ communityId: defaultCommunityId, communityName: defaultCommunityName }}
           />
           <Stack.Screen name="PendingPosts" component={PendingPosts} />
           <Stack.Screen
@@ -190,12 +180,20 @@ export default function SocialNavigator({ screen = 'Home' }: INavigator) {
           <Stack.Screen
             name="UserProfile"
             component={UserProfile}
-            options={{
+            options={({
+              route: {
+                params: { isBackEnabled = true },
+              },
+            }: any) => ({
+              headerLeft: () => isBackEnabled && <BackButton />,
               title: '',
-              headerLeft: () => <BackButton />,
-            }}
+            })}
             initialParams={{ userId: (client as Amity.Client).userId }}
           />
+          <Stack.Screen name="MyUserProfile" component={MyUserprofile}
+            options={{
+              headerShown: false,
+            }} />
           <Stack.Screen name="Newsfeed" component={AmityNewsFeedComponent} options={{ headerShown: false }} />
           <Stack.Screen name="EditProfile" component={EditProfile} />
           <Stack.Screen
@@ -215,6 +213,7 @@ export default function SocialNavigator({ screen = 'Home' }: INavigator) {
             name="UserProfileSetting"
             component={UserProfileSetting}
           />
+
           {/* <Stack.Screen
             name="VideoPlayer"
             component={VideoPlayerFull}

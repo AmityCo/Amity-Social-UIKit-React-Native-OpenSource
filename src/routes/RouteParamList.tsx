@@ -15,6 +15,7 @@ export type RootStackParamList = {
   CommunityHome: {
     communityId: string;
     communityName: string;
+    isBackEnabled?: boolean;
   };
   MemberDetail: undefined;
   Community: undefined;
@@ -59,7 +60,9 @@ export type RootStackParamList = {
   };
   UserProfile: {
     userId?: string;
+    isBackEnabled?: boolean
   };
+  MyUserProfile: undefined
   UserProfileSetting: {
     user: Amity.User;
     follow: string;
@@ -83,4 +86,5 @@ export type RootStackParamList = {
   FollowerList: Amity.User;
   AmitySocialGlobalSearchPage: undefined;
   Newsfeed: undefined;
+  PreloadCommunityHome: undefined;
 };

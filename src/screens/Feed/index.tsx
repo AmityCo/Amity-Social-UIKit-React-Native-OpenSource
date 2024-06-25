@@ -14,9 +14,9 @@ import {
   CommunityRepository,
   PostRepository,
   SubscriptionLevels,
-  UserRepository,
+  // UserRepository,
   getCommunityTopic,
-  getUserTopic,
+  // getUserTopic,
   subscribeTopic,
 } from '@amityco/ts-sdk-react-native';
 import type { FeedRefType } from '../CommunityHome';
@@ -49,10 +49,10 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
     if (isSubscribed) return;
 
     if (type === 'user') {
-      let user = {} as Amity.User; // use getUser to get user by targetId
-      UserRepository.getUser(id, ({ data }) => {
-        user = data;
-      });
+      // let user = {} as Amity.User; // use getUser to get user by targetId
+      // UserRepository.getUser(id, ({ data }) => {
+      //   user = data;
+      // });
       // disposers.push(
       //   subscribeTopic(getUserTopic(user, SubscriptionLevels.POST))
       // );

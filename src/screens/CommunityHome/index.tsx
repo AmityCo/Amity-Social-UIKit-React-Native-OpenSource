@@ -59,7 +59,7 @@ export default function CommunityHome({ route }: any) {
   const dispatch = useDispatch();
   const { openPostTypeChoiceModal } = uiSlice.actions;
   const { apiRegion, client } = useAuth();
-  const { communityId, communityName } = route.params as {
+  const { communityId, communityName,} = route.params as {
     communityId: string;
     communityName: string;
   };
@@ -91,11 +91,11 @@ export default function CommunityHome({ route }: any) {
       if (isSubscribed.current) return;
 
       if (targetType === 'community') {
-        // disposers.push(
-        //   subscribeTopic(
-        //     getCommunityTopic(communityData?.data, SubscriptionLevels.POST)
-        //   )
-        // );
+        disposers.push(
+          subscribeTopic(
+            getCommunityTopic(communityData?.data, SubscriptionLevels.POST)
+          )
+        );
         isSubscribed.current = true;
       }
     },
@@ -147,31 +147,28 @@ export default function CommunityHome({ route }: any) {
   );
 
   const loadCommunity = useCallback(async () => {
-    if (communityId) {
-      try {
-        const unsubscribe = CommunityRepository.getCommunity(
-          communityId,
-          (community) => {
-            setCommunityData(community);
-            setPostSetting(community?.data?.postSetting);
-            if (community.data?.postSetting === 'ADMIN_REVIEW_POST_REQUIRED') {
-              setPostSetting('ADMIN_REVIEW_POST_REQUIRED');
-            }
-            setIsJoin(community?.data.isJoined || false); // Set isJoin to communityData?.data.isJoined value
+    try {
+      const unsubscribe = CommunityRepository.getCommunity(
+        communityId,
+        (community) => {
+          setCommunityData(community);
+          setPostSetting(community?.data?.postSetting);
+          if (community.data?.postSetting === 'ADMIN_REVIEW_POST_REQUIRED') {
+            setPostSetting('ADMIN_REVIEW_POST_REQUIRED');
           }
-        );
-        unsubscribe();
-      } catch (error) {
-        console.error('Failed to load communities:', error);
-      }
+          setIsJoin(community?.data.isJoined || false); // Set isJoin to communityData?.data.isJoined value
+        }
+      );
+      unsubscribe();
+    } catch (error) {
+      console.error('Failed to load communities:', error);
     }
-
   }, [communityId]);
 
   useFocusEffect(
     useCallback(() => {
       getPendingPosts();
-      // loadCommunity();
+      loadCommunity();
       return () => {
         disposers.forEach((fn) => fn());
       };
@@ -279,10 +276,10 @@ export default function CommunityHome({ route }: any) {
   };
 
   const renderTabs = () => {
-    // if (currentTab === TabName.Timeline)
-    //   return (
-    //     <Feed targetType="community" targetId={communityId} ref={feedRef} />
-    //   );
+    if (currentTab === TabName.Timeline)
+      return (
+        <Feed targetType="community" targetId={communityId} ref={feedRef} />
+      );
     if (currentTab === TabName.Gallery)
       return (
         <GalleryComponent
