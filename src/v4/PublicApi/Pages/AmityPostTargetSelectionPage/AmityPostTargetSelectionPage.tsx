@@ -74,9 +74,6 @@ const AmityPostTargetSelectionPage = ({ navigation, route }) => {
         targetId,
         targetType,
         targetName,
-        postSetting,
-        needApprovalOnPostCreation,
-        isPublic,
       });
     }
   };

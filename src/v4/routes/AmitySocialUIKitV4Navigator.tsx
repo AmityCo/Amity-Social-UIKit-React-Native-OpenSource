@@ -44,6 +44,7 @@ import AmityPostTargetSelectionPage from '../PublicApi/Pages/AmityPostTargetSele
 import AmityStoryTargetSelectionPage from '../PublicApi/Pages/AmityStoryTargetSelectionPage/AmityStoryTargetSelectionPage';
 import CancelButton from '../component/CancelButton';
 import AmityMyCommunitiesSearchPage from '../PublicApi/Pages/AmityMyCommunitiesSearchPage/AmityMyCommunitiesSearchPage';
+import CreateLivestream from '../../screens/CreateLivestream/CreateLivestream';
 
 export default function AmitySocialUIKitV4Navigator() {
   const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -278,6 +279,11 @@ export default function AmitySocialUIKitV4Navigator() {
             <Stack.Screen
               name="StoryTargetSelection"
               component={AmityStoryTargetSelectionPage}
+            />
+            <Stack.Screen
+              name="CreateLivestream"
+              component={CreateLivestream}
+              options={{ headerShown: false }}
             />
           </Stack.Group>
         </Stack.Navigator>
