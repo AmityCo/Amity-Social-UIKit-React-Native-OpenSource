@@ -14,7 +14,7 @@ import Popup from '../../../component/PopupMenu/PopupMenu';
 
 const AmitySocialHomeTopNavigationComponent = () => {
   const theme = useTheme() as MyMD3Theme;
-  const { isOpen, toggle } = usePopup();
+  const { isOpen, setIsOpen, toggle } = usePopup();
 
   const { AmitySocialHomeTopNavigationComponentBehaviour } = useBehaviour();
   const [headerTitle] = useUiKitConfig({
@@ -54,6 +54,7 @@ const AmitySocialHomeTopNavigationComponent = () => {
       paddingVertical: 8,
       marginVertical: 8,
       zIndex: 1,
+      position: 'relative',
     },
     title: {
       fontWeight: 'bold',
@@ -98,40 +99,43 @@ const AmitySocialHomeTopNavigationComponent = () => {
   }, [AmitySocialHomeTopNavigationComponentBehaviour, onToggleCreateComponent]);
 
   return (
-    <View
-      style={styles.headerContainer}
-      testID="top_navigation"
-      accessibilityLabel="top_navigation"
-    >
-      <Text
-        style={styles.title}
-        testID="top_navigation/header_label"
-        accessibilityLabel="top_navigation/header_label"
+    <>
+      <View
+        style={styles.headerContainer}
+        testID="top_navigation"
+        accessibilityLabel="top_navigation"
       >
-        {headerTitle}
-      </Text>
-      <View style={styles.flexContainer}>
-        <TouchableOpacity
-          style={styles.iconBtn}
-          onPress={onPressSearch}
-          testID="top_navigation/global_search_button"
-          accessibilityLabel="top_navigation/global_search_button"
+        <Text
+          style={styles.title}
+          testID="top_navigation/header_label"
+          accessibilityLabel="top_navigation/header_label"
         >
-          <Image source={searchIcon} style={styles.icon} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.iconBtn}
-          onPress={onPressCreate}
-          testID="top_navigation/post_creation_button"
-          accessibilityLabel="top_navigation/post_creation_button"
-        >
-          <Image source={createIcon} style={styles.icon} />
-        </TouchableOpacity>
+          {headerTitle}
+        </Text>
+        <View style={styles.flexContainer}>
+          <TouchableOpacity
+            style={styles.iconBtn}
+            onPress={onPressSearch}
+            testID="top_navigation/global_search_button"
+            accessibilityLabel="top_navigation/global_search_button"
+          >
+            <Image source={searchIcon} style={styles.icon} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.iconBtn}
+            onPress={onPressCreate}
+            testID="top_navigation/post_creation_button"
+            accessibilityLabel="top_navigation/post_creation_button"
+          >
+            <Image source={createIcon} style={styles.icon} />
+          </TouchableOpacity>
+        </View>
         <Popup
+          setOpen={setIsOpen}
           open={isOpen}
           position={{
-            top: 20,
-            right: 0,
+            top: 45,
+            right: 15,
           }}
         >
           <AmityCreatePostMenuComponent
@@ -140,7 +144,7 @@ const AmitySocialHomeTopNavigationComponent = () => {
           />
         </Popup>
       </View>
-    </View>
+    </>
   );
 };
 

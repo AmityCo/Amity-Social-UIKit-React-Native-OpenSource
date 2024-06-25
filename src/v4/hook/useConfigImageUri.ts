@@ -83,6 +83,12 @@ export const useConfigImageUri = ({
     if (fileUri === 'create_story_button') {
       image = require('../configAssets/icons/create_story_button.png');
     }
+    if (fileUri === 'create_poll_button') {
+      image = require('../configAssets/icons/create_poll_button.png');
+    }
+    if (fileUri === 'create_livestream_button') {
+      image = require('../configAssets/icons/create_livestream_button.png');
+    }
     if (fileUri === 'close_button') {
       image = require('../configAssets/icons/close_button.png');
     }

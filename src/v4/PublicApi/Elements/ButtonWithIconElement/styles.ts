@@ -15,6 +15,7 @@ export const useStyle = (themeStyle: MyMD3Theme) => {
     icon: {
       width: 20,
       height: 20,
+      tintColor: themeStyle.colors.base,
     },
     label: {
       color: themeStyle.colors.base,
