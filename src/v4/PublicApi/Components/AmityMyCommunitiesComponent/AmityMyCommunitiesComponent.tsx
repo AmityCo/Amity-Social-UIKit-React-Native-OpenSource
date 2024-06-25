@@ -152,7 +152,7 @@ const AmityMyCommunitiesComponent: FC<AmityMyCommunitiesComponentType> = ({
       testID={accessibilityId}
       accessibilityLabel={accessibilityId}
     >
-      {!communities?.length ? (
+      {communities?.length ? (
         <FlatList
           onEndReached={onNextCommunityPage}
           data={communities}
