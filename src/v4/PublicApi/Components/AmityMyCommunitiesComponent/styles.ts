@@ -7,6 +7,8 @@ export const useStyles = (theme: MyMD3Theme) => {
       flex: 1,
       backgroundColor: theme.colors.background,
       paddingHorizontal: 16,
+      borderTopWidth: 8,
+      borderColor: theme.colors.baseShade4,
     },
     communityItemContainer: {
       paddingVertical: 16,
@@ -41,6 +43,7 @@ export const useStyles = (theme: MyMD3Theme) => {
     communityCategoryContainer: {
       flexDirection: 'row',
       marginVertical: 4,
+      flex: 1,
     },
     categoryName: {
       paddingHorizontal: 8,
@@ -51,6 +54,7 @@ export const useStyles = (theme: MyMD3Theme) => {
       overflow: 'hidden',
       marginHorizontal: 2,
       fontSize: 12,
+      maxWidth: '26%',
     },
     avatar: {
       width: 64,

@@ -4,8 +4,6 @@ import { useDispatch } from 'react-redux';
 import uiSlice from '../../../../redux/slices/uiSlice';
 import useAuth from '../../../../hooks/useAuth';
 import { View } from 'react-native';
-import AmityStoryTabComponent from '../AmityStoryTabComponent/AmityStoryTabComponent';
-import { AmityStoryTabComponentEnum } from '../../types';
 import useConfig from '../../../hook/useConfig';
 import { ComponentID, PageID } from '../../../enum/enumUIKitID';
 import AmityGlobalFeedComponent from '../AmityGlobalFeedComponent/AmityGlobalFeedComponent';
@@ -35,7 +33,6 @@ const AmityNewsFeedComponent: FC<AmityNewsFeedComponentType> = ({
 
   return (
     <View testID={uiReference} accessibilityLabel={uiReference}>
-      <AmityStoryTabComponent type={AmityStoryTabComponentEnum.globalFeed} />
       <AmityGlobalFeedComponent pageId={pageId} />
       <FloatingButton onPress={openModal} isGlobalFeed />
     </View>

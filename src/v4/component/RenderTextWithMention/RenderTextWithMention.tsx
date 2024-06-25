@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { IMentionPosition } from '../../types/type';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../routes/RouteParamList';
+import { MoreOrLess } from '@rntext/more-or-less';
 
 interface IrenderTextWithMention {
   mentionPositionArr: IMentionPosition[];
@@ -64,7 +65,20 @@ const RenderTextWithMention: React.FC<IrenderTextWithMention> = ({
   );
 
   if (heightlightTextPositions.length === 0) {
-    return <Text style={styles.inputText}>{textPost}</Text>;
+    return (
+      <MoreOrLess
+        numberOfLines={3}
+        textButtonStyle={{
+          fontWeight: 'normal',
+          color: '#1054DE',
+          fontSize: 15,
+        }}
+        textStyle={styles.inputText}
+        moreText="See more"
+      >
+        {textPost}
+      </MoreOrLess>
+    );
   }
 
   let currentPosition = 0;

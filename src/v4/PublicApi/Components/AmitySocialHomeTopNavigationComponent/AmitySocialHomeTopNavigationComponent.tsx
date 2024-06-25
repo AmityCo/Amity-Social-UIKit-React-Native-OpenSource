@@ -32,6 +32,12 @@ const AmitySocialHomeTopNavigationComponent: FC<
     element: ElementID.my_communities_button,
     keys: ['text'],
   }) as string[];
+  const [exploreTab] = useUiKitConfig({
+    page: PageID.social_home_page,
+    component: ComponentID.WildCardComponent,
+    element: ElementID.explore_button,
+    keys: ['text'],
+  }) as string[];
 
   const searchIcon = useConfigImageUri({
     configPath: {
@@ -138,14 +144,16 @@ const AmitySocialHomeTopNavigationComponent: FC<
         >
           <Image source={searchIcon} style={styles.icon} />
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.iconBtn}
-          onPress={onPressCreate}
-          testID="top_navigation/post_creation_button"
-          accessibilityLabel="top_navigation/post_creation_button"
-        >
-          <Image source={createIcon} style={styles.icon} />
-        </TouchableOpacity>
+        {activeTab !== exploreTab && (
+          <TouchableOpacity
+            style={styles.iconBtn}
+            onPress={onPressCreate}
+            testID="top_navigation/post_creation_button"
+            accessibilityLabel="top_navigation/post_creation_button"
+          >
+            <Image source={createIcon} style={styles.icon} />
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );
