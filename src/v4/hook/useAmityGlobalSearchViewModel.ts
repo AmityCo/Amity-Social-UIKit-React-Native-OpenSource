@@ -46,7 +46,7 @@ export const useAmityGlobalSearchViewModel = (
       const unsubscribeCommunity = CommunityRepository.getCommunities(
         {
           displayName: searchValue,
-          membership: 'notMember',
+          membership: 'all',
           limit: 20,
           sortBy: 'displayName',
         },
