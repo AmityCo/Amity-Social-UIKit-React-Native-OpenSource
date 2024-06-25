@@ -14,7 +14,7 @@ const NoSearchResult = () => {
     img: {
       width: 60,
       height: 60,
-      tintColor: theme.colors.baseShade3,
+      tintColor: theme.colors.baseShade4,
     },
     noResultText: {
       fontSize: 17,
