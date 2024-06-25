@@ -23,8 +23,9 @@ import { useNavigation } from '@react-navigation/native';
 
 export type FeedParams = {
   targetId: string;
-  targetName: string;
-  targetType: string;
+  targetType: 'user' | 'community';
+  community?: Amity.Community;
+  targetName?: string;
   isPublic?: boolean;
   postSetting?: ValueOf<
     Readonly<{
@@ -33,12 +34,13 @@ export type FeedParams = {
       ANYONE_CAN_POST: 'ANYONE_CAN_POST';
     }>
   >;
-  needApprovalOnPostCreation?: string;
+  needApprovalOnPostCreation?: boolean;
 };
 
 interface ITargetSelectionPage {
   pageId: PageID;
   onSelectFeed: ({
+    community,
     targetId,
     targetName,
     targetType,
@@ -123,8 +125,8 @@ const TargetSelectionPage = ({
         onSelect={() =>
           onSelectFeed({
             targetId: item.communityId,
-            targetName: item.displayName,
             targetType: 'community',
+            community: item,
           })
         }
         avatarFileId={item.avatarFileId}

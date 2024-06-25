@@ -33,11 +33,11 @@ export interface IBehaviour {
     goToPostComposerPage?: (arg?: {
       community: Amity.Community;
       targetId: string;
-      targetType: TabName.Communities | TabName.Users;
+      targetType: 'community' | 'user';
     }) => void;
     goToPollComposerPage?: (arg?: {
       targetId: string;
-      targetType: Omit<Amity.PostTargetType, 'content'>;
+      targetType: 'community' | 'user';
       targetName?: string;
       postSetting?: ValueOf<
         Readonly<{
@@ -51,7 +51,7 @@ export interface IBehaviour {
     }) => void;
     goToLivestreamComposerPage?: (arg?: {
       targetId: string;
-      targetType: Omit<Amity.PostTargetType, 'content'>;
+      targetType: 'community' | 'user';
       targetName?: string;
       postSetting?: ValueOf<
         Readonly<{
@@ -67,7 +67,7 @@ export interface IBehaviour {
   AmityStoryTargetSelectionPageBehavior?: {
     goToStoryComposerPage?: (arg?: {
       targetId: string;
-      targetType: TabName.Communities | TabName.Users;
+      targetType: 'community' | 'user';
     }) => void;
   };
 }
