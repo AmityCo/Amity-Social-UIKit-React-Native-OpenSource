@@ -4,15 +4,15 @@ import { ComponentID, ElementID, PageID } from '../../../enum/enumUIKitID';
 import useConfig from '../../../hook/useConfig';
 
 type TextElementType = Partial<TextProps> & {
-  pageID: PageID;
-  componentID: ComponentID;
+  pageID?: PageID;
+  componentID?: ComponentID;
   elementID: ElementID;
   text: string;
 };
 
 const TextElement: FC<TextElementType> = ({
-  pageID = '*',
-  componentID = '*',
+  pageID = PageID.WildCardPage,
+  componentID = ComponentID.WildCardComponent,
   elementID,
   text,
   ...props

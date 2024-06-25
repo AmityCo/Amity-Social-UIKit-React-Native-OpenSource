@@ -4,14 +4,14 @@ import { SvgXml } from 'react-native-svg';
 import { postIcon } from '../../../svg/svg-xml-list';
 import { styles } from './styles';
 
-interface IBackBtn {
+interface IFloatingButton {
   onPress: () => any;
   isGlobalFeed?: boolean;
 }
 export default function FloatingButton({
   onPress,
   isGlobalFeed = true,
-}: IBackBtn) {
+}: IFloatingButton) {
   return (
     <View style={!isGlobalFeed ? styles.otherFeedContainer : styles.container}>
       <Pressable
