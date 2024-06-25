@@ -20,6 +20,7 @@ import CloseButtonIconElement from '../../PublicApi/Elements/CloseButtonIconElem
 import { PageID, ComponentID, ElementID } from '../../../v4/enum';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
+import TextKeyElement from '../../PublicApi/Elements/TextKeyElement/TextKeyElement';
 
 export type FeedParams = {
   targetId: string;
@@ -69,11 +70,6 @@ const TargetSelectionPage = ({
     pageId,
     componentId: ComponentID.WildCardComponent,
     elementId: ElementID.my_timeline_text,
-  });
-  const { config: titleConfig } = useAmityElement({
-    pageId,
-    componentId: ComponentID.WildCardComponent,
-    elementId: ElementID.title,
   });
 
   const styles = StyleSheet.create({
@@ -156,9 +152,12 @@ const TargetSelectionPage = ({
             pageID={PageID.select_post_target_page}
           />
         </TouchableOpacity>
-        <Text style={styles.title}>
-          {(titleConfig?.text as string) || 'Post to'}
-        </Text>
+        <TextKeyElement
+          style={styles.title}
+          pageID={pageId}
+          componentID={ComponentID.WildCardComponent}
+          elementID={ElementID.title}
+        />
       </View>
       <TargetItem
         pageId={pageId}
