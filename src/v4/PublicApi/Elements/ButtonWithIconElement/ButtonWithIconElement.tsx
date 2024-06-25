@@ -1,10 +1,9 @@
 import React from 'react';
-import { Image, TouchableOpacity, View } from 'react-native';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
 import { useStyle } from './styles';
 import { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
 import { useAmityElement, useConfigImageUri } from '../../../hook';
 import { PageID, ComponentID, ElementID } from '../../../enum';
-import TextKeyElement from '../TextKeyElement/TextKeyElement';
 
 interface ButtonWithIconElementProps {
   pageId: PageID;
@@ -29,7 +28,7 @@ const ButtonWithIconElement = ({
     configKey: 'image',
   });
 
-  const { themeStyles, accessibilityId } = useAmityElement({
+  const { config, themeStyles, accessibilityId } = useAmityElement({
     pageId,
     componentId,
     elementId,
@@ -45,11 +44,7 @@ const ButtonWithIconElement = ({
     >
       <View style={styles.container}>
         <Image source={icon} style={styles.icon} />
-        <TextKeyElement
-          pageID={pageId}
-          componentID={componentId}
-          elementID={elementId}
-        />
+        <Text style={styles.label}>{(config.text as string) || ''}</Text>
       </View>
     </TouchableOpacity>
   );
