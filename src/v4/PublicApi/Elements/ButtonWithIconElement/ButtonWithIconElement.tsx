@@ -1,37 +1,50 @@
 import React from 'react';
-import {
-  Image,
-  ImageSourcePropType,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-
-import { Text, useTheme } from 'react-native-paper';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
 import { useStyle } from './styles';
 import { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
+import { useAmityElement, useConfigImageUri } from '../../../hook';
+import { PageID, ComponentID, ElementID } from '../../../enum';
 
 interface ButtonWithIconElementProps {
-  label: string;
-  icon: ImageSourcePropType;
+  pageId: PageID;
+  componentId: ComponentID;
+  elementId: ElementID;
   configTheme?: MyMD3Theme;
   onClick?: () => void;
 }
 
 const ButtonWithIconElement = ({
-  label,
-  icon,
-  configTheme,
+  pageId,
+  componentId,
+  elementId,
   onClick,
-  ...props
 }: ButtonWithIconElementProps) => {
-  const theme = useTheme() as MyMD3Theme;
-  const styles = useStyle(configTheme ?? theme);
+  const icon = useConfigImageUri({
+    configPath: {
+      page: pageId,
+      component: componentId,
+      element: elementId,
+    },
+    configKey: 'image',
+  });
+
+  const { config, themeStyles, accessibilityId } = useAmityElement({
+    pageId,
+    componentId,
+    elementId,
+  });
+
+  const styles = useStyle(themeStyles);
 
   return (
-    <TouchableOpacity onPress={onClick} {...props}>
+    <TouchableOpacity
+      onPress={onClick}
+      testID={accessibilityId}
+      accessibilityLabel={accessibilityId}
+    >
       <View style={styles.container}>
         <Image source={icon} style={styles.icon} />
-        <Text style={styles.label}>{label}</Text>
+        <Text style={styles.label}>{(config.text as string) || ''}</Text>
       </View>
     </TouchableOpacity>
   );
