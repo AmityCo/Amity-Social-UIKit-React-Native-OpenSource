@@ -5,8 +5,6 @@ import CreatePostButtonElement from '../../Elements/CreatePostButtonElement/Crea
 import CreateStoryButtonElement from '../../Elements/CreateStoryButtonElement/CreateStoryButtonElement';
 import CreatePollButtonElement from '../../Elements/CreatePollButtonElement/CreatePollButtonElement';
 import CreateLivestreamButtonElement from '../../Elements/CreateLivestreamButtonElement/CreateLivestreamButtonElement';
-import { useTheme } from 'react-native-paper';
-import { MyMD3Theme } from '~/providers/amity-ui-kit-provider';
 import { useAmityComponent } from '../../../hook';
 import { useBehaviour } from '../../../providers/BehaviourProvider';
 
@@ -19,7 +17,6 @@ export const AmityCreatePostMenuComponent = ({
   pageId = PageID.WildCardPage,
   componentId = ComponentID.WildCardComponent,
 }: AmityCreatePostMenuComponentProps): JSX.Element => {
-  const theme = useTheme() as MyMD3Theme;
   const { themeStyles } = useAmityComponent({ pageId, componentId });
 
   const { AmityCreatePostMenuComponentBehavior } = useBehaviour();
@@ -28,9 +25,7 @@ export const AmityCreatePostMenuComponent = ({
     container: {
       paddingVertical: 12,
       width: 200,
-      backgroundColor: themeStyles
-        ? themeStyles.colors.background
-        : theme.colors.background,
+      backgroundColor: themeStyles.colors.background,
       borderRadius: 12,
     },
   });
