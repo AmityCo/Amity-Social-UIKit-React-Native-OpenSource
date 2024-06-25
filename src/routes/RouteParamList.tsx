@@ -58,7 +58,7 @@ export type RootStackParamList = {
     // initImagePostsFullSize?: MediaUri[];
   };
   UserProfile: {
-    userId: string;
+    userId?: string;
   };
   UserProfileSetting: {
     user: Amity.User;
@@ -70,7 +70,7 @@ export type RootStackParamList = {
   EditCommunity: {
     communityId: string;
   };
-  AllMyCommunity: undefined;
+  MyCommunity: undefined;
   CreateCommunity: undefined;
   VideoPlayer: { source: string };
   PendingPosts: { communityId: string; isModerator: boolean };
@@ -82,4 +82,5 @@ export type RootStackParamList = {
   UserPendingRequest: undefined;
   FollowerList: Amity.User;
   AmitySocialGlobalSearchPage: undefined;
+  Newsfeed: undefined;
 };

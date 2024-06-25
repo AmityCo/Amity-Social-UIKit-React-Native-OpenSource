@@ -160,6 +160,10 @@ export const useStyles = () => {
       justifyContent: 'center',
       alignItems: 'center',
     },
+    galleryContainer:{
+      backgroundColor: theme.colors.background,
+      height:'100%'
+    }
   });
 
   return styles;

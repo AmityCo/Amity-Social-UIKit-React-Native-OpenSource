@@ -91,11 +91,11 @@ export default function CommunityHome({ route }: any) {
       if (isSubscribed.current) return;
 
       if (targetType === 'community') {
-        disposers.push(
-          subscribeTopic(
-            getCommunityTopic(communityData?.data, SubscriptionLevels.POST)
-          )
-        );
+        // disposers.push(
+        //   subscribeTopic(
+        //     getCommunityTopic(communityData?.data, SubscriptionLevels.POST)
+        //   )
+        // );
         isSubscribed.current = true;
       }
     },
@@ -147,28 +147,31 @@ export default function CommunityHome({ route }: any) {
   );
 
   const loadCommunity = useCallback(async () => {
-    try {
-      const unsubscribe = CommunityRepository.getCommunity(
-        communityId,
-        (community) => {
-          setCommunityData(community);
-          setPostSetting(community?.data?.postSetting);
-          if (community.data?.postSetting === 'ADMIN_REVIEW_POST_REQUIRED') {
-            setPostSetting('ADMIN_REVIEW_POST_REQUIRED');
+    if (communityId) {
+      try {
+        const unsubscribe = CommunityRepository.getCommunity(
+          communityId,
+          (community) => {
+            setCommunityData(community);
+            setPostSetting(community?.data?.postSetting);
+            if (community.data?.postSetting === 'ADMIN_REVIEW_POST_REQUIRED') {
+              setPostSetting('ADMIN_REVIEW_POST_REQUIRED');
+            }
+            setIsJoin(community?.data.isJoined || false); // Set isJoin to communityData?.data.isJoined value
           }
-          setIsJoin(community?.data.isJoined || false); // Set isJoin to communityData?.data.isJoined value
-        }
-      );
-      unsubscribe();
-    } catch (error) {
-      console.error('Failed to load communities:', error);
+        );
+        unsubscribe();
+      } catch (error) {
+        console.error('Failed to load communities:', error);
+      }
     }
+
   }, [communityId]);
 
   useFocusEffect(
     useCallback(() => {
       getPendingPosts();
-      loadCommunity();
+      // loadCommunity();
       return () => {
         disposers.forEach((fn) => fn());
       };
@@ -276,10 +279,10 @@ export default function CommunityHome({ route }: any) {
   };
 
   const renderTabs = () => {
-    if (currentTab === TabName.Timeline)
-      return (
-        <Feed targetType="community" targetId={communityId} ref={feedRef} />
-      );
+    // if (currentTab === TabName.Timeline)
+    //   return (
+    //     <Feed targetType="community" targetId={communityId} ref={feedRef} />
+    //   );
     if (currentTab === TabName.Gallery)
       return (
         <GalleryComponent

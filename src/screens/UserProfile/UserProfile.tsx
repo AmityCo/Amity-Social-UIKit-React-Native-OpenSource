@@ -41,6 +41,7 @@ export default function UserProfile({ route }: any) {
   const { apiRegion, client } = useAuth();
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const { userId } = route.params;
+  console.log('userId: ', userId);
   const { openPostTypeChoiceModal } = uiSlice.actions;
   const dispatch = useDispatch();
   const [user, setUser] = useState<Amity.User>();
@@ -202,7 +203,7 @@ export default function UserProfile({ route }: any) {
   };
 
   const renderTabs = () => {
-    if (currentTab === TabName.Timeline)
+    if (currentTab === TabName.Timeline && userId)
       return <Feed targetType="user" targetId={userId} ref={feedRef} />;
     if (currentTab === TabName.Gallery)
       return <UserProfileGallery userId={userId} />;
@@ -256,7 +257,8 @@ export default function UserProfile({ route }: any) {
               tabName={[TabName.Timeline, TabName.Gallery]}
               onTabChange={setCurrentTab}
             />
-            {renderTabs()}
+        
+            { renderTabs()}
           </>
         )}
       </ScrollView>

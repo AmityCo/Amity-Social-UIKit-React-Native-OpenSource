@@ -12,7 +12,7 @@ export const useStyles = () => {
       backgroundColor: theme.colors.baseShade4,
       flex: 1,
       height: '100%',
-      minHeight: Dimensions.get('window').height-350
+      minHeight: Dimensions.get('window').height-200
 
 
     },

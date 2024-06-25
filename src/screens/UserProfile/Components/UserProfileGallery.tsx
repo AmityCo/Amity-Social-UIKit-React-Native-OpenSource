@@ -72,7 +72,7 @@ const UserProfileGallery: FC<IUserProfileGallery> = ({ userId }) => {
     tabName,
   ]);
   return (
-    <View>
+    <View style={styles.galleryContainer}>
       <GalleryTab
         tabName={[TabName.Photos, TabName.Videos]}
         onTabChange={setTabName}

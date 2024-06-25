@@ -35,11 +35,42 @@ import PostTypeChoiceModal from '../components/PostTypeChoiceModal/PostTypeChoic
 import CreatePoll from '../screens/CreatePoll/CreatePoll';
 import { ThreeDotsIcon } from '../svg/ThreeDotsIcon';
 import AmitySocialGlobalSearchPage from '../screens/AmitySocialGlobalSearchPage/AmitySocialGlobalSearchPage';
+import AmityMyCommunitiesComponent from '../components/AmityMyCommunitiesComponent/AmityMyCommunitiesComponent';
+import AmityNewsFeedComponent from '../components/AmityNewsFeedComponent/AmityNewsFeedComponent';
+import { useCommunities } from '../hooks/useCommunities';
+import { CommunityRepository } from '@amityco/ts-sdk-react-native';
+import { useEffect, useState } from 'react';
 
-export default function SocialNavigator() {
+
+interface INavigator {
+  screen?: string
+}
+
+export default function SocialNavigator({ screen = 'Home' }: INavigator) {
   const Stack = createNativeStackNavigator<RootStackParamList>();
-  const { isConnected } = useAuth();
+  const { isConnected, client } = useAuth();
+  const [defaultCommunityId, setDefaultCommunityId] = useState<string>("")
+  console.log('defaultCommunityId: ', defaultCommunityId);
+  const [defaultCommunityName, setDefaultCommunityName] = useState<string>("")
+  console.log('defaultCommunityName: ', defaultCommunityName);
   const theme = useTheme() as MyMD3Theme;
+
+  useEffect(() => {
+    if (isConnected) {
+      CommunityRepository.getCommunities(
+        { membership: 'member', limit: 1 },
+        ({ data }) => {
+          setDefaultCommunityId(data[0].communityId)
+          setDefaultCommunityName(data[0].displayName)
+
+        }
+
+      )
+    }
+
+  }, [isConnected])
+
+
 
   const styles = useStyles();
   return (
@@ -58,10 +89,11 @@ export default function SocialNavigator() {
               color: theme.colors.base,
             },
           }}
+          initialRouteName={screen as keyof RootStackParamList}
         >
           <Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />
           <Stack.Screen name="Community" component={Home} />
-          <Stack.Screen name="Explore" component={Explore} />
+          <Stack.Screen name="Explore" component={Explore} options={{ headerShown: false }} />
           <Stack.Screen name="PostDetail" component={PostDetail}
             options={{
               headerShown: false,
@@ -99,6 +131,7 @@ export default function SocialNavigator() {
                 </TouchableOpacity>
               ),
             })}
+            initialParams={{ communityId: defaultCommunityId, communityName: defaultCommunityName }}
           />
           <Stack.Screen name="PendingPosts" component={PendingPosts} />
           <Stack.Screen
@@ -140,8 +173,9 @@ export default function SocialNavigator() {
             }}
           />
           <Stack.Screen
-            name="AllMyCommunity"
-            component={AllMyCommunity}
+            name="MyCommunity"
+            options={{ headerShown: false }}
+            component={AmityMyCommunitiesComponent}
           />
           <Stack.Screen
             name="CreatePost"
@@ -160,7 +194,9 @@ export default function SocialNavigator() {
               title: '',
               headerLeft: () => <BackButton />,
             }}
+            initialParams={{ userId: (client as Amity.Client).userId }}
           />
+          <Stack.Screen name="Newsfeed" component={AmityNewsFeedComponent} options={{ headerShown: false }} />
           <Stack.Screen name="EditProfile" component={EditProfile} />
           <Stack.Screen
             name="EditCommunity"

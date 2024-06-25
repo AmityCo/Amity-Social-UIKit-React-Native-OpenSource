@@ -189,54 +189,55 @@ const AmitySocialHomeTopNavigationComponent = ({ currentTab }: { currentTab: str
         {headerTitle}
       </Text>
       <View style={styles.flexContainer}>
-        {currentTab !== TabName.Explore &&
-          <TouchableOpacity
-            style={styles.iconBtn}
-            onPress={onPressSearch}
-            testID="top_navigation/global_search_button"
-            accessibilityLabel="top_navigation/global_search_button"
-          >
-            <SearchIconV4 color={theme.colors.base} />
-          </TouchableOpacity>
-        }
+
+        <TouchableOpacity
+          style={styles.iconBtn}
+          onPress={onPressSearch}
+          testID="top_navigation/global_search_button"
+          accessibilityLabel="top_navigation/global_search_button"
+        >
+          <SearchIconV4 color={theme.colors.base} />
+        </TouchableOpacity>
+
 
         {/* <Image source={searchIcon} style={styles.icon} /> */}
-
-        <Menu opened={openPostCreationMenu} onBackdropPress={() => setOpenPostCreationMenu(false)}>
-          <MenuTrigger >
-            <TouchableOpacity
-              style={styles.iconBtn}
-              onPress={onPressCreate}
-              testID="top_navigation/post_creation_button"
-              accessibilityLabel="top_navigation/post_creation_button"
-            >
-              {/* <Image source={createIcon} style={styles.icon} /> */}
-              <PlusIconV4 color={theme.colors.base} />
-
-            </TouchableOpacity>
-          </MenuTrigger>
-          <MenuOptions customStyles={{ optionsContainer: styles.optionsContainer }}>
-
-            <MenuOption >
+        {currentTab !== TabName.Explore &&
+          <Menu opened={openPostCreationMenu} onBackdropPress={() => setOpenPostCreationMenu(false)}>
+            <MenuTrigger >
               <TouchableOpacity
-                onPress={() => onChooseType('post')}
-                style={styles.modalRow}
+                style={styles.iconBtn}
+                onPress={onPressCreate}
+                testID="top_navigation/post_creation_button"
+                accessibilityLabel="top_navigation/post_creation_button"
               >
-                <PostIconOutlined color={theme.colors.base} />
-                <Text style={styles.postText}>Post</Text>
+                {/* <Image source={createIcon} style={styles.icon} /> */}
+                <PlusIconV4 color={theme.colors.base} />
+
               </TouchableOpacity>
-            </MenuOption>
-            <MenuOption >
-              <TouchableOpacity
-                onPress={() => onChooseType('poll')}
-                style={styles.modalRow}
-              >
-                <PollIcon color={theme.colors.base} />
-                <Text style={styles.postText}>Poll</Text>
-              </TouchableOpacity>
-            </MenuOption>
-          </MenuOptions>
-        </Menu>
+            </MenuTrigger>
+            <MenuOptions customStyles={{ optionsContainer: styles.optionsContainer }}>
+
+              <MenuOption >
+                <TouchableOpacity
+                  onPress={() => onChooseType('post')}
+                  style={styles.modalRow}
+                >
+                  <PostIconOutlined color={theme.colors.base} />
+                  <Text style={styles.postText}>Post</Text>
+                </TouchableOpacity>
+              </MenuOption>
+              <MenuOption >
+                <TouchableOpacity
+                  onPress={() => onChooseType('poll')}
+                  style={styles.modalRow}
+                >
+                  <PollIcon color={theme.colors.base} />
+                  <Text style={styles.postText}>Poll</Text>
+                </TouchableOpacity>
+              </MenuOption>
+            </MenuOptions>
+          </Menu>
+        }
         <CreatePostChooseTargetModal
           visible={createPostModalVisible}
           onClose={closeCreatePostModal}

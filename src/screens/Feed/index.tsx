@@ -42,7 +42,7 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
   const [unSubFunc, setUnSubPageFunc] = useState<() => void>();
   const dispatch = useDispatch();
 
-  const disposers: Amity.Unsubscriber[] = [];
+  // const disposers: Amity.Unsubscriber[] = [];
   let isSubscribed = false;
 
   const subscribePostTopic = useCallback((type: string, id: string) => {
@@ -53,11 +53,9 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
       UserRepository.getUser(id, ({ data }) => {
         user = data;
       });
-      disposers.push(
-        subscribeTopic(getUserTopic(user, SubscriptionLevels.POST), () => {
-          // use callback to handle errors with event subscription
-        })
-      );
+      // disposers.push(
+      //   subscribeTopic(getUserTopic(user, SubscriptionLevels.POST))
+      // );
       // eslint-disable-next-line react-hooks/exhaustive-deps
       isSubscribed = true;
       return;
@@ -135,7 +133,7 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
   return (
     <View style={styles.feedWrap}>
       <FlatList
-        scrollEnabled={false}
+        scrollEnabled={true}
         data={postList}
         renderItem={({ item, index }) => (
           <PostList
@@ -156,7 +154,7 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
         keyExtractor={(_, index) => index.toString()}
         extraData={postList}
       />
-      
+
     </View>
   );
 }
