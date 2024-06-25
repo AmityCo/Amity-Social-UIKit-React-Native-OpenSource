@@ -65,6 +65,10 @@ export const useStyles = (theme: MyMD3Theme) => {
       color: theme.colors.baseShade1,
       fontSize: 12,
     },
+    skeletonLoadingContainer: {
+      borderBottomWidth: 2,
+      borderColor: theme.colors.baseShade4,
+    },
   });
 
   return styles;
