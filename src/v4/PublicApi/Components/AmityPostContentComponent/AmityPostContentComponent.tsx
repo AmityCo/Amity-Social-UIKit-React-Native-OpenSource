@@ -40,6 +40,7 @@ import {
 import useAuth from '../../../../hooks/useAuth';
 import globalFeedSlice from '../../../../redux/slices/globalfeedSlice';
 import { useDispatch } from 'react-redux';
+import { useBehaviour } from '../../../providers/BehaviourProvider';
 export interface IPost {
   postId: string;
   data: Record<string, any>;
@@ -77,6 +78,10 @@ const AmityPostContentComponent = ({
   AmityPostContentComponentStyle = AmityPostContentComponentStyleEnum.detail,
 }: IPostList) => {
   const theme = useTheme() as MyMD3Theme;
+  const {
+    AmityPostContentComponentBehavior,
+    AmityGlobalFeedComponentBehavior,
+  } = useBehaviour();
   const componentId = ComponentID.post_content;
   const { accessibilityId, themeStyles } = useAmityComponent({
     pageId: pageId,
@@ -134,20 +139,29 @@ const AmityPostContentComponent = ({
   }
 
   const handleDisplayNamePress = () => {
-    if (user?.userId) {
-      navigation.navigate('UserProfile', {
-        userId: user?.userId,
+    if (!user?.userId) return null;
+    if (AmityPostContentComponentBehavior?.goToUserProfilePage) {
+      return AmityPostContentComponentBehavior.goToUserProfilePage({
+        userId: user.userId,
       });
     }
+    return navigation.navigate('UserProfile', {
+      userId: user.userId,
+    });
   };
 
   const handleCommunityNamePress = () => {
-    if (targetType === 'community' && targetId) {
-      navigation.navigate('CommunityHome', {
+    if (targetType !== 'community' || !targetId) return null;
+    if (AmityPostContentComponentBehavior?.goToCommunityProfilePage) {
+      return AmityPostContentComponentBehavior.goToCommunityProfilePage({
         communityId: targetId,
         communityName: communityData?.displayName,
       });
     }
+    return navigation.navigate('CommunityHome', {
+      communityId: targetId,
+      communityName: communityData?.displayName,
+    });
   };
 
   const modalStyle = {
@@ -281,6 +295,15 @@ const AmityPostContentComponent = ({
     );
   };
 
+  const onPressPost = useCallback(() => {
+    if (AmityGlobalFeedComponentBehavior.goToPostDetailPage) {
+      return AmityGlobalFeedComponentBehavior.goToPostDetailPage(postId);
+    }
+    return navigation.navigate('PostDetail', {
+      postId: postId,
+    });
+  }, [AmityGlobalFeedComponentBehavior, navigation, postId]);
+
   return (
     <View
       key={postId}
@@ -288,7 +311,7 @@ const AmityPostContentComponent = ({
       testID={accessibilityId}
       accessibilityLabel={accessibilityId}
     >
-      <View style={styles.headerSection}>
+      <Pressable style={styles.headerSection} onPress={onPressPost}>
         <View style={styles.user}>
           <AvatarElement
             style={styles.avatar}
@@ -354,7 +377,7 @@ const AmityPostContentComponent = ({
         </View>
         {AmityPostContentComponentStyle ===
         AmityPostContentComponentStyleEnum.feed ? (
-          <Pressable onPress={openModal}>
+          <Pressable onPress={openModal} hitSlop={12}>
             <MenuButtonIconElement
               pageID={pageId}
               componentID={componentId}
@@ -364,7 +387,7 @@ const AmityPostContentComponent = ({
         ) : (
           <View style={styles.threeDots} />
         )}
-      </View>
+      </Pressable>
       <View>
         <View style={styles.bodySection}>
           {textPost && childrenPosts?.length === 0 && (

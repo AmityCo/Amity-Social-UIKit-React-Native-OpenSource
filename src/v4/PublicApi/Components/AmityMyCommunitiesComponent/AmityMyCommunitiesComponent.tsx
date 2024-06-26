@@ -123,24 +123,26 @@ const AmityMyCommunitiesComponent: FC<AmityMyCommunitiesComponentType> = ({
   };
 
   const renderContentLoading = useCallback(() => {
-    return Array.from({ length: 8 }, (_, index) => {
+    return Array.from({ length: 6 }, (_, index) => {
       return (
-        <ContentLoader
-          key={index}
-          height={70}
-          speed={1}
-          width={380}
-          backgroundColor={'#d2d2d2'}
-          foregroundColor={'#eee'}
-          viewBox="-10 -10 380 70"
-        >
-          <Rect x="48" y="8" rx="3" ry="3" width="188" height="6" />
-          <Rect x="48" y="26" rx="3" ry="3" width="152" height="6" />
-          <Circle cx="20" cy="20" r="20" />
-        </ContentLoader>
+        <View style={styles.skeletonLoadingContainer}>
+          <ContentLoader
+            key={index}
+            height={70}
+            speed={0.5}
+            width={380}
+            backgroundColor={themeStyles.colors.baseShade4}
+            foregroundColor={themeStyles.colors.baseShade2}
+            viewBox="-10 -10 380 70"
+          >
+            <Rect x="48" y="8" rx="3" ry="3" width="188" height="6" />
+            <Rect x="48" y="26" rx="3" ry="3" width="152" height="6" />
+            <Circle cx="20" cy="20" r="20" />
+          </ContentLoader>
+        </View>
       );
     });
-  }, []);
+  }, [styles.skeletonLoadingContainer, themeStyles]);
 
   if (isExcluded) return null;
 

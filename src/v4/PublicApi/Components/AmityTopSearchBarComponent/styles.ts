@@ -26,7 +26,7 @@ export const useStyles = () => {
     input: { flex: 1, marginHorizontal: 6, color: theme.colors.base },
     cancelBtn: {
       marginRight: 16,
-      color: theme.colors.base,
+      color: theme.colors.primary,
     },
     searchIcon: { width: 20, height: 20, tintColor: theme.colors.base },
   });
