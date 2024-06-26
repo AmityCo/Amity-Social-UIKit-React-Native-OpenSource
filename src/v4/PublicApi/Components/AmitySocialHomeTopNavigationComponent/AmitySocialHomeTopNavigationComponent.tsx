@@ -11,7 +11,7 @@ import {
 } from '../../../hook';
 import { ComponentID, ElementID, PageID } from '../../../enum/enumUIKitID';
 import { useBehaviour } from '../../../providers/BehaviourProvider';
-import { AmityCreatePostMenuComponent } from '../AmityCreatePostMenuComponent/AmityCreatePostMenuComponent';
+import AmityCreatePostMenuComponent from '../AmityCreatePostMenuComponent/AmityCreatePostMenuComponent';
 import TextKeyElement from '../../Elements/TextKeyElement/TextKeyElement';
 import { usePopup } from '../../../hook/usePopup';
 import Popup from '../../../component/PopupMenu/PopupMenu';

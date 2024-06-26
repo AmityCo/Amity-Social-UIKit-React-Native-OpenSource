@@ -17,6 +17,7 @@ import {
   AmityNewsFeedComponent,
   AmityPostContentComponent,
   AmityPostDetailPage,
+  AmityPostTargetSelectionPageType,
 } from './v4';
 import { AmityStoryTabComponentEnum } from './v4/PublicApi/types';
 
@@ -59,4 +60,5 @@ export {
   AmityNewsFeedComponent,
   AmityPostContentComponent,
   AmityPostDetailPage,
+  AmityPostTargetSelectionPageType,
 };

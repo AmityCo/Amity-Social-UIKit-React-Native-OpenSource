@@ -1,5 +1,5 @@
 import React from 'react';
-import { PageID } from '../../../../v4/enum';
+import { PageID, AmityPostTargetSelectionPageType } from '../../../../v4/enum';
 import { useBehaviour } from '../../../providers/BehaviourProvider';
 
 import TargetSelectionPage, {
@@ -20,7 +20,7 @@ const AmityPostTargetSelectionPage = ({ navigation, route }) => {
     needApprovalOnPostCreation,
     isPublic,
   }: FeedParams) => {
-    if (postType === 'post') {
+    if (postType === AmityPostTargetSelectionPageType.post) {
       if (AmityPostTargetSelectionPageBehavior.goToPostComposerPage) {
         return AmityPostTargetSelectionPageBehavior.goToPostComposerPage({
           community,
@@ -36,7 +36,7 @@ const AmityPostTargetSelectionPage = ({ navigation, route }) => {
       });
     }
 
-    if (postType === 'poll') {
+    if (postType === AmityPostTargetSelectionPageType.poll) {
       if (AmityPostTargetSelectionPageBehavior.goToPollComposerPage) {
         return AmityPostTargetSelectionPageBehavior.goToPollComposerPage({
           targetId,
@@ -58,7 +58,7 @@ const AmityPostTargetSelectionPage = ({ navigation, route }) => {
       });
     }
 
-    if (postType === 'livestream') {
+    if (postType === AmityPostTargetSelectionPageType.livestream) {
       if (AmityPostTargetSelectionPageBehavior.goToLivestreamComposerPage) {
         return AmityPostTargetSelectionPageBehavior.goToLivestreamComposerPage({
           targetId,

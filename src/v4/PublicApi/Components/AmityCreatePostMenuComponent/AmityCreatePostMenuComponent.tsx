@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, memo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { ComponentID, ElementID, PageID } from '../../../enum/enumUIKitID';
 import { useAmityComponent } from '../../../hook';
@@ -13,7 +13,7 @@ interface AmityCreatePostMenuComponentProps {
   componentId?: ComponentID;
 }
 
-export const AmityCreatePostMenuComponent = ({
+const AmityCreatePostMenuComponent = ({
   pageId = PageID.WildCardPage,
   componentId = ComponentID.WildCardComponent,
 }: AmityCreatePostMenuComponentProps): JSX.Element => {
@@ -83,3 +83,5 @@ export const AmityCreatePostMenuComponent = ({
     </View>
   );
 };
+
+export default memo(AmityCreatePostMenuComponent);
