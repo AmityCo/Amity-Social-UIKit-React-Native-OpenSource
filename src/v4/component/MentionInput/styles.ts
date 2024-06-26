@@ -13,9 +13,7 @@ export const useStyles = () => {
   const theme = useTheme() as MyMD3Theme;
   const { isKeyboardShowing } = useKeyboardStatus();
   const { width, height } = useWindowDimensions();
-  const animatedMarginTop = useRef(
-    new Animated.Value(height * 0.25 - 10)
-  ).current;
+  const animatedMarginTop = useRef(new Animated.Value(height * 0.15)).current;
 
   const animateMarginTop = useCallback(
     (toValue) => {

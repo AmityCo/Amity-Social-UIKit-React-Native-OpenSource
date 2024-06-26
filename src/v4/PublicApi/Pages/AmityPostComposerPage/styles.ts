@@ -3,13 +3,12 @@ import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export const useStyles = (theme: MyMD3Theme) => {
-  const { top, bottom } = useSafeAreaInsets();
+  const { top } = useSafeAreaInsets();
   const styles = StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: theme.colors.background,
       paddingTop: top + 18,
-      paddingBottom: bottom,
     },
     headerContainer: {
       flexDirection: 'row',
@@ -29,10 +28,12 @@ export const useStyles = (theme: MyMD3Theme) => {
     },
     activePostBtn: {
       color: theme.colors.primary,
+      opacity: 1,
     },
     postBtnText: {
       color: theme.colors.primaryShade2,
       fontSize: 15,
+      opacity: 0.5,
     },
     inputWrapper: {
       flex: 1,

@@ -2,13 +2,14 @@ import {
   Alert,
   Keyboard,
   KeyboardAvoidingView,
+  NativeTouchEvent,
   Platform,
   ScrollView,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { FC, useCallback, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import { ComponentID, ElementID, PageID } from '../../../enum';
 import {
   TSearchItem,
@@ -28,6 +29,9 @@ import useAuth from '../../../../hooks/useAuth';
 import globalfeedSlice from '../../../../redux/slices/globalfeedSlice';
 import { createPostToFeed } from '../../../../providers/Social/feed-sdk';
 import TextKeyElement from '../../Elements/TextKeyElement/TextKeyElement';
+import AmityMediaAttachmentComponent from '../../Components/AmityMediaAttachmentComponent/AmityMediaAttachmentComponent';
+import AmityDetailedMediaAttachmentComponent from '../../Components/AmityDetailedMediaAttachmentComponent/AmityDetailedMediaAttachmentComponent';
+import { useKeyboardStatus } from '../../../hook';
 
 const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
   targetId,
@@ -37,6 +41,7 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
   const pageId = PageID.post_composer_page;
   const { isExcluded, themeStyles, accessibilityId } = useAmityPage({ pageId });
   const styles = useStyles(themeStyles);
+  const { isKayboardShowing } = useKeyboardStatus();
   const navigation = useNavigation();
   const { client } = useAuth();
   const dispatch = useDispatch();
@@ -54,6 +59,7 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
   const [mentionUsers, setMentionUsers] = useState<TSearchItem[]>([]);
   const [isShowingSuggestion, setIsShowingSuggestion] = useState(false);
 
+  const [isSwipeup, setIsSwipeup] = useState(false); //will use in next PR
   const privateCommunityId = !community?.isPublic && community?.communityId;
   const title = community?.displayName ?? 'My Timeline';
   const isInputValid = inputMessage.trim().length > 0;
@@ -139,6 +145,22 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
     targetType,
   ]);
 
+  const onSwipe = (touchEvent: NativeTouchEvent) => {
+    const swipeUp = touchEvent.locationY < -50;
+    const swipeDown = touchEvent.locationY > 50;
+    setIsSwipeup((prev) => {
+      if (swipeUp && !isKayboardShowing) return true;
+      if (swipeDown) return false;
+      return prev;
+    });
+  };
+
+  useEffect(() => {
+    isKayboardShowing && setIsSwipeup(false);
+  }, [isKayboardShowing]);
+
+  const shouldShowDetailAttachment = !isKayboardShowing && isSwipeup;
+
   if (isExcluded) return null;
   return (
     <View
@@ -185,6 +207,17 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
             isBottomMentionSuggestionsRender
           />
         </ScrollView>
+        <View
+          onTouchEndCapture={(a) => {
+            onSwipe(a?.nativeEvent?.changedTouches[0]);
+          }}
+        >
+          {shouldShowDetailAttachment ? (
+            <AmityDetailedMediaAttachmentComponent />
+          ) : (
+            <AmityMediaAttachmentComponent />
+          )}
+        </View>
       </KeyboardAvoidingView>
     </View>
   );
