@@ -1,5 +1,4 @@
 export enum PageID {
-  SelectTargetPage = 'select_target_page',
   CameraPage = 'camera_page',
   StoryPage = 'story_page',
   CreateStoryPage = 'create_story_page',
@@ -10,6 +9,7 @@ export enum PageID {
   social_global_search_page = 'social_global_search_page',
   post_composer_page = 'post_composer_page',
   select_post_target_page = 'select_post_target_page',
+  select_story_target_page = 'select_story_target_page',
 }
 export enum ComponentID {
   EditComment = 'edit_comment_component',

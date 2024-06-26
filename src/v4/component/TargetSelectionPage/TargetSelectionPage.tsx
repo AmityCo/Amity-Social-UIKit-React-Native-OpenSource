@@ -36,10 +36,12 @@ export type FeedParams = {
     }>
   >;
   needApprovalOnPostCreation?: boolean;
+  hideMyTimelineTarget?: boolean;
 };
 
 interface ITargetSelectionPage {
   pageId: PageID;
+  hideMyTimelineTarget?: boolean;
   onSelectFeed: ({
     community,
     targetId,
@@ -53,6 +55,7 @@ interface ITargetSelectionPage {
 
 const TargetSelectionPage = ({
   pageId,
+  hideMyTimelineTarget = false,
   onSelectFeed,
 }: ITargetSelectionPage) => {
   const { client } = useAuth();
@@ -147,10 +150,7 @@ const TargetSelectionPage = ({
             navigation.goBack();
           }}
         >
-          <CloseButtonIconElement
-            style={styles.closeIcon}
-            pageID={PageID.select_post_target_page}
-          />
+          <CloseButtonIconElement style={styles.closeIcon} pageID={pageId} />
         </TouchableOpacity>
         <TextKeyElement
           style={styles.title}
@@ -159,26 +159,31 @@ const TargetSelectionPage = ({
           elementID={ElementID.title}
         />
       </View>
-      <TargetItem
-        pageId={pageId}
-        displayNameElementId={ElementID.my_timeline_text}
-        displayName={(myTimelineConfig?.text as string) || 'My Timeline'}
-        avatarElementId={ElementID.my_timeline_avatar}
-        onSelect={() =>
-          onSelectFeed({
-            targetId: user.userId,
-            targetName: (myTimelineConfig?.text as string) || 'My Timeline',
-            targetType: 'user',
-          })
-        }
-        avatarFileId={user?.avatarFileId}
-      />
-      <View style={styles.divider}>
-        <Divider
-          theme={{ colors: { outlineVariant: theme.colors.baseShade4 } }}
-        />
-      </View>
-      <Text style={styles.communityHeader}>My Communities</Text>
+      {!hideMyTimelineTarget && (
+        <>
+          <TargetItem
+            pageId={pageId}
+            displayNameElementId={ElementID.my_timeline_text}
+            displayName={(myTimelineConfig?.text as string) || 'My Timeline'}
+            avatarElementId={ElementID.my_timeline_avatar}
+            onSelect={() =>
+              onSelectFeed({
+                targetId: user.userId,
+                targetName: (myTimelineConfig?.text as string) || 'My Timeline',
+                targetType: 'user',
+              })
+            }
+            avatarFileId={user?.avatarFileId}
+          />
+          <View style={styles.divider}>
+            <Divider
+              theme={{ colors: { outlineVariant: theme.colors.baseShade4 } }}
+            />
+          </View>
+          <Text style={styles.communityHeader}>My Communities</Text>
+        </>
+      )}
+
       <FlatList
         data={communities}
         renderItem={renderItem}

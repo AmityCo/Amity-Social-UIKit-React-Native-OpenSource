@@ -24,8 +24,9 @@ const AmityStoryTargetSelectionPage = ({ navigation }) => {
   return (
     <TargetSelectionPage
       // Story select target page use this pageId
-      pageId={PageID.SelectTargetPage}
+      pageId={PageID.select_story_target_page}
       onSelectFeed={onSelectFeed}
+      hideMyTimelineTarget={true}
     />
   );
 };
