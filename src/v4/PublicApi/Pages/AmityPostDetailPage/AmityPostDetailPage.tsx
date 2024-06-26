@@ -284,6 +284,10 @@ const AmityPostDetailPage: FC<AmityPostDetailPageType> = ({ route }) => {
   }, [inputMessage]);
 
   const onPressBack = useCallback(() => {
+    // if the previous screen is CreateLivestream, skip createLivestream and selectTarget screen
+    const routes = navigation.getState().routes;
+    if (routes[routes.length - 2]?.name === 'CreateLivestream')
+      return navigation.pop(3);
     navigation.goBack();
   }, [navigation]);
 
