@@ -77,6 +77,18 @@ export const useConfigImageUri = ({
     if (fileUri === 'shareButtonIcon') {
       image = require('../configAssets/icons/shareButtonIcon.png');
     }
+    if (fileUri === 'create_post_button') {
+      image = require('../configAssets/icons/create_post_button.png');
+    }
+    if (fileUri === 'create_story_button') {
+      image = require('../configAssets/icons/create_story_button.png');
+    }
+    if (fileUri === 'create_poll_button') {
+      image = require('../configAssets/icons/create_poll_button.png');
+    }
+    if (fileUri === 'create_livestream_button') {
+      image = require('../configAssets/icons/create_livestream_button.png');
+    }
     if (fileUri === 'close_button') {
       image = isDarkTheme
         ? require('../configAssets/icons/close_button_dark.png')

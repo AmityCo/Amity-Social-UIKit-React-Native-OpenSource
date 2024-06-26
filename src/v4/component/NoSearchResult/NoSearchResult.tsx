@@ -14,7 +14,7 @@ const NoSearchResult = () => {
     img: {
       width: 60,
       height: 60,
-      tintColor: theme.colors.baseShade3,
+      tintColor: theme.colors.baseShade4,
     },
     noResultText: {
       fontSize: 17,
@@ -29,7 +29,7 @@ const NoSearchResult = () => {
         style={styles.img}
         source={require('../../assets/icon/noSearchResult.png')}
       />
-      <Text style={styles.noResultText}>No result found</Text>
+      <Text style={styles.noResultText}>No results found</Text>
     </View>
   );
 };

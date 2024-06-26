@@ -28,6 +28,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../../../routes/RouteParamList';
 import LikeButtonIconElement from '../../../Elements/LikeButtonIconElement/LikeButtonIconElement';
 import CommentButtonIconElement from '../../../Elements/CommentButtonIconElement/CommentButtonIconElement';
+import { useBehaviour } from '../../../../providers/BehaviourProvider';
 
 const FeedStyle: FC<AmityPostEngagementActionsSubComponentType> = ({
   postId,
@@ -39,6 +40,7 @@ const FeedStyle: FC<AmityPostEngagementActionsSubComponentType> = ({
     componentId: ComponentID.post_content,
   });
   const styles = useStyles(themeStyles);
+  const { AmityGlobalFeedComponentBehavior } = useBehaviour();
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [postData, setPostData] = useState<Amity.Post>(null);
@@ -76,10 +78,13 @@ const FeedStyle: FC<AmityPostEngagementActionsSubComponentType> = ({
   }, [isLike, postData, postId]);
 
   const onPressComment = useCallback(() => {
-    navigation.navigate('PostDetail', {
+    if (AmityGlobalFeedComponentBehavior.goToPostDetailPage) {
+      return AmityGlobalFeedComponentBehavior.goToPostDetailPage();
+    }
+    return navigation.navigate('PostDetail', {
       postId: postId,
     });
-  }, [navigation, postId]);
+  }, [AmityGlobalFeedComponentBehavior, navigation, postId]);
 
   return (
     <View style={styles.actionSection}>

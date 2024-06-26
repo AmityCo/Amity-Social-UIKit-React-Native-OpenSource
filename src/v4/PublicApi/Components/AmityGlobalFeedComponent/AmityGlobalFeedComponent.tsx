@@ -1,5 +1,5 @@
 import React, { FC, memo, useCallback, useRef, useState } from 'react';
-import { FlatList, View } from 'react-native';
+import { FlatList } from 'react-native';
 import {
   getGlobalFeed,
   type IGlobalFeedRes,
@@ -16,6 +16,8 @@ import AmityPostContentComponent from '../AmityPostContentComponent/AmityPostCon
 import { ComponentID, PageID } from '../../../enum/enumUIKitID';
 import { useAmityComponent } from '../../../hook/useUiKitReference';
 import { AmityPostContentComponentStyleEnum } from '../../../enum/AmityPostContentComponentStyle';
+import AmityStoryTabComponent from '../AmityStoryTabComponent/AmityStoryTabComponent';
+import { AmityStoryTabComponentEnum } from '../../types';
 
 type AmityGlobalFeedComponentType = {
   pageId?: PageID;
@@ -80,38 +82,40 @@ const AmityGlobalFeedComponent: FC<AmityGlobalFeedComponentType> = ({
   if (isExcluded) return null;
 
   return (
-    <View
-      style={styles.feedWrap}
+    <FlatList
       testID={accessibilityId}
       accessibilityLabel={accessibilityId}
-    >
-      <View style={styles.feedWrap}>
-        <FlatList
-          data={postList}
-          renderItem={({ item }) => (
-            <AmityPostContentComponent
-              post={item}
-              AmityPostContentComponentStyle={
-                AmityPostContentComponentStyleEnum.feed
-              }
-            />
-          )}
-          keyExtractor={(item) => item.postId.toString()}
-          onEndReachedThreshold={0.5}
-          onEndReached={handleLoadMore}
-          ref={flatListRef}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              colors={['lightblue']}
-              tintColor="lightblue"
-            />
+      style={styles.feedWrap}
+      data={postList}
+      renderItem={({ item }) => (
+        <AmityPostContentComponent
+          post={item}
+          AmityPostContentComponentStyle={
+            AmityPostContentComponentStyleEnum.feed
           }
-          keyboardShouldPersistTaps="handled"
         />
-      </View>
-    </View>
+      )}
+      keyExtractor={(item) => item.postId.toString()}
+      onEndReachedThreshold={0.5}
+      onEndReached={handleLoadMore}
+      ref={flatListRef}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          colors={['lightblue']}
+          tintColor="lightblue"
+        />
+      }
+      keyboardShouldPersistTaps="handled"
+      ListHeaderComponent={
+        !refreshing && (
+          <AmityStoryTabComponent
+            type={AmityStoryTabComponentEnum.globalFeed}
+          />
+        )
+      }
+    />
   );
 };
 

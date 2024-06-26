@@ -36,7 +36,7 @@ export const useStyles = () => {
       height: 20,
     },
     exploreText: {
-      color: theme.colors.base,
+      color: '#fff',
       fontSize: 15,
       marginLeft: 8,
     },

@@ -16,7 +16,7 @@ export const useStyles = () => {
     },
     cancelText: {
       fontSize: 18,
-      color: 'black',
+      color: theme.colors.base,
     },
   });
   return styles;

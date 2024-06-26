@@ -1,7 +1,7 @@
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import React, { FC, memo, useCallback } from 'react';
 
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../../routes/RouteParamList';
 import {
@@ -11,7 +11,10 @@ import {
 } from '../../../hook';
 import { ComponentID, ElementID, PageID } from '../../../enum/enumUIKitID';
 import { useBehaviour } from '../../../providers/BehaviourProvider';
+import { AmityCreatePostMenuComponent } from '../AmityCreatePostMenuComponent/AmityCreatePostMenuComponent';
 import TextKeyElement from '../../Elements/TextKeyElement/TextKeyElement';
+import { usePopup } from '../../../hook/usePopup';
+import Popup from '../../../component/PopupMenu/PopupMenu';
 
 type AmitySocialHomeTopNavigationComponentType = {
   activeTab: string;
@@ -25,11 +28,18 @@ const AmitySocialHomeTopNavigationComponent: FC<
   const componentConfig = useAmityComponent({ pageId, componentId });
   const theme = componentConfig.themeStyles;
   const { AmitySocialHomeTopNavigationComponentBehaviour } = useBehaviour();
+  const { isOpen, setIsOpen, toggle } = usePopup();
 
   const [myCommunitiesTab] = useUiKitConfig({
     page: PageID.social_home_page,
     component: ComponentID.WildCardComponent,
     element: ElementID.my_communities_button,
+    keys: ['text'],
+  }) as string[];
+  const [exploreTab] = useUiKitConfig({
+    page: PageID.social_home_page,
+    component: ComponentID.WildCardComponent,
+    element: ElementID.explore_button,
     keys: ['text'],
   }) as string[];
 
@@ -49,6 +59,7 @@ const AmitySocialHomeTopNavigationComponent: FC<
     },
     configKey: 'icon',
   });
+
   const navigation =
     useNavigation() as NativeStackNavigationProp<RootStackParamList>;
   const styles = StyleSheet.create({
@@ -61,6 +72,8 @@ const AmitySocialHomeTopNavigationComponent: FC<
       paddingHorizontal: 24,
       paddingVertical: 8,
       marginVertical: 8,
+      zIndex: 1,
+      position: 'relative',
     },
     title: {
       fontWeight: 'bold',
@@ -84,6 +97,12 @@ const AmitySocialHomeTopNavigationComponent: FC<
     },
   });
 
+  useFocusEffect(
+    useCallback(() => {
+      return () => setIsOpen(false);
+    }, [setIsOpen])
+  );
+
   const onPressSearch = useCallback(() => {
     if (myCommunitiesTab === activeTab) {
       if (
@@ -104,50 +123,71 @@ const AmitySocialHomeTopNavigationComponent: FC<
     navigation,
   ]);
 
-  const onCreateCommunity = useCallback(() => {
-    navigation.navigate('CreateCommunity');
-  }, [navigation]);
+  const onToggleCreateComponent = useCallback(() => {
+    toggle();
+  }, [toggle]);
+
+  // const onCreateCommunity = useCallback(() => {
+  //   navigation.navigate('CreateCommunity');
+  // }, [navigation]);
 
   const onPressCreate = useCallback(() => {
     if (AmitySocialHomeTopNavigationComponentBehaviour.onPressCreate)
       return AmitySocialHomeTopNavigationComponentBehaviour.onPressCreate();
-    return onCreateCommunity();
-  }, [AmitySocialHomeTopNavigationComponentBehaviour, onCreateCommunity]);
+    return onToggleCreateComponent();
+  }, [AmitySocialHomeTopNavigationComponentBehaviour, onToggleCreateComponent]);
 
   if (componentConfig?.isExcluded) return null;
 
   return (
-    <View
-      style={styles.headerContainer}
-      testID={componentConfig.accessibilityId}
-      accessibilityLabel={componentConfig.accessibilityId}
-    >
-      <TextKeyElement
-        pageID={pageId}
-        componentID={componentId}
-        elementID={ElementID.header_label}
-        style={styles.title}
-      />
+    <>
+      <View
+        style={styles.headerContainer}
+        testID={componentConfig.accessibilityId}
+        accessibilityLabel={componentConfig.accessibilityId}
+      >
+        <TextKeyElement
+          pageID={pageId}
+          componentID={componentId}
+          elementID={ElementID.header_label}
+          style={styles.title}
+        />
 
-      <View style={styles.flexContainer}>
-        <TouchableOpacity
-          style={styles.iconBtn}
-          onPress={onPressSearch}
-          testID="top_navigation/global_search_button"
-          accessibilityLabel="top_navigation/global_search_button"
+        <View style={styles.flexContainer}>
+          <TouchableOpacity
+            style={styles.iconBtn}
+            onPress={onPressSearch}
+            testID="top_navigation/global_search_button"
+            accessibilityLabel="top_navigation/global_search_button"
+          >
+            <Image source={searchIcon} style={styles.icon} />
+          </TouchableOpacity>
+          {activeTab !== exploreTab && (
+            <TouchableOpacity
+              style={styles.iconBtn}
+              onPress={onPressCreate}
+              testID="top_navigation/post_creation_button"
+              accessibilityLabel="top_navigation/post_creation_button"
+            >
+              <Image source={createIcon} style={styles.icon} />
+            </TouchableOpacity>
+          )}
+        </View>
+        <Popup
+          setOpen={setIsOpen}
+          open={isOpen}
+          position={{
+            top: 45,
+            right: 15,
+          }}
         >
-          <Image source={searchIcon} style={styles.icon} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.iconBtn}
-          onPress={onPressCreate}
-          testID="top_navigation/post_creation_button"
-          accessibilityLabel="top_navigation/post_creation_button"
-        >
-          <Image source={createIcon} style={styles.icon} />
-        </TouchableOpacity>
+          <AmityCreatePostMenuComponent
+            pageId={PageID.social_home_page}
+            componentId={ComponentID.create_post_menu}
+          />
+        </Popup>
       </View>
-    </View>
+    </>
   );
 };
 

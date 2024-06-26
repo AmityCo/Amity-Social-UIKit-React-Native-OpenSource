@@ -93,7 +93,6 @@ const CommentListItem = ({
     childrenComment,
     editedAt,
     mentionPosition,
-    childrenNumber,
     referenceId,
     targetType,
     targetId,
@@ -411,14 +410,14 @@ const CommentListItem = ({
             />
           )}
 
-          {replyCommentList.length > 0 && !isOpenReply && (
+          {replyCommentList?.length > 0 && !isOpenReply && (
             <TouchableOpacity
               onPress={() => openReplyComment()}
               style={styles.viewMoreReplyBtn}
             >
               <SvgXml xml={expandIcon} />
               <Text style={styles.viewMoreText}>
-                View {childrenNumber} replies
+                View {replyCommentList.length} replies
               </Text>
             </TouchableOpacity>
           )}

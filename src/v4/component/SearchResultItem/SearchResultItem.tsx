@@ -11,6 +11,7 @@ import AvatarElement from '../../PublicApi/Elements/CommonElements/AvatarElement
 import { useAmityComponent } from '../../hook';
 import TextElement from '../../../v4/PublicApi/Elements/CommonElements/TextElement';
 import ImageElement from '../../../v4/PublicApi/Elements/CommonElements/ImageElement';
+import { formatNumber } from '../../../util/numberUtil';
 type SearchResultItemType = {
   pageId?: PageID;
   componentId?: ComponentID;
@@ -137,7 +138,7 @@ const SearchResultItem: FC<SearchResultItemType> = ({
               testID="community_search_result/community_members_count"
               accessibilityLabel="community_search_result/community_members_count"
             >
-              {`${item.membersCount} ${memberText}`}
+              {`${formatNumber(item?.membersCount)} ${memberText}`}
             </Text>
           </>
         )}
