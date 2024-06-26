@@ -92,7 +92,7 @@ const TargetSelectionPage = ({
     closeButton: {
       position: 'absolute',
       left: 18,
-      top: 30,
+      top: 25,
       width: 24,
       height: 24,
     },
