@@ -1,6 +1,6 @@
 import React, { memo, useState } from 'react';
 import { useStyles } from './styles';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 
 
@@ -25,6 +25,7 @@ const AmitySocialGlobalSearchPage = () => {
     searchType === TabName.Communities ? onNextCommunityPage : onNextUserPage;
   if (isExcluded) return null;
   return (
+    <SafeAreaProvider>
     <SafeAreaView style={styles.container}>
       <AmityTopSearchBarComponent setSearchValue={setSearchValue} />
       <CustomTab
@@ -38,6 +39,7 @@ const AmitySocialGlobalSearchPage = () => {
         onNextPage={onNextPage}
       />
     </SafeAreaView>
+    </SafeAreaProvider>
   );
 };
 
