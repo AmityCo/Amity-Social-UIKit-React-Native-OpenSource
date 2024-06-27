@@ -1,4 +1,5 @@
 import { AmityPostComposerPageType } from '../PublicApi/types';
+import { AmityPostTargetSelectionPageType } from '../enum';
 
 export type RootStackParamList = {
   Home: { postIdCallBack?: string };
@@ -65,7 +66,7 @@ export type RootStackParamList = {
   };
   UserPendingRequest: undefined;
   FollowerList: Amity.User;
-  PostTargetSelection: { postType: 'post' | 'story' | 'poll' | 'livestream' };
+  PostTargetSelection: { postType: AmityPostTargetSelectionPageType };
   StoryTargetSelection: undefined;
   CreateLivestream: {
     targetId: string;

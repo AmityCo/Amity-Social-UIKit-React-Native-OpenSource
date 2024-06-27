@@ -6,10 +6,16 @@ import TargetSelectionPage, {
   FeedParams,
 } from '../../../component/TargetSelectionPage/TargetSelectionPage';
 
-const AmityPostTargetSelectionPage = ({ navigation, route }) => {
-  const { postType } = route.params;
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
+const AmityPostTargetSelectionPage = ({
+  postType,
+}: {
+  postType: AmityPostTargetSelectionPageType;
+}) => {
   const { AmityPostTargetSelectionPageBehavior } = useBehaviour();
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
   const onSelectFeed = ({
     targetId,
