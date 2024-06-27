@@ -13,7 +13,7 @@ const AmityMyCommunitiesSearchPage = () => {
   const pageId = PageID.social_global_search_page;
   const { isExcluded, themeStyles } = useAmityPage({ pageId });
   const styles = useStyles(themeStyles);
-  const [searchValue, setSearchValue] = useState('');
+  const [searchValue, setSearchValue] = useState<null | string>(null);
   const searchType = TabName.MyCommunities;
   const { searchResult, onNextMyCommunityPage } = useAmityGlobalSearchViewModel(
     searchValue,

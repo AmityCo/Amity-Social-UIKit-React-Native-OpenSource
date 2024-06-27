@@ -41,7 +41,7 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
   const pageId = PageID.post_composer_page;
   const { isExcluded, themeStyles, accessibilityId } = useAmityPage({ pageId });
   const styles = useStyles(themeStyles);
-  const { isKayboardShowing } = useKeyboardStatus();
+  const { isKeyboardShowing } = useKeyboardStatus();
   const navigation = useNavigation();
   const { client } = useAuth();
   const dispatch = useDispatch();
@@ -58,11 +58,11 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
   );
   const [mentionUsers, setMentionUsers] = useState<TSearchItem[]>([]);
   const [isShowingSuggestion, setIsShowingSuggestion] = useState(false);
-
   const [isSwipeup, setIsSwipeup] = useState(false); //will use in next PR
   const privateCommunityId = !community?.isPublic && community?.communityId;
   const title = community?.displayName ?? 'My Timeline';
-  const isInputValid = inputMessage.trim().length > 0;
+  const isInputValid =
+    inputMessage.trim().length > 0 && inputMessage.trim().length <= 50000;
   const onPressClose = useCallback(() => {
     navigation.goBack();
   }, [navigation]);
@@ -77,7 +77,7 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
     }
     dispatch(
       showToastMessage({
-        toastMessage: 'Loading...',
+        toastMessage: 'Posting...',
         isLoadingToast: true,
       })
     );
@@ -127,7 +127,8 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
       return;
     } catch (error) {
       dispatch(hideToastMessage());
-      dispatch(showToastMessage({ toastMessage: error.message }));
+      // comment out for now. will need later
+      // dispatch(showToastMessage({ toastMessage: error.message }));
     }
   }, [
     addPostToGlobalFeed,
@@ -149,17 +150,16 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
     const swipeUp = touchEvent.locationY < -50;
     const swipeDown = touchEvent.locationY > 50;
     setIsSwipeup((prev) => {
-      if (swipeUp && !isKayboardShowing) return true;
+      if (swipeUp && !isKeyboardShowing) return true;
       if (swipeDown) return false;
       return prev;
     });
   };
 
   useEffect(() => {
-    isKayboardShowing && setIsSwipeup(false);
-  }, [isKayboardShowing]);
-
-  const shouldShowDetailAttachment = !isKayboardShowing && isSwipeup;
+    isKeyboardShowing && setIsSwipeup(false);
+  }, [isKeyboardShowing]);
+  const shouldShowDetailAttachment = !isKeyboardShowing && isSwipeup;
 
   if (isExcluded) return null;
   return (

@@ -1,26 +1,19 @@
 import { StyleSheet, useWindowDimensions } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
 
 export const useStyles = (theme: MyMD3Theme) => {
   const { width } = useWindowDimensions();
-  const { bottom } = useSafeAreaInsets();
   const styles = StyleSheet.create({
     container: {
       alignSelf: 'center',
       width,
-      paddingBottom: bottom,
+      borderTopWidth: 3,
+      borderLeftWidth: 1,
+      borderRightWidth: 1,
       borderTopLeftRadius: 20,
       borderTopRightRadius: 20,
       backgroundColor: theme.colors.background,
-      shadowColor: theme.colors.baseShade1,
-      shadowOffset: {
-        width: 0,
-        height: 3,
-      },
-      shadowOpacity: 0.29,
-      shadowRadius: 4.65,
-      elevation: 5,
+      borderColor: theme.colors.baseShade4,
       position: 'absolute',
       bottom: 0,
     },
@@ -37,7 +30,7 @@ export const useStyles = (theme: MyMD3Theme) => {
       paddingTop: 16,
       paddingHorizontal: 24,
       width: '100%',
-      justifyContent: 'space-between',
+      justifyContent: 'space-around',
     },
     iconBtn: {
       width: 24,

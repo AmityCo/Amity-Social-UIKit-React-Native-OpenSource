@@ -11,10 +11,11 @@ import { useKeyboardStatus } from '../../hook';
 
 export const useStyles = () => {
   const theme = useTheme() as MyMD3Theme;
-  const { isKeyboardShowing } = useKeyboardStatus();
+  const { isKeyboardShowing, keyboardHeight } = useKeyboardStatus();
   const { width, height } = useWindowDimensions();
-  const animatedMarginTop = useRef(new Animated.Value(height * 0.15)).current;
-
+  const animatedMarginTop = useRef(
+    new Animated.Value(height - keyboardHeight - 400)
+  ).current;
   const animateMarginTop = useCallback(
     (toValue) => {
       Animated.timing(animatedMarginTop, {
@@ -28,14 +29,17 @@ export const useStyles = () => {
   );
 
   useEffect(() => {
-    const marginTop = isKeyboardShowing ? height * 0.25 - 10 : height * 0.5;
+    const marginTop = isKeyboardShowing
+      ? height - keyboardHeight - 400
+      : height * 0.5;
     animateMarginTop(marginTop);
-  }, [animateMarginTop, height, isKeyboardShowing]);
+  }, [animateMarginTop, height, isKeyboardShowing, keyboardHeight]);
 
   const styles = StyleSheet.create({
     mentionListContainer: {
+      position: 'absolute',
       alignSelf: 'center',
-      marginTop: animatedMarginTop,
+      top: animatedMarginTop,
       width,
       height: 170,
     },
@@ -64,7 +68,7 @@ export const useStyles = () => {
       color: theme.colors.base,
       fontSize: 15,
       padding: 0,
-      maxHeight: 200,
+      maxHeight: 100,
     },
     textInput: {
       marginTop: 12,
