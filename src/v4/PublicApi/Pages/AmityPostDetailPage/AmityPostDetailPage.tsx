@@ -26,7 +26,7 @@ import { TSearchItem, useAmityPage } from '../../../hook';
 import { useStyles } from './styles';
 import BackButtonIconElement from '../../Elements/BackButtonIconElement/BackButtonIconElement';
 import MenuButtonIconElement from '../../Elements/MenuButtonIconElement/MenuButtonIconElement';
-import { RouteProp, useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../../../routes/RouteParamList';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import {
@@ -58,13 +58,13 @@ import { useDispatch } from 'react-redux';
 import useAuth from '../../../../hooks/useAuth';
 import EditPostModal from '../../../../components/EditPostModal';
 import { getCommunityById } from '../../../../providers/Social/communities-sdk';
+
 type AmityPostDetailPageType = {
-  route: RouteProp<RootStackParamList, 'PostDetail'>;
+  postId: Amity.Post['postId'];
 };
 
-const AmityPostDetailPage: FC<AmityPostDetailPageType> = ({ route }) => {
+const AmityPostDetailPage: FC<AmityPostDetailPageType> = ({ postId }) => {
   const pageId = PageID.post_detail_page;
-  const { postId } = route.params;
   const { client } = useAuth();
   const { deleteByPostId } = globalFeedSlice.actions;
   const dispatch = useDispatch();
@@ -284,6 +284,10 @@ const AmityPostDetailPage: FC<AmityPostDetailPageType> = ({ route }) => {
   }, [inputMessage]);
 
   const onPressBack = useCallback(() => {
+    // if the previous screen is CreateLivestream, skip createLivestream and selectTarget screen
+    const routes = navigation.getState().routes;
+    if (routes[routes.length - 2]?.name === 'CreateLivestream')
+      return navigation.pop(3);
     navigation.goBack();
   }, [navigation]);
 

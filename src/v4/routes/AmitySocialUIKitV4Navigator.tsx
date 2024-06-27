@@ -14,7 +14,7 @@ import CommunityHome from '../screen/CommunityHome';
 import { CommunitySetting } from '../../screens/CommunitySetting/index';
 import CommunityMemberDetail from '../../screens/CommunityMemberDetail/CommunityMemberDetail';
 import AmitySocialHomePage from '../PublicApi/Pages/AmitySocialHomePage/AmitySocialHomePage';
-import PostDetail from '../PublicApi/Pages/AmityPostDetailPage/AmityPostDetailPage';
+import PostDetail from '../screen/PostDetail';
 import CreatePost from '../screen/CreatePost';
 import UserProfile from '../screen/UserProfile/UserProfile';
 import { EditProfile } from '../../screens/EditProfile/EditProfile';
@@ -40,11 +40,11 @@ import Toast from '../../components/Toast/Toast';
 import AmitySocialGlobalSearchPage from '../PublicApi/Pages/AmitySocialGlobalSearchPage/AmitySocialGlobalSearchPage';
 import UserPendingRequest from '../screen/UserPendingRequest/UserPendingRequest';
 import FollowerList from '../screen/FollowerList/FollowerList';
-import AmityPostTargetSelectionPage from '../PublicApi/Pages/AmityPostTargetSelectionPage/AmityPostTargetSelectionPage';
-import AmityStoryTargetSelectionPage from '../PublicApi/Pages/AmityStoryTargetSelectionPage/AmityStoryTargetSelectionPage';
 import CancelButton from '../component/CancelButton';
 import AmityMyCommunitiesSearchPage from '../PublicApi/Pages/AmityMyCommunitiesSearchPage/AmityMyCommunitiesSearchPage';
 import CreateLivestream from '../../screens/CreateLivestream/CreateLivestream';
+import PostTargetSelection from '../screen/PostTargetSelection';
+import StoryTargetSelection from '../PublicApi/Pages/AmityStoryTargetSelectionPage/AmityStoryTargetSelectionPage';
 
 export default function AmitySocialUIKitV4Navigator() {
   const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -274,11 +274,11 @@ export default function AmitySocialUIKitV4Navigator() {
             <Stack.Screen name="CreateStory" component={CreateStoryScreen} />
             <Stack.Screen
               name="PostTargetSelection"
-              component={AmityPostTargetSelectionPage}
+              component={PostTargetSelection}
             />
             <Stack.Screen
               name="StoryTargetSelection"
-              component={AmityStoryTargetSelectionPage}
+              component={StoryTargetSelection}
             />
             <Stack.Screen
               name="CreateLivestream"
