@@ -10,7 +10,7 @@ export type TSearchItem = Amity.User &
   Amity.Membership<'community'> & { name: string; id: string };
 
 const useSearch = (
-  searchText: string = '',
+  searchText: string | null,
   privateCommunityId: string = ''
 ) => {
   const onNextPageRef = useRef<(() => void) | undefined | null>(null);
@@ -64,7 +64,7 @@ const useSearch = (
 
   useEffect(() => {
     if (privateCommunityId) return searchPrivateCommunityMember(searchText);
-    if (searchText.length < 2) return setSearchResult([]);
+    if (!searchText) return setSearchResult([]);
     return searchAllUsers(searchText);
   }, [
     privateCommunityId,

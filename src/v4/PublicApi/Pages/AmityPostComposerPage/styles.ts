@@ -3,12 +3,13 @@ import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export const useStyles = (theme: MyMD3Theme) => {
-  const { top } = useSafeAreaInsets();
+  const { top, bottom } = useSafeAreaInsets();
   const styles = StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: theme.colors.background,
       paddingTop: top + 18,
+      paddingBottom: bottom,
     },
     headerContainer: {
       flexDirection: 'row',

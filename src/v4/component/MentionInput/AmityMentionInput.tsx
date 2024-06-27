@@ -17,7 +17,7 @@ interface IMentionInput extends TextInputProps {
   mentionUsers: TSearchItem[];
   setMentionUsers: (mentionUsers: TSearchItem[]) => void;
   isBottomMentionSuggestionsRender: boolean;
-  privateCommunityId: string;
+  privateCommunityId?: string;
   initialValue?: string;
   resetValue?: boolean;
   inputRef?: Ref<TextInput>;
@@ -41,7 +41,7 @@ const AmityMentionInput: FC<IMentionInput> = ({
   const styles = useStyles();
 
   const [cursorIndex, setCursorIndex] = useState(0);
-  const [currentSearchUserName, setCurrentSearchUserName] = useState('');
+  const [currentSearchUserName, setCurrentSearchUserName] = useState(null);
   const { searchResult, getNextPage } = useSearch(
     currentSearchUserName,
     privateCommunityId
@@ -65,7 +65,7 @@ const AmityMentionInput: FC<IMentionInput> = ({
       const newMentionPosition = [...mentionsPosition, position];
       setMentionUsers(newMentionUsers);
       setMentionsPosition(newMentionPosition);
-      setCurrentSearchUserName('');
+      setCurrentSearchUserName(null);
     },
     [
       currentSearchUserName,

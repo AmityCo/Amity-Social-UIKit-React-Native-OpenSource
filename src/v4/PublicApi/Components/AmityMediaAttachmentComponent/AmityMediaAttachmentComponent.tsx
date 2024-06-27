@@ -18,7 +18,7 @@ const AmityMediaAttachmentComponent = () => {
 
   const showMediaAttachments = useCallback(() => {
     Animated.timing(animatedBottom, {
-      toValue: 0,
+      toValue: 14,
       duration: 300,
       easing: Easing.ease,
       useNativeDriver: false,
@@ -72,6 +72,7 @@ const AmityMediaAttachmentComponent = () => {
             style={styles.iconBtn}
           />
         </Pressable>
+        {/* //will use later
         <Pressable>
           <ImageKeyElement
             pageID={pageId}
@@ -79,7 +80,7 @@ const AmityMediaAttachmentComponent = () => {
             elementID={ElementID.file_button}
             style={styles.iconBtn}
           />
-        </Pressable>
+        </Pressable> */}
       </View>
     </Animated.View>
   );
