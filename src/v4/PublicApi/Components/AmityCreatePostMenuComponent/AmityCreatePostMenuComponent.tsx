@@ -7,6 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../../../v4/routes/RouteParamList';
 import ButtonWithIconElement from '../../Elements/ButtonWithIconElement/ButtonWithIconElement';
+import { AmityPostTargetSelectionPageType } from '../../../enum';
 
 interface AmityCreatePostMenuComponentProps {
   pageId?: PageID;
@@ -32,8 +33,8 @@ const AmityCreatePostMenuComponent = ({
   });
 
   const onPressCreatePost = useCallback(
-    (postType: 'post' | 'story' | 'poll' | 'livestream') => {
-      if (postType !== 'story') {
+    (postType: AmityPostTargetSelectionPageType) => {
+      if (postType !== AmityPostTargetSelectionPageType.story) {
         if (AmityCreatePostMenuComponentBehavior.goToSelectPostTargetPage) {
           return AmityCreatePostMenuComponentBehavior.goToSelectPostTargetPage({
             postType,
@@ -60,25 +61,29 @@ const AmityCreatePostMenuComponent = ({
         pageId={pageId}
         componentId={componentId}
         elementId={ElementID.create_post_button}
-        onClick={() => onPressCreatePost('post')}
+        onClick={() => onPressCreatePost(AmityPostTargetSelectionPageType.post)}
       />
       <ButtonWithIconElement
         pageId={pageId}
         componentId={componentId}
         elementId={ElementID.create_story_button}
-        onClick={() => onPressCreatePost('story')}
+        onClick={() =>
+          onPressCreatePost(AmityPostTargetSelectionPageType.story)
+        }
       />
       <ButtonWithIconElement
         pageId={pageId}
         componentId={componentId}
         elementId={ElementID.create_poll_button}
-        onClick={() => onPressCreatePost('poll')}
+        onClick={() => onPressCreatePost(AmityPostTargetSelectionPageType.poll)}
       />
       <ButtonWithIconElement
         pageId={pageId}
         componentId={componentId}
         elementId={ElementID.create_livestream_button}
-        onClick={() => onPressCreatePost('livestream')}
+        onClick={() =>
+          onPressCreatePost(AmityPostTargetSelectionPageType.livestream)
+        }
       />
     </View>
   );

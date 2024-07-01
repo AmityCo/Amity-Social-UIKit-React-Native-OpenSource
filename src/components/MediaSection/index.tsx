@@ -4,6 +4,7 @@ import {
   ImageStyle,
   StyleProp,
   Text,
+  TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
@@ -277,6 +278,25 @@ const MediaSection: React.FC<IMediaSection> = ({ childrenPosts }) => {
         onRequestClose={() => setIsVisibleFullImage(false)}
         isVideoButton={videoPosts.length > 0 ? true : false}
         videoPosts={videoPosts}
+        HeaderComponent={({ imageIndex: imgIndex }) => (
+          <View style={styles.headerContainer}>
+            <View style={styles.flexWidth}>
+              <TouchableOpacity
+                style={styles.closebtnIcon}
+                onPress={() => setIsVisibleFullImage(false)}
+              >
+                <Text style={styles.closeBtn}>X</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.flexWidth}>
+              <Text style={styles.header}>
+                {imgIndex + 1}/
+                {imagePostsFullSize.length || videoPostsFullSize.length}
+              </Text>
+            </View>
+            <View style={styles.flexWidth} />
+          </View>
+        )}
       />
     </View>
   );

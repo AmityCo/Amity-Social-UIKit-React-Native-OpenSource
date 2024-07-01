@@ -1,5 +1,6 @@
-import { DefaultConfigID } from '../enum';
+import uikit_config from '../../../uikit.config.json';
 
+export type IConfigRaw = typeof uikit_config;
 export interface IUIKitConfig {
   preferred_theme: 'dark' | 'light' | 'default';
   globalTheme: Record<string, any>;
@@ -39,40 +40,6 @@ export interface ITheme {
     alert_color?: string;
     background_color?: string;
   };
-}
-
-export interface IConfigRaw {
-  preferred_theme?: string;
-  theme?: ITheme;
-  excludes?: string[];
-  customizations?: Record<
-    DefaultConfigID,
-    {
-      theme?: ITheme;
-      title?: string;
-      back_icon?: string;
-      close_icon?: string;
-      aspect_ratio_icon?: string;
-      resolution?: string;
-      background_color?: string;
-      hyperlink_button_icon?: string;
-      share_icon?: string;
-      hide_avatar?: boolean;
-      progress_color?: string | string[];
-      overflow_menu_icon?: string;
-      impression_icon?: string;
-      reaction_icon?: string;
-      create_new_story_icon?: string;
-      mute_icon?: string;
-      unmute_icon?: string;
-      cancel_icon?: string;
-      cancel_button_text?: string;
-      save_icon?: string;
-      save_button_text?: string;
-      done_icon?: string;
-      done_button_text?: string;
-    }
-  >;
 }
 
 export interface IUIKitConfigOptions {

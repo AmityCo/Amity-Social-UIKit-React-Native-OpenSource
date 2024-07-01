@@ -57,7 +57,6 @@ const AmityPostCommentComponent: FC<AmityPostCommentComponentType> = ({
   const [commentList, setCommentList] = useState<IComment[]>([]);
   useEffect(() => {
     if (!postId) return () => {};
-    let unsub;
     const unsubComment = CommentRepository.getComments(
       {
         dataTypes: { matchType: 'any', values: ['text', 'image'] },
@@ -76,7 +75,6 @@ const AmityPostCommentComponent: FC<AmityPostCommentComponentType> = ({
     return () => {
       setCommentList([]);
       unsubComment();
-      unsub && unsub();
     };
   }, [postId, postType]);
 
@@ -152,7 +150,7 @@ const AmityPostCommentComponent: FC<AmityPostCommentComponentType> = ({
             />
           );
         }}
-        keyExtractor={(item, index) => item.commentId + index}
+        keyExtractor={(item) => item.commentId}
         onEndReachedThreshold={0.8}
         onEndReached={() => {
           onNextPageRef.current && onNextPageRef.current();

@@ -22,7 +22,7 @@ import { IMentionPosition } from '../../../types/type';
 import { RootStackParamList } from '../../../routes/RouteParamList';
 import { ComponentID, ElementID, PageID } from '../../../enum';
 import AvatarElement from '../../Elements/CommonElements/AvatarElement';
-import { useAmityComponent } from '../../../hook';
+import { useAmityComponent, useIsCommunityModerator } from '../../../hook';
 import ModeratorBadgeElement from '../../Elements/ModeratorBadgeElement/ModeratorBadgeElement';
 import AmityPostEngagementActionsComponent from '../AmityPostEngagementActionsComponent/AmityPostEngagementActionsComponent';
 import { AmityPostContentComponentStyleEnum } from '../../../enum/AmityPostContentComponentStyle';
@@ -100,6 +100,7 @@ const AmityPostContentComponent = ({
   const [mentionPositionArr, setMentionsPositionArr] = useState<
     IMentionPosition[]
   >([]);
+
   const slideAnimation = useRef(new Animated.Value(0)).current;
 
   const {
@@ -115,6 +116,10 @@ const AmityPostContentComponent = ({
     editedAt,
     mentionPosition,
   } = post ?? {};
+  const { isCommunityModerator } = useIsCommunityModerator({
+    communityId: targetType === 'community' && data.targetId,
+    userId: user.userId,
+  });
 
   useEffect(() => {
     if (mentionPosition) {
@@ -349,7 +354,7 @@ const AmityPostContentComponent = ({
               )}
             </View>
             <View style={styles.timeRow}>
-              {targetType === 'community' && targetId && (
+              {isCommunityModerator && (
                 <View style={styles.row}>
                   <ModeratorBadgeElement
                     pageID={pageId}

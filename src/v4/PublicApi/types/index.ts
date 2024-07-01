@@ -12,10 +12,10 @@ export const enum AmityPostComposerMode {
 
 export type AmityPostComposerPageType = {
   mode: AmityPostComposerMode;
-  post?: Amity.Post;
   targetId?: string;
-  targetType?: Amity.PostTargetType;
+  targetType: Amity.PostTargetType;
   community?: Amity.Community;
+  post?: Amity.Post;
 };
 
 export interface AmityStoryTabComponentType {

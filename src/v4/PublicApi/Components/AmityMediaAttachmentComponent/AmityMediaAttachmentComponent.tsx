@@ -1,11 +1,23 @@
 import { Pressable, View, Animated, Easing } from 'react-native';
-import React, { memo, useCallback, useEffect, useRef } from 'react';
-import { PageID, ComponentID, ElementID } from '../../../enum';
+import React, { FC, memo, useCallback, useEffect, useRef } from 'react';
+import { PageID, ComponentID, ElementID, mediaAttachment } from '../../../enum';
 import { useAmityComponent } from '../../../hook';
 import { useStyles } from './styles';
 import ImageKeyElement from '../../Elements/ImageKeyElement/ImageKeyElement';
 
-const AmityMediaAttachmentComponent = () => {
+type AmityMediaAttachmentComponentType = {
+  onPressCamera: () => void;
+  onPressImage: () => void;
+  onPressVideo: () => void;
+  chosenMediaType?: mediaAttachment;
+};
+
+const AmityMediaAttachmentComponent: FC<AmityMediaAttachmentComponentType> = ({
+  onPressCamera,
+  onPressImage,
+  onPressVideo,
+  chosenMediaType,
+}) => {
   const pageId = PageID.post_composer_page;
   const componentId = ComponentID.media_attachment;
   const { accessibilityId, themeStyles, isExcluded } = useAmityComponent({
@@ -18,7 +30,7 @@ const AmityMediaAttachmentComponent = () => {
 
   const showMediaAttachments = useCallback(() => {
     Animated.timing(animatedBottom, {
-      toValue: 14,
+      toValue: 0,
       duration: 300,
       easing: Easing.ease,
       useNativeDriver: false,
@@ -48,7 +60,7 @@ const AmityMediaAttachmentComponent = () => {
     >
       <View style={styles.handleBar} />
       <View style={styles.buttonsContainer}>
-        <Pressable>
+        <Pressable onPress={onPressCamera}>
           <ImageKeyElement
             pageID={pageId}
             componentID={componentId}
@@ -56,22 +68,27 @@ const AmityMediaAttachmentComponent = () => {
             style={styles.iconBtn}
           />
         </Pressable>
-        <Pressable>
-          <ImageKeyElement
-            pageID={pageId}
-            componentID={componentId}
-            elementID={ElementID.image_button}
-            style={styles.iconBtn}
-          />
-        </Pressable>
-        <Pressable>
-          <ImageKeyElement
-            pageID={pageId}
-            componentID={componentId}
-            elementID={ElementID.video_button}
-            style={styles.iconBtn}
-          />
-        </Pressable>
+
+        {(!chosenMediaType || chosenMediaType === mediaAttachment.image) && (
+          <Pressable onPress={onPressImage}>
+            <ImageKeyElement
+              pageID={pageId}
+              componentID={componentId}
+              elementID={ElementID.image_button}
+              style={styles.iconBtn}
+            />
+          </Pressable>
+        )}
+        {(!chosenMediaType || chosenMediaType === mediaAttachment.video) && (
+          <Pressable onPress={onPressVideo}>
+            <ImageKeyElement
+              pageID={pageId}
+              componentID={componentId}
+              elementID={ElementID.video_button}
+              style={styles.iconBtn}
+            />
+          </Pressable>
+        )}
         {/* //will use later
         <Pressable>
           <ImageKeyElement

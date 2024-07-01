@@ -20,7 +20,10 @@ const ModeratorBadgeElement: FC<ModeratorBadgeElementType> = ({
   communityId,
   ...props
 }) => {
-  const isModerator = useIsCommunityModerator({ communityId, userId });
+  const { isCommunityModerator } = useIsCommunityModerator({
+    communityId,
+    userId,
+  });
   const elementID = ElementID.moderator_badge;
   const { isExcluded, config, accessibilityId, themeStyles } = useAmityElement({
     pageId: pageID,
@@ -29,7 +32,7 @@ const ModeratorBadgeElement: FC<ModeratorBadgeElementType> = ({
   });
   const styles = useStyles(themeStyles);
   if (isExcluded) return null;
-  if (!isModerator || !communityId || !userId) return null;
+  if (!isCommunityModerator || !communityId || !userId) return null;
   const text = (config?.text as string) ?? '';
 
   return (

@@ -15,14 +15,12 @@ import { SvgXml } from 'react-native-svg';
 import {
   arrowOutlined,
   closeIcon,
-  plusIcon,
   privateIcon,
   publicIcon,
 } from '../../svg/svg-xml-list';
 import { useStyles } from './styles';
 import ChooseCategoryModal from '../../components/ChooseCategoryModal';
 import { RadioButton } from 'react-native-radio-buttons-group';
-import AddMembersModal from '../../components/AddMembersModal';
 import type { UserInterface } from '../../types/user.interface';
 import useAuth from '../../hooks/useAuth';
 import { useTheme } from 'react-native-paper';
@@ -55,7 +53,6 @@ const EditCommunity = ({ navigation, route }) => {
   const [categoryName, setCategoryName] = useState<string>('');
   const [categoryId, setCategoryId] = useState<string>(data.categoryIds[0]);
   const [categoryModal, setCategoryModal] = useState<boolean>(false);
-  const [addMembersModal, setAddMembersModal] = useState<boolean>(false);
   const [isPublic, setisPublic] = useState(data.isPublic);
   const [selectedUserList, setSelectedUserList] = useState<UserInterface[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -166,10 +163,6 @@ const EditCommunity = ({ navigation, route }) => {
   const handleSelectCategory = (categoryId: string, categoryName: string) => {
     setCategoryId(categoryId);
     setCategoryName(categoryName);
-  };
-
-  const handleAddMembers = (users: UserInterface[]) => {
-    setSelectedUserList(users);
   };
 
   const displayName = (user: string) => {
@@ -389,20 +382,6 @@ const EditCommunity = ({ navigation, route }) => {
                     numColumns={2}
                   />
                 )}
-
-                <Pressable
-                  onPress={() => setAddMembersModal(true)}
-                  style={styles.addIcon}
-                >
-                  <View style={styles.avatar}>
-                    <SvgXml
-                      style={styles.arrowIcon}
-                      xml={plusIcon(theme.colors.base)}
-                      width={24}
-                      height={24}
-                    />
-                  </View>
-                </Pressable>
               </View>
             </View>
           )}
@@ -413,13 +392,6 @@ const EditCommunity = ({ navigation, route }) => {
         onClose={() => setCategoryModal(false)}
         visible={categoryModal}
         categoryId={categoryId}
-      />
-      <AddMembersModal
-        onSelect={handleAddMembers}
-        onClose={() => setAddMembersModal(false)}
-        visible={addMembersModal}
-        initUserList={selectedUserList ?? []}
-        excludeUserList={[]}
       />
     </ScrollView>
   );
