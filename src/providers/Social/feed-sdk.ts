@@ -24,7 +24,7 @@ export async function getGlobalFeed(
     async (resolve, reject) => {
       try {
         const { data, nextPage, prevPage } =
-          await FeedRepository.queryGlobalFeed({
+          await FeedRepository.getCustomRankingGlobalFeed({
             page,
           });
         resolve({ data, nextPage, prevPage });

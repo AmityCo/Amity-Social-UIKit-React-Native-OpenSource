@@ -19,6 +19,7 @@ export const useAmityElement = ({
     element: elementId,
   });
   const defaultConfig = getDefaultConfig(uiReference);
+  //@ts-ignore
   const themeStyles = useGenerateThemeStyles(config);
   const isExcluded = excludes.includes(uiReference);
   const accessibilityId = uiReference;

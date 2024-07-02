@@ -16,6 +16,7 @@ export const useStyles = (theme: MyMD3Theme) => {
       paddingHorizontal: 12,
       alignItems: 'center',
       marginBottom: 12,
+      marginTop: 12,
     },
     closeBtn: {
       width: 14,

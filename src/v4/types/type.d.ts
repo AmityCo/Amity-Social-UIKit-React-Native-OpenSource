@@ -12,4 +12,5 @@ export interface IDisplayImage {
   fileName: string;
   isUploaded: boolean;
   thumbNail?: string;
+  postId?: string;
 }

@@ -181,7 +181,8 @@ const AmityPostContentComponent = ({
   };
 
   const openEditPostModal = () => {
-    setIsVisible(false);
+    closeModal();
+    navigation.navigate('EditPost', { post, community: communityData });
   };
 
   const openModal = () => {

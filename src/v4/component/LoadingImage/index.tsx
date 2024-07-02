@@ -108,7 +108,6 @@ const LoadingImage = ({
   const onRetryUpload = () => {
     uploadFileToAmity();
   };
-  console.log(fileCount);
   return (
     <View style={fileCount >= 3 ? styles.image3XContainer : styles.container}>
       <Image

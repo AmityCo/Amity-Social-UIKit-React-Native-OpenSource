@@ -45,6 +45,7 @@ import AmityMyCommunitiesSearchPage from '../PublicApi/Pages/AmityMyCommunitiesS
 import CreateLivestream from '../../screens/CreateLivestream/CreateLivestream';
 import PostTargetSelection from '../screen/PostTargetSelection';
 import StoryTargetSelection from '../PublicApi/Pages/AmityStoryTargetSelectionPage/AmityStoryTargetSelectionPage';
+import EditPost from '../screen/EditPost/EditPost';
 
 export default function AmitySocialUIKitV4Navigator() {
   const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -202,6 +203,11 @@ export default function AmitySocialUIKitV4Navigator() {
           <Stack.Screen
             name="CreatePost"
             component={CreatePost}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="EditPost"
+            component={EditPost}
             options={{ headerShown: false }}
           />
           <Stack.Screen
