@@ -15,7 +15,7 @@ import uiSlice from '../../../redux/slices/uiSlice';
 
 interface OverlayImageProps {
   source: string;
-  onClose?: (originalPath: string) => void;
+  onClose?: (originalPath: string, field?: string, postId?: string) => void;
   onLoadFinish?: (
     fileId: string,
     fileUrl: string,
@@ -28,6 +28,7 @@ interface OverlayImageProps {
   fileId?: string;
   isEditMode?: boolean;
   fileCount?: number;
+  postId?: string;
 }
 const LoadingImage = ({
   source,
@@ -38,6 +39,7 @@ const LoadingImage = ({
   fileId = '',
   isEditMode = false,
   fileCount,
+  postId,
 }: OverlayImageProps) => {
   const theme = useTheme() as MyMD3Theme;
   const dispatch = useDispatch();
@@ -89,12 +91,11 @@ const LoadingImage = ({
   }, [dispatch, index, onLoadFinish, showToastMessage, source]);
 
   const handleDelete = async () => {
-    if (fileId) {
-      onClose && onClose(source);
-      if (!isEditMode) {
-        await deleteAmityFile(fileId);
-      }
+    if (!fileId) return null;
+    if (!isEditMode) {
+      await deleteAmityFile(fileId);
     }
+    onClose && onClose(source, fileId, postId);
   };
   useEffect(() => {
     if (isUploaded) {
@@ -108,7 +109,6 @@ const LoadingImage = ({
   const onRetryUpload = () => {
     uploadFileToAmity();
   };
-  console.log(fileCount);
   return (
     <View style={fileCount >= 3 ? styles.image3XContainer : styles.container}>
       <Image

@@ -154,7 +154,9 @@ const AmityMyCommunitiesComponent: FC<AmityMyCommunitiesComponentType> = ({
     >
       {communities?.length ? (
         <FlatList
-          onEndReached={onNextCommunityPage}
+          onEndReached={() => {
+            onNextCommunityPage && onNextCommunityPage();
+          }}
           data={communities}
           renderItem={myCommunitiesListItem}
           keyExtractor={(item, index) => item.communityId + index}

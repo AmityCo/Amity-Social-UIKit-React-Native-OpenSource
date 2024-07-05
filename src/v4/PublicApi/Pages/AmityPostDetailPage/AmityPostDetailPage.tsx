@@ -22,7 +22,11 @@ import React, {
   useRef,
 } from 'react';
 import { ComponentID, PageID } from '../../../enum/';
-import { TSearchItem, useAmityPage } from '../../../hook';
+import {
+  TSearchItem,
+  useAmityPage,
+  useIsCommunityModerator,
+} from '../../../hook';
 import { useStyles } from './styles';
 import BackButtonIconElement from '../../Elements/BackButtonIconElement/BackButtonIconElement';
 import MenuButtonIconElement from '../../Elements/MenuButtonIconElement/MenuButtonIconElement';
@@ -43,7 +47,12 @@ import {
   createComment,
   createReplyComment,
 } from '../../../../providers/Social/comment-sdk';
-import { closeIcon } from '../../../../svg/svg-xml-list';
+import {
+  closeIcon,
+  editIcon,
+  reportOutLine,
+  storyDraftDeletHyperLink,
+} from '../../../../svg/svg-xml-list';
 import { SvgXml } from 'react-native-svg';
 import { IMentionPosition } from '~/types';
 import AmityMentionInput from '../../../../components/MentionInput/AmityMentionInput';
@@ -58,7 +67,7 @@ import { useDispatch } from 'react-redux';
 import useAuth from '../../../../hooks/useAuth';
 import EditPostModal from '../../../../components/EditPostModal';
 import { getCommunityById } from '../../../../providers/Social/communities-sdk';
-
+import uiSlice from '../../../../redux/slices/uiSlice';
 type AmityPostDetailPageType = {
   postId: Amity.Post['postId'];
 };
@@ -88,6 +97,12 @@ const AmityPostDetailPage: FC<AmityPostDetailPageType> = ({ postId }) => {
   const [privateCommunityId, setPrivateCommunityId] = useState(null);
   const [editPostModalVisible, setEditPostModalVisible] =
     useState<boolean>(false);
+  const { showToastMessage } = uiSlice.actions;
+  const myId = (client as Amity.Client).userId;
+  const { isCommunityModerator: isIAmModerator } = useIsCommunityModerator({
+    communityId: postData?.targetType === 'community' && postData?.targetId,
+    userId: myId,
+  });
 
   const slideAnimation = useRef(new Animated.Value(0)).current;
 
@@ -159,18 +174,28 @@ const AmityPostDetailPage: FC<AmityPostDetailPageType> = ({ postId }) => {
   const reportPostObject = async () => {
     if (isReportByMe) {
       const unReportPost = await unReportTargetById('post', postId);
-      if (unReportPost) {
-        Alert.alert('Undo Report sent');
-      }
       setIsVisible(false);
       setIsReportByMe(false);
+      if (unReportPost) {
+        dispatch(
+          showToastMessage({
+            toastMessage: 'Post unreported',
+            isSuccessToast: true,
+          })
+        );
+      }
     } else {
       const reportPost = await reportTargetById('post', postId);
-      if (reportPost) {
-        Alert.alert('Report sent');
-      }
       setIsVisible(false);
       setIsReportByMe(true);
+      if (reportPost) {
+        dispatch(
+          showToastMessage({
+            toastMessage: 'Post reported',
+            isSuccessToast: true,
+          })
+        );
+      }
     }
   };
 
@@ -206,33 +231,48 @@ const AmityPostDetailPage: FC<AmityPostDetailPageType> = ({ postId }) => {
             style={[
               styles.modalContent,
               modalStyle,
-              postData?.user?.userId === (client as Amity.Client).userId &&
+              (postData?.user?.userId === myId || isIAmModerator) &&
                 styles.twoOptions,
             ]}
           >
-            {postData?.user?.userId === (client as Amity.Client).userId ? (
-              <View>
-                <TouchableOpacity
-                  onPress={openEditPostModal}
-                  style={styles.modalRow}
-                >
-                  <Text style={styles.deleteText}> Edit Post</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={deletePostObject}
-                  style={styles.modalRow}
-                >
-                  <Text style={styles.deleteText}> Delete Post</Text>
-                </TouchableOpacity>
-              </View>
+            {postData?.user?.userId === myId ? (
+              <TouchableOpacity
+                onPress={openEditPostModal}
+                style={styles.modalRow}
+              >
+                <SvgXml
+                  xml={editIcon(themeStyles.colors.base)}
+                  width="20"
+                  height="20"
+                />
+                <Text style={styles.deleteText}> Edit Post</Text>
+              </TouchableOpacity>
             ) : (
               <TouchableOpacity
                 onPress={reportPostObject}
                 style={styles.modalRow}
               >
+                <SvgXml
+                  xml={reportOutLine(themeStyles.colors.base)}
+                  width="20"
+                  height="20"
+                />
                 <Text style={styles.deleteText}>
-                  {isReportByMe ? 'Undo Report' : 'Report'}
+                  {isReportByMe ? 'Unreport post' : 'Report post'}
                 </Text>
+              </TouchableOpacity>
+            )}
+            {(postData?.user?.userId === myId || isIAmModerator) && (
+              <TouchableOpacity
+                onPress={deletePostObject}
+                style={styles.modalRow}
+              >
+                <SvgXml
+                  xml={storyDraftDeletHyperLink()}
+                  width="20"
+                  height="20"
+                />
+                <Text style={styles.deleteText}> Delete Post</Text>
               </TouchableOpacity>
             )}
           </Animated.View>

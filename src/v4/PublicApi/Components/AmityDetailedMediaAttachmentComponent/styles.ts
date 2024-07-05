@@ -16,10 +16,11 @@ export const useStyles = (theme: MyMD3Theme) => {
       borderColor: theme.colors.baseShade4,
       position: 'absolute',
       bottom: 0,
+      paddingBottom: 14,
     },
     handleBar: {
       alignSelf: 'center',
-      width: 0.35 * width,
+      width: 36,
       backgroundColor: theme.colors.baseShade4,
       height: 5,
       marginVertical: 10,
@@ -43,7 +44,7 @@ export const useStyles = (theme: MyMD3Theme) => {
     mediaAttachmentBtn: {
       flexDirection: 'row',
       alignItems: 'center',
-      marginBottom: 12,
+      marginBottom: 32,
     },
   });
 

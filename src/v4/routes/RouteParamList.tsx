@@ -25,6 +25,7 @@ export type RootStackParamList = {
   Explore: undefined;
   CategoryList: undefined;
   CreatePost: AmityPostComposerPageType;
+  EditPost: AmityPostComposerPageType;
   CreatePoll: {
     targetId: string;
     targetName: string;

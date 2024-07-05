@@ -20,7 +20,7 @@ export const useIsCommunityModerator = ({
         sortBy: 'firstCreated',
         memberships: ['member'],
       },
-      ({ error, loading, data }) => {
+      async ({ error, loading, data }) => {
         if (error) return setisCommunityModerator(false);
         if (!loading) {
           const userRoles = data[0]?.roles ?? [];
@@ -30,6 +30,6 @@ export const useIsCommunityModerator = ({
       }
     );
     return () => unsub();
-  }, [communityId, isCommunityModerator, userId]);
+  }, [communityId, userId]);
   return { isCommunityModerator: isCommunityModerator };
 };

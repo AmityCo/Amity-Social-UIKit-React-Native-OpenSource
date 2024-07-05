@@ -19,6 +19,7 @@ import {
 import LikeButtonIconElement from '../../../Elements/LikeButtonIconElement/LikeButtonIconElement';
 import CommentButtonIconElement from '../../../Elements/CommentButtonIconElement/CommentButtonIconElement';
 import AmityReactionListComponent from '../../AmityReactionListComponent/AmityReactionListComponent';
+import { formatNumber } from '../../../../../util/numberUtil';
 
 const DetailStyle: FC<AmityPostEngagementActionsSubComponentType> = ({
   community,
@@ -114,7 +115,7 @@ const DetailStyle: FC<AmityPostEngagementActionsSubComponentType> = ({
                 height="16"
               />
               <Text style={styles.likeCountText} onPress={onClickReactions}>
-                {totalReactions} {renderLikeText(totalReactions)}
+                {formatNumber(totalReactions)} {renderLikeText(totalReactions)}
               </Text>
             </View>
           ) : (

@@ -79,12 +79,15 @@ const MediaSection: React.FC<IMediaSection> = ({ childrenPosts }) => {
         })
       );
       response.forEach((item) => {
-        if (item?.dataType === 'image') {
+        if (item?.dataType === 'image' && item?.data?.fileId) {
           const url: string = `https://api.${apiRegion}.amity.co/api/v3/files/${item?.data.fileId}/download?size=medium`;
           setImagePosts((prev) => {
             return !prev.includes(url) ? [...prev, url] : [...prev];
           });
-        } else if (item?.dataType === 'video') {
+        } else if (
+          item?.dataType === 'video' &&
+          item?.data?.videoFileId.original
+        ) {
           setVideoPosts((prev) => {
             const isExisted = prev.some(
               (video) =>
@@ -110,6 +113,8 @@ const MediaSection: React.FC<IMediaSection> = ({ childrenPosts }) => {
   }, [apiRegion, childrenPosts]);
 
   useEffect(() => {
+    setVideoPosts([]);
+    setImagePosts([]);
     getPostInfo();
   }, [childrenPosts, currentPostdetail, postList, postListGlobal, getPostInfo]);
 

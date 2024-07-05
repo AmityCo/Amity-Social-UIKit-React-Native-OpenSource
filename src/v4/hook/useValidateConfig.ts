@@ -1,4 +1,4 @@
-import { DefaultConfigID, PREFERRED_THEME, THEME_COLORS } from '../enum';
+import { PREFERRED_THEME, THEME_COLORS } from '../enum';
 import { IConfigRaw } from '../types/config.interface';
 
 const useValidateConfig = (config: IConfigRaw | undefined) => {
@@ -35,17 +35,6 @@ const useValidateConfig = (config: IConfigRaw | undefined) => {
   if (!config.excludes || !Array.isArray(config.excludes)) {
     console.error(
       'Config Json Error: `excluded` should be string array. please check `IConfigRaw` Interface'
-    );
-    return false;
-  }
-  if (
-    !config.customizations ||
-    !Object.values(DefaultConfigID).every((item) =>
-      Object.keys(config.customizations).includes(item)
-    )
-  ) {
-    console.error(
-      'Config Json Error: `customizations` should be Object data type. please check `IConfigRaw` Interface'
     );
     return false;
   }

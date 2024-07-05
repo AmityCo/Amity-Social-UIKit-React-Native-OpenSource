@@ -29,6 +29,7 @@ import { RootStackParamList } from '../../../../routes/RouteParamList';
 import LikeButtonIconElement from '../../../Elements/LikeButtonIconElement/LikeButtonIconElement';
 import CommentButtonIconElement from '../../../Elements/CommentButtonIconElement/CommentButtonIconElement';
 import { useBehaviour } from '../../../../providers/BehaviourProvider';
+import { formatNumber } from '../../../../../util/numberUtil';
 
 const FeedStyle: FC<AmityPostEngagementActionsSubComponentType> = ({
   postId,
@@ -106,7 +107,7 @@ const FeedStyle: FC<AmityPostEngagementActionsSubComponentType> = ({
             />
           )}
           <Text style={isLike ? styles.likedText : styles.btnText}>
-            {totalReactions}
+            {formatNumber(totalReactions)}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.commentBtn} onPress={onPressComment}>

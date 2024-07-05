@@ -94,7 +94,7 @@ const AmityMentionInput: FC<IMentionInput> = ({
   const renderSuggestions: FC<MentionSuggestionsProps> = useCallback(
     ({ keyword, onSuggestionPress }) => {
       setCurrentSearchUserName(keyword || '');
-      setIsShowingSuggestion(keyword?.length > 0);
+      setIsShowingSuggestion && setIsShowingSuggestion(keyword?.length > 0);
       if (keyword == null || !searchResult || searchResult?.length === 0) {
         return null;
       }
@@ -133,7 +133,6 @@ const AmityMentionInput: FC<IMentionInput> = ({
   );
   return (
     <MentionTextInput
-      autoFocus
       inputRef={inputRef}
       containerStyle={styles.inputContainer}
       {...rest}
