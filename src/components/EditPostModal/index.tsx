@@ -52,11 +52,9 @@ const EditPostModal = ({
   const theme = useTheme() as MyMD3Theme;
   const styles = useStyles();
   const { apiRegion } = useAuth();
-
   const [inputMessage, setInputMessage] = useState(
     postDetail?.data?.text ?? ''
   );
-
   const [displayImages, setDisplayImages] = useState<IDisplayImage[]>([]);
   const [displayVideos, setDisplayVideos] = useState<IDisplayImage[]>([]);
   const [mentionPosition, setMentionPosition] = useState<IMentionPosition[]>(
@@ -65,7 +63,6 @@ const EditPostModal = ({
   const [mentionUsers, setMentionUsers] = useState<TSearchItem[]>([]);
   const [imagePosts, setImagePosts] = useState<string[]>([]);
   const [videoPosts, setVideoPosts] = useState<IVideoPost[]>([]);
-
   const [childrenPostArr, setChildrenPostArr] = useState<string[]>([]);
   const [initialText, setInitialText] = useState('');
   const { updateByPostId: updateByPostIdGlobalFeed } = globalFeedSlice.actions;
@@ -203,6 +200,13 @@ const EditPostModal = ({
         : displayVideos.length > 0
         ? 'video'
         : 'text';
+    if (type === 'text' && postDetail?.childrenPosts.length > 0) {
+      await Promise.allSettled(
+        postDetail?.childrenPosts.map((postId) => {
+          PostRepository.deletePost(postId, true);
+        })
+      );
+    }
     const response = await editPost(
       postDetail.postId,
       {

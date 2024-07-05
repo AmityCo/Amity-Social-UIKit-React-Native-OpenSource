@@ -109,6 +109,8 @@ const MediaSection: React.FC<IMediaSection> = ({ childrenPosts }) => {
   }, [apiRegion, childrenPosts]);
 
   useEffect(() => {
+    setVideoPosts([]);
+    setImagePosts([]);
     getPostInfo();
   }, [childrenPosts, currentPostdetail, postList, postListGlobal, getPostInfo]);
 
