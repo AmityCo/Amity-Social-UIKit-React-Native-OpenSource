@@ -99,8 +99,11 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
   const [isShowingSuggestion, setIsShowingSuggestion] = useState(false);
   const [initialText, setInitialText] = useState(post?.data.text ?? '');
   const [isSwipeup, setIsSwipeup] = useState(true);
+  const [deletedPostIds, setDeletedPostIds] = useState<string[]>([]);
   const privateCommunityId = !community?.isPublic && community?.communityId;
-  const title = community?.displayName ?? 'My Timeline';
+  const title = isEditMode
+    ? 'Edit Post'
+    : community?.displayName ?? 'My Timeline';
   const isInputValid =
     inputMessage.trim().length <= 50000 &&
     (inputMessage.trim().length > 0 ||
@@ -183,6 +186,11 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
   );
 
   useEffect(() => {
+    setDeletedPostIds([]);
+    return () => setDeletedPostIds([]);
+  }, []);
+
+  useEffect(() => {
     post?.childrenPosts && getPostInfo(post.childrenPosts);
   }, [getPostInfo, post?.childrenPosts]);
 
@@ -246,6 +254,20 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
   const onPressClose = useCallback(() => {
     navigation.pop(2);
   }, [navigation]);
+  const onClose = useCallback(() => {
+    Alert.alert(
+      'Discard this post',
+      'The post will be permanently deleted. It cannot be undone',
+      [
+        { text: 'Keey Editing', style: 'cancel' },
+        {
+          text: 'Discard',
+          style: 'destructive',
+          onPress: () => onPressClose(),
+        },
+      ]
+    );
+  }, [onPressClose]);
 
   const onPressPost = useCallback(async () => {
     Keyboard.dismiss();
@@ -279,13 +301,20 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
     try {
       let response;
       if (isEditMode) {
-        if (type === 'text' && post?.childrenPosts) {
+        if (deletedPostIds?.length > 0) {
           await Promise.allSettled(
-            post?.childrenPosts.map((child) => {
-              PostRepository.deletePost(child, false);
-            })
+            deletedPostIds.map((postId) =>
+              PostRepository.deletePost(postId, false)
+            )
           );
         }
+        // if (type === 'text' && post?.childrenPosts) {
+        //   await Promise.allSettled(
+        //     post?.childrenPosts.map((child) => {
+        //       PostRepository.deletePost(child, false);
+        //     })
+        //   );
+        // }
 
         response = await editPost(
           post.postId,
@@ -310,9 +339,11 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
           mentionsPosition
         );
       }
-      console.log(response);
       if (!response) {
-        dispatch(showToastMessage({ toastMessage: 'Failed to create post' }));
+        const toastMessage = isEditMode
+          ? 'Failed to edit post'
+          : 'Failed to create post';
+        dispatch(showToastMessage({ toastMessage: toastMessage }));
         onPressClose();
         return;
       }
@@ -341,7 +372,7 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
         dispatch(
           updateByPostId({
             postId: post?.postId,
-            postDetail: updatedPost,
+            postDetail: { ...updatedPost },
           })
         );
       } else {
@@ -358,6 +389,7 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
     addPostToGlobalFeed,
     chosenMediaType,
     community,
+    deletedPostIds,
     dispatch,
     displayImages,
     displayVideos,
@@ -512,22 +544,30 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
     }
   }, [displayVideos.length, processMedia]);
 
-  const handleOnCloseImage = useCallback((originalPath: string) => {
-    setDisplayImages((prevData) => {
-      const newData = prevData.filter(
-        (item: IDisplayImage) => item.url !== originalPath
-      ); // Filter out objects containing the desired value
-      return newData; // Remove the element at the specified index
-    });
-  }, []);
-  const handleOnCloseVideo = useCallback((originalPath: string) => {
-    setDisplayVideos((prevData) => {
-      const newData = prevData.filter(
-        (item: IDisplayImage) => item.url !== originalPath
-      ); // Filter out objects containing the desired value
-      return newData; // Remove the element at the specified index
-    });
-  }, []);
+  const handleOnCloseImage = useCallback(
+    (originalPath: string, _, postId: string) => {
+      setDeletedPostIds((prev) => [...prev, postId]);
+      setDisplayImages((prevData) => {
+        const newData = prevData.filter(
+          (item: IDisplayImage) => item.url !== originalPath
+        );
+        return newData;
+      });
+    },
+    []
+  );
+  const handleOnCloseVideo = useCallback(
+    (originalPath: string, _, postId: string) => {
+      setDeletedPostIds((prev) => [...prev, postId]);
+      setDisplayVideos((prevData) => {
+        const newData = prevData.filter(
+          (item: IDisplayImage) => item.url !== originalPath
+        );
+        return newData;
+      });
+    },
+    []
+  );
   const handleOnFinishImage = useCallback(
     (fileId: string, fileUrl: string, fileName: string, index: number) => {
       const imageObject: IDisplayImage = {
@@ -576,17 +616,25 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
       style={styles.container}
     >
       <View style={styles.headerContainer}>
-        <TouchableOpacity onPress={onPressClose} hitSlop={20}>
+        <TouchableOpacity onPress={onClose} hitSlop={20}>
           <CloseButtonIconElement pageID={pageId} style={styles.closeBtn} />
         </TouchableOpacity>
         <Text style={styles.title}>{title}</Text>
         <TouchableOpacity onPress={onPressPost}>
-          <TextKeyElement
-            pageID={pageId}
-            componentID={ComponentID.WildCardComponent}
-            elementID={ElementID.create_new_post_button}
-            style={[styles.postBtnText, isInputValid && styles.activePostBtn]}
-          />
+          {isEditMode ? (
+            <Text
+              style={[styles.postBtnText, isInputValid && styles.activePostBtn]}
+            >
+              Save
+            </Text>
+          ) : (
+            <TextKeyElement
+              pageID={pageId}
+              componentID={ComponentID.WildCardComponent}
+              elementID={ElementID.create_new_post_button}
+              style={[styles.postBtnText, isInputValid && styles.activePostBtn]}
+            />
+          )}
         </TouchableOpacity>
       </View>
       <KeyboardAvoidingView
@@ -629,6 +677,7 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
                     fileId={item.fileId}
                     fileCount={displayImages.length}
                     isEditMode={isEditMode}
+                    postId={item.postId}
                   />
                 )}
                 numColumns={3}
@@ -648,6 +697,7 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
                     thumbNail={item.thumbNail as string}
                     fileCount={displayVideos.length}
                     isEditMode={isEditMode}
+                    postId={item.postId}
                   />
                 )}
                 numColumns={3}

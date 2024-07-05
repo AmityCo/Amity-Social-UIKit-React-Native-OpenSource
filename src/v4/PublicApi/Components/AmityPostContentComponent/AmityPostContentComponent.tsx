@@ -9,7 +9,12 @@ import {
   Alert,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
-import { arrowForward } from '../../../../svg/svg-xml-list';
+import {
+  arrowForward,
+  editIcon,
+  reportOutLine,
+  storyDraftDeletHyperLink,
+} from '../../../../svg/svg-xml-list';
 import { useStyles } from './styles';
 import type { UserInterface } from '../../../../types/user.interface';
 import { getCommunityById } from '../../../../providers/Social/communities-sdk';
@@ -41,6 +46,7 @@ import useAuth from '../../../../hooks/useAuth';
 import globalFeedSlice from '../../../../redux/slices/globalfeedSlice';
 import { useDispatch } from 'react-redux';
 import { useBehaviour } from '../../../providers/BehaviourProvider';
+import uiSlice from '../../../../redux/slices/uiSlice';
 export interface IPost {
   postId: string;
   data: Record<string, any>;
@@ -89,6 +95,7 @@ const AmityPostContentComponent = ({
   });
   const styles = useStyles(themeStyles);
   const { client } = useAuth();
+  const { showToastMessage } = uiSlice.actions;
   const [textPost, setTextPost] = useState<string>('');
   const [communityData, setCommunityData] = useState<Amity.Community>(null);
   const { deleteByPostId } = globalFeedSlice.actions;
@@ -117,10 +124,14 @@ const AmityPostContentComponent = ({
     mentionPosition,
   } = post ?? {};
   const { isCommunityModerator } = useIsCommunityModerator({
-    communityId: targetType === 'community' && data.targetId,
+    communityId: targetType === 'community' && targetId,
     userId: user.userId,
   });
-
+  const myId = (client as Amity.Client).userId;
+  const { isCommunityModerator: isIAmModerator } = useIsCommunityModerator({
+    communityId: targetType === 'community' && targetId,
+    userId: myId,
+  });
   useEffect(() => {
     if (mentionPosition) {
       setMentionsPositionArr(mentionPosition);
@@ -238,18 +249,28 @@ const AmityPostContentComponent = ({
   const reportPostObject = async () => {
     if (isReportByMe) {
       const unReportPost = await unReportTargetById('post', postId);
-      if (unReportPost) {
-        Alert.alert('Undo Report sent');
-      }
       setIsVisible(false);
       setIsReportByMe(false);
+      if (unReportPost) {
+        dispatch(
+          showToastMessage({
+            toastMessage: 'Post unreported',
+            isSuccessToast: true,
+          })
+        );
+      }
     } else {
       const reportPost = await reportTargetById('post', postId);
-      if (reportPost) {
-        Alert.alert('Report sent');
-      }
       setIsVisible(false);
       setIsReportByMe(true);
+      if (reportPost) {
+        dispatch(
+          showToastMessage({
+            toastMessage: 'Post reported',
+            isSuccessToast: true,
+          })
+        );
+      }
     }
   };
 
@@ -266,33 +287,48 @@ const AmityPostContentComponent = ({
             style={[
               styles.modalContent,
               modalStyle,
-              post?.user?.userId === (client as Amity.Client).userId &&
+              (post?.user?.userId === myId || isIAmModerator) &&
                 styles.twoOptions,
             ]}
           >
             {post?.user?.userId === (client as Amity.Client).userId ? (
-              <View>
-                <TouchableOpacity
-                  onPress={openEditPostModal}
-                  style={styles.modalRow}
-                >
-                  <Text style={styles.deleteText}> Edit Post</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={deletePostObject}
-                  style={styles.modalRow}
-                >
-                  <Text style={styles.deleteText}> Delete Post</Text>
-                </TouchableOpacity>
-              </View>
+              <TouchableOpacity
+                onPress={openEditPostModal}
+                style={styles.modalRow}
+              >
+                <SvgXml
+                  xml={editIcon(themeStyles.colors.base)}
+                  width="20"
+                  height="20"
+                />
+                <Text style={styles.editText}> Edit Post</Text>
+              </TouchableOpacity>
             ) : (
               <TouchableOpacity
                 onPress={reportPostObject}
                 style={styles.modalRow}
               >
-                <Text style={styles.deleteText}>
-                  {isReportByMe ? 'Undo Report' : 'Report'}
+                <SvgXml
+                  xml={reportOutLine(themeStyles.colors.base)}
+                  width="20"
+                  height="20"
+                />
+                <Text style={styles.editText}>
+                  {isReportByMe ? 'Unreport post' : 'Report post'}
                 </Text>
+              </TouchableOpacity>
+            )}
+            {(post?.user?.userId === myId || isIAmModerator) && (
+              <TouchableOpacity
+                onPress={deletePostObject}
+                style={styles.modalRow}
+              >
+                <SvgXml
+                  xml={storyDraftDeletHyperLink()}
+                  width="20"
+                  height="20"
+                />
+                <Text style={styles.deleteText}> Delete Post</Text>
               </TouchableOpacity>
             )}
           </Animated.View>

@@ -20,7 +20,7 @@ import uiSlice from '../../../redux/slices/uiSlice';
 
 interface OverlayImageProps {
   source: string;
-  onClose?: (originalPath: string, fileId?: string) => void;
+  onClose?: (originalPath: string, fileId?: string, postId?: string) => void;
   onLoadFinish?: (
     fileId: string,
     fileUrl: string,
@@ -36,6 +36,7 @@ interface OverlayImageProps {
   onPlay?: (fileUrl: string) => void;
   isEditMode?: boolean;
   fileCount?: number;
+  postId?: string;
 }
 const LoadingVideo = ({
   source,
@@ -48,6 +49,7 @@ const LoadingVideo = ({
   fileId,
   isEditMode = false,
   fileCount,
+  postId,
 }: OverlayImageProps) => {
   const theme = useTheme() as MyMD3Theme;
   const dispatch = useDispatch();
@@ -129,13 +131,11 @@ const LoadingVideo = ({
   }, [source]);
 
   const handleDelete = async () => {
-    if (fileId) {
-      if (!isEditMode) {
-        await deleteAmityFile(fileId as string);
-      }
-
-      onClose && onClose(source, fileId);
+    if (!fileId) return null;
+    if (!isEditMode) {
+      await deleteAmityFile(fileId);
     }
+    onClose && onClose(source, fileId, postId);
   };
   useEffect(() => {
     if (isUploaded) {

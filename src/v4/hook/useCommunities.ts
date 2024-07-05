@@ -13,13 +13,13 @@ export const useCommunities = () => {
         if (!loading) {
           setCommunities(data);
           setOnNextCommunityPage(() => {
-            if (hasNextPage) onNextPage;
-            null;
+            if (hasNextPage) return onNextPage;
+            return null;
           });
         }
       }
     );
-    unsubscribe();
+    return unsubscribe;
   }, []);
   return { communities, onNextCommunityPage };
 };

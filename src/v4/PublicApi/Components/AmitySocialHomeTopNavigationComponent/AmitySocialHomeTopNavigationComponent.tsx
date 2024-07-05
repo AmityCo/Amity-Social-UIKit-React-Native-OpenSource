@@ -127,15 +127,22 @@ const AmitySocialHomeTopNavigationComponent: FC<
     toggle();
   }, [toggle]);
 
-  // const onCreateCommunity = useCallback(() => {
-  //   navigation.navigate('CreateCommunity');
-  // }, [navigation]);
+  const onCreateCommunity = useCallback(() => {
+    navigation.navigate('CreateCommunity');
+  }, [navigation]);
 
   const onPressCreate = useCallback(() => {
     if (AmitySocialHomeTopNavigationComponentBehaviour.onPressCreate)
       return AmitySocialHomeTopNavigationComponentBehaviour.onPressCreate();
+    if (activeTab === myCommunitiesTab) return onCreateCommunity();
     return onToggleCreateComponent();
-  }, [AmitySocialHomeTopNavigationComponentBehaviour, onToggleCreateComponent]);
+  }, [
+    AmitySocialHomeTopNavigationComponentBehaviour,
+    activeTab,
+    myCommunitiesTab,
+    onCreateCommunity,
+    onToggleCreateComponent,
+  ]);
 
   if (componentConfig?.isExcluded) return null;
 
