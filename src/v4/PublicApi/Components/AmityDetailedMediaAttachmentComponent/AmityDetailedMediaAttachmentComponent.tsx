@@ -1,12 +1,21 @@
 import { Animated, Easing, Pressable, View } from 'react-native';
-import React, { memo, useCallback, useEffect, useRef } from 'react';
-import { PageID, ComponentID, ElementID } from '../../../enum';
+import React, { FC, memo, useCallback, useEffect, useRef } from 'react';
+import { PageID, ComponentID, ElementID, mediaAttachment } from '../../../enum';
 import { useAmityComponent } from '../../../hook';
 import { useStyles } from './styles';
 import ImageKeyElement from '../../Elements/ImageKeyElement/ImageKeyElement';
 import TextKeyElement from '../../Elements/TextKeyElement/TextKeyElement';
 
-const AmityDetailedMediaAttachmentComponent = () => {
+type AmityDetailedMediaAttachmentComponentType = {
+  onPressCamera: () => void;
+  onPressImage: () => void;
+  onPressVideo: () => void;
+  chosenMediaType?: mediaAttachment;
+};
+
+const AmityDetailedMediaAttachmentComponent: FC<
+  AmityDetailedMediaAttachmentComponentType
+> = ({ onPressCamera, onPressImage, onPressVideo, chosenMediaType }) => {
   const pageId = PageID.post_composer_page;
   const componentId = ComponentID.detailed_media_attachment;
   const { accessibilityId, themeStyles, isExcluded } = useAmityComponent({
@@ -19,7 +28,7 @@ const AmityDetailedMediaAttachmentComponent = () => {
 
   const showMediaAttachments = useCallback(() => {
     Animated.timing(animatedBottom, {
-      toValue: 14,
+      toValue: 0,
       duration: 300,
       easing: Easing.ease,
       useNativeDriver: false,
@@ -49,7 +58,7 @@ const AmityDetailedMediaAttachmentComponent = () => {
     >
       <View style={styles.handleBar} />
       <View style={styles.buttonsContainer}>
-        <Pressable style={styles.mediaAttachmentBtn}>
+        <Pressable style={styles.mediaAttachmentBtn} onPress={onPressCamera}>
           <ImageKeyElement
             pageID={pageId}
             componentID={componentId}
@@ -63,34 +72,38 @@ const AmityDetailedMediaAttachmentComponent = () => {
             style={styles.iconText}
           />
         </Pressable>
-        <Pressable style={styles.mediaAttachmentBtn}>
-          <ImageKeyElement
-            pageID={pageId}
-            componentID={componentId}
-            elementID={ElementID.image_button}
-            style={styles.iconBtn}
-          />
-          <TextKeyElement
-            pageID={pageId}
-            componentID={componentId}
-            elementID={ElementID.image_button}
-            style={styles.iconText}
-          />
-        </Pressable>
-        <Pressable style={styles.mediaAttachmentBtn}>
-          <ImageKeyElement
-            pageID={pageId}
-            componentID={componentId}
-            elementID={ElementID.video_button}
-            style={styles.iconBtn}
-          />
-          <TextKeyElement
-            pageID={pageId}
-            componentID={componentId}
-            elementID={ElementID.video_button}
-            style={styles.iconText}
-          />
-        </Pressable>
+        {(!chosenMediaType || chosenMediaType === mediaAttachment.image) && (
+          <Pressable style={styles.mediaAttachmentBtn} onPress={onPressImage}>
+            <ImageKeyElement
+              pageID={pageId}
+              componentID={componentId}
+              elementID={ElementID.image_button}
+              style={styles.iconBtn}
+            />
+            <TextKeyElement
+              pageID={pageId}
+              componentID={componentId}
+              elementID={ElementID.image_button}
+              style={styles.iconText}
+            />
+          </Pressable>
+        )}
+        {(!chosenMediaType || chosenMediaType === mediaAttachment.video) && (
+          <Pressable style={styles.mediaAttachmentBtn} onPress={onPressVideo}>
+            <ImageKeyElement
+              pageID={pageId}
+              componentID={componentId}
+              elementID={ElementID.video_button}
+              style={styles.iconBtn}
+            />
+            <TextKeyElement
+              pageID={pageId}
+              componentID={componentId}
+              elementID={ElementID.video_button}
+              style={styles.iconText}
+            />
+          </Pressable>
+        )}
         {/* will use later
         <Pressable style={styles.mediaAttachmentBtn}>
           <ImageKeyElement

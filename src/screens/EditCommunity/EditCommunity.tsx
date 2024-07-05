@@ -8,22 +8,13 @@ import {
   TextInput,
   ScrollView,
   Pressable,
-  FlatList,
   ActivityIndicator,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
-import {
-  arrowOutlined,
-  closeIcon,
-  plusIcon,
-  privateIcon,
-  publicIcon,
-} from '../../svg/svg-xml-list';
+import { arrowOutlined, privateIcon, publicIcon } from '../../svg/svg-xml-list';
 import { useStyles } from './styles';
 import ChooseCategoryModal from '../../components/ChooseCategoryModal';
 import { RadioButton } from 'react-native-radio-buttons-group';
-import AddMembersModal from '../../components/AddMembersModal';
-import type { UserInterface } from '../../types/user.interface';
 import useAuth from '../../hooks/useAuth';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
@@ -55,9 +46,7 @@ const EditCommunity = ({ navigation, route }) => {
   const [categoryName, setCategoryName] = useState<string>('');
   const [categoryId, setCategoryId] = useState<string>(data.categoryIds[0]);
   const [categoryModal, setCategoryModal] = useState<boolean>(false);
-  const [addMembersModal, setAddMembersModal] = useState<boolean>(false);
   const [isPublic, setisPublic] = useState(data.isPublic);
-  const [selectedUserList, setSelectedUserList] = useState<UserInterface[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [imageFileId, setImageFileId] = useState<string>(data.avatarFileId);
 
@@ -166,26 +155,6 @@ const EditCommunity = ({ navigation, route }) => {
   const handleSelectCategory = (categoryId: string, categoryName: string) => {
     setCategoryId(categoryId);
     setCategoryName(categoryName);
-  };
-
-  const handleAddMembers = (users: UserInterface[]) => {
-    setSelectedUserList(users);
-  };
-
-  const displayName = (user: string) => {
-    const maxLength = 10;
-    if (user) {
-      if (user!.length > maxLength) {
-        return user!.substring(0, maxLength) + '..';
-      }
-      return user!;
-    }
-    return 'Display name';
-  };
-
-  const onDeleteUserPressed = (user: UserInterface) => {
-    const removedUser = selectedUserList.filter((item) => item !== user);
-    setSelectedUserList(removedUser);
   };
 
   return (
@@ -343,69 +312,6 @@ const EditCommunity = ({ navigation, route }) => {
               />
             </Pressable>
           </View>
-          {!isPublic && (
-            <View style={styles.inputContainer}>
-              <View style={styles.titleRow}>
-                <Text style={styles.inputTitle}>
-                  Add members<Text style={styles.requiredField}> *</Text>
-                </Text>
-              </View>
-              <View style={styles.addUsersContainer}>
-                {selectedUserList.length > 0 && (
-                  <FlatList
-                    data={selectedUserList}
-                    renderItem={({ item }) => (
-                      <View style={styles.userItemWrap}>
-                        <View style={styles.avatarRow}>
-                          <View style={styles.avatarImageContainer}>
-                            <Image
-                              style={styles.avatarImage}
-                              source={
-                                item.avatarFileId
-                                  ? {
-                                      uri: getAvatarURL(
-                                        apiRegion,
-                                        item.avatarFileId
-                                      ),
-                                    }
-                                  : require('../../../assets/icon/Placeholder.png')
-                              }
-                            />
-                          </View>
-                          <Text>{displayName(item.displayName)}</Text>
-                        </View>
-                        <TouchableOpacity
-                          onPress={() => onDeleteUserPressed(item)}
-                        >
-                          <SvgXml
-                            xml={closeIcon(theme.colors.base)}
-                            width={12}
-                            height={12}
-                          />
-                        </TouchableOpacity>
-                      </View>
-                    )}
-                    keyExtractor={(item) => item.userId.toString()}
-                    numColumns={2}
-                  />
-                )}
-
-                <Pressable
-                  onPress={() => setAddMembersModal(true)}
-                  style={styles.addIcon}
-                >
-                  <View style={styles.avatar}>
-                    <SvgXml
-                      style={styles.arrowIcon}
-                      xml={plusIcon(theme.colors.base)}
-                      width={24}
-                      height={24}
-                    />
-                  </View>
-                </Pressable>
-              </View>
-            </View>
-          )}
         </View>
       </View>
       <ChooseCategoryModal
@@ -413,13 +319,6 @@ const EditCommunity = ({ navigation, route }) => {
         onClose={() => setCategoryModal(false)}
         visible={categoryModal}
         categoryId={categoryId}
-      />
-      <AddMembersModal
-        onSelect={handleAddMembers}
-        onClose={() => setAddMembersModal(false)}
-        visible={addMembersModal}
-        initUserList={selectedUserList ?? []}
-        excludeUserList={[]}
       />
     </ScrollView>
   );

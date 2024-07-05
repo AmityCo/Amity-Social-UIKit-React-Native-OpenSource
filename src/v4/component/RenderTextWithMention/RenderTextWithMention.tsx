@@ -67,7 +67,7 @@ const RenderTextWithMention: React.FC<IrenderTextWithMention> = ({
   if (heightlightTextPositions.length === 0) {
     return (
       <MoreOrLess
-        numberOfLines={3}
+        numberOfLines={8}
         textButtonStyle={{
           fontWeight: 'normal',
           color: '#1054DE',

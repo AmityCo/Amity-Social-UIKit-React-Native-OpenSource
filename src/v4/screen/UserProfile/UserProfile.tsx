@@ -142,7 +142,7 @@ export default function UserProfile({ route }: any) {
       });
       setAvatar(avatarUrl ?? defaultAvatarUri);
     })();
-  }, [client, getImage, user?.avatarFileId]);
+  }, [getImage, user?.avatarFileId]);
 
   useEffect(() => {
     let userUnsubscribe: () => void;

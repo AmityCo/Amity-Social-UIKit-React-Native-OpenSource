@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useRef, useState } from 'react';
+import React, { memo, useEffect, useRef, useState } from 'react';
 
 import {
   View,
@@ -14,9 +14,12 @@ import {
 import { useStyles } from './styles';
 import { SvgXml } from 'react-native-svg';
 import {
+  editIcon,
   expandIcon,
   likeCircle,
   personXml,
+  reportOutLine,
+  storyDraftDeletHyperLink,
   threeDots,
 } from '../../../../../svg/svg-xml-list';
 import type { UserInterface, IMentionPosition } from '../../../../../types';
@@ -43,6 +46,8 @@ import ModeratorBadgeElement from '../../../Elements/ModeratorBadgeElement/Moder
 import { ComponentID, PageID } from '../../../../enum';
 import { LinkPreview } from '../../../../component/PreviewLink/LinkPreview';
 import AmityReactionListComponent from '../../AmityReactionListComponent/AmityReactionListComponent';
+import uiSlice from '../../../../../redux/slices/uiSlice';
+import { useDispatch } from 'react-redux';
 
 export interface IComment {
   commentId: string;
@@ -96,8 +101,11 @@ const CommentListItem = ({
     referenceId,
     targetType,
     targetId,
+    childrenNumber,
   } = commentDetail ?? {};
   const timeDifference = useTimeDifference(createdAt);
+  const dispatch = useDispatch();
+  const { showToastMessage } = uiSlice.actions;
   const [isLike, setIsLike] = useState<boolean>(
     myReactions ? myReactions.includes('like') : false
   );
@@ -199,7 +207,7 @@ const CommentListItem = ({
       referenceType: postType,
       referenceId: referenceId, // post ID
       dataTypes: { values: ['text', 'image'], matchType: 'any' },
-      limit: 3,
+      limit: 5,
       parentId: commentId,
     };
 
@@ -249,18 +257,28 @@ const CommentListItem = ({
   const reportCommentObject = async () => {
     if (isReportByMe) {
       const unReportPost = await unReportTargetById('comment', commentId);
-      if (unReportPost) {
-        Alert.alert('Undo Report sent');
-      }
       setIsVisible(false);
       setIsReportByMe(false);
+      if (unReportPost) {
+        dispatch(
+          showToastMessage({
+            toastMessage: 'Comment unreported',
+            isSuccessToast: true,
+          })
+        );
+      }
     } else {
       const reportPost = await reportTargetById('comment', commentId);
-      if (reportPost) {
-        Alert.alert('Report sent');
-      }
       setIsVisible(false);
       setIsReportByMe(true);
+      if (reportPost) {
+        dispatch(
+          showToastMessage({
+            toastMessage: 'Comment reported',
+            isSuccessToast: true,
+          })
+        );
+      }
     }
   };
   const modalStyle = {
@@ -395,7 +413,7 @@ const CommentListItem = ({
               onHandleReply={onHandleReply}
             />
           )}
-          {isOpenReply && (
+          {isOpenReply && replyCommentList?.length > 0 && (
             <FlatList
               data={replyCommentList}
               renderItem={({ item }) => (
@@ -406,7 +424,7 @@ const CommentListItem = ({
                   onHandleReply={onHandleReply}
                 />
               )}
-              keyExtractor={(item, index) => item.commentId + index}
+              keyExtractor={(item) => item.commentId}
             />
           )}
 
@@ -417,7 +435,11 @@ const CommentListItem = ({
             >
               <SvgXml xml={expandIcon} />
               <Text style={styles.viewMoreText}>
-                View {replyCommentList.length} replies
+                View{' '}
+                {childrenNumber === 0
+                  ? replyCommentList.length
+                  : childrenNumber}{' '}
+                replies
               </Text>
             </TouchableOpacity>
           )}
@@ -454,12 +476,22 @@ const CommentListItem = ({
                   onPress={openEditCommentModal}
                   style={styles.modalRow}
                 >
+                  <SvgXml
+                    xml={editIcon(theme.colors.base)}
+                    width="20"
+                    height="20"
+                  />
                   <Text style={styles.deleteText}> Edit Comment</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={deletePostObject}
                   style={styles.modalRow}
                 >
+                  <SvgXml
+                    xml={storyDraftDeletHyperLink()}
+                    width="20"
+                    height="20"
+                  />
                   <Text style={styles.deleteText}> Delete Comment</Text>
                 </TouchableOpacity>
               </View>
@@ -468,8 +500,13 @@ const CommentListItem = ({
                 onPress={reportCommentObject}
                 style={styles.modalRow}
               >
+                <SvgXml
+                  xml={reportOutLine(theme.colors.base)}
+                  width="20"
+                  height="20"
+                />
                 <Text style={styles.deleteText}>
-                  {isReportByMe ? 'Undo Report' : 'Report'}
+                  {isReportByMe ? 'Unreport post' : 'Report post'}
                 </Text>
               </TouchableOpacity>
             )}
@@ -493,4 +530,4 @@ const CommentListItem = ({
     </View>
   );
 };
-export default CommentListItem;
+export default memo(CommentListItem);

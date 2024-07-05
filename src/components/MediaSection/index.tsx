@@ -4,6 +4,7 @@ import {
   ImageStyle,
   StyleProp,
   Text,
+  TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
@@ -78,12 +79,15 @@ const MediaSection: React.FC<IMediaSection> = ({ childrenPosts }) => {
         })
       );
       response.forEach((item) => {
-        if (item?.dataType === 'image') {
+        if (item?.dataType === 'image' && item?.data?.fileId) {
           const url: string = `https://api.${apiRegion}.amity.co/api/v3/files/${item?.data.fileId}/download?size=medium`;
           setImagePosts((prev) => {
             return !prev.includes(url) ? [...prev, url] : [...prev];
           });
-        } else if (item?.dataType === 'video') {
+        } else if (
+          item?.dataType === 'video' &&
+          item?.data?.videoFileId.original
+        ) {
           setVideoPosts((prev) => {
             const isExisted = prev.some(
               (video) =>
@@ -109,6 +113,8 @@ const MediaSection: React.FC<IMediaSection> = ({ childrenPosts }) => {
   }, [apiRegion, childrenPosts]);
 
   useEffect(() => {
+    setVideoPosts([]);
+    setImagePosts([]);
     getPostInfo();
   }, [childrenPosts, currentPostdetail, postList, postListGlobal, getPostInfo]);
 
@@ -277,6 +283,25 @@ const MediaSection: React.FC<IMediaSection> = ({ childrenPosts }) => {
         onRequestClose={() => setIsVisibleFullImage(false)}
         isVideoButton={videoPosts.length > 0 ? true : false}
         videoPosts={videoPosts}
+        HeaderComponent={({ imageIndex: imgIndex }) => (
+          <View style={styles.headerContainer}>
+            <View style={styles.flexWidth}>
+              <TouchableOpacity
+                style={styles.closebtnIcon}
+                onPress={() => setIsVisibleFullImage(false)}
+              >
+                <Text style={styles.closeBtn}>X</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.flexWidth}>
+              <Text style={styles.header}>
+                {imgIndex + 1}/
+                {imagePostsFullSize.length || videoPostsFullSize.length}
+              </Text>
+            </View>
+            <View style={styles.flexWidth} />
+          </View>
+        )}
       />
     </View>
   );

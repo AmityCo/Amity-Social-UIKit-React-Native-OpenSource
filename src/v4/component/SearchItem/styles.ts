@@ -10,7 +10,6 @@ export const useStyles = () => {
       alignItems: 'center',
       justifyContent: 'space-between',
       paddingVertical: 8,
-      paddingHorizontal: 16,
       backgroundColor: 'transparent',
     },
     avatar: {

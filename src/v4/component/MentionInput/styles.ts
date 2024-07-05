@@ -1,55 +1,17 @@
-import { useRef, useEffect, useCallback } from 'react';
-import {
-  StyleSheet,
-  useWindowDimensions,
-  Animated,
-  Easing,
-} from 'react-native';
+import { StyleSheet, useWindowDimensions } from 'react-native';
 import { useTheme } from 'react-native-paper';
-import { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
-import { useKeyboardStatus } from '../../hook';
+import { MyMD3Theme } from '../../../providers/amity-ui-kit-provider';
 
 export const useStyles = () => {
   const theme = useTheme() as MyMD3Theme;
-  const { isKeyboardShowing, keyboardHeight } = useKeyboardStatus();
-  const { width, height } = useWindowDimensions();
-  const animatedMarginTop = useRef(
-    new Animated.Value(height - keyboardHeight - 400)
-  ).current;
-  const animateMarginTop = useCallback(
-    (toValue) => {
-      Animated.timing(animatedMarginTop, {
-        toValue: toValue,
-        easing: Easing.linear,
-        duration: 200,
-        useNativeDriver: false,
-      }).start();
-    },
-    [animatedMarginTop]
-  );
-
-  useEffect(() => {
-    const marginTop = isKeyboardShowing
-      ? height - keyboardHeight - 400
-      : height * 0.5;
-    animateMarginTop(marginTop);
-  }, [animateMarginTop, height, isKeyboardShowing, keyboardHeight]);
-
+  const { width } = useWindowDimensions();
   const styles = StyleSheet.create({
     mentionListContainer: {
-      position: 'absolute',
-      alignSelf: 'center',
-      top: animatedMarginTop,
-      width,
-      height: 170,
-    },
-    mentionListInnerContainer: {
-      justifyContent: 'flex-end',
-    },
-    mentionContainer: {
-      padding: 10,
-      flexDirection: 'row',
-      alignItems: 'center',
+      marginTop: 10,
+      width: width,
+      maxHeight: 170,
+      top: 0,
+      backgroundColor: 'transparent',
     },
     avatar: {
       width: 30,
@@ -62,7 +24,6 @@ export const useStyles = () => {
     },
     inputContainer: {
       width: '100%',
-      flex: 1,
     },
     inputText: {
       color: theme.colors.base,

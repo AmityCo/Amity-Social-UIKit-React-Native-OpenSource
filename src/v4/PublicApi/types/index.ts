@@ -10,13 +10,34 @@ export const enum AmityPostComposerMode {
   EDIT = 'edit',
 }
 
-export type AmityPostComposerPageType = {
-  mode: AmityPostComposerMode;
-  post?: Amity.Post;
+export type AmityPostCreationOption = {
+  mode?: AmityPostComposerMode.CREATE;
   targetId?: string;
   targetType?: Amity.PostTargetType;
   community?: Amity.Community;
 };
+
+export type AmityPostEditOption = {
+  mode?: AmityPostComposerMode.EDIT;
+  community?: Amity.Community;
+  post?: Amity.Post;
+};
+
+export type AmityPostComposerPageType = {
+  mode?: AmityPostComposerMode;
+  targetId?: string;
+  targetType?: Amity.PostTargetType;
+  community?: Amity.Community;
+  post?: Amity.Post;
+};
+
+// export type AmityPostComposerPageType = {
+//   mode: AmityPostComposerMode;
+//   targetId?: string;
+//   targetType: Amity.PostTargetType;
+//   community?: Amity.Community;
+//   post?: Amity.Post;
+// };
 
 export interface AmityStoryTabComponentType {
   type: AmityStoryTabComponentEnum;

@@ -1,14 +1,14 @@
-import { TextInputProps, FlatList, TextInput, Animated } from 'react-native';
+import { View, TextInputProps, FlatList, TextInput } from 'react-native';
 import React, { FC, Ref, memo, useCallback, useEffect, useState } from 'react';
 import { useStyles } from './styles';
 import SearchItem from '../SearchItem';
-import { IMentionPosition } from '../../types/type';
 import {
   MentionSuggestionsProps,
   MentionInput as MentionTextInput,
   replaceMentionValues,
 } from 'react-native-controlled-mentions';
 import useSearch, { TSearchItem } from '../../hook/useSearch';
+import { IMentionPosition } from '../../types/type';
 
 interface IMentionInput extends TextInputProps {
   setInputMessage: (inputMessage: string) => void;
@@ -39,9 +39,8 @@ const AmityMentionInput: FC<IMentionInput> = ({
   ...rest
 }) => {
   const styles = useStyles();
-
   const [cursorIndex, setCursorIndex] = useState(0);
-  const [currentSearchUserName, setCurrentSearchUserName] = useState(null);
+  const [currentSearchUserName, setCurrentSearchUserName] = useState('');
   const { searchResult, getNextPage } = useSearch(
     currentSearchUserName,
     privateCommunityId
@@ -95,14 +94,13 @@ const AmityMentionInput: FC<IMentionInput> = ({
   const renderSuggestions: FC<MentionSuggestionsProps> = useCallback(
     ({ keyword, onSuggestionPress }) => {
       setCurrentSearchUserName(keyword || '');
-      setIsShowingSuggestion(keyword?.length > 0);
+      setIsShowingSuggestion && setIsShowingSuggestion(keyword?.length > 0);
       if (keyword == null || !searchResult || searchResult?.length === 0) {
         return null;
       }
       return (
-        <Animated.View style={styles.mentionListContainer}>
+        <View style={styles.mentionListContainer}>
           <FlatList
-            contentContainerStyle={styles.mentionListInnerContainer}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
             onEndReached={() => getNextPage && getNextPage()}
@@ -122,7 +120,7 @@ const AmityMentionInput: FC<IMentionInput> = ({
             }}
             keyExtractor={(item) => item.id}
           />
-        </Animated.View>
+        </View>
       );
     },
     [
@@ -135,7 +133,6 @@ const AmityMentionInput: FC<IMentionInput> = ({
   );
   return (
     <MentionTextInput
-      autoFocus
       inputRef={inputRef}
       containerStyle={styles.inputContainer}
       {...rest}
