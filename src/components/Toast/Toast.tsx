@@ -3,15 +3,14 @@ import React, { FC, memo, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import uiSlice from '../../redux/slices/uiSlice';
 import { RootState } from 'src/redux/store';
-import { toastIcon } from '../../svg/svg-xml-list';
+import { toastIcon, toastSuccess } from '../../svg/svg-xml-list';
 import { SvgXml } from 'react-native-svg';
 
 const Toast: FC = () => {
   const dispatch = useDispatch();
   const { hideToastMessage } = uiSlice.actions;
-  const { toastMessage, showToastMessage, isLoadingToast } = useSelector(
-    (state: RootState) => state.ui
-  );
+  const { toastMessage, showToastMessage, isLoadingToast, isSuccessToast } =
+    useSelector((state: RootState) => state.ui);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const timeoutRef = useRef<NodeJS.Timeout>(null);
   useEffect(() => {
@@ -70,6 +69,8 @@ const Toast: FC = () => {
           color="lightblue"
           size="small"
         />
+      ) : isSuccessToast ? (
+        <SvgXml xml={toastSuccess()} width="24" height="24" />
       ) : (
         <SvgXml xml={toastIcon()} width="24" height="24" />
       )}

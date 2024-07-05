@@ -16,6 +16,7 @@ export const useStyles = () => {
       backgroundColor: theme.colors.background,
       width: '100%',
       paddingTop: 4,
+      paddingRight: 12,
     },
     headerSection: {
       paddingVertical: 12,

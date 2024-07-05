@@ -222,8 +222,8 @@ export const useStyles = (theme: MyMD3Theme) => {
     },
     modalContent: {
       backgroundColor: theme.colors.background,
-      borderTopLeftRadius: 10,
-      borderTopRightRadius: 10,
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
       padding: 10,
       minHeight: 700,
     },
@@ -236,10 +236,15 @@ export const useStyles = (theme: MyMD3Theme) => {
       padding: 5,
       marginVertical: 8,
     },
-    deleteText: {
+    editText: {
       paddingLeft: 12,
       fontWeight: '600',
       color: theme.colors.base,
+    },
+    deleteText: {
+      paddingLeft: 12,
+      fontWeight: '600',
+      color: theme.colors.alert,
     },
     timeRow: {
       marginTop: 4,

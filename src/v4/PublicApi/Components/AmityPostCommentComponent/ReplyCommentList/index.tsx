@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useRef, useState } from 'react';
+import React, { memo, useEffect, useRef, useState } from 'react';
 
 import {
   View,
@@ -37,8 +37,10 @@ import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
 import { IMentionPosition } from '../../../../types/type';
 import ModeratorBadgeElement from '../../../../PublicApi/Elements/ModeratorBadgeElement/ModeratorBadgeElement';
 import { ComponentID, PageID } from '../../../../enum';
-import { LinkPreview } from '../../../../component/PreviewLink/LinkPreview';
 import AmityReactionListComponent from '../../AmityReactionListComponent/AmityReactionListComponent';
+import RenderTextWithMention from '../../../../component/RenderTextWithMention/RenderTextWithMention';
+import uiSlice from '../../../../../redux/slices/uiSlice';
+import { useDispatch } from 'react-redux';
 
 export interface IComment {
   commentId: string;
@@ -65,12 +67,12 @@ export interface IReplyCommentList {
   onHandleReply?: (user: UserInterface, commentId: string) => void;
 }
 
-export default function ReplyCommentList({
+const ReplyCommentList = ({
   commentDetail,
   onDelete,
   commentId,
   onHandleReply,
-}: IReplyCommentList) {
+}: IReplyCommentList) => {
   const {
     data,
     user,
@@ -87,6 +89,8 @@ export default function ReplyCommentList({
 
   const theme = useTheme() as MyMD3Theme;
   const styles = useStyles();
+  const dispatch = useDispatch();
+  const { showToastMessage } = uiSlice.actions;
   const timeDifference = useTimeDifference(createdAt);
   const [isLike, setIsLike] = useState<boolean>(
     myReactions ? myReactions.includes('like') : false
@@ -103,15 +107,6 @@ export default function ReplyCommentList({
   const [editCommentModal, setEditCommentModal] = useState<boolean>(false);
   const [isEditComment, setIsEditComment] = useState<boolean>(false);
   const slideAnimation = useRef(new Animated.Value(0)).current;
-  const [commentMentionPosition, setCommentMentionPosition] = useState<
-    IMentionPosition[]
-  >([]);
-
-  useEffect(() => {
-    if (mentionPosition) {
-      setCommentMentionPosition(mentionPosition);
-    }
-  }, [mentionPosition]);
 
   const openModal = () => {
     setIsVisible(true);
@@ -167,18 +162,28 @@ export default function ReplyCommentList({
   const reportCommentObject = async () => {
     if (isReportByMe) {
       const unReportPost = await unReportTargetById('comment', commentId);
-      if (unReportPost) {
-        Alert.alert('Undo Report sent');
-      }
       setIsVisible(false);
       setIsReportByMe(false);
+      if (unReportPost) {
+        dispatch(
+          showToastMessage({
+            toastMessage: 'Comment unreported',
+            isSuccessToast: true,
+          })
+        );
+      }
     } else {
       const reportPost = await reportTargetById('comment', commentId);
-      if (reportPost) {
-        Alert.alert('Report sent');
-      }
       setIsVisible(false);
       setIsReportByMe(true);
+      if (reportPost) {
+        dispatch(
+          showToastMessage({
+            toastMessage: 'Comment reported',
+            isSuccessToast: true,
+          })
+        );
+      }
     }
   };
   const modalStyle = {
@@ -242,10 +247,14 @@ export default function ReplyCommentList({
               </View>
             )}
             {textComment && (
-              <LinkPreview
-                text={textComment}
-                mentionPositionArr={commentMentionPosition}
+              <RenderTextWithMention
+                textPost={textComment}
+                mentionPositionArr={mentionPosition ?? []}
               />
+              // <LinkPreview
+              //   text={textComment}
+              //   mentionPositionArr={commentMentionPosition}
+              // />
             )}
           </View>
 
@@ -365,4 +374,5 @@ export default function ReplyCommentList({
       )}
     </View>
   );
-}
+};
+export default memo(ReplyCommentList);

@@ -71,7 +71,7 @@ const AmityCreatePostMenuComponent = ({
           onPressCreatePost(AmityPostTargetSelectionPageType.story)
         }
       />
-      <ButtonWithIconElement
+      {/* <ButtonWithIconElement
         pageId={pageId}
         componentId={componentId}
         elementId={ElementID.create_poll_button}
@@ -84,7 +84,7 @@ const AmityCreatePostMenuComponent = ({
         onClick={() =>
           onPressCreatePost(AmityPostTargetSelectionPageType.livestream)
         }
-      />
+      /> */}
     </View>
   );
 };
