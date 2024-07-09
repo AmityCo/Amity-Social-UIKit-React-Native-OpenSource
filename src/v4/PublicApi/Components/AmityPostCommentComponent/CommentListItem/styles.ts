@@ -46,7 +46,7 @@ export const useStyles = () => {
       justifyContent: 'center',
     },
     rightSection: {
-      width: '90%',
+      flex: 1,
     },
     commentBubble: {
       marginBottom: 4,
@@ -55,6 +55,7 @@ export const useStyles = () => {
       borderRadius: 12,
       borderTopLeftRadius: 0,
       alignSelf: 'flex-start',
+      width: '100%',
     },
 
     viewMoreReplyBtn: {

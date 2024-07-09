@@ -525,14 +525,7 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
       const mediaOj = processMedia(imageUriArr);
       setDisplayImages((prev) => {
         const updatedArray = [...prev, ...mediaOj];
-        if (updatedArray.length > 10) {
-          Alert.alert(
-            'Maximum number of images exceeded',
-            'Maximum number of images that can be uploaded is 10. The rest images will be discarded'
-          );
-          return updatedArray.slice(0, 10);
-        }
-        return updatedArray;
+        return updatedArray.slice(0, 10);
       });
     }
   }, [displayImages.length, processMedia]);
@@ -555,14 +548,7 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
       const mediaOj = processMedia(videoUriArr);
       setDisplayVideos((prev) => {
         const updatedArray = [...prev, ...mediaOj];
-        if (updatedArray.length > 10) {
-          Alert.alert(
-            'Maximum number of videos exceeded',
-            'Maximum number of videos that can be uploaded is 10. The rest videos will be discarded'
-          );
-          return updatedArray.slice(0, 10);
-        }
-        return updatedArray;
+        return updatedArray.slice(0, 10);
       });
     }
   }, [displayVideos.length, processMedia]);
@@ -730,47 +716,41 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
                 nestedScrollEnabled={true}
                 scrollEnabled={false}
                 data={displayImages}
-                renderItem={({ item, index }) => {
-                  if (!item) return null;
-                  return (
-                    <LoadingImage
-                      source={item.url}
-                      onClose={handleOnCloseImage}
-                      index={index} //TODO: Fix this without index
-                      onLoadFinish={handleOnFinishImage}
-                      isUploaded={item.isUploaded}
-                      fileId={item.fileId}
-                      fileCount={displayImages.length}
-                      isEditMode={isEditMode}
-                      postId={item.postId}
-                      setIsUploading={setIsUploading}
-                    />
-                  );
-                }}
+                renderItem={({ item, index }) => (
+                  <LoadingImage
+                    source={item.url}
+                    onClose={handleOnCloseImage}
+                    index={index}
+                    onLoadFinish={handleOnFinishImage}
+                    isUploaded={item.isUploaded}
+                    fileId={item.fileId}
+                    fileCount={displayImages.length}
+                    isEditMode={isEditMode}
+                    postId={item.postId}
+                    setIsUploading={setIsUploading}
+                  />
+                )}
                 numColumns={3}
               />
             )}
             {displayVideos.length > 0 && (
               <FlatList
                 data={displayVideos}
-                renderItem={({ item, index }) => {
-                  if (!item) return null;
-                  return (
-                    <LoadingVideo
-                      source={item.url}
-                      onClose={handleOnCloseVideo}
-                      index={index} //TODO: Fix this without index
-                      onLoadFinish={handleOnFinishVideo}
-                      isUploaded={item.isUploaded}
-                      fileId={item.fileId}
-                      thumbNail={item.thumbNail as string}
-                      fileCount={displayVideos.length}
-                      isEditMode={isEditMode}
-                      postId={item.postId}
-                      setIsUploading={setIsUploading}
-                    />
-                  );
-                }}
+                renderItem={({ item, index }) => (
+                  <LoadingVideo
+                    source={item.url}
+                    onClose={handleOnCloseVideo}
+                    index={index}
+                    onLoadFinish={handleOnFinishVideo}
+                    isUploaded={item.isUploaded}
+                    fileId={item.fileId}
+                    thumbNail={item.thumbNail as string}
+                    fileCount={displayVideos.length}
+                    isEditMode={isEditMode}
+                    postId={item.postId}
+                    setIsUploading={setIsUploading}
+                  />
+                )}
                 numColumns={3}
               />
             )}
