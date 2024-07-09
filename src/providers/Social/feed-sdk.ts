@@ -26,6 +26,7 @@ export async function getGlobalFeed(
         const { data, nextPage, prevPage } =
           await FeedRepository.getCustomRankingGlobalFeed({
             page,
+            limit: 20,
           });
         resolve({ data, nextPage, prevPage });
       } catch (error) {

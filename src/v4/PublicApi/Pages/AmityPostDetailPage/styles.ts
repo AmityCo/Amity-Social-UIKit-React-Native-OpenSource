@@ -64,6 +64,13 @@ export const useStyles = (theme: MyMD3Theme) => {
       borderTopWidth: 1,
       borderTopColor: theme.colors.baseShade4,
     },
+    myAvatar: {
+      width: 32,
+      height: 32,
+      borderRadius: 32,
+      alignSelf: 'center',
+      marginRight: 8,
+    },
     postDisabledBtn: {
       color: '#A0BDF8',
       fontSize: 16,
@@ -171,13 +178,21 @@ export const useStyles = (theme: MyMD3Theme) => {
       minHeight: 700,
     },
     twoOptions: {
-      minHeight: 720,
+      minHeight: 750,
     },
     modalRow: {
       flexDirection: 'row',
       alignItems: 'center',
       padding: 5,
       marginVertical: 8,
+    },
+    handleBar: {
+      alignSelf: 'center',
+      width: 36,
+      backgroundColor: theme.colors.baseShade4,
+      height: 5,
+      marginVertical: 10,
+      borderRadius: 10,
     },
     deleteText: {
       paddingLeft: 12,

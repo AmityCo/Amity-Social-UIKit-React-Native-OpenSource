@@ -185,7 +185,7 @@ const AmityPostContentComponent = ({
       {
         translateY: slideAnimation.interpolate({
           inputRange: [0, 1],
-          outputRange: [600, 0], // Adjust this value to control the sliding distance
+          outputRange: [580, 0], // Adjust this value to control the sliding distance
         }),
       },
     ],
@@ -291,6 +291,7 @@ const AmityPostContentComponent = ({
                 styles.twoOptions,
             ]}
           >
+            <View style={styles.handleBar} />
             {post?.user?.userId === (client as Amity.Client).userId ? (
               <TouchableOpacity
                 onPress={openEditPostModal}

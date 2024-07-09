@@ -14,6 +14,9 @@ import CommentListItem from './CommentListItem/CommentListItem';
 import { deleteCommentById } from '../../../../providers/Social/comment-sdk';
 import { ComponentID, PageID } from '../../../enum';
 import { useAmityComponent } from '../../../hook';
+import ContentLoader, { Circle, Rect } from 'react-content-loader/native';
+import { useDispatch } from 'react-redux';
+import uiSlice from '../../../../redux/slices/uiSlice';
 
 interface IComment {
   commentId: string;
@@ -52,9 +55,15 @@ const AmityPostCommentComponent: FC<AmityPostCommentComponentType> = ({
   ListHeaderComponent,
 }) => {
   const componentId = ComponentID.CommentTray;
-  const { isExcluded } = useAmityComponent({ pageId, componentId });
+  const { isExcluded, themeStyles } = useAmityComponent({
+    pageId,
+    componentId,
+  });
+  const dispatch = useDispatch();
+  const { showToastMessage } = uiSlice.actions;
   const onNextPageRef = useRef<() => void | null>(null);
   const [commentList, setCommentList] = useState<IComment[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
     if (!postId) return () => {};
     const unsubComment = CommentRepository.getComments(
@@ -65,10 +74,16 @@ const AmityPostCommentComponent: FC<AmityPostCommentComponentType> = ({
         limit: 10,
       },
       async ({ error, loading, data, hasNextPage, onNextPage }) => {
-        if (error) return;
+        if (error) {
+          dispatch(showToastMessage({ toastMessage: "Couldn't load comment" }));
+          return;
+        }
         if (!loading) {
           data && data.length > 0 && (await queryComment(data));
           onNextPageRef.current = hasNextPage ? onNextPage : null;
+          setTimeout(() => {
+            setIsLoading(false);
+          }, 1000);
         }
       }
     );
@@ -76,7 +91,7 @@ const AmityPostCommentComponent: FC<AmityPostCommentComponentType> = ({
       setCommentList([]);
       unsubComment();
     };
-  }, [postId, postType]);
+  }, [dispatch, postId, postType, showToastMessage]);
 
   const queryComment = async (comments: Amity.InternalComment[]) => {
     const formattedCommentList = await Promise.all(
@@ -132,6 +147,47 @@ const AmityPostCommentComponent: FC<AmityPostCommentComponentType> = ({
     },
     [setReplyCommentId, setReplyUserName]
   );
+
+  const renderCommentListItem = useCallback(
+    ({ item }) => {
+      if (isLoading) {
+        return (
+          <ContentLoader
+            height={100}
+            speed={1}
+            width={300}
+            backgroundColor={themeStyles.colors.baseShade4}
+            foregroundColor={themeStyles.colors.baseShade2}
+            viewBox="0 0 300 70"
+          >
+            <Circle cx="24" cy="24" r="12" />
+            <Rect x="50" y="12" rx="5" ry="5" width={220} height={50} />
+            <Rect x="50" y="74" rx="5" ry="5" width={150} height={8} />
+          </ContentLoader>
+        );
+      }
+
+      return (
+        <CommentListItem
+          onDelete={onDeleteComment}
+          commentDetail={item}
+          onClickReply={handleClickReply}
+          postType={postType}
+          disabledInteraction={disabledInteraction}
+        />
+      );
+    },
+    [
+      disabledInteraction,
+      handleClickReply,
+      isLoading,
+      onDeleteComment,
+      postType,
+      themeStyles.colors.baseShade2,
+      themeStyles.colors.baseShade4,
+    ]
+  );
+
   if (isExcluded) return null;
   return (
     <View style={{ flex: 1, paddingBottom: 40 }}>
@@ -139,17 +195,7 @@ const AmityPostCommentComponent: FC<AmityPostCommentComponentType> = ({
         ListHeaderComponent={ListHeaderComponent}
         keyboardShouldPersistTaps="handled"
         data={commentList}
-        renderItem={({ item }) => {
-          return (
-            <CommentListItem
-              onDelete={onDeleteComment}
-              commentDetail={item}
-              onClickReply={handleClickReply}
-              postType={postType}
-              disabledInteraction={disabledInteraction}
-            />
-          );
-        }}
+        renderItem={renderCommentListItem}
         keyExtractor={(item) => item.commentId}
         onEndReachedThreshold={0.8}
         onEndReached={() => {

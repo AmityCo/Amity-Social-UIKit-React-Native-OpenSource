@@ -21,7 +21,7 @@ const NewsFeedLoadingComponent = () => {
           <ContentLoader
             key={i}
             height={70}
-            speed={0.5}
+            speed={1}
             width={70}
             backgroundColor={theme.colors.baseShade4}
             foregroundColor={theme.colors.baseShade2}
@@ -34,7 +34,7 @@ const NewsFeedLoadingComponent = () => {
       </View>
       <ContentLoader
         height={70}
-        speed={0.5}
+        speed={1}
         width={width}
         backgroundColor={theme.colors.baseShade4}
         foregroundColor={theme.colors.baseShade2}

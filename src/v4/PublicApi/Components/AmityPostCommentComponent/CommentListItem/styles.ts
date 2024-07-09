@@ -46,7 +46,7 @@ export const useStyles = () => {
       justifyContent: 'center',
     },
     rightSection: {
-      width: '90%',
+      flex: 1,
     },
     commentBubble: {
       marginBottom: 4,
@@ -55,6 +55,7 @@ export const useStyles = () => {
       borderRadius: 12,
       borderTopLeftRadius: 0,
       alignSelf: 'flex-start',
+      width: '100%',
     },
 
     viewMoreReplyBtn: {
@@ -125,13 +126,21 @@ export const useStyles = () => {
       padding: 5,
       marginVertical: 8,
     },
+    handleBar: {
+      alignSelf: 'center',
+      width: 36,
+      backgroundColor: theme.colors.baseShade4,
+      height: 5,
+      marginVertical: 10,
+      borderRadius: 10,
+    },
     deleteText: {
       paddingLeft: 12,
       fontWeight: '600',
       color: theme.colors.base,
     },
     twoOptions: {
-      minHeight: 720,
+      minHeight: 750,
     },
     timeRow: {
       flexDirection: 'row',

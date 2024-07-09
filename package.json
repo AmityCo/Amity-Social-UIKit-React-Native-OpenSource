@@ -209,7 +209,7 @@
     ]
   },
   "dependencies": {
-    "@amityco/ts-sdk-react-native": "^6.25.0",
+    "@amityco/ts-sdk-react-native": "^6.28.0",
     "@amityco/video-broadcaster-react-native": "^1.0.0",
     "@amityco/video-player-react-native": "^1.0.0",
     "@devvie/bottom-sheet": "^0.3.0",

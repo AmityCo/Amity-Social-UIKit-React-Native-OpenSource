@@ -1,9 +1,5 @@
 import React, { FC, memo, useCallback, useRef, useState } from 'react';
 import { FlatList } from 'react-native';
-import {
-  getGlobalFeed,
-  type IGlobalFeedRes,
-} from '../../../../providers/Social/feed-sdk';
 import useAuth from '../../../../hooks/useAuth';
 import { useStyle } from './styles';
 import { amityPostsFormatter } from '../../../../util/postDataFormatter';
@@ -18,6 +14,7 @@ import { useAmityComponent } from '../../../hook/useUiKitReference';
 import { AmityPostContentComponentStyleEnum } from '../../../enum/AmityPostContentComponentStyle';
 import AmityStoryTabComponent from '../AmityStoryTabComponent/AmityStoryTabComponent';
 import { AmityStoryTabComponentEnum } from '../../types';
+import { FeedRepository, PostRepository } from '@amityco/ts-sdk-react-native';
 
 type AmityGlobalFeedComponentType = {
   pageId?: PageID;
@@ -37,17 +34,22 @@ const AmityGlobalFeedComponent: FC<AmityGlobalFeedComponentType> = ({
   const dispatch = useDispatch();
   const styles = useStyle(themeStyles);
   const { isConnected } = useAuth();
-  const [postData, setPostData] = useState<IGlobalFeedRes>();
+  const [postData, setPostData] = useState<{ data: any; nextPage: string }>();
   const { data: posts = [], nextPage } = postData ?? {};
   const flatListRef = useRef(null);
-  async function getGlobalFeedList(
-    page: Amity.Page<number> = { after: 0, limit: 8 }
-  ): Promise<void> {
-    const feedObject = await getGlobalFeed(page);
-    if (feedObject) {
-      setPostData(feedObject);
+
+  const getGlobalFeedList = async (queryToken?: string) => {
+    const {
+      data,
+      paging: { next },
+    } = await FeedRepository.getCustomRankingGlobalFeed({
+      queryToken,
+      limit: 20,
+    });
+    if (data) {
+      setPostData({ data, nextPage: next });
     }
-  }
+  };
   const handleLoadMore = () => {
     if (nextPage) {
       getGlobalFeedList(nextPage);
@@ -63,13 +65,46 @@ const AmityGlobalFeedComponent: FC<AmityGlobalFeedComponentType> = ({
   useFocusEffect(
     useCallback(() => {
       if (isConnected) {
-        getGlobalFeedList();
+        FeedRepository.getCustomRankingGlobalFeed({
+          limit: 20,
+        }).then(({ data, paging: { next } }) => {
+          setPostData({ data, nextPage: next });
+        });
       }
     }, [isConnected])
   );
   const getPostList = useCallback(async () => {
     if (posts.length > 0) {
-      const formattedPostList = await amityPostsFormatter(posts);
+      //filter image and video post. remove this later
+      const results = await Promise.all(
+        posts.map((post) => {
+          if (post?.children.length > 0) {
+            return new Promise((resolve) => {
+              PostRepository.getPost(
+                post?.children[0],
+                ({ error, loading, data }) => {
+                  if (!error && !loading) {
+                    if (
+                      data?.dataType === 'image' ||
+                      data?.dataType === 'video'
+                    ) {
+                      resolve(post);
+                    } else {
+                      resolve(null);
+                    }
+                  } else {
+                    resolve(null);
+                  }
+                }
+              );
+            });
+          } else {
+            return post;
+          }
+        })
+      );
+      const filteredResult = results.filter((result) => result !== null);
+      const formattedPostList = await amityPostsFormatter(filteredResult);
       dispatch(updateGlobalFeed(formattedPostList));
     }
   }, [dispatch, posts, updateGlobalFeed]);
@@ -83,6 +118,7 @@ const AmityGlobalFeedComponent: FC<AmityGlobalFeedComponentType> = ({
 
   return (
     <FlatList
+      initialNumToRender={20}
       testID={accessibilityId}
       accessibilityLabel={accessibilityId}
       style={styles.feedWrap}
