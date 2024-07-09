@@ -69,7 +69,10 @@ import EditPostModal from '../../../../components/EditPostModal';
 import { getCommunityById } from '../../../../providers/Social/communities-sdk';
 import uiSlice from '../../../../redux/slices/uiSlice';
 import MyAvatar from '../../../component/MyAvatar/MyAvatar';
-import { text_contain_blocked_word } from '../../../../constants';
+import {
+  comment_contains_inapproproate_word,
+  text_contain_blocked_word,
+} from '../../../../constants';
 type AmityPostDetailPageType = {
   postId: Amity.Post['postId'];
 };
@@ -359,7 +362,9 @@ const AmityPostDetailPage: FC<AmityPostDetailPageType> = ({ postId }) => {
       } catch (error) {
         if (error.message.includes(text_contain_blocked_word)) {
           dispatch(
-            showToastMessage({ toastMessage: text_contain_blocked_word })
+            showToastMessage({
+              toastMessage: comment_contains_inapproproate_word,
+            })
           );
           return;
         }
@@ -376,7 +381,9 @@ const AmityPostDetailPage: FC<AmityPostDetailPageType> = ({ postId }) => {
       } catch (error) {
         if (error.message.includes(text_contain_blocked_word)) {
           dispatch(
-            showToastMessage({ toastMessage: text_contain_blocked_word })
+            showToastMessage({
+              toastMessage: comment_contains_inapproproate_word,
+            })
           );
           return;
         }

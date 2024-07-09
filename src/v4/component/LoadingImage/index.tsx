@@ -156,7 +156,11 @@ const LoadingImage = ({
           <SvgXml xml={toastIcon()} width="24" height="24" />
         </TouchableOpacity>
       ) : (
-        <TouchableOpacity style={styles.closeButton} onPress={handleDelete}>
+        <TouchableOpacity
+          style={styles.closeButton}
+          disabled={loading || isProcess}
+          onPress={handleDelete}
+        >
           <SvgXml xml={closeIcon(theme.colors.base)} width="12" height="12" />
         </TouchableOpacity>
       )}
