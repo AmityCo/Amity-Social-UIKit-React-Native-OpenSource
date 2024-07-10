@@ -297,7 +297,7 @@
       "text": "My Timeline"
     },
     "select_story_target_page/*/close_button": {
-      "image": "platformValue"
+      "image": "close_button"
     },
     "select_story_target_page/*/title": {
       "text": "Share to"
