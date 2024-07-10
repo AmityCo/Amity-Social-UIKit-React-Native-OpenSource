@@ -13,7 +13,6 @@ import CommunityList from '../screens/CommunityList';
 import CommunityHome from '../v4/screen/CommunityHome';
 import { CommunitySetting } from '../screens/CommunitySetting/index';
 import CommunityMemberDetail from '../screens/CommunityMemberDetail/CommunityMemberDetail';
-import Home from '../v4/screen/Home';
 import PostDetail from '../screens/PostDetail';
 import CreatePost from '../screens/CreatePost';
 import UserProfile from '../v4/screen/UserProfile/UserProfile';
@@ -34,11 +33,11 @@ import CancelButton from '../components/CancelButton';
 import CloseButton from '../components/CloseButton';
 import EditCommunity from '../screens/EditCommunity/EditCommunity';
 import VideoPlayerFull from '../screens/VideoPlayerFullScreen';
-import PostTypeChoiceModal from '../components/PostTypeChoiceModal/PostTypeChoiceModal';
 import CreatePoll from '../screens/CreatePoll/CreatePoll';
 import ReactionListScreen from '../screens/ReactionListScreen/ReactionListScreen';
 import CreateStoryScreen from '../v4/screen/CreateStory/CreateStoryScreen';
-import Toast from '../components/Toast/Toast';
+import Home from '../screens/Home';
+import AmitySocialUIKitV4Navigator from '../v4/routes/AmitySocialUIKitV4Navigator';
 import UserPendingRequest from '../v4/screen/UserPendingRequest/UserPendingRequest';
 import FollowerList from '../v4/screen/FollowerList/FollowerList';
 import CreateLivestream from '../screens/CreateLivestream/CreateLivestream';
@@ -54,6 +53,7 @@ export default function SocialNavigator() {
     <NavigationContainer independent={true}>
       {isConnected && (
         <Stack.Navigator
+          initialRouteName="AmitySocialUIKitV4Navigator"
           screenOptions={{
             headerShadowVisible: false,
             contentStyle: {
@@ -67,6 +67,11 @@ export default function SocialNavigator() {
             },
           }}
         >
+          <Stack.Screen
+            name="AmitySocialUIKitV4Navigator"
+            component={AmitySocialUIKitV4Navigator}
+            options={{ headerShown: false }}
+          />
           <Stack.Screen name="Home" component={Home} />
           <Stack.Screen name="Explore" component={Explore} />
           <Stack.Screen
@@ -107,7 +112,7 @@ export default function SocialNavigator() {
               headerLeft: () => (
                 <BackButton
                   onPress={() => {
-                    navigation.navigate(Home);
+                    navigation.navigate('Home');
                   }}
                 />
               ),
@@ -296,8 +301,6 @@ export default function SocialNavigator() {
           </Stack.Group>
         </Stack.Navigator>
       )}
-      <PostTypeChoiceModal />
-      <Toast />
     </NavigationContainer>
   );
 }

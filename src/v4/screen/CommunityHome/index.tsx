@@ -44,7 +44,7 @@ import uiSlice from '../../../redux/slices/uiSlice';
 import { PostTargetType } from '../../../enum/postTargetType';
 import useConfig from '../../hook/useConfig';
 import { ComponentID } from '../../enum/enumUIKitID';
-import AmityStoryTabComponent from '../../PublicApi/AmityStoryTabComponent/AmityStoryTabComponent';
+import AmityStoryTabComponent from '../../PublicApi/Components/AmityStoryTabComponent/AmityStoryTabComponent';
 import { AmityStoryTabComponentEnum } from '../../PublicApi/types/index';
 import GalleryComponent from '../../component/Gallery/GalleryComponent';
 

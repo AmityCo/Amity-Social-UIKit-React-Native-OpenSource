@@ -1,11 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -16,10 +10,9 @@ import {
   type NativeSyntheticEvent,
   type NativeScrollEvent,
 } from 'react-native';
-import debounce from 'lodash.debounce';
 import { useStyles } from './styles';
 import { SvgXml } from 'react-native-svg';
-import { circleCloseIcon, plusIcon, searchIcon } from '../../svg/svg-xml-list';
+import { circleCloseIcon, searchIcon } from '../../svg/svg-xml-list';
 import { CommunityRepository } from '@amityco/ts-sdk-react-native';
 import type { ISearchItem } from '../../components/SearchItem';
 import SearchItem from '../../components/SearchItem';
@@ -42,10 +35,6 @@ export default function AllMyCommunity() {
   const { data: communitiesArr = [], onNextPage } = communities ?? {};
 
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
-
-  const onClickCreateCommunity = () => {
-    navigation.navigate('CreateCommunity');
-  };
 
   const handleChange = (text: string) => {
     setSearchTerm(text);
@@ -98,29 +87,6 @@ export default function AllMyCommunity() {
     }
   }, [communitiesArr]);
 
-  const debouncedResults = useMemo(() => {
-    return debounce(handleChange, 500);
-  }, []);
-
-  const headerRight = useCallback(
-    () => (
-      <TouchableOpacity onPress={onClickCreateCommunity}>
-        <SvgXml xml={plusIcon(theme.colors.base)} width="25" height="25" />
-      </TouchableOpacity>
-    ),
-    []
-  );
-
-  useEffect(() => {
-    navigation.setOptions({
-      headerRight: () => headerRight(),
-      headerTitle: 'My Community',
-    });
-    return () => {
-      debouncedResults.cancel();
-    };
-  }, []);
-
   const clearButton = () => {
     setSearchTerm('');
   };
@@ -134,7 +100,6 @@ export default function AllMyCommunity() {
       <View style={styles.headerWrap}>
         <View style={styles.inputWrap}>
           <SvgXml xml={searchIcon(theme.colors.base)} width="20" height="20" />
-
           <TextInput
             style={styles.input}
             value={searchTerm}
@@ -144,7 +109,6 @@ export default function AllMyCommunity() {
             <SvgXml xml={circleCloseIcon} width="20" height="20" />
           </TouchableOpacity>
         </View>
-
         <TouchableOpacity onPress={cancelSearch}>
           <Text style={styles.cancelBtn}>Cancel</Text>
         </TouchableOpacity>

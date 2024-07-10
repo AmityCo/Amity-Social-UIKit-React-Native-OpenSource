@@ -1,30 +1,29 @@
-import { StyleSheet, Text, Animated } from 'react-native';
+import { StyleSheet, Text, Animated, ActivityIndicator } from 'react-native';
 import React, { FC, memo, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import uiSlice from '../../redux/slices/uiSlice';
 import { RootState } from 'src/redux/store';
-import { toastIcon } from '../../svg/svg-xml-list';
+import { toastIcon, toastSuccess } from '../../svg/svg-xml-list';
 import { SvgXml } from 'react-native-svg';
 
 const Toast: FC = () => {
   const dispatch = useDispatch();
   const { hideToastMessage } = uiSlice.actions;
-  const { toastMessage, showToastMessage } = useSelector(
-    (state: RootState) => state.ui
-  );
+  const { toastMessage, showToastMessage, isLoadingToast, isSuccessToast } =
+    useSelector((state: RootState) => state.ui);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const timeoutRef = useRef<NodeJS.Timeout>(null);
   useEffect(() => {
     if (showToastMessage) {
       Animated.timing(fadeAnim, {
         toValue: 1,
-        duration: 500,
+        duration: isLoadingToast ? 2500 : 500,
         useNativeDriver: false,
       }).start(() => {
         timeoutRef.current = setTimeout(() => {
           Animated.timing(fadeAnim, {
             toValue: 0,
-            duration: 500,
+            duration: isLoadingToast ? 2500 : 500,
             useNativeDriver: false,
           }).start(() => {
             dispatch(hideToastMessage());
@@ -38,7 +37,7 @@ const Toast: FC = () => {
       fadeAnim.stopAnimation();
       clearTimeout(timeoutRef.current);
     };
-  }, [dispatch, fadeAnim, hideToastMessage, showToastMessage]);
+  }, [dispatch, fadeAnim, hideToastMessage, isLoadingToast, showToastMessage]);
 
   const styles = StyleSheet.create({
     toastContainer: {
@@ -63,7 +62,18 @@ const Toast: FC = () => {
   if (!showToastMessage) return null;
   return (
     <Animated.View style={[styles.toastContainer, { opacity: 1 }]}>
-      <SvgXml xml={toastIcon()} width="24" height="24" />
+      {isLoadingToast ? (
+        <ActivityIndicator
+          style={{ marginRight: 5 }}
+          animating={isLoadingToast}
+          color="lightblue"
+          size="small"
+        />
+      ) : isSuccessToast ? (
+        <SvgXml xml={toastSuccess()} width="24" height="24" />
+      ) : (
+        <SvgXml xml={toastIcon()} width="24" height="24" />
+      )}
       <Text style={styles.message}>{toastMessage}</Text>
     </Animated.View>
   );

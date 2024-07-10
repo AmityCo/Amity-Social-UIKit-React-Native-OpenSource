@@ -14,6 +14,7 @@
 Our AmityUIKit include user interfaces to enable fast integration of standard Amity Social features into new or existing applications. Furthermore, our React Native UIKit supports integration with **React Native CLI**, providing you with a flexible experience to seamlessly integrate social features into your existing React Native application.
 
 #Minimum Requirements
+
 - node 16
 - JDK 17.0.10
 - ruby 3.2.0
@@ -117,12 +118,9 @@ In android/build.gradle, add belows in in buildscript > ext
 
 kotlinVersion = 1.7.0 and above
 compileSdkVersion = 34
-buildToolsVersion = "34.0.0"  
+buildToolsVersion = "34.0.0"
 
 <img width="754" alt="Screenshot 2567-06-14 at 19 01 13" src="https://github.com/AmityCo/Amity-Social-UIKit-React-Native-CLI-OpenSource/assets/155952277/82f15d39-8fb0-4b98-b0ec-1dea49a093cf">
-
-
-
 
 ### Add Camera permission (iOS)
 

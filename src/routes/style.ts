@@ -13,6 +13,11 @@ export const useStyles = () => {
       height: 12,
       tintColor: theme.colors.base,
     },
+    closeIcon: {
+      width: 24,
+      height: 24,
+      tintColor: theme.colors.base,
+    },
   });
   return styles;
 };

@@ -58,7 +58,6 @@ const StoryCircleItem: FC<IStoryCircleItem> = ({
   }, [getImage, storyTarget.targetId, storyTarget.targetType]);
 
   if (storyTarget.targetType !== 'community') return null;
-
   return (
     <TouchableOpacity
       key={storyTarget.targetId}

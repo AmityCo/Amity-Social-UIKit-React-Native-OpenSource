@@ -6,6 +6,8 @@ import ContentLoader, { Circle } from 'react-content-loader/native';
 import StoryCircleItem from './StoryCircleItem';
 import Modal from 'react-native-modalbox';
 import StoryTargetView from './StoryTargetView';
+import { useTheme } from 'react-native-paper';
+import { MyMD3Theme } from '~/providers/amity-ui-kit-provider';
 
 export interface IStoryItems {
   communityId: string;
@@ -18,7 +20,7 @@ export interface IStoryItems {
 
 const MyStories = () => {
   const styles = useStyles();
-
+  const theme = useTheme() as MyMD3Theme;
   const {
     getGlobalStoryTargets,
     globalStoryTargets,
@@ -52,8 +54,8 @@ const MyStories = () => {
                 height={70}
                 speed={1}
                 width={70}
-                backgroundColor={'#d2d2d2'}
-                foregroundColor={'#eee'}
+                backgroundColor={theme.colors.baseShade4}
+                foregroundColor={theme.colors.baseShade2}
                 viewBox="0 0 50 50"
               >
                 <Circle cx="25" cy="25" r="25" />

@@ -12,6 +12,12 @@ export const store: Store = configureStore({
     feed: feedSlice.reducer,
     ui: uiSlice.reducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredPaths: ['globalFeed'],
+      },
+    }),
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
