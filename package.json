@@ -1,6 +1,6 @@
 {
   "name": "amity-react-native-social-ui-kit",
-  "version": "4.0.0-beta-11",
+  "version": "4.0.0-beta-12",
   "description": "Social UIKit",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
