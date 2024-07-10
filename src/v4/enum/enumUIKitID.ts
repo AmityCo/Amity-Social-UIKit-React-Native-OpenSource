@@ -1,9 +1,15 @@
 export enum PageID {
-  SelectTargetPage = 'select_target_page',
   CameraPage = 'camera_page',
   StoryPage = 'story_page',
   CreateStoryPage = 'create_story_page',
   WildCardPage = '*',
+  social_home_page = 'social_home_page',
+  global_search_page = 'global_search_page',
+  post_detail_page = 'post_detail_page',
+  social_global_search_page = 'social_global_search_page',
+  post_composer_page = 'post_composer_page',
+  select_post_target_page = 'select_post_target_page',
+  select_story_target_page = 'select_story_target_page',
 }
 export enum ComponentID {
   EditComment = 'edit_comment_component',
@@ -11,9 +17,19 @@ export enum ComponentID {
   CommentTray = 'comment_tray_component',
   StoryTab = 'story_tab_component',
   WildCardComponent = '*',
+  top_navigation = 'top_navigation',
+  empty_newsfeed = 'empty_newsfeed',
+  my_communities = 'my_communities',
+  newsfeed_component = 'newsfeed_component',
+  global_feed_component = 'global_feed_component',
+  post_content = 'post_content',
+  top_search_bar = 'top_search_bar',
+  community_search_result = 'community_search_result',
+  media_attachment = 'media_attachment',
+  detailed_media_attachment = 'detailed_media_attachment',
+  create_post_menu = 'create_post_menu',
 }
 export enum ElementID {
-  BackBtn = 'back_button',
   CloseBtn = 'close_button',
   AspectRatioBtn = 'aspect_ratio_button',
   StoryHyperLinkBtn = 'story_hyperlink_button',
@@ -31,6 +47,78 @@ export enum ElementID {
   DoneBtn = 'done_button',
   StoryRing = 'story_ring',
   WildCardElement = '*',
+  header_label = 'header_label',
+  global_search_button = 'global_search_button',
+  post_creation_button = 'post_creation_button',
+  newsfeed_button = 'newsfeed_button',
+  explore_button = 'explore_button',
+  my_communities_button = 'my_communities_button',
+  illustration = 'illustration',
+  title = 'title',
+  description = 'description',
+  explore_communities_button = 'explore_communities_button',
+  create_community_button = 'create_community_button',
+  community_avatar = 'community_avatar',
+  community_display_name = 'community_display_name',
+  community_private_badge = 'community_private_badge',
+  community_official_badge = 'community_official_badge',
+  community_category_name = 'community_category_name',
+  community_members_count = 'community_members_count',
+  back_button = 'back_button',
+  menu_button = 'menu_button',
+  moderator_badge = 'moderator_badge',
+  timestamp = 'timestamp',
+  post_content_view_count = 'post_content_view_count',
+  reaction_button = 'reaction_button',
+  comment_button = 'comment_button',
+  share_button = 'share_button',
+  search_icon = 'search_icon',
+  clear_button = 'clear_button',
+  cancel_button = 'cancel_button',
+  create_new_post_button = 'create_new_post_button',
+  edit_post_button = 'edit_post_button',
+  edit_post_title = 'edit_post_title',
+  camera_button = 'camera_button',
+  image_button = 'image_button',
+  video_button = 'video_button',
+  file_button = 'file_button',
+  detailed_button = 'detailed_button',
+  create_post_button = 'create_post_button',
+  create_story_button = 'create_story_button',
+  create_poll_button = 'create_poll_button',
+  create_livestream_button = 'create_livestream_button',
+  my_timeline_avatar = 'my_timeline_avatar',
+  my_timeline_text = 'my_timeline_text',
+  close_button = 'close_button',
+}
+
+export interface UiKitConfigKeys {
+  title?: string;
+  text?: string;
+  back_icon?: string;
+  resolution?: string;
+  close_icon?: string;
+  background_color?: string;
+  aspect_ratio_icon?: string;
+  hyperlink_button_icon?: string;
+  share_icon?: string;
+  hide_avatar?: boolean;
+  progress_color?: [string, string];
+  overflow_menu_icon?: string;
+  impression_icon?: string;
+  comment_icon?: string;
+  reaction_icon?: string;
+  create_new_story_icon?: string;
+  mute_icon?: string;
+  unmute_icon?: string;
+  cancel_icon?: string;
+  cancel_button_text?: string;
+  save_icon?: string;
+  save_button_text?: string;
+  done_icon?: string;
+  done_button_text?: string;
+  icon?: string;
+  image?: string;
 }
 
 export enum DefaultConfigID {

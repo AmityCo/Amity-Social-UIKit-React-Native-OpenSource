@@ -136,12 +136,12 @@ const EditPostModal = ({
         );
 
         response.forEach((item) => {
-          if (item.dataType === 'image') {
+          if (item?.dataType === 'image') {
             setImagePosts((prev) => [
               ...prev,
               `https://api.${apiRegion}.amity.co/api/v3/files/${item?.data.fileId}/download?size=medium`,
             ]);
-          } else if (item.dataType === 'video') {
+          } else if (item?.dataType === 'video') {
             setVideoPosts((prev) => [...prev, item.data]);
           }
         });

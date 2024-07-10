@@ -1,7 +1,43 @@
-import { StyleSheet } from 'react-native';
-
+import { StyleSheet, useWindowDimensions } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 export const useStyles = () => {
+  const { top } = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
   const styles = StyleSheet.create({
+    headerContainer: {
+      width,
+      alignItems: 'center',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginTop: top + 14,
+      paddingHorizontal: 12,
+    },
+    closebtnIcon: {
+      backgroundColor: '#ffffff8f',
+      borderRadius: 24,
+      width: 24,
+      height: 24,
+      textAlign: 'center',
+      justifyContent: 'center',
+      alignItems: 'center',
+      textAlignVertical: 'center',
+      overflow: 'hidden',
+    },
+
+    closeBtn: {
+      fontSize: 18,
+      color: 'black',
+      fontWeight: 'bold',
+    },
+    header: {
+      textAlign: 'center',
+      fontSize: 14,
+      color: 'white',
+      fontWeight: 'bold',
+    },
+    flexWidth: {
+      flex: 1,
+    },
     imageLargePost: {
       height: 350,
       borderRadius: 6,

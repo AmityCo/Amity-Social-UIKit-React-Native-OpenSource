@@ -24,7 +24,7 @@ export async function getGlobalFeed(
     async (resolve, reject) => {
       try {
         const { data, nextPage, prevPage } =
-          await FeedRepository.queryGlobalFeed({
+          await FeedRepository.getCustomRankingGlobalFeed({
             page,
           });
         resolve({ data, nextPage, prevPage });
@@ -235,8 +235,8 @@ export async function deletePostById(postId: string): Promise<boolean> {
   const isDeletedObject: Promise<boolean> = new Promise(
     async (resolve, reject) => {
       try {
-        const hardDelete = await PostRepository.deletePost(postId, true);
-        if (hardDelete) {
+        const softDeleted = await PostRepository.deletePost(postId, false);
+        if (softDeleted) {
           resolve(true);
         }
       } catch (error) {

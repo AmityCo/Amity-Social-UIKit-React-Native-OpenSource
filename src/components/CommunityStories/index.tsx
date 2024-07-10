@@ -36,7 +36,7 @@ export default function CommunityStories({ communityId }: ICommunityStories) {
         story_image: `https://api.${apiRegion}.amity.co/api/v3/files/${item?.data?.fileId}/download?size=full`,
         swipeText: '',
         onPress: () => console.log('story 1 swiped'),
-        story_type: item.dataType,
+        story_type: item?.dataType,
         story_video: `https://api.${apiRegion}.amity.co/api/v3/files/${item?.data?.videoFileId?.original}/download`,
         story_page: 0,
         creatorName: item?.creator?.displayName ?? '',

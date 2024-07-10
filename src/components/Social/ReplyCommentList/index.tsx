@@ -39,7 +39,7 @@ import EditCommentModal from '../../../components/EditCommentModal';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../../providers/amity-ui-kit-provider';
 import { IMentionPosition } from '../../../screens/CreatePost';
-import RenderTextWithMention from '../PostList/Components/RenderTextWithMention';
+import { LinkPreview } from '../../../v4/component/PreviewLink/LinkPreview';
 
 export interface IComment {
   commentId: string;
@@ -272,8 +272,8 @@ export default function ReplyCommentList({
           </View>
           <View style={styles.commentBubble}>
             {textComment && (
-              <RenderTextWithMention
-                textPost={textComment}
+              <LinkPreview
+                text={textComment}
                 mentionPositionArr={commentMentionPosition}
               />
             )}
