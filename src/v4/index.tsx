@@ -7,6 +7,7 @@ export { default as AmityPostDetailPage } from './PublicApi/Pages/AmityPostDetai
 export { default as AmityPostTargetSelectionPage } from './PublicApi/Pages/AmityPostTargetSelectionPage/AmityPostTargetSelectionPage';
 export { default as AmityStoryTargetSelectionPage } from './PublicApi/Pages/AmityStoryTargetSelectionPage/AmityStoryTargetSelectionPage';
 export { default as AmityPostComposerPage } from './PublicApi/Pages/AmityPostComposerPage/AmityPostComposerPage';
+export { default as AmityMyCommunitiesSearchPage } from './PublicApi/Pages/AmityMyCommunitiesSearchPage/AmityMyCommunitiesSearchPage';
 
 export { default as AmityStoryTabComponent } from './PublicApi/Components/AmityStoryTabComponent/AmityStoryTabComponent';
 export { default as AmitySocialHomeTopNavigationComponent } from './PublicApi/Components/AmitySocialHomeTopNavigationComponent/AmitySocialHomeTopNavigationComponent';

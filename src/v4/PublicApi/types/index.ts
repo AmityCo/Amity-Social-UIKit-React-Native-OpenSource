@@ -10,6 +10,12 @@ export const enum AmityPostComposerMode {
   EDIT = 'edit',
 }
 
+export enum mediaAttachment {
+  image = 'image',
+  video = 'video',
+  file = 'file',
+}
+
 export type AmityPostCreationOption = {
   mode?: AmityPostComposerMode.CREATE;
   targetId?: string;
