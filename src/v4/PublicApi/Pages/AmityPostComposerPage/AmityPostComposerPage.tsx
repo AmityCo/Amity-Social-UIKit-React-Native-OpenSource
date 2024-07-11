@@ -12,7 +12,7 @@ import {
   StatusBar,
   Linking,
 } from 'react-native';
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import React, { FC, memo, useCallback, useEffect, useState } from 'react';
 import {
   ComponentID,
   ElementID,
@@ -793,4 +793,4 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
   );
 };
 
-export default AmityPostComposerPage;
+export default memo(AmityPostComposerPage);

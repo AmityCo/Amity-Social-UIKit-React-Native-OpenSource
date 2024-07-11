@@ -18,6 +18,16 @@ import {
   AmityPostContentComponent,
   AmityPostDetailPage,
   AmityPostTargetSelectionPageType,
+  AmityCreatePostMenuComponent,
+  AmityDetailedMediaAttachmentComponent,
+  AmityMediaAttachmentComponent,
+  AmityPostCommentComponent,
+  AmityPostComposerPage,
+  AmityPostEngagementActionsComponent,
+  AmityPostTargetSelectionPage,
+  AmityReactionListComponent,
+  AmityStoryTargetSelectionPage,
+  AmityUserSearchResultComponent,
 } from './v4';
 import { AmityStoryTabComponentEnum } from './v4/PublicApi/types';
 
@@ -61,4 +71,14 @@ export {
   AmityPostContentComponent,
   AmityPostDetailPage,
   AmityPostTargetSelectionPageType,
+  AmityCreatePostMenuComponent,
+  AmityDetailedMediaAttachmentComponent,
+  AmityMediaAttachmentComponent,
+  AmityPostCommentComponent,
+  AmityPostComposerPage,
+  AmityPostEngagementActionsComponent,
+  AmityPostTargetSelectionPage,
+  AmityReactionListComponent,
+  AmityStoryTargetSelectionPage,
+  AmityUserSearchResultComponent,
 };
