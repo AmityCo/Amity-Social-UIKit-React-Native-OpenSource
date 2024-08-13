@@ -53,9 +53,6 @@ export default function SocialNavigator({ screen = 'Home' }: INavigator) {
   const theme = useTheme() as MyMD3Theme;
 
 
-
-
-
   const styles = useStyles();
   return (
     <NavigationContainer independent={true}>

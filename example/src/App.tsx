@@ -17,7 +17,7 @@ export default function App() {
       displayName="topAmity"
       apiEndpoint="https://api.sg.amity.co"
     >
-      <MyUserProfile />
+      <AmityUiKitSocial />
     </AmityUiKitProvider>
   );
 }

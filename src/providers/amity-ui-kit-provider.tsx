@@ -14,6 +14,7 @@ import { IBehaviour } from '../types/behaviour.interface';
 import { lighten, parseToHsl, hslToColorString } from 'polished';
 import { MenuProvider } from 'react-native-popup-menu';
 import useValidateConfig from '../hooks/useValidateConfig';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 export type CusTomTheme = typeof DefaultTheme;
 export interface IAmityUIkitProvider {
@@ -119,7 +120,12 @@ export default function AmityUiKitProvider({
         >
           <ConfigProvider configs={configData}>
             <BehaviourProvider behaviour={behaviour}>
-              <PaperProvider theme={globalTheme}>{children}</PaperProvider>
+              <PaperProvider theme={globalTheme}>
+                <SafeAreaProvider>
+                  {children}
+                </SafeAreaProvider>
+
+              </PaperProvider>
             </BehaviourProvider>
           </ConfigProvider>
         </AuthContextProvider>
