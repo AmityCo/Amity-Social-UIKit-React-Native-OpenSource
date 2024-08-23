@@ -14,9 +14,7 @@ export const store: Store = configureStore({
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      serializableCheck: {
-        ignoredPaths: ['globalFeed'],
-      },
+      serializableCheck: false,
     }),
 });
 
