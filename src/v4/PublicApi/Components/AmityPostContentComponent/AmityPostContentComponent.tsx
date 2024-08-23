@@ -47,6 +47,7 @@ import globalFeedSlice from '../../../../redux/slices/globalfeedSlice';
 import { useDispatch } from 'react-redux';
 import { useBehaviour } from '../../../providers/BehaviourProvider';
 import uiSlice from '../../../../redux/slices/uiSlice';
+
 export interface IPost {
   postId: string;
   data: Record<string, any>;
@@ -63,6 +64,7 @@ export interface IPost {
   childrenPosts: string[];
   mentionees: string[];
   mentionPosition?: IMentionPosition[];
+  analytics: Amity.Post<'analytics'>;
 }
 export interface IPostList {
   post: IPost;

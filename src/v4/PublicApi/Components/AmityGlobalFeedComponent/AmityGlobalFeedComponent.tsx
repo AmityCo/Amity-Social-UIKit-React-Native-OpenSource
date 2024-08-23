@@ -1,5 +1,12 @@
-import React, { FC, memo, useCallback, useRef, useState } from 'react';
-import { FlatList } from 'react-native';
+import React, {
+  FC,
+  memo,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+import { FlatList, ViewToken } from 'react-native';
 import useAuth from '../../../../hooks/useAuth';
 import { useStyle } from './styles';
 import { amityPostsFormatter } from '../../../../util/postDataFormatter';
@@ -8,7 +15,9 @@ import globalFeedSlice from '../../../../redux/slices/globalfeedSlice';
 import { RootState } from '../../../../redux/store';
 import { useFocusEffect } from '@react-navigation/native';
 import { RefreshControl } from 'react-native';
-import AmityPostContentComponent from '../AmityPostContentComponent/AmityPostContentComponent';
+import AmityPostContentComponent, {
+  IPost,
+} from '../AmityPostContentComponent/AmityPostContentComponent';
 import { ComponentID, PageID } from '../../../enum/enumUIKitID';
 import { useAmityComponent } from '../../../hook/useUiKitReference';
 import { AmityPostContentComponentStyleEnum } from '../../../enum/AmityPostContentComponentStyle';
@@ -28,13 +37,16 @@ const AmityGlobalFeedComponent: FC<AmityGlobalFeedComponentType> = ({
     pageId,
     componentId,
   });
-  const { postList } = useSelector((state: RootState) => state.globalFeed);
+  const { postList } = useSelector(
+    (state: RootState) => state.globalFeed as { postList: IPost[] }
+  );
   const [refreshing, setRefreshing] = useState(false);
   const { updateGlobalFeed, clearFeed } = globalFeedSlice.actions;
   const dispatch = useDispatch();
   const styles = useStyle(themeStyles);
   const { isConnected } = useAuth();
   const [postData, setPostData] = useState<{ data: any; nextPage: string }>();
+  const [postViews, setPostViews] = useState<ViewToken[]>([]);
   const { data: posts = [], nextPage } = postData ?? {};
   const flatListRef = useRef(null);
 
@@ -108,11 +120,31 @@ const AmityGlobalFeedComponent: FC<AmityGlobalFeedComponentType> = ({
       dispatch(updateGlobalFeed(formattedPostList));
     }
   }, [dispatch, posts, updateGlobalFeed]);
+
   useFocusEffect(
     useCallback(() => {
       posts && getPostList();
     }, [getPostList, posts])
   );
+
+  const handleViewChange = useCallback(({ viewableItems }) => {
+    setPostViews([...viewableItems]);
+  }, []);
+
+  useEffect(() => {
+    if (postViews.length > 0) {
+      for (const viewablePost of postViews) {
+        if (viewablePost) {
+          const post = postList.find(
+            (post) => post.postId === viewablePost.item.postId
+          );
+          if (post) {
+            post.analytics.markAsViewed();
+          }
+        }
+      }
+    }
+  }, [postViews, postList]);
 
   if (isExcluded) return null;
 
@@ -151,6 +183,8 @@ const AmityGlobalFeedComponent: FC<AmityGlobalFeedComponentType> = ({
           />
         )
       }
+      viewabilityConfig={{ viewAreaCoveragePercentThreshold: 60 }}
+      onViewableItemsChanged={handleViewChange}
     />
   );
 };
