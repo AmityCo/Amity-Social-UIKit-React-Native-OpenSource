@@ -1,12 +1,5 @@
-import React, {
-  FC,
-  memo,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
-import { FlatList, ViewToken } from 'react-native';
+import React, { FC, memo, useCallback, useRef, useState } from 'react';
+import { FlatList } from 'react-native';
 import useAuth from '../../../../hooks/useAuth';
 import { useStyle } from './styles';
 import { amityPostsFormatter } from '../../../../util/postDataFormatter';
@@ -24,6 +17,7 @@ import { AmityPostContentComponentStyleEnum } from '../../../enum/AmityPostConte
 import AmityStoryTabComponent from '../AmityStoryTabComponent/AmityStoryTabComponent';
 import { AmityStoryTabComponentEnum } from '../../types';
 import { FeedRepository, PostRepository } from '@amityco/ts-sdk-react-native';
+import { usePostImpression } from '../../../hook/usePostImpression';
 
 type AmityGlobalFeedComponentType = {
   pageId?: PageID;
@@ -46,7 +40,6 @@ const AmityGlobalFeedComponent: FC<AmityGlobalFeedComponentType> = ({
   const styles = useStyle(themeStyles);
   const { isConnected } = useAuth();
   const [postData, setPostData] = useState<{ data: any; nextPage: string }>();
-  const [postViews, setPostViews] = useState<ViewToken[]>([]);
   const { data: posts = [], nextPage } = postData ?? {};
   const flatListRef = useRef(null);
 
@@ -127,24 +120,7 @@ const AmityGlobalFeedComponent: FC<AmityGlobalFeedComponentType> = ({
     }, [getPostList, posts])
   );
 
-  const handleViewChange = useCallback(({ viewableItems }) => {
-    setPostViews([...viewableItems]);
-  }, []);
-
-  useEffect(() => {
-    if (postViews.length > 0) {
-      for (const viewablePost of postViews) {
-        if (viewablePost) {
-          const post = postList.find(
-            (post) => post.postId === viewablePost.item.postId
-          );
-          if (post) {
-            post.analytics.markAsViewed();
-          }
-        }
-      }
-    }
-  }, [postViews, postList]);
+  const { handleViewChange } = usePostImpression(postList);
 
   if (isExcluded) return null;
 
