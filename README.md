@@ -45,19 +45,34 @@ yarn example android
 
 ### Installation
 Here are the steps to install ui-kit together with another React Native project.
-```sh
-1. git clone https://github.com/AmityCo/Amity-Social-UIKit-React-Native-OpenSource.git
-2. cd Amity-Social-Cloud-UIKit-React-Native-OpenSource
-3. yarn 
-4. npm pack
-```
 
+1. Clone the repository
+```sh
+   git clone https://github.com/AmityCo/Amity-Social-UIKit-React-Native-OpenSource.git
+```
+2. Navigate to the cloned repository's directory:
+```sh
+  cd Amity-Social-Cloud-UIKit-React-Native-OpenSource
+```
+3. Install the dependencies using yarn
+```sh
+  yarn
+```
+4. Pack the project using npm (`yarn pack` is not supported by the UIKit at the moment`)
+```sh
+  npm pack
+```
 This step will build the app and return amityco-asc-react-native-ui-kit-x.x.x.tgz file in inside the folder
 
 Then, inside another project, Copy tgz file to your application folder where you need to use ui-kit:
-
+1. Install UIKit package to the application folder
 ```sh
-1. yarn add ./amity-react-native-social-ui-kit-x.x.x.tgz
+ yarn add ./amity-react-native-social-ui-kit-x.x.x.tgz
+```
+
+2. Install all the required dependencies for the UIKit
+```sh
+ yarn add @react-navigation/native-stack @react-navigation/native @react-navigation/stack react-native-safe-area-context react-native-screens react-native-svg @react-native-async-storage/async-storage
 ```
 
 ### Usage
