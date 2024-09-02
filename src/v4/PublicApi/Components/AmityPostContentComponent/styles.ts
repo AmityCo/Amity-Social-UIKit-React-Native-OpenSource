@@ -228,13 +228,21 @@ export const useStyles = (theme: MyMD3Theme) => {
       minHeight: 700,
     },
     twoOptions: {
-      minHeight: 720,
+      minHeight: 750,
     },
     modalRow: {
       flexDirection: 'row',
       alignItems: 'center',
       padding: 5,
       marginVertical: 8,
+    },
+    handleBar: {
+      alignSelf: 'center',
+      width: 36,
+      backgroundColor: theme.colors.baseShade4,
+      height: 5,
+      marginVertical: 10,
+      borderRadius: 10,
     },
     editText: {
       paddingLeft: 12,

@@ -26,7 +26,7 @@ const RenderTextWithMention: React.FC<IrenderTextWithMention> = ({
   const navigation =
     useNavigation() as NativeStackNavigationProp<RootStackParamList>;
   const linkArr = useCallback((text: string): LinkInfo[] => {
-    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const urlRegex = /(https?:\/\/|www\.)[^\s]+/g;
     const links: LinkInfo[] = [];
     let match;
     while ((match = urlRegex.exec(text)) !== null) {

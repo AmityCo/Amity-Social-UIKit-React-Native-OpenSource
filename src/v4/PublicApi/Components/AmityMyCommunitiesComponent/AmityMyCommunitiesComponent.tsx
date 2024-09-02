@@ -129,14 +129,14 @@ const AmityMyCommunitiesComponent: FC<AmityMyCommunitiesComponentType> = ({
           <ContentLoader
             key={index}
             height={70}
-            speed={0.5}
+            speed={1}
             width={380}
-            backgroundColor={themeStyles.colors.baseShade4}
-            foregroundColor={themeStyles.colors.baseShade2}
+            backgroundColor={themeStyles.colors.baseShade1}
+            foregroundColor={themeStyles.colors.baseShade4}
             viewBox="-10 -10 380 70"
           >
-            <Rect x="48" y="8" rx="3" ry="3" width="188" height="6" />
-            <Rect x="48" y="26" rx="3" ry="3" width="152" height="6" />
+            <Rect x="48" y="8" rx="3" ry="3" width="188" height="8" />
+            <Rect x="48" y="26" rx="3" ry="3" width="152" height="8" />
             <Circle cx="20" cy="20" r="20" />
           </ContentLoader>
         </View>

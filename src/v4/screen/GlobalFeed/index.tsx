@@ -27,6 +27,7 @@ export default function GlobalFeed() {
   const [postData, setPostData] = useState<IGlobalFeedRes>();
   const { data: posts = [], nextPage } = postData ?? {};
   const flatListRef = useRef(null);
+
   async function getGlobalFeedList(
     page: Amity.Page<number> = { after: 0, limit: 8 }
   ): Promise<void> {

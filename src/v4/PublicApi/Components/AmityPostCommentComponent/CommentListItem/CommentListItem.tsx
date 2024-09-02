@@ -286,7 +286,7 @@ const CommentListItem = ({
       {
         translateY: slideAnimation.interpolate({
           inputRange: [0, 1],
-          outputRange: [600, 0], // Adjust this value to control the sliding distance
+          outputRange: [580, 0], // Adjust this value to control the sliding distance
         }),
       },
     ],
@@ -470,6 +470,7 @@ const CommentListItem = ({
                 styles.twoOptions,
             ]}
           >
+            <View style={styles.handleBar} />
             {user?.userId === (client as Amity.Client).userId ? (
               <View>
                 <TouchableOpacity

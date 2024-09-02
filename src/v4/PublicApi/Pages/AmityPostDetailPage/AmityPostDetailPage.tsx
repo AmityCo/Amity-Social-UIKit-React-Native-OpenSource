@@ -68,6 +68,11 @@ import useAuth from '../../../../hooks/useAuth';
 import EditPostModal from '../../../../components/EditPostModal';
 import { getCommunityById } from '../../../../providers/Social/communities-sdk';
 import uiSlice from '../../../../redux/slices/uiSlice';
+import MyAvatar from '../../../component/MyAvatar/MyAvatar';
+import {
+  comment_contains_inapproproate_word,
+  text_contain_blocked_word,
+} from '../../../../constants';
 type AmityPostDetailPageType = {
   postId: Amity.Post['postId'];
 };
@@ -204,7 +209,7 @@ const AmityPostDetailPage: FC<AmityPostDetailPageType> = ({ postId }) => {
       {
         translateY: slideAnimation.interpolate({
           inputRange: [0, 1],
-          outputRange: [600, 0], // Adjust this value to control the sliding distance
+          outputRange: [580, 0], // Adjust this value to control the sliding distance
         }),
       },
     ],
@@ -235,6 +240,7 @@ const AmityPostDetailPage: FC<AmityPostDetailPageType> = ({ postId }) => {
                 styles.twoOptions,
             ]}
           >
+            <View style={styles.handleBar} />
             {postData?.user?.userId === myId ? (
               <TouchableOpacity
                 onPress={openEditPostModal}
@@ -354,7 +360,14 @@ const AmityPostDetailPage: FC<AmityPostDetailPageType> = ({ postId }) => {
           'post'
         );
       } catch (error) {
-        Alert.alert('Reply Error ', error.message);
+        if (error.message.includes(text_contain_blocked_word)) {
+          dispatch(
+            showToastMessage({
+              toastMessage: comment_contains_inapproproate_word,
+            })
+          );
+          return;
+        }
       }
     } else {
       try {
@@ -366,7 +379,14 @@ const AmityPostDetailPage: FC<AmityPostDetailPageType> = ({ postId }) => {
           'post'
         );
       } catch (error) {
-        Alert.alert('Comment Error ', error.message);
+        if (error.message.includes(text_contain_blocked_word)) {
+          dispatch(
+            showToastMessage({
+              toastMessage: comment_contains_inapproproate_word,
+            })
+          );
+          return;
+        }
       }
     }
     setInputMessage('');
@@ -374,7 +394,15 @@ const AmityPostDetailPage: FC<AmityPostDetailPageType> = ({ postId }) => {
     setMentionsPosition([]);
     onCloseReply();
     setResetValue(true);
-  }, [inputMessage, mentionNames, mentionsPosition, postId, replyCommentId]);
+  }, [
+    dispatch,
+    inputMessage,
+    mentionNames,
+    mentionsPosition,
+    postId,
+    replyCommentId,
+    showToastMessage,
+  ]);
 
   const renderFooterComponent = useMemo(() => {
     return (
@@ -401,6 +429,7 @@ const AmityPostDetailPage: FC<AmityPostDetailPageType> = ({ postId }) => {
         )}
         {!disabledInteraction && (
           <View style={styles.InputWrap}>
+            <MyAvatar style={styles.myAvatar} />
             <View style={styles.inputContainer}>
               <AmityMentionInput
                 resetValue={resetValue}

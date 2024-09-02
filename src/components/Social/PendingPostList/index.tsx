@@ -34,6 +34,7 @@ export interface IPost {
   mentionees: string[];
   mentionPosition?: IMentionPosition[];
   path: string;
+  analytics: Amity.Post<'analytics'>;
 }
 export interface IPendingPostList {
   onAcceptDecline?: (postId: string) => void;

@@ -15,7 +15,6 @@ export const useStyles = (theme: MyMD3Theme) => {
       justifyContent: 'space-between',
       paddingHorizontal: 12,
       alignItems: 'center',
-      marginBottom: 12,
       marginTop: 12,
     },
     closeBtn: {
@@ -38,7 +37,8 @@ export const useStyles = (theme: MyMD3Theme) => {
     },
     inputWrapper: {
       flex: 1,
-      padding: 16,
+      paddingVertical: 16,
+      paddingHorizontal: 12,
     },
     scrollContainer: {
       height: height,

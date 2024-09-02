@@ -37,6 +37,7 @@ interface OverlayImageProps {
   isEditMode?: boolean;
   fileCount?: number;
   postId?: string;
+  setIsUploading?: (arg: boolean) => void;
 }
 const LoadingVideo = ({
   source,
@@ -50,6 +51,7 @@ const LoadingVideo = ({
   isEditMode = false,
   fileCount,
   postId,
+  setIsUploading,
 }: OverlayImageProps) => {
   const theme = useTheme() as MyMD3Theme;
   const dispatch = useDispatch();
@@ -79,6 +81,7 @@ const LoadingVideo = ({
 
   const handleLoadEnd = () => {
     setLoading(false);
+    setIsUploading(false);
   };
 
   const processThumbNail = async () => {
@@ -98,6 +101,7 @@ const LoadingVideo = ({
   }, [progress]);
 
   const uploadFileToAmity = useCallback(async () => {
+    setIsUploading(true);
     setIsUploadError(false);
     try {
       const file: Amity.File<any>[] = await uploadVideoFile(
@@ -186,13 +190,18 @@ const LoadingVideo = ({
       {loading ? (
         <View style={styles.overlay}>
           {isProcess ? (
-            <Progress.CircleSnail size={60} borderColor="transparent" />
+            <Progress.CircleSnail
+              size={24}
+              borderColor="transparent"
+              thickness={2}
+            />
           ) : (
             <Progress.Circle
               progress={progress / 100}
-              size={60}
+              size={24}
               borderColor="transparent"
               unfilledColor="#ffffff"
+              thickness={2}
             />
           )}
         </View>
@@ -201,7 +210,11 @@ const LoadingVideo = ({
           <SvgXml xml={toastIcon()} width="24" height="24" />
         </TouchableOpacity>
       ) : (
-        <TouchableOpacity style={styles.closeButton} onPress={handleDelete}>
+        <TouchableOpacity
+          style={styles.closeButton}
+          disabled={loading || isProcess}
+          onPress={handleDelete}
+        >
           <SvgXml xml={closeIcon(theme.colors.base)} width="12" height="12" />
         </TouchableOpacity>
       )}

@@ -25,6 +25,7 @@ export const amityPostsFormatter = async (
         mentionees: item.mentionees[0]?.userIds,
         mentionPosition: item?.metadata?.mentioned || undefined,
         path: item.path,
+        analytics: item.analytics,
       } as IPost;
     })
   );

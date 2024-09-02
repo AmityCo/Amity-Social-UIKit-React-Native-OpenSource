@@ -47,6 +47,7 @@ import globalFeedSlice from '../../../../redux/slices/globalfeedSlice';
 import { useDispatch } from 'react-redux';
 import { useBehaviour } from '../../../providers/BehaviourProvider';
 import uiSlice from '../../../../redux/slices/uiSlice';
+
 export interface IPost {
   postId: string;
   data: Record<string, any>;
@@ -63,6 +64,7 @@ export interface IPost {
   childrenPosts: string[];
   mentionees: string[];
   mentionPosition?: IMentionPosition[];
+  analytics: Amity.Post<'analytics'>;
 }
 export interface IPostList {
   post: IPost;
@@ -185,7 +187,7 @@ const AmityPostContentComponent = ({
       {
         translateY: slideAnimation.interpolate({
           inputRange: [0, 1],
-          outputRange: [600, 0], // Adjust this value to control the sliding distance
+          outputRange: [580, 0], // Adjust this value to control the sliding distance
         }),
       },
     ],
@@ -291,6 +293,7 @@ const AmityPostContentComponent = ({
                 styles.twoOptions,
             ]}
           >
+            <View style={styles.handleBar} />
             {post?.user?.userId === (client as Amity.Client).userId ? (
               <TouchableOpacity
                 onPress={openEditPostModal}

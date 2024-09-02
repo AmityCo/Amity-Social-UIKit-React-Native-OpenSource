@@ -125,13 +125,21 @@ export const useStyles = () => {
       padding: 5,
       marginVertical: 8,
     },
+    handleBar: {
+      alignSelf: 'center',
+      width: 36,
+      backgroundColor: theme.colors.baseShade4,
+      height: 5,
+      marginVertical: 10,
+      borderRadius: 10,
+    },
     deleteText: {
       paddingLeft: 12,
       fontWeight: '600',
       color: theme.colors.base,
     },
     twoOptions: {
-      minHeight: 720,
+      minHeight: 750,
     },
     timeRow: {
       flexDirection: 'row',

@@ -12,7 +12,7 @@ import {
   StatusBar,
   Linking,
 } from 'react-native';
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import React, { FC, memo, useCallback, useEffect, useState } from 'react';
 import {
   ComponentID,
   ElementID,
@@ -100,16 +100,26 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
   const [initialText, setInitialText] = useState(post?.data.text ?? '');
   const [isSwipeup, setIsSwipeup] = useState(true);
   const [deletedPostIds, setDeletedPostIds] = useState<string[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
+  const [hasChangedAttachment, setHasChangedAttachment] = useState(false);
   const privateCommunityId = !community?.isPublic && community?.communityId;
   const title = isEditMode
     ? 'Edit Post'
     : community?.displayName ?? 'My Timeline';
   const isInputValid =
+    !isUploading &&
     inputMessage.trim().length <= 50000 &&
     (inputMessage.trim().length > 0 ||
       displayImages.length > 0 ||
       displayVideos.length > 0) &&
     (displayImages.length <= 10 || displayVideos.length <= 10);
+
+  const checkIsEditValid = useCallback(() => {
+    return (
+      isInputValid &&
+      (inputMessage !== post?.data?.text || hasChangedAttachment)
+    );
+  }, [hasChangedAttachment, inputMessage, isInputValid, post?.data?.text]);
 
   const parsePostText = useCallback(
     (text: string, mentionUsersArr: TSearchItem[]) => {
@@ -308,13 +318,6 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
             )
           );
         }
-        // if (type === 'text' && post?.childrenPosts) {
-        //   await Promise.allSettled(
-        //     post?.childrenPosts.map((child) => {
-        //       PostRepository.deletePost(child, false);
-        //     })
-        //   );
-        // }
 
         response = await editPost(
           post.postId,
@@ -520,7 +523,17 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
         (item: Asset) => item.uri
       ) as string[];
       const mediaOj = processMedia(imageUriArr);
-      setDisplayImages((prev) => [...prev, ...mediaOj]);
+      setDisplayImages((prev) => {
+        const updatedArray = [...prev, ...mediaOj];
+        if (updatedArray.length > 10) {
+          Alert.alert(
+            'Maximum number of images exceeded',
+            'Maximum number of images that can be uploaded is 10. The rest images will be discarded'
+          );
+          return updatedArray.slice(0, 10);
+        }
+        return updatedArray;
+      });
     }
   }, [displayImages.length, processMedia]);
 
@@ -540,12 +553,23 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
         (item: Asset) => item.uri
       ) as string[];
       const mediaOj = processMedia(videoUriArr);
-      setDisplayVideos((prev) => [...prev, ...mediaOj]);
+      setDisplayVideos((prev) => {
+        const updatedArray = [...prev, ...mediaOj];
+        if (updatedArray.length > 10) {
+          Alert.alert(
+            'Maximum number of videos exceeded',
+            'Maximum number of videos that can be uploaded is 10. The rest videos will be discarded'
+          );
+          return updatedArray.slice(0, 10);
+        }
+        return updatedArray;
+      });
     }
   }, [displayVideos.length, processMedia]);
 
   const handleOnCloseImage = useCallback(
     (originalPath: string, _, postId: string) => {
+      setHasChangedAttachment(true);
       setDeletedPostIds((prev) => [...prev, postId]);
       setDisplayImages((prevData) => {
         const newData = prevData.filter(
@@ -558,6 +582,7 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
   );
   const handleOnCloseVideo = useCallback(
     (originalPath: string, _, postId: string) => {
+      setHasChangedAttachment(true);
       setDeletedPostIds((prev) => [...prev, postId]);
       setDisplayVideos((prevData) => {
         const newData = prevData.filter(
@@ -570,6 +595,7 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
   );
   const handleOnFinishImage = useCallback(
     (fileId: string, fileUrl: string, fileName: string, index: number) => {
+      setHasChangedAttachment(true);
       const imageObject: IDisplayImage = {
         url: fileUrl,
         fileId: fileId,
@@ -593,6 +619,7 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
       _,
       thumbnail: string
     ) => {
+      setHasChangedAttachment(true);
       const imageObject: IDisplayImage = {
         url: fileUrl,
         fileId: fileId,
@@ -608,6 +635,36 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
     },
     []
   );
+
+  const renderDetailedAttachment = useCallback(() => {
+    if (isEditMode) return null;
+    if (shouldShowDetailAttachment) {
+      return (
+        <AmityDetailedMediaAttachmentComponent
+          onPressCamera={onPressCamera}
+          onPressImage={onPressImage}
+          onPressVideo={onPressVideo}
+          chosenMediaType={chosenMediaType}
+        />
+      );
+    }
+    return (
+      <AmityMediaAttachmentComponent
+        onPressCamera={onPressCamera}
+        onPressImage={onPressImage}
+        onPressVideo={onPressVideo}
+        chosenMediaType={chosenMediaType}
+      />
+    );
+  }, [
+    chosenMediaType,
+    isEditMode,
+    onPressCamera,
+    onPressImage,
+    onPressVideo,
+    shouldShowDetailAttachment,
+  ]);
+
   if (isExcluded) return null;
   return (
     <SafeAreaView
@@ -620,10 +677,16 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
           <CloseButtonIconElement pageID={pageId} style={styles.closeBtn} />
         </TouchableOpacity>
         <Text style={styles.title}>{title}</Text>
-        <TouchableOpacity onPress={onPressPost}>
+        <TouchableOpacity
+          onPress={onPressPost}
+          disabled={!isInputValid || !checkIsEditValid()}
+        >
           {isEditMode ? (
             <Text
-              style={[styles.postBtnText, isInputValid && styles.activePostBtn]}
+              style={[
+                styles.postBtnText,
+                checkIsEditValid() && styles.activePostBtn,
+              ]}
             >
               Save
             </Text>
@@ -667,39 +730,47 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
                 nestedScrollEnabled={true}
                 scrollEnabled={false}
                 data={displayImages}
-                renderItem={({ item, index }) => (
-                  <LoadingImage
-                    source={item.url}
-                    onClose={handleOnCloseImage}
-                    index={index}
-                    onLoadFinish={handleOnFinishImage}
-                    isUploaded={item.isUploaded}
-                    fileId={item.fileId}
-                    fileCount={displayImages.length}
-                    isEditMode={isEditMode}
-                    postId={item.postId}
-                  />
-                )}
+                renderItem={({ item, index }) => {
+                  if (!item) return null;
+                  return (
+                    <LoadingImage
+                      source={item.url}
+                      onClose={handleOnCloseImage}
+                      index={index} //TODO: Fix this without index
+                      onLoadFinish={handleOnFinishImage}
+                      isUploaded={item.isUploaded}
+                      fileId={item.fileId}
+                      fileCount={displayImages.length}
+                      isEditMode={isEditMode}
+                      postId={item.postId}
+                      setIsUploading={setIsUploading}
+                    />
+                  );
+                }}
                 numColumns={3}
               />
             )}
             {displayVideos.length > 0 && (
               <FlatList
                 data={displayVideos}
-                renderItem={({ item, index }) => (
-                  <LoadingVideo
-                    source={item.url}
-                    onClose={handleOnCloseVideo}
-                    index={index}
-                    onLoadFinish={handleOnFinishVideo}
-                    isUploaded={item.isUploaded}
-                    fileId={item.fileId}
-                    thumbNail={item.thumbNail as string}
-                    fileCount={displayVideos.length}
-                    isEditMode={isEditMode}
-                    postId={item.postId}
-                  />
-                )}
+                renderItem={({ item, index }) => {
+                  if (!item) return null;
+                  return (
+                    <LoadingVideo
+                      source={item.url}
+                      onClose={handleOnCloseVideo}
+                      index={index} //TODO: Fix this without index
+                      onLoadFinish={handleOnFinishVideo}
+                      isUploaded={item.isUploaded}
+                      fileId={item.fileId}
+                      thumbNail={item.thumbNail as string}
+                      fileCount={displayVideos.length}
+                      isEditMode={isEditMode}
+                      postId={item.postId}
+                      setIsUploading={setIsUploading}
+                    />
+                  );
+                }}
                 numColumns={3}
               />
             )}
@@ -714,21 +785,7 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
             onSwipe(tEvents);
           }}
         >
-          {shouldShowDetailAttachment ? (
-            <AmityDetailedMediaAttachmentComponent
-              onPressCamera={onPressCamera}
-              onPressImage={onPressImage}
-              onPressVideo={onPressVideo}
-              chosenMediaType={chosenMediaType}
-            />
-          ) : (
-            <AmityMediaAttachmentComponent
-              onPressCamera={onPressCamera}
-              onPressImage={onPressImage}
-              onPressVideo={onPressVideo}
-              chosenMediaType={chosenMediaType}
-            />
-          )}
+          {renderDetailedAttachment()}
         </View>
       </KeyboardAvoidingView>
       <StatusBar backgroundColor={themeStyles.colors.background} />
@@ -736,4 +793,4 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
   );
 };
 
-export default AmityPostComposerPage;
+export default memo(AmityPostComposerPage);
