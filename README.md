@@ -65,14 +65,14 @@ Here are the steps to install ui-kit together with another React Native project.
 This step will build the app and return amityco-asc-react-native-ui-kit-x.x.x.tgz file in inside the folder
 
 Then, inside another project, Copy tgz file to your application folder where you need to use ui-kit:
-1. Install UIKit package to the application folder
-```sh
- yarn add ./amity-react-native-social-ui-kit-x.x.x.tgz
-```
 
-2. Install all the required dependencies for the UIKit
+5. Install UIKit package to the application folder
 ```sh
- yarn add @react-navigation/native-stack @react-navigation/native @react-navigation/stack react-native-safe-area-context react-native-screens react-native-svg @react-native-async-storage/async-storage
+ yarn add ./amityco-asc-react-native-ui-kit-3.0.0.tgz
+```
+or
+```sh
+npm install ./amityco-asc-react-native-ui-kit-3.0.0.tgz
 ```
 
 ### Usage
