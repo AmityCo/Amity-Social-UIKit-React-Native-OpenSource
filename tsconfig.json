@@ -1,8 +1,10 @@
 {
   "compilerOptions": {
     "baseUrl": "./",
-     "paths": {
-      "@amityco/asc-react-native-ui-kit": ["./src/index"]
+    "paths": {
+      "@amityco/asc-react-native-ui-kit": ["./src/index"],
+      "~/*": ["./src/*"],
+      "react": ["./node_modules/@types/react"]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
@@ -21,6 +23,7 @@
     "skipLibCheck": true,
     "strict": false,
     "target": "esnext",
-    "noImplicitAny": false
+    "noImplicitAny": false,
+    "allowSyntheticDefaultImports": true
   }
 }

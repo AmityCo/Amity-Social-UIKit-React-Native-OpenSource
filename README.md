@@ -24,7 +24,7 @@ cd example
 ```
 yarn
 ```
-2. Configure your apiKey,apiRegion,apiEndpoint,userId,displayName in /example/src/App.tsx file(https://github.com/AmityCo/Amity-Social-UIKit-React-Native-CLI-OpenSource/blob/main/example/src/App.tsx) first before run the sample app
+2. Configure your apiKey,apiRegion,apiEndpoint,userId,displayName in /example/src/App.tsx file(https://github.com/AmityCo/Amity-Social-UIKit-React-Native-OpenSource/blob/main/example/src/App.tsx) first before run the sample app
 <img width="1503" alt="Screenshot 2566-09-18 at 00 32 49" src="https://github.com/AmityCo/Amity-Social-UIKit-React-Native-CLI-OpenSource/assets/112688936/2939ed92-3bfd-4a90-b2a7-f5aafccef084">
 
 3. Go back to your root folder (`cd ..`) and Choose to run between iOS or Android
@@ -48,8 +48,8 @@ Here are the steps to install ui-kit together with another React Native project.
 ```sh
 1. git clone https://github.com/AmityCo/Amity-Social-UIKit-React-Native-OpenSource.git
 2. cd Amity-Social-Cloud-UIKit-React-Native-OpenSource
-3. yarn or npm install
-4. yarn pack or npm pack
+3. yarn 
+4. npm pack
 ```
 
 This step will build the app and return amityco-asc-react-native-ui-kit-x.x.x.tgz file in inside the folder

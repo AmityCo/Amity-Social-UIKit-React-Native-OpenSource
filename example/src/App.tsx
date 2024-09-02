@@ -7,11 +7,11 @@ import {
 export default function App() {
   return (
     <AmityUiKitProvider
-      apiKey="YOUR_API_KEY" // Put your apiKey
-      apiRegion="API_REGION" // Put your apiRegion
-      userId="USER_ID" // Put your UserId
-      displayName="DISPLAYNAME" // Put your displayName
-      apiEndpoint="API_ENDPOINT" //"https://api.{apiRegion}.amity.co" e.g "https://api.eu.amity.co"
+      apiKey="b0e9e10f6edef1331e66d91f035d148fd40a8de3eb363a2d"
+      apiRegion="eu"
+      userId="topAmity"
+      displayName="topAmity"
+      apiEndpoint="https://api.eu.amity.co"
     >
       <AmityUiKitSocial />
     </AmityUiKitProvider>
