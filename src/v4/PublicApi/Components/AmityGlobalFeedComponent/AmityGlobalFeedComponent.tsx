@@ -17,6 +17,7 @@ import { AmityPostContentComponentStyleEnum } from '../../../enum/AmityPostConte
 import AmityStoryTabComponent from '../AmityStoryTabComponent/AmityStoryTabComponent';
 import { AmityStoryTabComponentEnum } from '../../types';
 import { FeedRepository, PostRepository } from '@amityco/ts-sdk-react-native';
+import { usePostImpression } from '../../../../v4/hook/usePostImpression';
 
 type AmityGlobalFeedComponentType = {
   pageId?: PageID;
