@@ -45,9 +45,15 @@ const CommunityMembersTab: React.FC<ICommunityMembersTab> = ({
   const getCommunityMemberList = useCallback(() => {
     setRefreshing(true);
     setMemberList([]);
-    const option: { communityId: string; limit: number; roles?: string[] } = {
+    const option: {
+      communityId: string;
+      limit: number;
+      roles?: string[];
+      includeDeleted: false;
+    } = {
       communityId,
       limit: 10,
+      includeDeleted: false,
     };
 
     CommunityRepository.Membership.getMembers(

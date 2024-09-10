@@ -24,6 +24,7 @@ const useSearch = (
           limit: 5,
           sortBy: 'firstCreated',
           memberships: ['member'],
+          includeDeleted: false,
         },
         ({ data, error, hasNextPage, onNextPage }) => {
           if (error) return null;
