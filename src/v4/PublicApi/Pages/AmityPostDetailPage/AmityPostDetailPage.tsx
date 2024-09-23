@@ -10,6 +10,8 @@ import {
   Platform,
   Animated,
   Modal,
+  useWindowDimensions,
+  LayoutChangeEvent,
 } from 'react-native';
 import React, {
   FC,
@@ -73,11 +75,13 @@ import {
   comment_contains_inapproproate_word,
   text_contain_blocked_word,
 } from '../../../../constants';
+
 type AmityPostDetailPageType = {
   postId: Amity.Post['postId'];
 };
 
 const AmityPostDetailPage: FC<AmityPostDetailPageType> = ({ postId }) => {
+  const { height } = useWindowDimensions();
   const pageId = PageID.post_detail_page;
   const { client } = useAuth();
   const { deleteByPostId } = globalFeedSlice.actions;
@@ -102,6 +106,15 @@ const AmityPostDetailPage: FC<AmityPostDetailPageType> = ({ postId }) => {
   const [privateCommunityId, setPrivateCommunityId] = useState(null);
   const [editPostModalVisible, setEditPostModalVisible] =
     useState<boolean>(false);
+
+  const [footerHeight, setFooterHeight] = useState(0);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+
+  const adjustedHeight = isKeyboardVisible
+    ? height - footerHeight - keyboardHeight - 55
+    : height - footerHeight;
+
   const { showToastMessage } = uiSlice.actions;
   const myId = (client as Amity.Client).userId;
   const { isCommunityModerator: isIAmModerator } = useIsCommunityModerator({
@@ -129,6 +142,28 @@ const AmityPostDetailPage: FC<AmityPostDetailPageType> = ({ postId }) => {
       setIsReportByMe(true);
     }
   }, [postId]);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      (event) => {
+        setKeyboardHeight(event.endCoordinates.height);
+        setIsKeyboardVisible(true);
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        setKeyboardHeight(0);
+        setIsKeyboardVisible(false);
+      }
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
 
   useEffect(() => {
     checkIsReport();
@@ -410,60 +445,67 @@ const AmityPostDetailPage: FC<AmityPostDetailPageType> = ({ postId }) => {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.commentListFooter}
       >
-        {replyUserName.length > 0 && (
-          <View style={styles.replyLabelWrap}>
-            <Text style={styles.replyLabel}>
-              Replying to{' '}
-              <Text style={styles.userNameLabel}>{replyUserName}</Text>
-            </Text>
-            <TouchableOpacity>
-              <TouchableOpacity onPress={onCloseReply}>
-                <SvgXml
-                  style={styles.closeIcon}
-                  xml={closeIcon(themeStyles.colors.baseShade2)}
-                  width={20}
-                />
-              </TouchableOpacity>
-            </TouchableOpacity>
-          </View>
-        )}
-        {!disabledInteraction && (
-          <View style={styles.InputWrap}>
-            <MyAvatar style={styles.myAvatar} />
-            <View style={styles.inputContainer}>
-              <AmityMentionInput
-                resetValue={resetValue}
-                initialValue=""
-                privateCommunityId={null}
-                multiline
-                placeholder="Say something nice..."
-                placeholderTextColor={themeStyles.colors.baseShade3}
-                mentionUsers={mentionNames}
-                setInputMessage={setInputMessage}
-                setMentionUsers={setMentionNames}
-                mentionsPosition={mentionsPosition}
-                setMentionsPosition={setMentionsPosition}
-                isBottomMentionSuggestionsRender={false}
-              />
-            </View>
-
-            <TouchableOpacity
-              disabled={inputMessage.length > 0 ? false : true}
-              onPress={handleSend}
-              style={styles.postBtn}
-            >
-              <Text
-                style={
-                  inputMessage.length > 0
-                    ? styles.postBtnText
-                    : styles.postDisabledBtn
-                }
-              >
-                Post
+        <View
+          onLayout={(event: LayoutChangeEvent) => {
+            const { height: layoutHeight } = event.nativeEvent.layout;
+            setFooterHeight(layoutHeight);
+          }}
+        >
+          {replyUserName.length > 0 && (
+            <View style={styles.replyLabelWrap}>
+              <Text style={styles.replyLabel}>
+                Replying to{' '}
+                <Text style={styles.userNameLabel}>{replyUserName}</Text>
               </Text>
-            </TouchableOpacity>
-          </View>
-        )}
+              <TouchableOpacity>
+                <TouchableOpacity onPress={onCloseReply}>
+                  <SvgXml
+                    style={styles.closeIcon}
+                    xml={closeIcon(themeStyles.colors.baseShade2)}
+                    width={20}
+                  />
+                </TouchableOpacity>
+              </TouchableOpacity>
+            </View>
+          )}
+          {!disabledInteraction && (
+            <View style={styles.InputWrap}>
+              <MyAvatar style={styles.myAvatar} />
+              <View style={styles.inputContainer}>
+                <AmityMentionInput
+                  resetValue={resetValue}
+                  initialValue=""
+                  privateCommunityId={null}
+                  multiline
+                  placeholder="Say something nice..."
+                  placeholderTextColor={themeStyles.colors.baseShade3}
+                  mentionUsers={mentionNames}
+                  setInputMessage={setInputMessage}
+                  setMentionUsers={setMentionNames}
+                  mentionsPosition={mentionsPosition}
+                  setMentionsPosition={setMentionsPosition}
+                  isBottomMentionSuggestionsRender={false}
+                />
+              </View>
+
+              <TouchableOpacity
+                disabled={inputMessage.length > 0 ? false : true}
+                onPress={handleSend}
+                style={styles.postBtn}
+              >
+                <Text
+                  style={
+                    inputMessage.length > 0
+                      ? styles.postBtnText
+                      : styles.postDisabledBtn
+                  }
+                >
+                  Post
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
       </KeyboardAvoidingView>
     );
   }, [
@@ -482,7 +524,18 @@ const AmityPostDetailPage: FC<AmityPostDetailPageType> = ({ postId }) => {
 
   return (
     <SafeAreaView testID={accessibilityId} style={styles.container}>
-      <View style={styles.scrollContainer}>
+      <View
+        style={[
+          styles.scrollContainer,
+
+          {
+            paddingBottom: isKeyboardVisible
+              ? keyboardHeight + footerHeight - 80
+              : footerHeight - 40,
+            height: adjustedHeight,
+          },
+        ]}
+      >
         <AmityPostCommentComponent
           setReplyUserName={setReplyUserName}
           setReplyCommentId={setReplyCommentId}
