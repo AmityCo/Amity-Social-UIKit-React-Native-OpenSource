@@ -34,7 +34,6 @@ export const useStyles = (theme: MyMD3Theme) => {
       fontWeight: '600',
     },
     scrollContainer: {
-      paddingTop: 40,
       flex: 1,
     },
     input: {

@@ -76,12 +76,16 @@ import {
   text_contain_blocked_word,
 } from '../../../../constants';
 
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 type AmityPostDetailPageType = {
   postId: Amity.Post['postId'];
 };
 
 const AmityPostDetailPage: FC<AmityPostDetailPageType> = ({ postId }) => {
+  const { top, bottom } = useSafeAreaInsets();
   const { height } = useWindowDimensions();
+
   const pageId = PageID.post_detail_page;
   const { client } = useAuth();
   const { deleteByPostId } = globalFeedSlice.actions;
@@ -107,13 +111,18 @@ const AmityPostDetailPage: FC<AmityPostDetailPageType> = ({ postId }) => {
   const [editPostModalVisible, setEditPostModalVisible] =
     useState<boolean>(false);
 
+  const [topBarHeigh, setTopBarHeight] = useState(0);
   const [footerHeight, setFooterHeight] = useState(0);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
-  const adjustedHeight = isKeyboardVisible
-    ? height - footerHeight - keyboardHeight - 55
-    : height - footerHeight;
+  const adjustedHeight =
+    height -
+    (footerHeight +
+      (isKeyboardVisible ? keyboardHeight : 0) +
+      top +
+      bottom +
+      topBarHeigh);
 
   const { showToastMessage } = uiSlice.actions;
   const myId = (client as Amity.Client).userId;
@@ -527,11 +536,11 @@ const AmityPostDetailPage: FC<AmityPostDetailPageType> = ({ postId }) => {
       <View
         style={[
           styles.scrollContainer,
-
           {
+            paddingTop: topBarHeigh,
             paddingBottom: isKeyboardVisible
-              ? keyboardHeight + footerHeight - 80
-              : footerHeight - 40,
+              ? keyboardHeight + footerHeight - topBarHeigh - bottom
+              : footerHeight - topBarHeigh,
             height: adjustedHeight,
           },
         ]}
@@ -555,7 +564,13 @@ const AmityPostDetailPage: FC<AmityPostDetailPageType> = ({ postId }) => {
           }
         />
       </View>
-      <View style={styles.header}>
+      <View
+        style={styles.header}
+        onLayout={(event: LayoutChangeEvent) => {
+          const { height: layoutHeight } = event.nativeEvent.layout;
+          setTopBarHeight(layoutHeight);
+        }}
+      >
         <Pressable onPress={onPressBack}>
           <BackButtonIconElement
             pageID={pageId}
