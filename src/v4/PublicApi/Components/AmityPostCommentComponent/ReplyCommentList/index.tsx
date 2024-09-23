@@ -16,6 +16,7 @@ import {
   expandIcon,
   likeCircle,
   personXml,
+  reportOutLine,
   threeDots,
 } from '../../../../../svg/svg-xml-list';
 import type { UserInterface } from '../../../../../types';
@@ -327,7 +328,7 @@ const ReplyCommentList = ({
               styles.modalContent,
               modalStyle,
               user?.userId === (client as Amity.Client).userId &&
-                styles.twoOptions,
+              styles.twoOptions,
             ]}
           >
             {user?.userId === (client as Amity.Client).userId ? (
@@ -350,8 +351,13 @@ const ReplyCommentList = ({
                 onPress={reportCommentObject}
                 style={styles.modalRow}
               >
+                <SvgXml
+                  xml={reportOutLine(theme.colors.base)}
+                  width="20"
+                  height="20"
+                />
                 <Text style={styles.deleteText}>
-                  {isReportByMe ? 'Undo Report' : 'Report'}
+                  {isReportByMe ? 'Unreport comment' : 'Report comment'}
                 </Text>
               </TouchableOpacity>
             )}

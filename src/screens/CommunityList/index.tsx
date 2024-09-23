@@ -36,7 +36,7 @@ export default function CommunityList({ navigation, route }: any) {
       setPaginateLoading(true);
       try {
         const unsubscribe = CommunityRepository.getCommunities(
-          { categoryId: categoryId },
+          { categoryId: categoryId, sortBy:'displayName' },
           ({ data: communities, onNextPage, hasNextPage, loading }) => {
             if (!loading) {
               setCommunities((prevCommunities) => [
