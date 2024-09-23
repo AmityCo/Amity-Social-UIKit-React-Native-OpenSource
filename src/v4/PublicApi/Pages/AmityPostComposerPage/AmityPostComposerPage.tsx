@@ -262,8 +262,12 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
   }, [getMentionPositions, getMentionUsers, post]);
 
   const onPressClose = useCallback(() => {
-    navigation.pop(2);
+    const routes = navigation.getState().routes;
+    if (routes[routes.length - 2].name === 'PostTargetSelection') {
+      navigation.pop(2);
+    } else navigation.pop();
   }, [navigation]);
+
   const onClose = useCallback(() => {
     Alert.alert(
       'Discard this post',
