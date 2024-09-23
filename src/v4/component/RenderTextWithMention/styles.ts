@@ -14,6 +14,11 @@ export const useStyles = () => {
       color: theme.colors.base,
       fontSize: 15,
     },
+    moreLessButton: {
+      fontWeight: 'normal',
+      color: theme.colors.primary,
+      fontSize: 15,
+    },
   });
 
   return styles;
