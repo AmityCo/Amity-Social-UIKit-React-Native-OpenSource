@@ -538,9 +538,10 @@ const AmityPostDetailPage: FC<AmityPostDetailPageType> = ({ postId }) => {
           styles.scrollContainer,
           {
             paddingTop: topBarHeigh,
-            paddingBottom: isKeyboardVisible
-              ? keyboardHeight + footerHeight - topBarHeigh - bottom
-              : footerHeight - topBarHeigh,
+            paddingBottom:
+              isKeyboardVisible && Platform.OS !== 'android'
+                ? keyboardHeight + footerHeight - topBarHeigh - bottom
+                : footerHeight - topBarHeigh,
             height: adjustedHeight,
           },
         ]}
