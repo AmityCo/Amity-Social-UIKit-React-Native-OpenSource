@@ -539,7 +539,10 @@ const AmityPostDetailPage: FC<AmityPostDetailPageType> = ({ postId }) => {
           {
             paddingTop: topBarHeigh,
             paddingBottom: isKeyboardVisible
-              ? keyboardHeight + footerHeight - topBarHeigh - bottom
+              ? (Platform.OS !== 'android' ? keyboardHeight : 0) +
+                footerHeight -
+                topBarHeigh -
+                bottom
               : footerHeight - topBarHeigh,
             height: adjustedHeight,
           },
