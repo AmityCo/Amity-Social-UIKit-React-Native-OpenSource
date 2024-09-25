@@ -75,7 +75,7 @@ Here are the steps to install ui-kit together with another React Native project.
 1. git clone https://github.com/AmityCo/Amity-Social-UIKit-React-Native-CLI-OpenSource.git
 2. cd Amity-Social-Cloud-UIKit-React-Native-OpenSource
 3. yarn or npm install
-4. yarn pack or npm pack
+4. npm pack
 ```
 
 This step will build the app and return amityco-asc-react-native-ui-kit-x.x.x.tgz file in inside the folder
