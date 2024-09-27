@@ -435,18 +435,20 @@ const AmityPostContentComponent = ({
       </Pressable>
       <View>
         <View style={styles.bodySection}>
-          {textPost && childrenPosts?.length === 0 && (
-            <LinkPreview
-              text={textPost}
-              mentionPositionArr={[...mentionPositionArr]}
-            />
-          )}
-          {textPost && childrenPosts?.length > 0 && (
-            <RenderTextWithMention
-              textPost={textPost}
-              mentionPositionArr={[...mentionPositionArr]}
-            />
-          )}
+          <Pressable onPress={onPressPost}>
+            {textPost && childrenPosts?.length === 0 && (
+              <LinkPreview
+                text={textPost}
+                mentionPositionArr={[...mentionPositionArr]}
+              />
+            )}
+            {textPost && childrenPosts?.length > 0 && (
+              <RenderTextWithMention
+                textPost={textPost}
+                mentionPositionArr={[...mentionPositionArr]}
+              />
+            )}
+          </Pressable>
           {childrenPosts?.length > 0 && (
             <MediaSection childrenPosts={childrenPosts} />
           )}

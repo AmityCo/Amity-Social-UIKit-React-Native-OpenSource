@@ -34,8 +34,6 @@ export const useStyles = (theme: MyMD3Theme) => {
       fontWeight: '600',
     },
     scrollContainer: {
-      paddingTop: top / 2,
-      paddingBottom: bottom,
       flex: 1,
     },
     input: {
@@ -60,7 +58,7 @@ export const useStyles = (theme: MyMD3Theme) => {
       paddingHorizontal: 15,
       paddingBottom: 25,
       paddingTop: 10,
-      alignItems: 'flex-end',
+      alignItems: 'center',
       borderTopWidth: 1,
       borderTopColor: theme.colors.baseShade4,
     },

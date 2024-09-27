@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@amityco/ts-sdk-react-native@^6.28.1":
-  version "6.28.1"
-  resolved "https://registry.yarnpkg.com/@amityco/ts-sdk-react-native/-/ts-sdk-react-native-6.28.1.tgz#cbc568b9c5779b2b6b989915eb34aa5a23be160e"
-  integrity sha512-RtyWtit2znVPyqIne3MDlimwU/ZgeiM5J+v8nOP9eq+2elXwTEZNhRY47eggYaAPNIkf4JmtD1KcABEKyjc2wA==
+"@amityco/ts-sdk-react-native@^6.30.0":
+  version "6.30.2"
+  resolved "https://registry.yarnpkg.com/@amityco/ts-sdk-react-native/-/ts-sdk-react-native-6.30.2.tgz#c82c8f3c80549db4fb9f607901c388d20cd9dafb"
+  integrity sha512-QRmaeuY/m3zgwrT07TgYpuCEvxobvEorEdsT8XdV8aqgcOBn/3G4o+v7j4HmW98NIPfaM7qlnT6hVUn18dj7XA==
   dependencies:
     "@react-native-async-storage/async-storage" "^1.17.7"
     "@react-native-community/netinfo" "^9.4.1"
@@ -1467,6 +1467,13 @@
   resolved "https://registry.yarnpkg.com/@evilmartians/lefthook/-/lefthook-1.6.18.tgz#be0e090c70cbf234215c5d673673b853c410d980"
   integrity sha512-nvJ1uYgz/F1DbykTMIiI2nUZctVmijUYkqdGqmGkrL0ImEKFjWxk1jZg6pULJ5vWxsArfUFJiFuOhUnUhyMbig==
 
+"@fawazahmed/react-native-read-more@^3.0.4":
+  version "3.0.4"
+  resolved "https://registry.yarnpkg.com/@fawazahmed/react-native-read-more/-/react-native-read-more-3.0.4.tgz#5c0f150285b33500b4cff34ff51d39239584676b"
+  integrity sha512-6cG7ANwmHlznJtz4ehvuY+K5ybFU7CMvEXaGeo71eTAy0Zx3u7ehD2ntiTnQi5kV2MmD4Y1cfjaBmDUe9unfpQ==
+  dependencies:
+    prop-types "^15.7.2"
+
 "@hapi/hoek@^9.0.0", "@hapi/hoek@^9.3.0":
   version "9.3.0"
   resolved "https://registry.yarnpkg.com/@hapi/hoek/-/hoek-9.3.0.tgz#8368869dcb735be2e7f5cb7647de78e167a251fb"
@@ -2633,11 +2640,6 @@
     conventional-changelog "^3.1.25"
     conventional-recommended-bump "^6.1.0"
     semver "7.3.8"
-
-"@rntext/more-or-less@^2.0.2":
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/@rntext/more-or-less/-/more-or-less-2.0.2.tgz#d43029945537407b588c75e02f389330eb87ec73"
-  integrity sha512-tJ2XTRqxfhXTmqNkVRtWA2Pu7qQaTZg4muExS8RaQTEXzvur5Q78ruUSxZoO1wJRFKdZ2PVxonGAjt3Nzy2EAQ==
 
 "@rnx-kit/chromium-edge-launcher@^1.0.0":
   version "1.0.0"

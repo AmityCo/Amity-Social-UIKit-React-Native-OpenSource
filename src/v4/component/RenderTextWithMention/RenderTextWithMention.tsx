@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { IMentionPosition } from '../../types/type';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../routes/RouteParamList';
-import { MoreOrLess } from '@rntext/more-or-less';
+import ReadMore from '@fawazahmed/react-native-read-more';
 
 interface IrenderTextWithMention {
   mentionPositionArr: IMentionPosition[];
@@ -66,18 +66,15 @@ const RenderTextWithMention: React.FC<IrenderTextWithMention> = ({
 
   if (heightlightTextPositions.length === 0) {
     return (
-      <MoreOrLess
+      <ReadMore
+        key={textPost}
         numberOfLines={8}
-        textButtonStyle={{
-          fontWeight: 'normal',
-          color: '#1054DE',
-          fontSize: 15,
-        }}
-        textStyle={styles.inputText}
-        moreText="See more"
+        seeMoreStyle={styles.moreLessButton}
+        style={styles.inputText}
+        seeLessStyle={styles.moreLessButton}
       >
         {textPost}
-      </MoreOrLess>
+      </ReadMore>
     );
   }
 

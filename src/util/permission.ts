@@ -49,6 +49,7 @@ export const isCommunityModerator = async ({
             limit: 1,
             sortBy: 'firstCreated',
             memberships: ['member'],
+            includeDeleted: false,
           },
           (result) => resolve(result)
         );
