@@ -51,7 +51,6 @@ export default function Explore() {
       { sortBy: 'name', limit: 8 },
       ({ data }) => {
         if (data) {
-          data.sort((a, b) => b.name.localeCompare(a.name));
           setCategoryList(data);
         }
       }
