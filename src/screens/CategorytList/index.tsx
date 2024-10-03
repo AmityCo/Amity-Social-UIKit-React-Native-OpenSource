@@ -1,10 +1,9 @@
 import { CategoryRepository } from '@amityco/ts-sdk-react-native';
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   FlatList,
   View,
   Text,
-  ActivityIndicator,
   Image,
   TouchableOpacity,
 } from 'react-native';
@@ -14,7 +13,7 @@ import useAuth from '../../hooks/useAuth';
 
 export default function CategoryList({ navigation }: any) {
   const { apiRegion } = useAuth();
-  const [loading, setLoading] = useState(false);
+
   const [categoryObject, setCategoryObject] = useState<Amity.LiveCollection<Amity.Category>>();
   const { data: categoryArr = [], onNextPage } = categoryObject ?? {};
   const styles = useStyles();
@@ -22,19 +21,17 @@ export default function CategoryList({ navigation }: any) {
 
   const onEndReachedCalledDuringMomentumRef = useRef(true);
   React.useLayoutEffect(() => {
-    // Set the headerRight component to a TouchableOpacity
     navigation.setOptions({
       headerLeft: () => <CloseButton />,
     });
   }, [navigation]);
   useEffect(() => {
     const loadCategories = async () => {
-      setLoading(true);
       try {
         const unsubscribe = CategoryRepository.getCategories(
-          { sortBy: 'name', limit: 10 },
+          { sortBy: 'name', limit: 12 },
           (data) => {
-            if (!loading) {
+            if (!data.loading) {
               if (data) {
                 setCategoryObject(data);
               }
@@ -44,13 +41,9 @@ export default function CategoryList({ navigation }: any) {
         unsubscribe();
       } catch (error) {
         console.error('Failed to load categories:', error);
-      } finally {
-        setLoading(false);
-      }
+      } 
     };
-
     loadCategories();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const handleCategoryClick = (categoryId: string, categoryName: string) => {
     setTimeout(() => {
@@ -78,14 +71,6 @@ export default function CategoryList({ navigation }: any) {
     );
   };
 
-  const renderFooter = () => {
-    if (!loading) return null;
-    return (
-      <View style={styles.LoadingIndicator}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  };
 
   const handleEndReached=()=>{
     onNextPage && onNextPage()
@@ -97,7 +82,6 @@ export default function CategoryList({ navigation }: any) {
         data={categoryArr}
         renderItem={renderCategory}
         keyExtractor={(item) => item.categoryId.toString()}
-        ListFooterComponent={renderFooter}
         onEndReached={handleEndReached}
         onMomentumScrollBegin={() =>
           (onEndReachedCalledDuringMomentumRef.current = false)
