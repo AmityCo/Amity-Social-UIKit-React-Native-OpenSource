@@ -8,17 +8,16 @@ import {
   Image,
   ScrollView,
 } from 'react-native';
+import { SvgXml } from 'react-native-svg';
 import { getAmityUser } from '../../providers/user-provider';
 import type { UserInterface } from '../../types/user.interface';
+import { closeIcon } from '../../svg/svg-xml-list';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import useAuth from '../../hooks/useAuth';
 import { useStyles } from './styles';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
-import CloseIcon from '../../svg/CloseIcon';
-import { AvatarIcon } from '../../svg/AvatarIcon';
-import CommunityIcon from '../../svg/CommunityIcon';
 interface IModal {
   visible: boolean;
   userId?: string;
@@ -51,7 +50,7 @@ const CreatePostChooseTargetModal = ({
       formattedUserObject = {
         userId: userObject.data.userId,
         displayName: userObject.data.displayName,
-        avatarFileId: userObject.data?.avatarFileId,
+        avatarFileId: userObject.data.avatarFileId,
       };
       setMyUser(formattedUserObject);
     }
@@ -95,17 +94,16 @@ const CreatePostChooseTargetModal = ({
         onPress={() => onSelectFeed(userId as string, 'My Timeline', 'user')}
         style={styles.rowContainerMyTimeLine}
       >
-        {myUser?.avatarFileId ?
-          <Image
-            style={styles.avatar}
-            source={
-              {
-                uri: myUser?.avatarFileId && avatarFileURL(myUser?.avatarFileId),
-              }
-            }
-          /> : <View style={styles.avatar}> <AvatarIcon /></View>
-        }
-
+        <Image
+          style={styles.avatar}
+          source={
+            myUser
+              ? {
+                  uri: `https://api.${apiRegion}.amity.co/api/v3/files/${myUser.avatarFileId}/download`,
+                }
+              : require('./../../../assets/icon/Placeholder.png')
+          }
+        />
         <Text style={styles.communityText}>My Timeline</Text>
       </TouchableOpacity>
     );
@@ -114,6 +112,7 @@ const CreatePostChooseTargetModal = ({
     targetId: string,
     targetName: string,
     targetType: string,
+    isPublic?: boolean,
     postSetting?: ValueOf<
       Readonly<{
         ONLY_ADMIN_CAN_POST: 'ONLY_ADMIN_CAN_POST';
@@ -127,6 +126,7 @@ const CreatePostChooseTargetModal = ({
     const targetscreen = () => {
       if (postType === 'post') return 'CreatePost';
       if (postType === 'poll') return 'CreatePoll';
+      if (postType === 'livestream') return 'CreateLivestream';
       return null;
     };
     navigation.navigate(targetscreen(), {
@@ -134,14 +134,10 @@ const CreatePostChooseTargetModal = ({
       targetName: targetName,
       targetType: targetType,
       postSetting: postSetting,
+      isPublic: isPublic,
       needApprovalOnPostCreation: needApprovalOnPostCreation,
     });
   };
-
-  const avatarFileURL = (fileId: string) => {
-    return `https://api.${apiRegion}.amity.co/api/v3/files/${fileId}/download?size=medium`;
-  };
-
   const renderCommunity = ({ item }: { item: Amity.Community }) => {
     return (
       <TouchableOpacity
@@ -151,24 +147,23 @@ const CreatePostChooseTargetModal = ({
             item.communityId,
             item.displayName,
             'community',
+            item.isPublic,
             item.postSetting,
             (item as Record<string, any>).needApprovalOnPostCreation
           )
         }
         style={styles.rowContainer}
       >
-        {item?.avatarFileId ?
-          <Image
-            style={styles.avatar}
-            source={
-              {
-                uri: item?.avatarFileId && avatarFileURL(item?.avatarFileId),
-              }
-
-            }
-          /> : <View style={styles.avatar}> <CommunityIcon /></View>
-        }
-
+        <Image
+          style={styles.avatar}
+          source={
+            item.avatarFileId
+              ? {
+                  uri: `https://api.${apiRegion}.amity.co/api/v3/files/${item.avatarFileId}/download`,
+                }
+              : require('./../../../assets/icon/Placeholder.png')
+          }
+        />
         <Text style={styles.communityText}>{item.displayName}</Text>
       </TouchableOpacity>
     );
@@ -195,7 +190,7 @@ const CreatePostChooseTargetModal = ({
       <View style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-            <CloseIcon color={theme.colors.base} />
+            <SvgXml xml={closeIcon(theme.colors.base)} width="17" height="17" />
           </TouchableOpacity>
           <View style={styles.headerTextContainer}>
             <Text style={styles.headerText}>Post To</Text>

@@ -14,9 +14,9 @@ import {
   CommunityRepository,
   PostRepository,
   SubscriptionLevels,
-  // UserRepository,
+  UserRepository,
   getCommunityTopic,
-  // getUserTopic,
+  getUserTopic,
   subscribeTopic,
 } from '@amityco/ts-sdk-react-native';
 import type { FeedRefType } from '../CommunityHome';
@@ -42,20 +42,22 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
   const [unSubFunc, setUnSubPageFunc] = useState<() => void>();
   const dispatch = useDispatch();
 
-  // const disposers: Amity.Unsubscriber[] = [];
+  const disposers: Amity.Unsubscriber[] = [];
   let isSubscribed = false;
 
   const subscribePostTopic = useCallback((type: string, id: string) => {
     if (isSubscribed) return;
 
     if (type === 'user') {
-      // let user = {} as Amity.User; // use getUser to get user by targetId
-      // UserRepository.getUser(id, ({ data }) => {
-      //   user = data;
-      // });
-      // disposers.push(
-      //   subscribeTopic(getUserTopic(user, SubscriptionLevels.POST))
-      // );
+      let user = {} as Amity.User; // use getUser to get user by targetId
+      UserRepository.getUser(id, ({ data }) => {
+        user = data;
+      });
+      disposers.push(
+        subscribeTopic(getUserTopic(user, SubscriptionLevels.POST), () => {
+          // use callback to handle errors with event subscription
+        })
+      );
       // eslint-disable-next-line react-hooks/exhaustive-deps
       isSubscribed = true;
       return;
@@ -133,7 +135,7 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
   return (
     <View style={styles.feedWrap}>
       <FlatList
-        scrollEnabled={true}
+        scrollEnabled={false}
         data={postList}
         renderItem={({ item, index }) => (
           <PostList
@@ -154,7 +156,6 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
         keyExtractor={(_, index) => index.toString()}
         extraData={postList}
       />
-
     </View>
   );
 }

@@ -44,10 +44,9 @@ export const useStyles = () => {
       maxHeight: 200,
     },
     textInput: {
-      marginVertical: 8,
+      marginTop: 12,
       fontSize: 15,
       width: '100%',
-      alignItems: 'center'
     },
     transparentText: {
       color: 'transparent',

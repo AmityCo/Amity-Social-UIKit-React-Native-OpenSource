@@ -59,7 +59,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@amityco/react-native-social-ui-kit@workspace:."
   dependencies:
-    "@amityco/ts-sdk-react-native": ^6.16.0
+    "@amityco/ts-sdk-react-native": ^6.33.1
     "@commitlint/config-conventional": ^17.0.2
     "@evilmartians/lefthook": ^1.5.0
     "@react-native-async-storage/async-storage": ^1.19.0
@@ -123,9 +123,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@amityco/ts-sdk-react-native@npm:^6.16.0":
-  version: 6.26.0
-  resolution: "@amityco/ts-sdk-react-native@npm:6.26.0"
+"@amityco/ts-sdk-react-native@npm:^6.33.1":
+  version: 6.33.1
+  resolution: "@amityco/ts-sdk-react-native@npm:6.33.1"
   dependencies:
     "@react-native-async-storage/async-storage": ^1.17.7
     "@react-native-community/netinfo": ^9.4.1
@@ -134,6 +134,7 @@ __metadata:
     debug: ^4.3.4
     hls.js: ^1.4.10
     js-base64: ^3.7.2
+    mime: 3.0.0
     mitt: ^3.0.0
     mqtt: ^4.3.7
     object-hash: ^3.0.0
@@ -141,8 +142,8 @@ __metadata:
     socket.io-client: 2.2.0
     ts-jest: ^28.0.3
   peerDependencies:
-    react-native: ^0.70.13
-  checksum: 59167f5c9e1e7a0b3e90f2da0b85622feead4a7f043488c7a5af23b6057356ddaf155824563eb17087019f3fea94c4770aecc82760d726584555f089ae3e15cf
+    react-native: ">=0.70.13"
+  checksum: cf721488676f68cbfb940d836310b12cc82933b50471b3c83455eec916e637d1384f098a334b80db756ee5517ebd966ff4549c3a4853de5669c8e77fe44b342a
   languageName: node
   linkType: hard
 
@@ -18121,6 +18122,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mime@npm:3.0.0":
+  version: 3.0.0
+  resolution: "mime@npm:3.0.0"
+  bin:
+    mime: cli.js
+  checksum: f43f9b7bfa64534e6b05bd6062961681aeb406a5b53673b53b683f27fcc4e739989941836a355eef831f4478923651ecc739f4a5f6e20a76487b432bfd4db928
+  languageName: node
+  linkType: hard
+
 "mime@npm:^2.4.1, mime@npm:^2.4.4":
   version: 2.6.0
   resolution: "mime@npm:2.6.0"
@@ -24604,7 +24614,7 @@ __metadata:
 
 "typescript@patch:typescript@^4.6.4 || ^5.2.2#~builtin<compat/typescript>, typescript@patch:typescript@^5.2.2#~builtin<compat/typescript>":
   version: 5.3.3
-  resolution: "typescript@patch:typescript@npm%3A5.3.3#~builtin<compat/typescript>::version=5.3.3&hash=14eedb"
+  resolution: "typescript@patch:typescript@npm%3A5.3.3#~builtin<compat/typescript>::version=5.3.3&hash=29ae49"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver

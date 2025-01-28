@@ -1,14 +1,14 @@
 import { StyleSheet } from 'react-native';
-import { useTheme } from 'react-native-paper';
-import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
+import type { MyMD3Theme } from './../../providers/amity-ui-kit-provider';
 
-export const useStyles = () => {
-  const theme = useTheme() as MyMD3Theme;
+export const useStyles = (theme: MyMD3Theme) => {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: theme.colors.background,
       paddingHorizontal: 16,
+      borderTopWidth: 8,
+      borderColor: theme.colors.baseShade4,
     },
     communityItemContainer: {
       paddingVertical: 16,
@@ -43,6 +43,7 @@ export const useStyles = () => {
     communityCategoryContainer: {
       flexDirection: 'row',
       marginVertical: 4,
+      flex: 1,
     },
     categoryName: {
       paddingHorizontal: 8,
@@ -53,15 +54,21 @@ export const useStyles = () => {
       overflow: 'hidden',
       marginHorizontal: 2,
       fontSize: 12,
+      maxWidth: '26%',
     },
     avatar: {
-      width: 64,
-      height: 64,
+      width: 40,
+      height: 40,
       borderRadius: 64,
     },
     communityCount: {
       color: theme.colors.baseShade1,
       fontSize: 12,
+    },
+    skeletonLoadingContainer: {
+      borderBottomWidth: 2,
+      borderColor: theme.colors.baseShade4,
+      paddingVertical: 8,
     },
   });
 
