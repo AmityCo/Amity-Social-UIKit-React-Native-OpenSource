@@ -15,7 +15,8 @@ import { closeIcon } from '../../svg/svg-xml-list';
 import { useStyles } from './styles';
 import type { IDisplayImage, IMentionPosition } from '../../screens/CreatePost';
 import { editPost, getPostById } from '../../providers/Social/feed-sdk';
-
+import LoadingImage from '../LoadingImage';
+import LoadingVideo from '../LoadingVideo';
 import type { IPost, IVideoPost } from '../Social/PostList';
 import useAuth from '../../hooks/useAuth';
 import { useTheme } from 'react-native-paper';
@@ -27,9 +28,8 @@ import globalFeedSlice from '../../redux/slices/globalfeedSlice';
 import feedSlice from '../../redux/slices/feedSlice';
 import { useDispatch } from 'react-redux';
 import MentionInput from '../MentionInput/AmityMentionInput';
-import { TSearchItem } from '../../hooks/useSearch';
-import LoadingImage from '../LoadingImage ';
-import LoadingVideo from '../LoadingVideo';
+import { TSearchItem } from '../../hooks';
+
 interface IModal {
   visible: boolean;
   userId?: string;
