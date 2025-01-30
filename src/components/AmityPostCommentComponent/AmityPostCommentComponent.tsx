@@ -1,15 +1,25 @@
 import { FlatList, View } from 'react-native';
-import React, { FC, useState, useRef, memo, useEffect } from 'react';
+import React, {
+  FC,
+  useState,
+  useRef,
+  memo,
+  useEffect,
+  useCallback,
+} from 'react';
 
 import { getAmityUser } from '../../providers/user-provider';
 import { CommentRepository } from '@amityco/ts-sdk-react-native';
 import CommentListItem from './CommentListItem/CommentListItem';
 import { deleteCommentById } from '../../providers/Social/comment-sdk';
 import { ComponentID, PageID } from '../../enum';
-import { useAmityComponent } from '../../hooks/useUiKitReference';
-import { IMentionPosition } from '../../types/type';
-import { UserInterface } from '../../types/user.interface';
 
+import ContentLoader, { Circle, Rect } from 'react-content-loader/native';
+import { useDispatch } from 'react-redux';
+import uiSlice from '../../redux/slices/uiSlice';
+import { UserInterface } from '../../types/user.interface';
+import { IMentionPosition } from '../../types/type';
+import { useAmityComponent } from '../../hooks';
 
 interface IComment {
   commentId: string;
@@ -48,31 +58,43 @@ const AmityPostCommentComponent: FC<AmityPostCommentComponentType> = ({
   ListHeaderComponent,
 }) => {
   const componentId = ComponentID.CommentTray;
-  const { isExcluded } = useAmityComponent({ pageId, componentId });
+  const { isExcluded, themeStyles } = useAmityComponent({
+    pageId,
+    componentId,
+  });
+  const dispatch = useDispatch();
+  const { showToastMessage } = uiSlice.actions;
   const onNextPageRef = useRef<() => void | null>(null);
   const [commentList, setCommentList] = useState<IComment[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
-    let unsub;
-    CommentRepository.getComments(
+    if (!postId) return () => {};
+    const unsubComment = CommentRepository.getComments(
       {
         dataTypes: { matchType: 'any', values: ['text', 'image'] },
         referenceId: postId,
         referenceType: postType,
-        limit: 3,
+        limit: 10,
       },
       async ({ error, loading, data, hasNextPage, onNextPage }) => {
-        if (error) return;
+        if (error) {
+          dispatch(showToastMessage({ toastMessage: "Couldn't load comment" }));
+          return;
+        }
         if (!loading) {
           data && data.length > 0 && (await queryComment(data));
           onNextPageRef.current = hasNextPage ? onNextPage : null;
+          setTimeout(() => {
+            setIsLoading(false);
+          }, 1000);
         }
       }
     );
     return () => {
       setCommentList([]);
-      unsub && unsub();
+      unsubComment();
     };
-  }, [postId, postType]);
+  }, [dispatch, postId, postType, showToastMessage]);
 
   const queryComment = async (comments: Amity.InternalComment[]) => {
     const formattedCommentList = await Promise.all(
@@ -91,7 +113,7 @@ const AmityPostCommentComponent: FC<AmityPostCommentComponentType> = ({
           targetId: item.targetId,
           commentId: item.commentId,
           data: item.data as Record<string, any>,
-          dataType: item.dataType || 'text',
+          dataType: item?.dataType || 'text',
           myReactions: item.myReactions as string[],
           reactions: item.reactions as Record<string, number>,
           user: formattedUserObject as UserInterface,
@@ -108,21 +130,66 @@ const AmityPostCommentComponent: FC<AmityPostCommentComponentType> = ({
     setCommentList([...formattedCommentList]);
   };
 
-  const onDeleteComment = async (commentId: string) => {
-    const isDeleted = await deleteCommentById(commentId);
-    if (isDeleted) {
-      const prevCommentList: IComment[] = [...commentList];
-      const updatedCommentList: IComment[] = prevCommentList.filter(
-        (item) => item.commentId !== commentId
-      );
-      setCommentList(updatedCommentList);
-    }
-  };
+  const onDeleteComment = useCallback(
+    async (commentId: string) => {
+      const isDeleted = await deleteCommentById(commentId);
+      if (isDeleted) {
+        const prevCommentList: IComment[] = [...commentList];
+        const updatedCommentList: IComment[] = prevCommentList.filter(
+          (item) => item.commentId !== commentId
+        );
+        setCommentList(updatedCommentList);
+      }
+    },
+    [commentList]
+  );
+  const handleClickReply = useCallback(
+    (user: UserInterface, commentId: string) => {
+      setReplyUserName(user.displayName);
+      setReplyCommentId(commentId);
+    },
+    [setReplyCommentId, setReplyUserName]
+  );
 
-  const handleClickReply = (user: UserInterface, commentId: string) => {
-    setReplyUserName(user.displayName);
-    setReplyCommentId(commentId);
-  };
+  const renderCommentListItem = useCallback(
+    ({ item }) => {
+      if (isLoading) {
+        return (
+          <ContentLoader
+            height={100}
+            speed={1}
+            width={300}
+            backgroundColor={themeStyles.colors.baseShade4}
+            foregroundColor={themeStyles.colors.baseShade2}
+            viewBox="0 0 300 70"
+          >
+            <Circle cx="24" cy="24" r="12" />
+            <Rect x="50" y="12" rx="5" ry="5" width={220} height={50} />
+            <Rect x="50" y="74" rx="5" ry="5" width={150} height={8} />
+          </ContentLoader>
+        );
+      }
+
+      return (
+        <CommentListItem
+          onDelete={onDeleteComment}
+          commentDetail={item}
+          onClickReply={handleClickReply}
+          postType={postType}
+          disabledInteraction={disabledInteraction}
+        />
+      );
+    },
+    [
+      disabledInteraction,
+      handleClickReply,
+      isLoading,
+      onDeleteComment,
+      postType,
+      themeStyles.colors.baseShade2,
+      themeStyles.colors.baseShade4,
+    ]
+  );
 
   if (isExcluded) return null;
   return (
@@ -131,18 +198,8 @@ const AmityPostCommentComponent: FC<AmityPostCommentComponentType> = ({
         ListHeaderComponent={ListHeaderComponent}
         keyboardShouldPersistTaps="handled"
         data={commentList}
-        renderItem={({ item }) => {
-          return (
-            <CommentListItem
-              onDelete={onDeleteComment}
-              commentDetail={item}
-              onClickReply={handleClickReply}
-              postType={postType}
-              disabledInteraction={disabledInteraction}
-            />
-          );
-        }}
-        keyExtractor={(item, index) => item.commentId + index}
+        renderItem={renderCommentListItem}
+        keyExtractor={(item) => item.commentId}
         onEndReachedThreshold={0.8}
         onEndReached={() => {
           onNextPageRef.current && onNextPageRef.current();

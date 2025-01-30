@@ -36,7 +36,7 @@ import { AmityPostContentComponentStyleEnum } from '../../enum/AmityPostContentC
 import { PostTargetType } from '../../enum/postTargetType';
 import TimestampElement from '../../Elements/TimestampElement/TimestampElement';
 
-import MenuButtonIconElement from '../../Elements/MenuButtonIconElement/MenuButtonIconElement';
+
 import {
   deletePostById,
   isReportTarget,
@@ -133,7 +133,7 @@ const AmityPostContentComponent = ({
   } = post ?? {};
   const { isCommunityModerator } = useIsCommunityModerator({
     communityId: targetType === 'community' && targetId,
-    userId: user.userId,
+    userId: user?.userId,
   });
   const myId = (client as Amity.Client).userId;
   const { isCommunityModerator: isIAmModerator } = useIsCommunityModerator({

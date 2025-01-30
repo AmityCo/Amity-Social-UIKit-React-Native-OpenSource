@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useRef, useState } from 'react';
+import React, { memo, useEffect, useRef, useState } from 'react';
 
 import {
   View,
@@ -12,6 +12,18 @@ import {
   FlatList,
 } from 'react-native';
 import { useStyles } from './styles';
+import { SvgXml } from 'react-native-svg';
+import {
+  editIcon,
+  expandIcon,
+  likeCircle,
+  personXml,
+  reportOutLine,
+  storyDraftDeletHyperLink,
+  threeDots,
+} from '../../../svg/svg-xml-list';
+
+
 import {
   addCommentReaction,
   removeCommentReaction,
@@ -27,24 +39,19 @@ import {
 import EditCommentModal from '../../../components/EditCommentModal';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../../providers/amity-ui-kit-provider';
-import { useNavigation } from '@react-navigation/native';
 import ReplyCommentList from '../ReplyCommentList/index';
 import { CommentRepository } from '@amityco/ts-sdk-react-native';
 
-
-
+import ModeratorBadgeElement from '../../../Elements/ModeratorBadgeElement/ModeratorBadgeElement';
 import { ComponentID, PageID } from '../../../enum';
 
+import AmityReactionListComponent from '../../AmityReactionListComponent/AmityReactionListComponent';
+import uiSlice from '../../../redux/slices/uiSlice';
+import { useDispatch } from 'react-redux';
 import { UserInterface } from '../../../types/user.interface';
-import { IMentionPosition } from '../../../screens/CreatePost';
 import { useTimeDifference } from '../../../hooks/useTimeDifference';
-import ModeratorBadgeElement from '../../../Elements/ModeratorBadgeElement/ModeratorBadgeElement';
-import PersonIcon from '../../../svg/PersonIcon';
-import { ThreeDotsIcon } from '../../../svg/ThreeDotsIcon';
-
-import ExpandIcon from '../../../svg/ExpandIcon';
-import LikeReactionIcon from '../../../svg/LikeReactionIcon';
-import RenderTextWithMention from '../../RenderTextWithMention /RenderTextWithMention';
+import { LinkPreview } from '../../PreviewLink';
+import { IMentionPosition } from '../../../types/type';
 
 export interface IComment {
   commentId: string;
@@ -95,12 +102,14 @@ const CommentListItem = ({
     childrenComment,
     editedAt,
     mentionPosition,
-    childrenNumber,
     referenceId,
     targetType,
     targetId,
+    childrenNumber,
   } = commentDetail ?? {};
   const timeDifference = useTimeDifference(createdAt);
+  const dispatch = useDispatch();
+  const { showToastMessage } = uiSlice.actions;
   const [isLike, setIsLike] = useState<boolean>(
     myReactions ? myReactions.includes('like') : false
   );
@@ -115,12 +124,7 @@ const CommentListItem = ({
   >([]);
   const [replyCommentCollection, setReplyCommentCollection] =
     useState<Amity.LiveCollection<Amity.InternalComment<any>>>();
-
   const { onNextPage, hasNextPage } = replyCommentCollection ?? {};
-  // const { themeStyles } = useAmityComponent({
-  //   pageId: PageID.post_detail_page,
-  //   componentId: ComponentID.post_content,
-  // });
   const [isOpenReply, setIsOpenReply] = useState<boolean>(false);
   const [textComment, setTextComment] = useState<string>(data?.text);
   const [isVisible, setIsVisible] = useState(false);
@@ -128,7 +132,7 @@ const CommentListItem = ({
   const [editCommentModal, setEditCommentModal] = useState<boolean>(false);
   const [isEditComment, setIsEditComment] = useState<boolean>(false);
   const slideAnimation = useRef(new Animated.Value(0)).current;
-  const navigation = useNavigation<any>();
+  const [isReactionListVisible, setIsReactionListVisible] = useState(false);
 
   useEffect(() => {
     getReplyComments();
@@ -207,7 +211,7 @@ const CommentListItem = ({
       referenceType: postType,
       referenceId: referenceId, // post ID
       dataTypes: { values: ['text', 'image'], matchType: 'any' },
-      limit: 3,
+      limit: 5,
       parentId: commentId,
     };
 
@@ -257,18 +261,28 @@ const CommentListItem = ({
   const reportCommentObject = async () => {
     if (isReportByMe) {
       const unReportPost = await unReportTargetById('comment', commentId);
-      if (unReportPost) {
-        Alert.alert('Undo Report sent');
-      }
       setIsVisible(false);
       setIsReportByMe(false);
+      if (unReportPost) {
+        dispatch(
+          showToastMessage({
+            toastMessage: 'Comment unreported',
+            isSuccessToast: true,
+          })
+        );
+      }
     } else {
       const reportPost = await reportTargetById('comment', commentId);
-      if (reportPost) {
-        Alert.alert('Report sent');
-      }
       setIsVisible(false);
       setIsReportByMe(true);
+      if (reportPost) {
+        dispatch(
+          showToastMessage({
+            toastMessage: 'Comment reported',
+            isSuccessToast: true,
+          })
+        );
+      }
     }
   };
   const modalStyle = {
@@ -276,7 +290,7 @@ const CommentListItem = ({
       {
         translateY: slideAnimation.interpolate({
           inputRange: [0, 1],
-          outputRange: [600, 0], // Adjust this value to control the sliding distance
+          outputRange: [580, 0], // Adjust this value to control the sliding distance
         }),
       },
     ],
@@ -301,10 +315,7 @@ const CommentListItem = ({
 
   const onPressCommentReaction = () => {
     onNavigate && onNavigate();
-    navigation.navigate('ReactionList', {
-      referenceId: commentId,
-      referenceType: 'comment',
-    });
+    setIsReactionListVisible(true);
   };
 
   return (
@@ -319,7 +330,7 @@ const CommentListItem = ({
           />
         ) : (
           <View style={styles.avatar}>
-            <PersonIcon width={20} height={16} />
+            <SvgXml xml={personXml} width="20" height="16" />
           </View>
         )}
         <View style={styles.rightSection}>
@@ -336,9 +347,9 @@ const CommentListItem = ({
               </View>
             )}
             {textComment && (
-              <RenderTextWithMention
+              <LinkPreview
                 mentionPositionArr={mentionPosition}
-                textPost={textComment}
+                text={textComment}
               />
             )}
           </View>
@@ -350,7 +361,6 @@ const CommentListItem = ({
                   <Text style={styles.headerTextTime}>{timeDifference}</Text>
                   {(editedAt !== createdAt || isEditComment) && (
                     <Text style={styles.headerTextTime}> (edited)</Text>
-                    
                   )}
                 </View>
 
@@ -369,7 +379,11 @@ const CommentListItem = ({
                   <Text style={styles.btnText}>Reply</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={openModal} style={styles.threeDots}>
-                  <ThreeDotsIcon color={theme.colors.base} />
+                  <SvgXml
+                    xml={threeDots(theme.colors.base)}
+                    width="20"
+                    height="16"
+                  />
                 </TouchableOpacity>
               </View>
 
@@ -378,8 +392,13 @@ const CommentListItem = ({
                   onPress={onPressCommentReaction}
                   style={styles.likeBtn}
                 >
-                <Text style={styles.btnText}>{likeReaction}</Text>
-               <LikeReactionIcon width={20} height={16} style={{marginLeft: 4}} />
+                  <Text style={styles.btnText}>{likeReaction}</Text>
+                  <SvgXml
+                    style={{ marginLeft: 4 }}
+                    xml={likeCircle}
+                    width="20"
+                    height="16"
+                  />
                 </TouchableOpacity>
               )}
             </View>
@@ -398,7 +417,7 @@ const CommentListItem = ({
               onHandleReply={onHandleReply}
             />
           )}
-          {isOpenReply && (
+          {isOpenReply && replyCommentList?.length > 0 && (
             <FlatList
               data={replyCommentList}
               renderItem={({ item }) => (
@@ -409,18 +428,22 @@ const CommentListItem = ({
                   onHandleReply={onHandleReply}
                 />
               )}
-              keyExtractor={(item, index) => item.commentId + index}
+              keyExtractor={(item) => item.commentId}
             />
           )}
 
-          {replyCommentList.length > 0 && !isOpenReply && (
+          {replyCommentList?.length > 0 && !isOpenReply && (
             <TouchableOpacity
               onPress={() => openReplyComment()}
               style={styles.viewMoreReplyBtn}
             >
-              <ExpandIcon />
+              <SvgXml xml={expandIcon} />
               <Text style={styles.viewMoreText}>
-                View {childrenNumber} replies
+                View{' '}
+                {childrenNumber === 0
+                  ? replyCommentList.length
+                  : childrenNumber}{' '}
+                replies
               </Text>
             </TouchableOpacity>
           )}
@@ -430,7 +453,7 @@ const CommentListItem = ({
               onPress={() => onNextPage()}
               style={styles.viewMoreReplyBtn}
             >
-              <ExpandIcon />
+              <SvgXml xml={expandIcon} />
               <Text style={styles.viewMoreText}>View more replies</Text>
             </TouchableOpacity>
           )}
@@ -448,21 +471,32 @@ const CommentListItem = ({
               styles.modalContent,
               modalStyle,
               user?.userId === (client as Amity.Client).userId &&
-              styles.twoOptions,
+                styles.twoOptions,
             ]}
           >
+            <View style={styles.handleBar} />
             {user?.userId === (client as Amity.Client).userId ? (
               <View>
                 <TouchableOpacity
                   onPress={openEditCommentModal}
                   style={styles.modalRow}
                 >
+                  <SvgXml
+                    xml={editIcon(theme.colors.base)}
+                    width="20"
+                    height="20"
+                  />
                   <Text style={styles.deleteText}> Edit Comment</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={deletePostObject}
                   style={styles.modalRow}
                 >
+                  <SvgXml
+                    xml={storyDraftDeletHyperLink()}
+                    width="20"
+                    height="20"
+                  />
                   <Text style={styles.deleteText}> Delete Comment</Text>
                 </TouchableOpacity>
               </View>
@@ -471,8 +505,13 @@ const CommentListItem = ({
                 onPress={reportCommentObject}
                 style={styles.modalRow}
               >
+                <SvgXml
+                  xml={reportOutLine(theme.colors.base)}
+                  width="20"
+                  height="20"
+                />
                 <Text style={styles.deleteText}>
-                  {isReportByMe ? 'Undo Report' : 'Report'}
+                  {isReportByMe ? 'Unreport comment' : 'Report comment'}
                 </Text>
               </TouchableOpacity>
             )}
@@ -485,7 +524,15 @@ const CommentListItem = ({
         onFinishEdit={onEditComment}
         onClose={onCloseEditCommentModal}
       />
+      {isReactionListVisible && (
+        <AmityReactionListComponent
+          referenceId={commentId}
+          referenceType="comment"
+          isModalVisible={isReactionListVisible}
+          onCloseModal={() => setIsReactionListVisible(false)}
+        />
+      )}
     </View>
   );
 };
-export default CommentListItem;
+export default memo(CommentListItem);

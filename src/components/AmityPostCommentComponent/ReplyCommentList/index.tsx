@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useRef, useState } from 'react';
+import React, { memo, useEffect, useRef, useState } from 'react';
 
 import {
   View,
@@ -11,15 +11,22 @@ import {
   Alert,
 } from 'react-native';
 import { useStyles } from './styles';
+import { SvgXml } from 'react-native-svg';
+import {
+  expandIcon,
+  likeCircle,
+  personXml,
+  reportOutLine,
+  threeDots,
+} from '../../../svg/svg-xml-list';
 
 import {
   addCommentReaction,
   removeCommentReaction,
 } from '../../../providers/Social/comment-sdk';
-
 import { Pressable } from 'react-native';
 import useAuth from '../../../hooks/useAuth';
-import { useTimeDifference } from '../../../hooks/useTimeDifference';
+
 import {
   isReportTarget,
   reportTargetById,
@@ -31,17 +38,14 @@ import type { MyMD3Theme } from '../../../providers/amity-ui-kit-provider';
 
 
 import { ComponentID, PageID } from '../../../enum';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../../routes/RouteParamList';
+import AmityReactionListComponent from '../../AmityReactionListComponent/AmityReactionListComponent';
 
-import ModeratorBadgeElement from '../../../Elements/ModeratorBadgeElement/ModeratorBadgeElement';
-import { IMentionPosition } from '../../../types/type';
+import uiSlice from '../../../redux/slices/uiSlice';
+import { useDispatch } from 'react-redux';
 import { UserInterface } from '../../../types/user.interface';
-import PersonIcon from '../../../svg/PersonIcon';
-import ExpandIcon from '../../../svg/ExpandIcon';
-import { ThreeDotsIcon } from '../../../svg/ThreeDotsIcon';
-import LikeReactionIcon from '../../../svg/LikeReactionIcon';
+import { IMentionPosition } from '../../../types/type';
+import { useTimeDifference } from '../../../hooks';
+import ModeratorBadgeElement from '../../../Elements/ModeratorBadgeElement/ModeratorBadgeElement';
 import RenderTextWithMention from '../../RenderTextWithMention /RenderTextWithMention';
 
 export interface IComment {
@@ -69,12 +73,12 @@ export interface IReplyCommentList {
   onHandleReply?: (user: UserInterface, commentId: string) => void;
 }
 
-export default function ReplyCommentList({
+const ReplyCommentList = ({
   commentDetail,
   onDelete,
   commentId,
   onHandleReply,
-}: IReplyCommentList) {
+}: IReplyCommentList) => {
   const {
     data,
     user,
@@ -91,6 +95,8 @@ export default function ReplyCommentList({
 
   const theme = useTheme() as MyMD3Theme;
   const styles = useStyles();
+  const dispatch = useDispatch();
+  const { showToastMessage } = uiSlice.actions;
   const timeDifference = useTimeDifference(createdAt);
   const [isLike, setIsLike] = useState<boolean>(
     myReactions ? myReactions.includes('like') : false
@@ -100,23 +106,13 @@ export default function ReplyCommentList({
   );
 
   const { client, apiRegion } = useAuth();
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [textComment, setTextComment] = useState<string>(data.text);
   const [isVisible, setIsVisible] = useState(false);
+  const [isReactionListVisible, setIsReactionListVisible] = useState(false);
   const [isReportByMe, setIsReportByMe] = useState<boolean>(false);
   const [editCommentModal, setEditCommentModal] = useState<boolean>(false);
   const [isEditComment, setIsEditComment] = useState<boolean>(false);
   const slideAnimation = useRef(new Animated.Value(0)).current;
-  const [commentMentionPosition, setCommentMentionPosition] = useState<
-    IMentionPosition[]
-  >([]);
-
-  useEffect(() => {
-    if (mentionPosition) {
-      setCommentMentionPosition(mentionPosition);
-    }
-  }, [mentionPosition]);
 
   const openModal = () => {
     setIsVisible(true);
@@ -172,18 +168,28 @@ export default function ReplyCommentList({
   const reportCommentObject = async () => {
     if (isReportByMe) {
       const unReportPost = await unReportTargetById('comment', commentId);
-      if (unReportPost) {
-        Alert.alert('Undo Report sent');
-      }
       setIsVisible(false);
       setIsReportByMe(false);
+      if (unReportPost) {
+        dispatch(
+          showToastMessage({
+            toastMessage: 'Comment unreported',
+            isSuccessToast: true,
+          })
+        );
+      }
     } else {
       const reportPost = await reportTargetById('comment', commentId);
-      if (reportPost) {
-        Alert.alert('Report sent');
-      }
       setIsVisible(false);
       setIsReportByMe(true);
+      if (reportPost) {
+        dispatch(
+          showToastMessage({
+            toastMessage: 'Comment reported',
+            isSuccessToast: true,
+          })
+        );
+      }
     }
   };
   const modalStyle = {
@@ -211,10 +217,7 @@ export default function ReplyCommentList({
   };
 
   const onPressCommentReaction = () => {
-    navigation.navigate('ReactionList', {
-      referenceId: commentId,
-      referenceType: 'comment',
-    });
+    setIsReactionListVisible(true);
   };
 
   const onPressReply = () => {
@@ -233,7 +236,7 @@ export default function ReplyCommentList({
           />
         ) : (
           <View style={styles.avatar}>
-            <PersonIcon width={20} height={16}/>
+            <SvgXml xml={personXml} width="20" height="16" />
           </View>
         )}
         <View style={styles.rightSection}>
@@ -252,8 +255,12 @@ export default function ReplyCommentList({
             {textComment && (
               <RenderTextWithMention
                 textPost={textComment}
-                mentionPositionArr={commentMentionPosition}
+                mentionPositionArr={mentionPosition ?? []}
               />
+              // <LinkPreview
+              //   text={textComment}
+              //   mentionPositionArr={commentMentionPosition}
+              // />
             )}
           </View>
 
@@ -278,7 +285,11 @@ export default function ReplyCommentList({
                 <Text style={styles.btnText}>Reply</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={openModal} style={styles.threeDots}>
-                <ThreeDotsIcon color={theme.colors.base}/>
+                <SvgXml
+                  xml={threeDots(theme.colors.base)}
+                  width="20"
+                  height="16"
+                />
               </TouchableOpacity>
             </View>
 
@@ -288,7 +299,12 @@ export default function ReplyCommentList({
                 style={styles.likeBtn}
               >
                 <Text style={styles.btnText}>{likeReaction}</Text>
-                <LikeReactionIcon  width={20} height={16}/>
+                <SvgXml
+                  style={{ marginLeft: 4 }}
+                  xml={likeCircle}
+                  width="20"
+                  height="16"
+                />
               </TouchableOpacity>
             )}
           </View>
@@ -296,7 +312,7 @@ export default function ReplyCommentList({
           <View>
             {childrenComment && childrenComment.length > 0 && (
               <Pressable style={styles.viewMoreReplyBtn}>
-                <ExpandIcon/>
+                <SvgXml xml={expandIcon} />
                 <Text style={styles.viewMoreText}>
                   View {childrenNumber} replies
                 </Text>
@@ -317,7 +333,7 @@ export default function ReplyCommentList({
               styles.modalContent,
               modalStyle,
               user?.userId === (client as Amity.Client).userId &&
-                styles.twoOptions,
+              styles.twoOptions,
             ]}
           >
             {user?.userId === (client as Amity.Client).userId ? (
@@ -340,8 +356,13 @@ export default function ReplyCommentList({
                 onPress={reportCommentObject}
                 style={styles.modalRow}
               >
+                <SvgXml
+                  xml={reportOutLine(theme.colors.base)}
+                  width="20"
+                  height="20"
+                />
                 <Text style={styles.deleteText}>
-                  {isReportByMe ? 'Undo Report' : 'Report'}
+                  {isReportByMe ? 'Unreport comment' : 'Report comment'}
                 </Text>
               </TouchableOpacity>
             )}
@@ -354,6 +375,15 @@ export default function ReplyCommentList({
         onFinishEdit={onEditComment}
         onClose={onCloseEditCommentModal}
       />
+      {isReactionListVisible && (
+        <AmityReactionListComponent
+          referenceId={commentId}
+          referenceType="comment"
+          isModalVisible={isReactionListVisible}
+          onCloseModal={() => setIsReactionListVisible(false)}
+        />
+      )}
     </View>
   );
-}
+};
+export default memo(ReplyCommentList);

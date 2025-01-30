@@ -1,5 +1,6 @@
 export type RootStackParamList = {
   Home: { postIdCallBack?: string };
+  AmitySocialGlobalSearchPage: undefined;
   AmitySocialUIKitV4Navigator: undefined;
   CommunitySearch: undefined;
   CommunityMemberDetail: {
@@ -48,28 +49,9 @@ export type RootStackParamList = {
     >;
     needApprovalOnPostCreation: boolean;
   };
-  CreateLivestream: {
-    targetId: string;
-    targetName: string;
-    targetType: string;
-    isPublic?: boolean;
-    postSetting?: ValueOf<
-      Readonly<{
-        ONLY_ADMIN_CAN_POST: 'ONLY_ADMIN_CAN_POST';
-        ADMIN_REVIEW_POST_REQUIRED: 'ADMIN_REVIEW_POST_REQUIRED';
-        ANYONE_CAN_POST: 'ANYONE_CAN_POST';
-      }>
-    >;
-    needApprovalOnPostCreation: boolean;
-  };
+
   PostDetail: {
     postId: string;
-    postIndex: number;
-    isFromGlobalfeed?: boolean;
-    // initVideoPosts?: IVideoPost[];
-    // initImagePosts?: string[];
-    // initVideoPostsFullSize?: MediaUri[];
-    // initImagePostsFullSize?: MediaUri[];
   };
   UserProfile: {
     userId: string;
@@ -95,5 +77,8 @@ export type RootStackParamList = {
   };
   UserPendingRequest: undefined;
   FollowerList: Amity.User;
-  LivestreamPlayer: { streamId: string };
+  Newsfeed: undefined;
+  MyUserProfile: undefined;
+  PreloadCommunityHome: undefined;
+  MyCommunity: undefined;
 };

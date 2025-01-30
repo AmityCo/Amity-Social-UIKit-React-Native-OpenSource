@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
-import type { MyMD3Theme } from '../../../providers/amity-ui-kit-provider';
+import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
 
 export const useStyles = () => {
   const theme = useTheme() as MyMD3Theme;
@@ -125,13 +125,21 @@ export const useStyles = () => {
       padding: 5,
       marginVertical: 8,
     },
+    handleBar: {
+      alignSelf: 'center',
+      width: 36,
+      backgroundColor: theme.colors.baseShade4,
+      height: 5,
+      marginVertical: 10,
+      borderRadius: 10,
+    },
     deleteText: {
       paddingLeft: 12,
       fontWeight: '600',
       color: theme.colors.base,
     },
     twoOptions: {
-      minHeight: 720,
+      minHeight: 750,
     },
     timeRow: {
       flexDirection: 'row',

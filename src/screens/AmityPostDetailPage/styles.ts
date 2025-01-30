@@ -9,7 +9,6 @@ export const useStyles = (theme: MyMD3Theme) => {
     container: {
       flex: 1,
       backgroundColor: theme.colors.background,
-      paddingTop: 50
     },
     header: {
       top: top,
@@ -35,8 +34,6 @@ export const useStyles = (theme: MyMD3Theme) => {
       fontWeight: '600',
     },
     scrollContainer: {
-      paddingTop: top / 2,
-      paddingBottom: bottom,
       flex: 1,
     },
     input: {
@@ -64,6 +61,13 @@ export const useStyles = (theme: MyMD3Theme) => {
       alignItems: 'center',
       borderTopWidth: 1,
       borderTopColor: theme.colors.baseShade4,
+    },
+    myAvatar: {
+      width: 32,
+      height: 32,
+      borderRadius: 32,
+      alignSelf: 'center',
+      marginRight: 8,
     },
     postDisabledBtn: {
       color: '#A0BDF8',
@@ -108,7 +112,7 @@ export const useStyles = (theme: MyMD3Theme) => {
       flex: 1,
       justifyContent: 'center',
       alignItems: 'flex-start',
-      // paddingVertical: 10,
+      paddingVertical: 10,
       paddingHorizontal: 12,
       backgroundColor: theme.colors.baseShade4,
       borderRadius: 20,
@@ -158,6 +162,40 @@ export const useStyles = (theme: MyMD3Theme) => {
       width: width,
       position: 'absolute',
       bottom: bottom,
+    },
+    modalContainer: {
+      flex: 1,
+      justifyContent: 'flex-end',
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalContent: {
+      backgroundColor: theme.colors.background,
+      borderTopLeftRadius: 10,
+      borderTopRightRadius: 10,
+      padding: 10,
+      minHeight: 700,
+    },
+    twoOptions: {
+      minHeight: 750,
+    },
+    modalRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: 5,
+      marginVertical: 8,
+    },
+    handleBar: {
+      alignSelf: 'center',
+      width: 36,
+      backgroundColor: theme.colors.baseShade4,
+      height: 5,
+      marginVertical: 10,
+      borderRadius: 10,
+    },
+    deleteText: {
+      paddingLeft: 12,
+      fontWeight: '600',
+      color: theme.colors.base,
     },
   });
 

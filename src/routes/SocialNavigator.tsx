@@ -14,7 +14,7 @@ import CommunityHome from '../screens/CommunityHome/index';
 import { CommunitySetting } from '../screens/CommunitySetting/index';
 import CommunityMemberDetail from '../screens/CommunityMemberDetail/CommunityMemberDetail';
 import Home from '../screens/Home';
-import PostDetail from '../screens/AmityPostDetailPage/AmityPostDetailPage';
+
 import CreatePost from '../screens/CreatePost';
 import UserProfile from '../screens/UserProfile/UserProfile';
 import { EditProfile } from '../screens/EditProfile/EditProfile';
@@ -40,6 +40,7 @@ import AmityNewsFeedComponent from '../components/AmityNewsFeedComponent/AmityNe
 
 import PreloadCommunityHome from '../screens/PreloadCommunityHome';
 import MyUserprofile from '../screens/MyUserProfile';
+import PostDetail from '../screens/PostDetail';
 
 
 interface INavigator {
