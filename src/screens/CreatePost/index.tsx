@@ -25,7 +25,7 @@ import {
 } from '../../svg/svg-xml-list';
 import { useStyles } from './styles';
 import * as ImagePicker from 'expo-image-picker';
-import LoadingImage from '../../components/LoadingImage';
+
 import { createPostToFeed } from '../../providers/Social/feed-sdk';
 import LoadingVideo from '../../components/LoadingVideo';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
@@ -39,6 +39,7 @@ import globalFeedSlice from '../../redux/slices/globalfeedSlice';
 import { useDispatch } from 'react-redux';
 import { amityPostsFormatter } from '../../util/postDataFormatter';
 import feedSlice from '../../redux/slices/feedSlice';
+import LoadingImage from '../../components/LoadingImage ';
 
 
 export interface IDisplayImage {

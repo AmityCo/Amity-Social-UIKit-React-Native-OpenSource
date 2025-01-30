@@ -5,12 +5,13 @@ import { defaultAvatarUri } from '../../assets';
 import { UserRepository } from '@amityco/ts-sdk-react-native';
 import { ImageSizeState } from '../../enum';
 import useAuth from '../../hooks/useAuth';
-import { useFile } from '../../hooks';
+import { useFileV4 } from '../../hooks/useFilev4';
+
 
 type MyAvatarProp = Partial<ImageProps>;
 const MyAvatar: FC<MyAvatarProp> = (props) => {
   const { client } = useAuth();
-  const { getImage } = useFile();
+  const { getImage } = useFileV4();
   const myId = (client as Amity.Client).userId;
   const [avatarUrl, setAvatarUrl] = useState(defaultAvatarUri);
 

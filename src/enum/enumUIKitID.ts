@@ -1,5 +1,4 @@
 export enum PageID {
-  SelectTargetPage = 'select_target_page',
   CameraPage = 'camera_page',
   StoryPage = 'story_page',
   CreateStoryPage = 'create_story_page',
@@ -8,6 +7,9 @@ export enum PageID {
   global_search_page = 'global_search_page',
   post_detail_page = 'post_detail_page',
   social_global_search_page = 'social_global_search_page',
+  post_composer_page = 'post_composer_page',
+  select_post_target_page = 'select_post_target_page',
+  select_story_target_page = 'select_story_target_page',
 }
 export enum ComponentID {
   EditComment = 'edit_comment_component',
@@ -23,6 +25,9 @@ export enum ComponentID {
   post_content = 'post_content',
   top_search_bar = 'top_search_bar',
   community_search_result = 'community_search_result',
+  media_attachment = 'media_attachment',
+  detailed_media_attachment = 'detailed_media_attachment',
+  create_post_menu = 'create_post_menu',
 }
 export enum ElementID {
   CloseBtn = 'close_button',
@@ -70,6 +75,21 @@ export enum ElementID {
   search_icon = 'search_icon',
   clear_button = 'clear_button',
   cancel_button = 'cancel_button',
+  create_new_post_button = 'create_new_post_button',
+  edit_post_button = 'edit_post_button',
+  edit_post_title = 'edit_post_title',
+  camera_button = 'camera_button',
+  image_button = 'image_button',
+  video_button = 'video_button',
+  file_button = 'file_button',
+  detailed_button = 'detailed_button',
+  create_post_button = 'create_post_button',
+  create_story_button = 'create_story_button',
+  create_poll_button = 'create_poll_button',
+  create_livestream_button = 'create_livestream_button',
+  my_timeline_avatar = 'my_timeline_avatar',
+  my_timeline_text = 'my_timeline_text',
+  close_button = 'close_button',
 }
 
 export interface UiKitConfigKeys {
@@ -98,6 +118,7 @@ export interface UiKitConfigKeys {
   done_icon?: string;
   done_button_text?: string;
   icon?: string;
+  image?: string;
 }
 
 export enum DefaultConfigID {

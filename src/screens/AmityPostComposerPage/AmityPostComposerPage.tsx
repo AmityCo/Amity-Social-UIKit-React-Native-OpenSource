@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
   View,
   StatusBar,
-  Linking,
+
 } from 'react-native';
 import React, { FC, memo, useCallback, useEffect, useState } from 'react';
 import {
@@ -20,43 +20,44 @@ import {
   PageID,
   mediaAttachment,
 } from '../../enum';
-import {
-  TSearchItem,
-  useAmityPage,
-  useIsCommunityModerator,
-  useRequestPermission,
-} from '../../../hook';
+
 import { useStyles } from './styles';
-import { AmityPostComposerMode, AmityPostComposerPageType } from '../../types';
-import AmityMentionInput from '../../../component/MentionInput/AmityMentionInput';
-import { IDisplayImage, IMentionPosition } from '~/v4/types/type';
-import CloseButtonIconElement from '../../Elements/CloseButtonIconElement/CloseButtonIconElement';
+
+
+
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
-import uiSlice from '../../../../redux/slices/uiSlice';
-import { amityPostsFormatter } from '../../../../util/postDataFormatter';
-import useAuth from '../../../../hooks/useAuth';
-import globalfeedSlice from '../../../../redux/slices/globalfeedSlice';
+import uiSlice from '../../redux/slices/uiSlice';
+import { amityPostsFormatter } from '../../util/postDataFormatter';
+import useAuth from '../../hooks/useAuth';
+import globalfeedSlice from '../../redux/slices/globalfeedSlice';
 import {
   createPostToFeed,
   editPost,
   getPostById,
-} from '../../../../providers/Social/feed-sdk';
-import TextKeyElement from '../../Elements/TextKeyElement/TextKeyElement';
-import AmityMediaAttachmentComponent from '../../Components/AmityMediaAttachmentComponent/AmityMediaAttachmentComponent';
-import AmityDetailedMediaAttachmentComponent from '../../Components/AmityDetailedMediaAttachmentComponent/AmityDetailedMediaAttachmentComponent';
-import { useKeyboardStatus } from '../../../hook';
+} from '../../providers/Social/feed-sdk';
+
 import ImagePicker, {
   launchImageLibrary,
   type Asset,
   launchCamera,
 } from 'react-native-image-picker';
-import LoadingImage from '../../../component/LoadingImage';
-import LoadingVideo from '../../../component/LoadingVideo';
+
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../../routes/RouteParamList';
+import { RootStackParamList } from '../../routes/RouteParamList';
 import { PostRepository, UserRepository } from '@amityco/ts-sdk-react-native';
-import { useFile } from '../../../hook';
+import { AmityPostComposerMode, AmityPostComposerPageType, IDisplayImage } from '../../types/global.interface';
+import { TSearchItem, useAmityPage, useIsCommunityModerator, useKeyboardStatus } from '../../hooks';
+import { IMentionPosition } from '../../types/type';
+import AmityMentionInput from '../../components/MentionInput/AmityMentionInput';
+import LoadingImage from '../../components/LoadingImage ';
+import LoadingVideo from '../../components/LoadingVideo';
+import AmityMediaAttachmentComponent from '../../components/AmityMediaAttachmentComponent/AmityMediaAttachmentComponent';
+import AmityDetailedMediaAttachmentComponent from '../../components/AmityDetailedMediaAttachmentComponent/AmityDetailedMediaAttachmentComponent';
+import TextKeyElement from '../../Elements/TextKeyElement/TextKeyElement';
+import CloseButtonIconElement from '../../Elements/CloseButtonIconElement/CloseButtonIconElement';
+import { useFileV4 } from '../../hooks/useFilev4';
+
 
 const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
   mode,
@@ -65,16 +66,11 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
   community,
   post,
 }) => {
-  useRequestPermission({
-    onRequestPermissionFailed: () => {
-      Linking.openSettings();
-    },
-    shouldCall: true,
-  });
+
   const pageId = PageID.post_composer_page;
   const { isExcluded, themeStyles, accessibilityId } = useAmityPage({ pageId });
   const styles = useStyles(themeStyles);
-  const { getImage } = useFile();
+  const { getImage } = useFileV4();
   const isEditMode = mode === AmityPostComposerMode.EDIT;
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();

@@ -64,7 +64,7 @@ const useSearch = (
 
   useEffect(() => {
     if (privateCommunityId) return searchPrivateCommunityMember(searchText);
-    if (searchText.length < 2) return setSearchResult([]);
+    if (searchText?.length < 2) return setSearchResult([]);
     return searchAllUsers(searchText);
   }, [
     privateCommunityId,

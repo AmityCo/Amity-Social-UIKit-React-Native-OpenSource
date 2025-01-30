@@ -49,8 +49,9 @@ import { defaultAvatarUri } from '../../assets';
 import { ImageSizeState } from '../../enum';
 
 import GalleryComponent from '../../components/Gallery/GalleryComponent';
-import { useFile } from '../../hooks/useFile';
+import {  } from '../../hooks';
 import { TabName } from '../../enum/enumTabName';
+import { useFileV4 } from '../../hooks/useFilev4';
 
 export default function UserProfile({ route }: any) {
   const theme = useTheme() as MyMD3Theme;
@@ -69,7 +70,7 @@ export default function UserProfile({ route }: any) {
   const [socialSettings, setSocialSettings] =
     useState<Amity.SocialSettings>(null);
   const [pendingCount, setPendingCount] = useState<number>(0);
-  const { getImage } = useFile();
+  const { getImage } = useFileV4();
   const [avatar, setAvatar] = useState<string>(null);
   const isMyProfile = !followStatus;
   const isBlocked = followStatus === 'blocked';

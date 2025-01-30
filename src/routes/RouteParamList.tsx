@@ -1,3 +1,5 @@
+import { AmityPostComposerPageType } from "../types/global.interface";
+
 export type RootStackParamList = {
   Home: { postIdCallBack?: string };
   AmitySocialGlobalSearchPage: undefined;
@@ -21,20 +23,7 @@ export type RootStackParamList = {
   Community: undefined;
   Explore: undefined;
   CategoryList: undefined;
-  CreatePost: {
-    targetId: string;
-    targetName: string;
-    targetType: string;
-    isPublic?: boolean;
-    postSetting?: ValueOf<
-      Readonly<{
-        ONLY_ADMIN_CAN_POST: 'ONLY_ADMIN_CAN_POST';
-        ADMIN_REVIEW_POST_REQUIRED: 'ADMIN_REVIEW_POST_REQUIRED';
-        ANYONE_CAN_POST: 'ANYONE_CAN_POST';
-      }>
-    >;
-    needApprovalOnPostCreation: boolean;
-  };
+  CreatePost: AmityPostComposerPageType;
   CreatePoll: {
     targetId: string;
     targetName: string;

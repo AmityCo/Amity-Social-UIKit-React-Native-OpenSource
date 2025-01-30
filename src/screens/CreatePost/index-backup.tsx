@@ -18,7 +18,7 @@ import {
 import { useStyles } from './styles';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
-import LoadingImage from '../../components/LoadingImage';
+
 import { createPostToFeed } from '../../providers/Social/feed-sdk';
 import LoadingVideo from '../../components/LoadingVideo';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
@@ -37,6 +37,7 @@ import {
 } from '../../svg/svg-xml-list';
 import AmityMentionInput from '../../components/MentionInput/AmityMentionInput';
 import { TSearchItem } from '../../hooks/useSearch';
+import LoadingImage from '../../components/LoadingImage ';
 
 
 export interface IDisplayImage {

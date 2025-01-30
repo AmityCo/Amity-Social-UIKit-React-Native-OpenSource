@@ -52,3 +52,12 @@ export interface AmityStoryTabComponentType {
 
 
 
+export interface IDisplayImage {
+    url: string;
+    fileId: string | undefined;
+    fileName: string;
+    isUploaded: boolean;
+    thumbNail?: string;
+    postId?: string;
+  }
+  

@@ -1,14 +1,16 @@
-import { View, TextInputProps, FlatList } from 'react-native';
-import React, { FC, memo, useCallback, useEffect, useState } from 'react';
+import { View, TextInputProps, FlatList, TextInput } from 'react-native';
+import React, { FC, Ref, memo, useCallback, useEffect, useState } from 'react';
 import { useStyles } from './styles';
 import SearchItem from '../SearchItem';
-import { IMentionPosition } from '../../screens/CreatePost';
 import {
   MentionSuggestionsProps,
   MentionInput as MentionTextInput,
   replaceMentionValues,
 } from 'react-native-controlled-mentions';
-import useSearch, { TSearchItem } from '../../hooks/useSearch';
+
+import { IMentionPosition } from '../../types/type';
+import { TSearchItem } from '../../hooks';
+import useSearch from '../../hooks/useSearch';
 
 interface IMentionInput extends TextInputProps {
   setInputMessage: (inputMessage: string) => void;
@@ -17,9 +19,11 @@ interface IMentionInput extends TextInputProps {
   mentionUsers: TSearchItem[];
   setMentionUsers: (mentionUsers: TSearchItem[]) => void;
   isBottomMentionSuggestionsRender: boolean;
-  privateCommunityId: string;
+  privateCommunityId?: string;
   initialValue?: string;
   resetValue?: boolean;
+  inputRef?: Ref<TextInput>;
+  setIsShowingSuggestion?: (arg: boolean) => void;
 }
 
 const AmityMentionInput: FC<IMentionInput> = ({
@@ -32,6 +36,8 @@ const AmityMentionInput: FC<IMentionInput> = ({
   isBottomMentionSuggestionsRender,
   privateCommunityId,
   resetValue,
+  inputRef,
+  setIsShowingSuggestion,
   ...rest
 }) => {
   const styles = useStyles();
@@ -60,7 +66,7 @@ const AmityMentionInput: FC<IMentionInput> = ({
       const newMentionPosition = [...mentionsPosition, position];
       setMentionUsers(newMentionUsers);
       setMentionsPosition(newMentionPosition);
-      setCurrentSearchUserName('');
+      setCurrentSearchUserName(null);
     },
     [
       currentSearchUserName,
@@ -90,6 +96,7 @@ const AmityMentionInput: FC<IMentionInput> = ({
   const renderSuggestions: FC<MentionSuggestionsProps> = useCallback(
     ({ keyword, onSuggestionPress }) => {
       setCurrentSearchUserName(keyword || '');
+      setIsShowingSuggestion && setIsShowingSuggestion(keyword?.length > 0);
       if (keyword == null || !searchResult || searchResult?.length === 0) {
         return null;
       }
@@ -122,14 +129,16 @@ const AmityMentionInput: FC<IMentionInput> = ({
       getNextPage,
       onSelectUserMention,
       searchResult,
-      styles.mentionListContainer,
+      setIsShowingSuggestion,
+      styles,
     ]
   );
   return (
     <MentionTextInput
+      inputRef={inputRef}
       containerStyle={styles.inputContainer}
-      style={styles.inputText}
       {...rest}
+      style={styles.inputText}
       value={value}
       onChange={onChangeInput}
       onSelectionChange={handleSelectionChange}

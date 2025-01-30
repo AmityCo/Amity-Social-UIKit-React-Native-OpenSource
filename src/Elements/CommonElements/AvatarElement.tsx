@@ -2,10 +2,10 @@ import { Image, ImageProps } from 'react-native';
 import React, { FC, useLayoutEffect, useState } from 'react';
 import { ComponentID, ElementID, ImageSizeState, PageID } from '../../enum';
 import useConfig from '../../hooks/useConfig';
-import { useFile } from '../../hooks/useFile';
-import { defaultAvatarUri, defaultCommunityAvatarUri } from '../../assets';
+
 import { SvgXml } from 'react-native-svg';
 import { communityIcon, userIcon } from '../../svg/svg-xml-list';
+import { useFileV4 } from '../../hooks/useFilev4';
 
 
 type AvatarElementType = Partial<ImageProps> & {
@@ -29,7 +29,7 @@ const AvatarElement: FC<AvatarElementType> = ({
   const [avatarUrl, setAvatarUrl] = useState<string>('');
   const { excludes } = useConfig();
   const configId = `${pageID}/${componentID}/${elementID}`;
-  const { getImage } = useFile();
+  const { getImage } = useFileV4();
 
   useLayoutEffect(() => {
     if (!avatarId) {
