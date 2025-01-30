@@ -10,7 +10,8 @@ import {
   Platform,
   ScrollView,
 } from 'react-native';
-
+import { SvgXml } from 'react-native-svg';
+import { closeIcon } from '../../svg/svg-xml-list';
 import { useStyles } from './styles';
 import type { IDisplayImage, IMentionPosition } from '../../screens/CreatePost';
 import { editPost, getPostById } from '../../providers/Social/feed-sdk';
@@ -24,11 +25,10 @@ import { PostRepository, UserRepository } from '@amityco/ts-sdk-react-native';
 import { amityPostsFormatter } from '../../util/postDataFormatter';
 import postDetailSlice from '../../redux/slices/postDetailSlice';
 import globalFeedSlice from '../../redux/slices/globalfeedSlice';
+import feedSlice from '../../redux/slices/feedSlice';
 import { useDispatch } from 'react-redux';
 import MentionInput from '../MentionInput/AmityMentionInput';
 import { TSearchItem } from '../../hooks/useSearch';
-
-import CloseIcon from '../../svg/CloseIcon';
 interface IModal {
   visible: boolean;
   userId?: string;
@@ -52,12 +52,9 @@ const EditPostModal = ({
   const theme = useTheme() as MyMD3Theme;
   const styles = useStyles();
   const { apiRegion } = useAuth();
-
   const [inputMessage, setInputMessage] = useState(
     postDetail?.data?.text ?? ''
   );
-
-  const [videoPostList, setVideoPostList] = useState<IVideoPost[]>([]);
   const [displayImages, setDisplayImages] = useState<IDisplayImage[]>([]);
   const [displayVideos, setDisplayVideos] = useState<IDisplayImage[]>([]);
   const [mentionPosition, setMentionPosition] = useState<IMentionPosition[]>(
@@ -66,11 +63,11 @@ const EditPostModal = ({
   const [mentionUsers, setMentionUsers] = useState<TSearchItem[]>([]);
   const [imagePosts, setImagePosts] = useState<string[]>([]);
   const [videoPosts, setVideoPosts] = useState<IVideoPost[]>([]);
-
   const [childrenPostArr, setChildrenPostArr] = useState<string[]>([]);
   const [initialText, setInitialText] = useState('');
-  const { updateByPostId } = globalFeedSlice.actions;
+  const { updateByPostId: updateByPostIdGlobalFeed } = globalFeedSlice.actions;
   const { updatePostDetail } = postDetailSlice.actions;
+  const { updateByPostId } = feedSlice.actions;
   const dispatch = useDispatch();
 
   const parsePostText = useCallback(
@@ -139,12 +136,12 @@ const EditPostModal = ({
         );
 
         response.forEach((item) => {
-          if (item.dataType === 'image') {
+          if (item?.dataType === 'image') {
             setImagePosts((prev) => [
               ...prev,
               `https://api.${apiRegion}.amity.co/api/v3/files/${item?.data.fileId}/download?size=medium`,
             ]);
-          } else if (item.dataType === 'video') {
+          } else if (item?.dataType === 'video') {
             setVideoPosts((prev) => [...prev, item.data]);
           }
         });
@@ -190,67 +187,61 @@ const EditPostModal = ({
 
   const handleEditPost = async () => {
     const mentionees = mentionUsers.map((user) => user.id);
-    if (displayImages.length > 0) {
-      const fileIdArr: (string | undefined)[] = displayImages.map(
-        (item) => item.fileId
+    const files =
+      displayImages.length > 0
+        ? displayImages
+        : displayVideos?.length > 0
+        ? displayVideos
+        : [];
+    const fileIds = files ? files.map((item) => item.fileId) : [];
+    const type =
+      displayImages.length > 0
+        ? 'image'
+        : displayVideos.length > 0
+        ? 'video'
+        : 'text';
+    if (type === 'text' && postDetail?.childrenPosts.length > 0) {
+      await Promise.allSettled(
+        postDetail?.childrenPosts.map((postId) => {
+          PostRepository.deletePost(postId, true);
+        })
       );
-
-      const imageUrls: string[] = displayImages.map((item) => item.url);
-      const type: string = displayImages.length > 0 ? 'image' : 'text';
-      const response = await editPost(
-        postDetail.postId,
-        {
-          text: inputMessage,
-          fileIds: fileIdArr as string[],
-        },
-        type,
-        mentionees,
-        mentionPosition
+    }
+    const response = await editPost(
+      postDetail.postId,
+      {
+        text: inputMessage,
+        fileIds: fileIds as string[],
+      },
+      type,
+      mentionees,
+      mentionPosition
+    );
+    if (response) {
+      const formattedPost = await amityPostsFormatter([response]);
+      const updatedPost = { ...postDetail, ...formattedPost[0] };
+      dispatch(
+        updateByPostId({
+          postId: postDetail.postId,
+          postDetail: updatedPost,
+        })
       );
-      if (response) {
-        const formattedPost = await amityPostsFormatter([response]);
-        dispatch(
-          updateByPostId({
-            postId: postDetail.postId,
-            postDetail: formattedPost[0],
-          })
+      dispatch(
+        updateByPostIdGlobalFeed({
+          postId: postDetail.postId,
+          postDetail: updatedPost,
+        })
+      );
+      dispatch(updatePostDetail(updatedPost));
+      onFinishEdit &&
+        onFinishEdit(
+          {
+            text: inputMessage,
+            mediaUrls: formattedPost[0].childrenPosts,
+          },
+          type
         );
-        dispatch(updatePostDetail(formattedPost[0]));
-        onFinishEdit &&
-          onFinishEdit(
-            {
-              text: inputMessage,
-              mediaUrls: imageUrls,
-            },
-            type
-          );
-      }
-    } else {
-      const fileIdArr: (string | undefined)[] = displayVideos.map(
-        (item) => item.fileId
-      );
-      const type: string = displayVideos.length > 0 ? 'video' : 'text';
-      const response = await editPost(
-        postDetail.postId,
-        {
-          text: inputMessage,
-          fileIds: fileIdArr as string[],
-        },
-        type,
-        mentionees,
-        mentionPosition
-      );
-      if (response) {
-        onFinishEdit &&
-          onFinishEdit(
-            {
-              text: inputMessage,
-              mediaUrls: videoPostList,
-            },
-            type
-          );
-        handleOnClose();
-      }
+      handleOnClose();
     }
   };
 
@@ -271,7 +262,7 @@ const EditPostModal = ({
     }
   }, [imagePosts]);
 
-  const processVideo = async () => {
+  const processVideo = useCallback(async () => {
     if (videoPosts.length > 0) {
       const videosObject: IDisplayImage[] = await Promise.all(
         videoPosts.map(async (item: IVideoPost) => {
@@ -286,13 +277,11 @@ const EditPostModal = ({
       );
       setDisplayVideos(videosObject);
     }
-  };
+  }, [apiRegion, videoPosts]);
+
   useEffect(() => {
     processVideo();
-    if (videoPosts.length > 0) {
-      setVideoPostList(videoPosts);
-    }
-  }, [videoPosts]);
+  }, [processVideo]);
 
   const handleOnCloseImage = (originalPath: string) => {
     setDisplayImages((prevData) => {
@@ -302,16 +291,10 @@ const EditPostModal = ({
       return newData; // Remove the element at the specified index
     });
   };
-  const handleOnCloseVideo = (originalPath: string, fileId: string) => {
+  const handleOnCloseVideo = (originalPath: string) => {
     setDisplayVideos((prevData) => {
       const newData = prevData.filter(
         (item: IDisplayImage) => item.url !== originalPath
-      ); // Filter out objects containing the desired value
-      return newData; // Remove the element at the specified index
-    });
-    setVideoPostList((prevData) => {
-      const newData = prevData.filter(
-        (item: IVideoPost) => item.videoFileId.original !== fileId
       ); // Filter out objects containing the desired value
       return newData; // Remove the element at the specified index
     });
@@ -321,7 +304,7 @@ const EditPostModal = ({
     <Modal visible={visible} animationType="slide">
       <View style={styles.header}>
         <TouchableOpacity style={styles.closeButton} onPress={handleOnClose}>
-          <CloseIcon color={theme.colors.base} width={17} height={17}/>
+          <SvgXml xml={closeIcon(theme.colors.base)} width="17" height="17" />
         </TouchableOpacity>
         <View style={styles.headerTextContainer}>
           <Text style={styles.headerText}>Edit Post</Text>

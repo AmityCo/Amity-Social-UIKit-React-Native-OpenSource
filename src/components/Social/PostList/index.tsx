@@ -1,11 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-// import { useTranslation } from 'react-i18next';
 import {
   View,
   Text,
   TouchableOpacity,
   Image,
-  TouchableWithoutFeedback,
   Modal,
   Pressable,
   Animated,
@@ -13,7 +11,15 @@ import {
   StyleProp,
   ImageStyle,
 } from 'react-native';
-
+import { SvgXml } from 'react-native-svg';
+import {
+  arrowXml,
+  commentXml,
+  likedXml,
+  likeXml,
+  personXml,
+  threeDots,
+} from '../../../svg/svg-xml-list';
 import { useStyles } from './styles';
 import type { UserInterface } from '../../../types/user.interface';
 import {
@@ -23,10 +29,10 @@ import {
   reportTargetById,
   unReportTargetById,
 } from '../../../providers/Social/feed-sdk';
-import { getCommunityById } from '../../../providers/Social/communities-sdk';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import useAuth from '../../../hooks/useAuth';
+import EditPostModal from '../../../components/EditPostModal';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../../providers/amity-ui-kit-provider';
 import MediaSection from '../../../components/MediaSection';
@@ -35,17 +41,13 @@ import { useDispatch } from 'react-redux';
 import globalFeedSlice from '../../../redux/slices/globalfeedSlice';
 import { IMentionPosition } from '../../../screens/CreatePost';
 import feedSlice from '../../../redux/slices/feedSlice';
-import RenderTextWithMention from './Components/RenderTextWithMention';
 import { RootStackParamList } from '../../../routes/RouteParamList';
 import { useTimeDifference } from '../../../hooks/useTimeDifference';
-import PersonIcon from '../../../svg/PersonIcon';
-import { ThreeDotsIcon } from '../../../svg/ThreeDotsIcon';
-import { LikedIcon } from '../../../svg/LikedIcon';
-import { LikeIcon } from '../../../svg/LikeIcon';
-import CommentIcon from '../../../svg/CommentIcon';
-import { ChevronRightIcon } from '../../../svg/ChevronRightIcon';
-import EditPostModal from '../../EditPostModal';
 import { CommunityRepository } from '@amityco/ts-sdk-react-native';
+import RenderTextWithMention from '../../RenderTextWithMention /RenderTextWithMention';
+import { LinkPreview } from '../../PreviewLink/LinkPreview';
+
+
 
 export interface IPost {
   postId: string;
@@ -63,6 +65,8 @@ export interface IPost {
   childrenPosts: string[];
   mentionees: string[];
   mentionPosition?: IMentionPosition[];
+  path: string;
+  analytics: Amity.Post<'analytics'>;
 }
 export interface IPostList {
   onDelete?: (postId: string) => void;
@@ -84,15 +88,15 @@ export default function PostList({
   postDetail,
   postIndex,
   onDelete,
-  isGlobalfeed = true,
+  isGlobalfeed,
 }: IPostList) {
   const theme = useTheme() as MyMD3Theme;
   const { client, apiRegion } = useAuth();
   const styles = useStyles();
   const [isLike, setIsLike] = useState<boolean>(false);
   const [likeReaction, setLikeReaction] = useState<number>(0);
-  const [isJoined, setIsJoined] = useState<boolean>(true);
   const [communityName, setCommunityName] = useState('');
+  const [isJoined, setIsJoined] = useState<boolean>(true);
   const [textPost, setTextPost] = useState<string>('');
   const [privateCommunityId, setPrivateCommunityId] = useState(null);
   const [isVisible, setIsVisible] = useState<boolean>(false);
@@ -195,9 +199,6 @@ export default function PostList({
     if (reactionCount?.like) {
       setLikeReaction(reactionCount?.like);
     }
-    if (targetType === 'community' && targetId) {
-      getCommunityInfo(targetId);
-    }
   }, [data?.text, myReactions, reactionCount?.like, targetId, targetType]);
 
   const renderLikeText = useCallback(
@@ -256,12 +257,6 @@ export default function PostList({
     ]
   );
 
-
-  async function getCommunityInfo(id: string) {
-    const { data: community } = await getCommunityById(id);
-    setCommunityName(community.data.displayName);
-  }
-
   function onClickComment() {
     dispatch(
       updatePostDetail({
@@ -315,14 +310,14 @@ export default function PostList({
     if (isReportByMe) {
       const unReportPost = await unReportTargetById('post', postId);
       if (unReportPost) {
-        Alert.alert('Undo Report sent', '', []);
+        Alert.alert('Undo Report sent');
       }
       setIsVisible(false);
       setIsReportByMe(false);
     } else {
       const reportPost = await reportTargetById('post', postId);
       if (reportPost) {
-        Alert.alert('Report sent', '', []);
+        Alert.alert('Report sent');
       }
       setIsVisible(false);
       setIsReportByMe(true);
@@ -354,7 +349,7 @@ export default function PostList({
               styles.modalContent,
               modalStyle,
               user?.userId === (client as Amity.Client).userId &&
-              styles.twoOptions,
+                styles.twoOptions,
             ]}
           >
             {user?.userId === (client as Amity.Client).userId ? (
@@ -395,14 +390,20 @@ export default function PostList({
     setEditPostModalVisible(true);
   };
 
-  const handleOnFinishEdit = (postData: {
-    text: string;
-    mediaUrls: string[] | IVideoPost[];
-  }) => {
-    setTextPost(postData.text);
-    setEditPostModalVisible(false);
-    setIsEdit(true);
-  };
+  const handleOnFinishEdit = useCallback(
+    (postData: { text: string; mediaUrls: string[] | IVideoPost[] }) => {
+      setTextPost(postData.text);
+      setEditPostModalVisible(false);
+      setIsEdit(true);
+    },
+    []
+  );
+  const onClickReactions = useCallback(() => {
+    navigation.navigate('ReactionList', {
+      referenceId: postId,
+      referenceType: 'post',
+    });
+  }, [navigation, postId]);
 
   return (
     <View key={postId} style={styles.postWrap}>
@@ -417,23 +418,35 @@ export default function PostList({
             />
           ) : (
             <View style={styles.avatar}>
-              <PersonIcon />
+              <SvgXml xml={personXml} width="20" height="16" />
             </View>
           )}
 
-          <View>
+          <View style={styles.fillSpace}>
             <View style={styles.headerRow}>
               <TouchableOpacity onPress={handleDisplayNamePress}>
                 <Text style={styles.headerText}>{user?.displayName}</Text>
               </TouchableOpacity>
 
               {communityName && (
-                <>
-                  <ChevronRightIcon style={styles.arrow} />
+                <View style={styles.communityNameContainer}>
+                  <SvgXml
+                    style={styles.arrow}
+                    xml={arrowXml}
+                    width="8"
+                    height="8"
+                  />
+
                   <TouchableOpacity onPress={handleCommunityNamePress}>
-                    <Text style={styles.headerText}>{communityName}</Text>
+                    <Text
+                      ellipsizeMode="tail"
+                      numberOfLines={3}
+                      style={styles.headerText}
+                    >
+                      {communityName}
+                    </Text>
                   </TouchableOpacity>
-                </>
+                </View>
               )}
             </View>
             <View style={styles.timeRow}>
@@ -448,30 +461,35 @@ export default function PostList({
           </View>
         </View>
         <TouchableOpacity onPress={openModal} style={styles.threeDots}>
-          <ThreeDotsIcon color={theme.colors.baseShade2} />
+          <SvgXml xml={threeDots(theme.colors.base)} width="20" height="16" />
         </TouchableOpacity>
       </View>
       <View>
         <View style={styles.bodySection}>
-          {textPost && (
-            <RenderTextWithMention
-              mentionPositionArr={mentionPositionArr}
-              textPost={textPost}
+          {textPost && childrenPosts?.length === 0 && (
+            <LinkPreview
+              text={textPost}
+              mentionPositionArr={[...mentionPositionArr]}
             />
           )}
-          {childrenPosts?.length > 0 && (
+          {textPost && childrenPosts?.length > 0 && (
+            <RenderTextWithMention
+              textPost={textPost}
+              mentionPositionArr={[...mentionPositionArr]}
+            />
+          )}
+          {childrenPosts?.length > 0 && !editPostModalVisible && (
             <MediaSection childrenPosts={childrenPosts} />
           )}
-
         </View>
 
         {likeReaction === 0 && commentsCount === 0 ? (
           ''
         ) : (
-          <TouchableWithoutFeedback onPress={() => onClickComment()}>
+          <View>
             <View style={styles.countSection}>
               {likeReaction ? (
-                <Text style={styles.likeCountText}>
+                <Text style={styles.likeCountText} onPress={onClickReactions}>
                   {likeReaction} {renderLikeText(likeReaction)}
                 </Text>
               ) : (
@@ -484,10 +502,9 @@ export default function PostList({
                 </Text>
               )}
             </View>
-          </TouchableWithoutFeedback>
+          </View>
         )}
 
-  
         {targetType !== 'community' || isJoined !== false ? (
           <View style={styles.actionSection}>
             <TouchableOpacity
@@ -495,9 +512,13 @@ export default function PostList({
               style={styles.likeBtn}
             >
               {isLike ? (
-                <LikedIcon color={theme.colors.primary} />
+                <SvgXml
+                  xml={likedXml(theme.colors.primary)}
+                  width="20"
+                  height="16"
+                />
               ) : (
-                <LikeIcon color={theme.colors.baseShade2} />
+                <SvgXml xml={likeXml} width="20" height="16" />
               )}
 
               <Text style={isLike ? styles.likedText : styles.btnText}>
@@ -508,7 +529,7 @@ export default function PostList({
               onPress={onClickComment}
               style={styles.commentBtn}
             >
-              <CommentIcon color={theme.colors.baseShade2} />
+              <SvgXml xml={commentXml} width="20" height="16" />
               <Text style={styles.btnText}>Comment</Text>
             </TouchableOpacity>
           </View>

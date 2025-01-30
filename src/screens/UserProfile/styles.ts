@@ -9,9 +9,7 @@ export const useStyles = () => {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      // alignItems: 'center',
-      width: '100%',
-      justifyContent: 'flex-start',
+      backgroundColor: theme.colors.background,
     },
     loadingIndicator: {
       flex: 1,
@@ -27,13 +25,12 @@ export const useStyles = () => {
     dotIcon: {
       width: 16,
       height: 12,
-      marginRight: 16
+      tintColor: theme.colors.base,
     },
 
     followIcon: {
       width: 18,
       height: 16,
-      color: 'white',
     },
     userDetail: {
       flexDirection: 'row',
@@ -78,8 +75,6 @@ export const useStyles = () => {
       color: theme.colors.base,
     },
     editProfileButton: {
-      // flex: 1,
-      // backgroundColor: 'white',
       borderWidth: 1,
       borderColor: '#A5A9B5',
       padding: 8,
@@ -89,10 +84,6 @@ export const useStyles = () => {
       alignItems: 'center',
     },
     followButton: {
-      // flex: 1,
-      // backgroundColor: 'white',
-      // borderWidth: 1,
-      // borderColor: '#A5A9B5',
       backgroundColor: theme.colors.primary,
       padding: 8,
       borderRadius: 4,
@@ -148,8 +139,8 @@ export const useStyles = () => {
       color: theme.colors.baseShade1,
     },
     thumbnail: {
-      width: width * 0.5 - 30,
-      height: width * 0.5 - 30,
+      width: width * 0.5 - 20,
+      height: width * 0.5 - 20,
       borderRadius: 10,
       margin: 10,
     },
@@ -160,10 +151,44 @@ export const useStyles = () => {
       justifyContent: 'center',
       alignItems: 'center',
     },
-    galleryContainer:{
-      backgroundColor: theme.colors.background,
-      height:'100%'
-    }
+    pendingRequestContainer: {
+      marginTop: 10,
+      backgroundColor: theme.colors.baseShade4,
+      borderRadius: 4,
+      alignItems: 'center',
+      padding: 8,
+    },
+    rowContainer: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: 4,
+    },
+    pendingRequestText: {
+      color: theme.colors.base,
+      fontSize: 15,
+      fontWeight: '600',
+      marginLeft: 6,
+    },
+    pendingRequestSubText: {
+      color: theme.colors.baseShade1,
+      fontSize: 13,
+    },
+    privateProfileContainer: {
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingVertical: width * 0.3,
+    },
+    privateAccountTitle: {
+      fontSize: 17,
+      fontWeight: '600',
+      color: theme.colors.base,
+      marginVertical: 12,
+    },
+    privateAccountSubTitle: {
+      fontSize: 15,
+      color: theme.colors.baseShade3,
+    },
   });
 
   return styles;

@@ -3,35 +3,31 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Modal,
   Pressable,
+  Modal,
   Animated,
   Alert,
   StyleProp,
   ImageStyle,
 } from 'react-native';
-
+import { SvgXml } from 'react-native-svg';
+import {
+  arrowForward,
+  editIcon,
+  reportOutLine,
+  storyDraftDeletHyperLink,
+} from '../../svg/svg-xml-list';
 import { useStyles } from './styles';
 import type { UserInterface } from '../../types/user.interface';
-import {
-  deletePostById,
-  isReportTarget,
-  reportTargetById,
-  unReportTargetById,
-} from '../../providers/Social/feed-sdk';
 import { getCommunityById } from '../../providers/Social/communities-sdk';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import useAuth from '../../hooks/useAuth';
-import EditPostModal from '../../components/EditPostModal';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import MediaSection from '../../components/MediaSection';
-import { useDispatch } from 'react-redux';
-import globalFeedSlice from '../../redux/slices/globalfeedSlice';
 import { IMentionPosition } from '../../types/type';
-import RenderTextWithMention from '../RenderTextWithMention/RenderTextWithMention';
 import { RootStackParamList } from '../../routes/RouteParamList';
+import { ComponentID, ElementID, PageID } from '../../enum';
 import AvatarElement from '../../Elements/CommonElements/AvatarElement';
 
 import ModeratorBadgeElement from '../../Elements/ModeratorBadgeElement/ModeratorBadgeElement';
@@ -39,10 +35,25 @@ import AmityPostEngagementActionsComponent from '../AmityPostEngagementActionsCo
 import { AmityPostContentComponentStyleEnum } from '../../enum/AmityPostContentComponentStyle';
 import { PostTargetType } from '../../enum/postTargetType';
 import TimestampElement from '../../Elements/TimestampElement/TimestampElement';
+
 import MenuButtonIconElement from '../../Elements/MenuButtonIconElement/MenuButtonIconElement';
-import { ComponentID, ElementID, PageID } from '../../enum';
+import {
+  deletePostById,
+  isReportTarget,
+  reportTargetById,
+  unReportTargetById,
+} from '../../providers/Social/feed-sdk';
+import useAuth from '../../hooks/useAuth';
+import globalFeedSlice from '../../redux/slices/globalfeedSlice';
+import { useDispatch } from 'react-redux';
+import { useBehaviour } from '../../providers/BehaviourProvider';
+import uiSlice from '../../redux/slices/uiSlice';
 import { useAmityComponent } from '../../hooks/useUiKitReference';
-import ArrowForwardIcon from '../../svg/ArrowForwardIcon';
+import { useIsCommunityModerator } from '../../hooks/useIsCommunityModerator';
+import RenderTextWithMention from '../RenderTextWithMention /RenderTextWithMention';
+import { LinkPreview } from '../PreviewLink/LinkPreview';
+import { ThreeDotsIcon } from '../../svg/ThreeDotsIcon';
+
 export interface IPost {
   postId: string;
   data: Record<string, any>;
@@ -59,6 +70,7 @@ export interface IPost {
   childrenPosts: string[];
   mentionees: string[];
   mentionPosition?: IMentionPosition[];
+  analytics: Amity.Post<'analytics'>;
 }
 export interface IPostList {
   post: IPost;
@@ -80,30 +92,32 @@ const AmityPostContentComponent = ({
   AmityPostContentComponentStyle = AmityPostContentComponentStyleEnum.detail,
 }: IPostList) => {
   const theme = useTheme() as MyMD3Theme;
+  const {
+    AmityPostContentComponentBehavior,
+    AmityGlobalFeedComponentBehavior,
+  } = useBehaviour();
   const componentId = ComponentID.post_content;
   const { accessibilityId, themeStyles } = useAmityComponent({
     pageId: pageId,
     componentId: componentId,
   });
-  const { client } = useAuth();
   const styles = useStyles(themeStyles);
-  const { deleteByPostId } = globalFeedSlice.actions;
+  const { client } = useAuth();
+  const { showToastMessage } = uiSlice.actions;
   const [textPost, setTextPost] = useState<string>('');
-  const [privateCommunityId, setPrivateCommunityId] = useState(null);
-  const [isVisible, setIsVisible] = useState<boolean>(false);
-  const [isEdit, setIsEdit] = useState<boolean>(false);
-  const [isReportByMe, setIsReportByMe] = useState<boolean>(false);
   const [communityData, setCommunityData] = useState<Amity.Community>(null);
-  const [editPostModalVisible, setEditPostModalVisible] =
-    useState<boolean>(false);
-  const slideAnimation = useRef(new Animated.Value(0)).current;
+  const { deleteByPostId } = globalFeedSlice.actions;
+  const dispatch = useDispatch();
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const dispatch = useDispatch();
-
+  const [isVisible, setIsVisible] = useState(false);
+  const [isReportByMe, setIsReportByMe] = useState(false);
   const [mentionPositionArr, setMentionsPositionArr] = useState<
     IMentionPosition[]
   >([]);
+
+  const slideAnimation = useRef(new Animated.Value(0)).current;
+
   const {
     postId,
     data,
@@ -117,12 +131,78 @@ const AmityPostContentComponent = ({
     editedAt,
     mentionPosition,
   } = post ?? {};
-
+  const { isCommunityModerator } = useIsCommunityModerator({
+    communityId: targetType === 'community' && targetId,
+    userId: user.userId,
+  });
+  const myId = (client as Amity.Client).userId;
+  const { isCommunityModerator: isIAmModerator } = useIsCommunityModerator({
+    communityId: targetType === 'community' && targetId,
+    userId: myId,
+  });
   useEffect(() => {
     if (mentionPosition) {
       setMentionsPositionArr(mentionPosition);
     }
   }, [mentionPosition]);
+
+  useEffect(() => {
+    setTextPost(data?.text);
+    if (targetType === 'community' && targetId) {
+      getCommunityInfo(targetId);
+    }
+  }, [data?.text, myReactions, reactionCount?.like, targetId, targetType]);
+
+  async function getCommunityInfo(id: string) {
+    const { data: community }: { data: Amity.LiveObject<Amity.Community> } =
+      await getCommunityById(id);
+    if (community.error) return;
+    if (!community.loading) {
+      setCommunityData(community?.data);
+    }
+  }
+
+  const handleDisplayNamePress = () => {
+    if (!user?.userId) return null;
+    if (AmityPostContentComponentBehavior?.goToUserProfilePage) {
+      return AmityPostContentComponentBehavior.goToUserProfilePage({
+        userId: user.userId,
+      });
+    }
+    return navigation.navigate('UserProfile', {
+      userId: user.userId,
+    });
+  };
+
+  const handleCommunityNamePress = () => {
+    if (targetType !== 'community' || !targetId) return null;
+    if (AmityPostContentComponentBehavior?.goToCommunityProfilePage) {
+      return AmityPostContentComponentBehavior.goToCommunityProfilePage({
+        communityId: targetId,
+        communityName: communityData?.displayName,
+      });
+    }
+    return navigation.navigate('CommunityHome', {
+      communityId: targetId,
+      communityName: communityData?.displayName,
+    });
+  };
+
+  const modalStyle = {
+    transform: [
+      {
+        translateY: slideAnimation.interpolate({
+          inputRange: [0, 1],
+          outputRange: [580, 0], // Adjust this value to control the sliding distance
+        }),
+      },
+    ],
+  };
+
+  const openEditPostModal = () => {
+    closeModal();
+    navigation.navigate('EditPost', { post, community: communityData });
+  };
 
   const openModal = () => {
     setIsVisible(true);
@@ -147,40 +227,14 @@ const AmityPostContentComponent = ({
     checkIsReport();
   }, [checkIsReport]);
 
-  useEffect(() => {
-    setTextPost(data?.text);
-    if (targetType === 'community' && targetId) {
-      getCommunityInfo(targetId);
+  const onDeletePost = useCallback(async () => {
+    const deleted = await deletePostById(postId);
+    if (deleted) {
+      dispatch(deleteByPostId({ postId }));
+      navigation.pop();
     }
-  }, [data?.text, myReactions, reactionCount?.like, targetId, targetType]);
+  }, [deleteByPostId, dispatch, navigation, postId]);
 
-  async function getCommunityInfo(id: string) {
-    const { data: community }: { data: Amity.LiveObject<Amity.Community> } =
-      await getCommunityById(id);
-    if (community.error) return;
-    if (!community.loading) {
-      setCommunityData(community?.data);
-      !community.data.isPublic &&
-        setPrivateCommunityId(community.data.communityId);
-    }
-  }
-
-  const handleDisplayNamePress = () => {
-    if (user?.userId) {
-      navigation.navigate('UserProfile', {
-        userId: user?.userId,
-      });
-    }
-  };
-
-  const handleCommunityNamePress = () => {
-    if (targetType === 'community' && targetId) {
-      navigation.navigate('CommunityHome', {
-        communityId: targetId,
-        communityName: communityData?.displayName,
-      });
-    }
-  };
   const deletePostObject = () => {
     Alert.alert(
       'Delete this post',
@@ -199,33 +253,33 @@ const AmityPostContentComponent = ({
     );
     setIsVisible(false);
   };
+
   const reportPostObject = async () => {
     if (isReportByMe) {
       const unReportPost = await unReportTargetById('post', postId);
-      if (unReportPost) {
-        Alert.alert('Undo Report sent');
-      }
       setIsVisible(false);
       setIsReportByMe(false);
+      if (unReportPost) {
+        dispatch(
+          showToastMessage({
+            toastMessage: 'Post unreported',
+            isSuccessToast: true,
+          })
+        );
+      }
     } else {
       const reportPost = await reportTargetById('post', postId);
-      if (reportPost) {
-        Alert.alert('Report sent');
-      }
       setIsVisible(false);
       setIsReportByMe(true);
+      if (reportPost) {
+        dispatch(
+          showToastMessage({
+            toastMessage: 'Post reported',
+            isSuccessToast: true,
+          })
+        );
+      }
     }
-  };
-
-  const modalStyle = {
-    transform: [
-      {
-        translateY: slideAnimation.interpolate({
-          inputRange: [0, 1],
-          outputRange: [600, 0], // Adjust this value to control the sliding distance
-        }),
-      },
-    ],
   };
 
   const renderOptionModal = () => {
@@ -241,33 +295,49 @@ const AmityPostContentComponent = ({
             style={[
               styles.modalContent,
               modalStyle,
-              user?.userId === (client as Amity.Client).userId &&
+              (post?.user?.userId === myId || isIAmModerator) &&
                 styles.twoOptions,
             ]}
           >
-            {user?.userId === (client as Amity.Client).userId ? (
-              <View>
-                <TouchableOpacity
-                  onPress={openEditPostModal}
-                  style={styles.modalRow}
-                >
-                  <Text style={styles.deleteText}> Edit Post</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={deletePostObject}
-                  style={styles.modalRow}
-                >
-                  <Text style={styles.deleteText}> Delete Post</Text>
-                </TouchableOpacity>
-              </View>
+            <View style={styles.handleBar} />
+            {post?.user?.userId === (client as Amity.Client).userId ? (
+              <TouchableOpacity
+                onPress={openEditPostModal}
+                style={styles.modalRow}
+              >
+                <SvgXml
+                  xml={editIcon(themeStyles.colors.base)}
+                  width="20"
+                  height="20"
+                />
+                <Text style={styles.editText}> Edit Post</Text>
+              </TouchableOpacity>
             ) : (
               <TouchableOpacity
                 onPress={reportPostObject}
                 style={styles.modalRow}
               >
-                <Text style={styles.deleteText}>
-                  {isReportByMe ? 'Undo Report' : 'Report'}
+                <SvgXml
+                  xml={reportOutLine(themeStyles.colors.base)}
+                  width="20"
+                  height="20"
+                />
+                <Text style={styles.editText}>
+                  {isReportByMe ? 'Unreport post' : 'Report post'}
                 </Text>
+              </TouchableOpacity>
+            )}
+            {(post?.user?.userId === myId || isIAmModerator) && (
+              <TouchableOpacity
+                onPress={deletePostObject}
+                style={styles.modalRow}
+              >
+                <SvgXml
+                  xml={storyDraftDeletHyperLink()}
+                  width="20"
+                  height="20"
+                />
+                <Text style={styles.deleteText}> Delete Post</Text>
               </TouchableOpacity>
             )}
           </Animated.View>
@@ -275,29 +345,15 @@ const AmityPostContentComponent = ({
       </Modal>
     );
   };
-  const closeEditPostModal = () => {
-    setEditPostModalVisible(false);
-  };
-  const openEditPostModal = () => {
-    setIsVisible(false);
-    setEditPostModalVisible(true);
-  };
 
-  const handleOnFinishEdit = (postData: {
-    text: string;
-    mediaUrls: string[] | IVideoPost[];
-  }) => {
-    setTextPost(postData.text);
-    setEditPostModalVisible(false);
-    setIsEdit(true);
-  };
-
-  const onDeletePost = useCallback(async () => {
-    const isDeleted = await deletePostById(postId);
-    if (isDeleted) {
-      dispatch(deleteByPostId({ postId }));
+  const onPressPost = useCallback(() => {
+    if (AmityGlobalFeedComponentBehavior.goToPostDetailPage) {
+      return AmityGlobalFeedComponentBehavior.goToPostDetailPage(postId);
     }
-  }, [deleteByPostId, dispatch, postId]);
+    return navigation.navigate('PostDetail', {
+      postId: postId,
+    });
+  }, [AmityGlobalFeedComponentBehavior, navigation, postId]);
 
   return (
     <View
@@ -306,7 +362,7 @@ const AmityPostContentComponent = ({
       testID={accessibilityId}
       accessibilityLabel={accessibilityId}
     >
-      <View style={styles.headerSection}>
+      <Pressable style={styles.headerSection} onPress={onPressPost}>
         <View style={styles.user}>
           <AvatarElement
             style={styles.avatar as StyleProp<ImageStyle>}
@@ -324,7 +380,12 @@ const AmityPostContentComponent = ({
 
               {communityData?.displayName && (
                 <View style={styles.communityNameContainer}>
-                  <ArrowForwardIcon  style={styles.arrow}  width={8} height={8} color={theme.colors.baseShade1}/>
+                  <SvgXml
+                    style={styles.arrow}
+                    xml={arrowForward(theme.colors.baseShade1)}
+                    width="8"
+                    height="8"
+                  />
 
                   <TouchableOpacity onPress={handleCommunityNamePress}>
                     <Text
@@ -339,7 +400,7 @@ const AmityPostContentComponent = ({
               )}
             </View>
             <View style={styles.timeRow}>
-              {targetType === 'community' && targetId && (
+              {isCommunityModerator && (
                 <View style={styles.row}>
                   <ModeratorBadgeElement
                     pageID={pageId}
@@ -356,7 +417,7 @@ const AmityPostContentComponent = ({
                 componentID={componentId}
               />
 
-              {(editedAt !== createdAt || isEdit) && (
+              {editedAt !== createdAt && (
                 <>
                   <Text style={styles.dot}>·</Text>
                   <Text style={styles.headerTextTime}>Edited</Text>
@@ -365,24 +426,31 @@ const AmityPostContentComponent = ({
             </View>
           </View>
         </View>
-        <TouchableOpacity onPress={openModal} style={styles.threeDots}>
-          <MenuButtonIconElement
-            width={20}
-            height={20}
-            resizeMode="contain"
-            tintColor={themeStyles.colors.base}
-            componentID={componentId}
-          />
-        </TouchableOpacity>
-      </View>
+        {AmityPostContentComponentStyle ===
+        AmityPostContentComponentStyleEnum.feed ? (
+          <Pressable onPress={openModal} hitSlop={12}>
+          <ThreeDotsIcon/>
+          </Pressable>
+        ) : (
+          <View style={styles.threeDots} />
+        )}
+      </Pressable>
       <View>
         <View style={styles.bodySection}>
-          {textPost && (
-            <RenderTextWithMention
-              mentionPositionArr={[...mentionPositionArr]}
-              textPost={textPost}
-            />
-          )}
+          <Pressable onPress={onPressPost}>
+            {textPost && childrenPosts?.length === 0 && (
+              <LinkPreview
+                text={textPost}
+                mentionPositionArr={[...mentionPositionArr]}
+              />
+            )}
+            {textPost && childrenPosts?.length > 0 && (
+              <RenderTextWithMention
+                textPost={textPost}
+                mentionPositionArr={[...mentionPositionArr]}
+              />
+            )}
+          </Pressable>
           {childrenPosts?.length > 0 && (
             <MediaSection childrenPosts={childrenPosts} />
           )}
@@ -397,15 +465,6 @@ const AmityPostContentComponent = ({
         />
       </View>
       {renderOptionModal()}
-      {editPostModalVisible && (
-        <EditPostModal
-          privateCommunityId={privateCommunityId}
-          visible={editPostModalVisible}
-          onClose={closeEditPostModal}
-          postDetail={{ ...post, data: { ...data, text: textPost } }}
-          onFinishEdit={handleOnFinishEdit}
-        />
-      )}
     </View>
   );
 };

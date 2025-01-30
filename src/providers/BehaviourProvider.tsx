@@ -1,7 +1,6 @@
 import React, { ReactNode, createContext, useContext, useMemo } from 'react';
 import { IBehaviour } from '../types/behaviour.interface';
 
-
 const BehaviourContext = createContext<IBehaviour>(undefined);
 
 interface IBehavioudProviderProps {
@@ -16,10 +15,15 @@ export const BehaviourProvider = ({
   const defaultBehaviour = useMemo(
     () => ({
       AmitySocialHomePageBehaviour: {},
+      AmityGlobalFeedComponentBehavior: {},
+      AmityPostContentComponentBehavior: {},
       AmitySocialHomeTopNavigationComponentBehaviour: {},
       AmityCommunitySearchResultComponent: {},
       AmityEmptyNewsFeedComponent: {},
       AmityMyCommunitiesComponentBehaviour: {},
+      AmityCreatePostMenuComponentBehavior: {},
+      AmityPostTargetSelectionPageBehavior: {},
+      AmityStoryTargetSelectionPageBehavior: {},
     }),
     []
   );

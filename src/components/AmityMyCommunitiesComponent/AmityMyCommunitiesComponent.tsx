@@ -19,8 +19,8 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../routes/RouteParamList';
 import { formatNumber } from '../../util/numberUtil';
 import ContentLoader, { Circle, Rect } from 'react-content-loader/native';
-import { useAmityComponent } from '../../hooks/useUiKitReference';
 import { useCommunities } from '../../hooks/useCommunities';
+import { useAmityComponent } from '../../hooks/useUiKitReference';
 type AmityMyCommunitiesComponentType = {
   pageId?: PageID;
   componentId?: ComponentID;
@@ -39,6 +39,7 @@ const AmityMyCommunitiesComponent: FC<AmityMyCommunitiesComponentType> = ({
   const { AmityMyCommunitiesComponentBehaviour } = useBehaviour();
   const styles = useStyles(themeStyles);
   const { communities, onNextCommunityPage } = useCommunities();
+
   const myCommunitiesListItem = ({ item }: { item: Amity.Community }) => {
     const privateCommunityTextlength: TextStyle = !item.isPublic && {
       width: '90%',

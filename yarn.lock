@@ -62,6 +62,7 @@ __metadata:
     "@amityco/ts-sdk-react-native": ^6.33.1
     "@commitlint/config-conventional": ^17.0.2
     "@evilmartians/lefthook": ^1.5.0
+    "@fawazahmed/react-native-read-more": ^3.0.4
     "@react-native-async-storage/async-storage": ^1.19.0
     "@react-native/eslint-config": ^0.73.1
     "@react-navigation/native": 6.1.6
@@ -4234,6 +4235,18 @@ __metadata:
   bin:
     excpretty: build/cli.js
   checksum: dbf3e2d7f501fbbd11baf0c0aa9057c8a87efe0993a82caafd30c66977ac430d03fa84e27b529e3d0b04fee8c6beec1bd135f0522229dca91220561b76309854
+  languageName: node
+  linkType: hard
+
+"@fawazahmed/react-native-read-more@npm:^3.0.4":
+  version: 3.0.4
+  resolution: "@fawazahmed/react-native-read-more@npm:3.0.4"
+  dependencies:
+    prop-types: ^15.7.2
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: b70881d2ec5ae6d5fdd156764a533adca71ff0a7a8944993f1285612caacc899b645cd11c4786ef4a24726054259e04d4ddbfcc88dc4682bf7346c8bc4d704de
   languageName: node
   linkType: hard
 

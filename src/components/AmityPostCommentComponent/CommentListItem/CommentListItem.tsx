@@ -34,7 +34,7 @@ import { CommentRepository } from '@amityco/ts-sdk-react-native';
 
 
 import { ComponentID, PageID } from '../../../enum';
-import RenderTextWithMention from '../../RenderTextWithMention/RenderTextWithMention';
+
 import { UserInterface } from '../../../types/user.interface';
 import { IMentionPosition } from '../../../screens/CreatePost';
 import { useTimeDifference } from '../../../hooks/useTimeDifference';
@@ -44,6 +44,7 @@ import { ThreeDotsIcon } from '../../../svg/ThreeDotsIcon';
 
 import ExpandIcon from '../../../svg/ExpandIcon';
 import LikeReactionIcon from '../../../svg/LikeReactionIcon';
+import RenderTextWithMention from '../../RenderTextWithMention /RenderTextWithMention';
 
 export interface IComment {
   commentId: string;

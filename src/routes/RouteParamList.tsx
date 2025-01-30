@@ -15,7 +15,6 @@ export type RootStackParamList = {
   CommunityHome: {
     communityId: string;
     communityName: string;
-    isBackEnabled?: boolean;
   };
   MemberDetail: undefined;
   Community: undefined;
@@ -49,9 +48,23 @@ export type RootStackParamList = {
     >;
     needApprovalOnPostCreation: boolean;
   };
+  CreateLivestream: {
+    targetId: string;
+    targetName: string;
+    targetType: string;
+    isPublic?: boolean;
+    postSetting?: ValueOf<
+      Readonly<{
+        ONLY_ADMIN_CAN_POST: 'ONLY_ADMIN_CAN_POST';
+        ADMIN_REVIEW_POST_REQUIRED: 'ADMIN_REVIEW_POST_REQUIRED';
+        ANYONE_CAN_POST: 'ANYONE_CAN_POST';
+      }>
+    >;
+    needApprovalOnPostCreation: boolean;
+  };
   PostDetail: {
     postId: string;
-    postIndex?: number;
+    postIndex: number;
     isFromGlobalfeed?: boolean;
     // initVideoPosts?: IVideoPost[];
     // initImagePosts?: string[];
@@ -59,10 +72,8 @@ export type RootStackParamList = {
     // initImagePostsFullSize?: MediaUri[];
   };
   UserProfile: {
-    userId?: string;
-    isBackEnabled?: boolean
+    userId: string;
   };
-  MyUserProfile: undefined
   UserProfileSetting: {
     user: Amity.User;
     follow: string;
@@ -73,7 +84,7 @@ export type RootStackParamList = {
   EditCommunity: {
     communityId: string;
   };
-  MyCommunity: undefined;
+  AllMyCommunity: undefined;
   CreateCommunity: undefined;
   VideoPlayer: { source: string };
   PendingPosts: { communityId: string; isModerator: boolean };
@@ -84,7 +95,5 @@ export type RootStackParamList = {
   };
   UserPendingRequest: undefined;
   FollowerList: Amity.User;
-  AmitySocialGlobalSearchPage: undefined;
-  Newsfeed: undefined;
-  PreloadCommunityHome: undefined;
+  LivestreamPlayer: { streamId: string };
 };

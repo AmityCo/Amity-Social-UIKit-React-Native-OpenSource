@@ -120,7 +120,8 @@ export const getPreviewData = async (text: string, requestTimeout = 5000) => {
     let matches: RegExpMatchArray | null;
     const meta: RegExpMatchArray[] = [];
     while ((matches = REGEX_META.exec(head)) !== null) {
-      meta.push([...matches] as RegExpMatchArray);
+      // @ts-ignore
+      meta.push([...matches]);
     }
 
     const metaPreviewData = meta.reduce<{
@@ -162,7 +163,8 @@ export const getPreviewData = async (text: string, requestTimeout = 5000) => {
       let imageMatches: RegExpMatchArray | null;
       const tags: RegExpMatchArray[] = [];
       while ((imageMatches = REGEX_IMAGE_TAG.exec(html)) !== null) {
-        tags.push([...imageMatches] as RegExpMatchArray);
+        // @ts-ignore
+        tags.push([...imageMatches]);
       }
 
       let images: PreviewDataImage[] = [];
@@ -189,7 +191,7 @@ export const getPreviewData = async (text: string, requestTimeout = 5000) => {
 };
 
 /* istanbul ignore next */
-export const getPreviewDataImage = async (url?: string): Promise<PreviewDataImage | null> => {
+export const getPreviewDataImage = async (url?: string) => {
   if (!url) return null;
 
   try {
@@ -199,15 +201,13 @@ export const getPreviewDataImage = async (url?: string): Promise<PreviewDataImag
     if (height > 100 && width > 100 && aspectRatio > 0.1 && aspectRatio < 10) {
       const image: PreviewDataImage = { height, url, width };
       return image;
+    } else {
+      return null;
     }
   } catch {
-    // Handle error silently
+    return null;
   }
-
-  // Return null if the conditions are not met or if an error occurs
-  return null;
 };
-
 
 export const oneOf =
   <T extends (...args: A) => any, U, A extends any[]>(

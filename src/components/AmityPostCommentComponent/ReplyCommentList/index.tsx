@@ -34,7 +34,7 @@ import { ComponentID, PageID } from '../../../enum';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../../routes/RouteParamList';
-import RenderTextWithMention from '../../RenderTextWithMention/RenderTextWithMention';
+
 import ModeratorBadgeElement from '../../../Elements/ModeratorBadgeElement/ModeratorBadgeElement';
 import { IMentionPosition } from '../../../types/type';
 import { UserInterface } from '../../../types/user.interface';
@@ -42,6 +42,7 @@ import PersonIcon from '../../../svg/PersonIcon';
 import ExpandIcon from '../../../svg/ExpandIcon';
 import { ThreeDotsIcon } from '../../../svg/ThreeDotsIcon';
 import LikeReactionIcon from '../../../svg/LikeReactionIcon';
+import RenderTextWithMention from '../../RenderTextWithMention /RenderTextWithMention';
 
 export interface IComment {
   commentId: string;

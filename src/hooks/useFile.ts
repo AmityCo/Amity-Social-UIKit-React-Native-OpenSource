@@ -1,33 +1,25 @@
-import { useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import { FileRepository } from '@amityco/ts-sdk-react-native';
 import { ImageSizeState, ImageSizeSubset } from '../enum/imageSizeState';
+import { defaultAvatarUri } from '../assets/index';
 
 interface useFileProps {
   fileId: string;
   imageSize?: ImageSizeSubset;
 }
 
-const useFile = ({
-  fileId,
-  imageSize = ImageSizeState.medium,
-}: useFileProps) => {
-  const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
-
-  useEffect(() => {
-    async function run() {
-      if (!fileId) return;
+export const useFile = () => {
+  const getImage = useCallback(
+    async ({ fileId, imageSize = ImageSizeState.medium }: useFileProps) => {
+      if (!fileId) return defaultAvatarUri;
       const file = await FileRepository.getFile(fileId);
-      if (!file) return;
-      const newImageUrl = await FileRepository.fileUrlWithSize(
-        file.data.fileUrl,
-        imageSize
-      );
-      setImageUrl(newImageUrl);
-    }
-    run();
-  }, [fileId, imageSize]);
-
-  return imageUrl;
+      if (!file) return defaultAvatarUri;
+      const newImageUrl =
+        FileRepository.fileUrlWithSize(file.data.fileUrl, imageSize) ??
+        defaultAvatarUri;
+      return newImageUrl;
+    },
+    []
+  );
+  return { getImage };
 };
-
-export default useFile;

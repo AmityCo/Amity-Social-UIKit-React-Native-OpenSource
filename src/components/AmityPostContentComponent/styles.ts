@@ -210,7 +210,10 @@ export const useStyles = (theme: MyMD3Theme) => {
       minHeight: 375,
     },
     threeDots: {
-      padding: 5,
+      width: 18,
+      height: 18,
+      tintColor: theme.colors.base,
+      resizeMode: 'contain',
     },
     modalContainer: {
       flex: 1,
@@ -219,13 +222,13 @@ export const useStyles = (theme: MyMD3Theme) => {
     },
     modalContent: {
       backgroundColor: theme.colors.background,
-      borderTopLeftRadius: 10,
-      borderTopRightRadius: 10,
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
       padding: 10,
       minHeight: 700,
     },
     twoOptions: {
-      minHeight: 720,
+      minHeight: 750,
     },
     modalRow: {
       flexDirection: 'row',
@@ -233,10 +236,23 @@ export const useStyles = (theme: MyMD3Theme) => {
       padding: 5,
       marginVertical: 8,
     },
-    deleteText: {
+    handleBar: {
+      alignSelf: 'center',
+      width: 36,
+      backgroundColor: theme.colors.baseShade4,
+      height: 5,
+      marginVertical: 10,
+      borderRadius: 10,
+    },
+    editText: {
       paddingLeft: 12,
       fontWeight: '600',
       color: theme.colors.base,
+    },
+    deleteText: {
+      paddingLeft: 12,
+      fontWeight: '600',
+      color: theme.colors.alert,
     },
     timeRow: {
       marginTop: 4,

@@ -11,7 +11,7 @@ import { useStyles } from './styles';
 import { TabName } from '../../enum/enumTabName';
 
 interface ICustomTab {
-  onTabChange: (tabName: any) => void;
+  onTabChange: (tabName: TabName) => void;
   tabName: TabName[];
 }
 const CustomTab = ({ tabName, onTabChange }: ICustomTab): ReactElement => {

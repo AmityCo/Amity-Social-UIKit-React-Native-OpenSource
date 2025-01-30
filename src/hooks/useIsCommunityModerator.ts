@@ -2,7 +2,7 @@ import { CommunityRepository } from '@amityco/ts-sdk-react-native';
 import { isModerator } from '../util/permission';
 import { useEffect, useState } from 'react';
 
-export const useIsCommunityModerator = async ({
+export const useIsCommunityModerator = ({
   userId,
   communityId,
 }: {
@@ -20,7 +20,7 @@ export const useIsCommunityModerator = async ({
         sortBy: 'firstCreated',
         memberships: ['member'],
       },
-      ({ error, loading, data }) => {
+      async ({ error, loading, data }) => {
         if (error) return setisCommunityModerator(false);
         if (!loading) {
           const userRoles = data[0]?.roles ?? [];
@@ -30,6 +30,6 @@ export const useIsCommunityModerator = async ({
       }
     );
     return () => unsub();
-  }, [communityId, isCommunityModerator, userId]);
+  }, [communityId, userId]);
   return { isCommunityModerator: isCommunityModerator };
 };
