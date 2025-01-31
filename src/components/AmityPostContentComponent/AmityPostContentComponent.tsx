@@ -465,6 +465,7 @@ const AmityPostContentComponent = ({
         />
       </View>
       {renderOptionModal()}
+      
     </View>
   );
 };

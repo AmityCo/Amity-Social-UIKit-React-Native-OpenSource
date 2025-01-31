@@ -15,7 +15,7 @@ import { closeIcon } from '../../svg/svg-xml-list';
 import { useStyles } from './styles';
 import type { IDisplayImage, IMentionPosition } from '../../screens/CreatePost';
 import { editPost, getPostById } from '../../providers/Social/feed-sdk';
-import LoadingImage from '../LoadingImage';
+import LoadingImage from '../LoadingImageV4';
 import LoadingVideo from '../LoadingVideo';
 import type { IPost, IVideoPost } from '../Social/PostList';
 import useAuth from '../../hooks/useAuth';

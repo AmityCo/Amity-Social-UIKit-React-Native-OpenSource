@@ -1,5 +1,5 @@
 import React, { FC, memo, useCallback, useRef, useState } from 'react';
-import { FlatList } from 'react-native';
+import { FlatList, View } from 'react-native';
 import useAuth from '../../hooks/useAuth';
 import { useStyle } from './styles';
 import { amityPostsFormatter } from '../../util/postDataFormatter';
@@ -12,13 +12,13 @@ import AmityPostContentComponent, {
   IPost,
 } from '../AmityPostContentComponent/AmityPostContentComponent';
 import { ComponentID, PageID } from '../../enum/enumUIKitID';
-
+import { useAmityComponent } from '../../hooks/useUiKitReference';
 import { AmityPostContentComponentStyleEnum } from '../../enum/AmityPostContentComponentStyle';
 
 import { FeedRepository, PostRepository } from '@amityco/ts-sdk-react-native';
-
-import { useAmityComponent } from '../../hooks/useUiKitReference';
 import { usePostImpression } from '../../hooks/usePostImpression';
+import NewsFeedLoadingComponent from '../NewsFeedLoadingComponent/NewsFeedLoadingComponent';
+
 
 type AmityGlobalFeedComponentType = {
   pageId?: PageID;
@@ -50,7 +50,7 @@ const AmityGlobalFeedComponent: FC<AmityGlobalFeedComponentType> = ({
       paging: { next },
     } = await FeedRepository.getCustomRankingGlobalFeed({
       queryToken,
-      limit: 20,
+      limit: 10,
     });
     if (data) {
       setPostData({ data, nextPage: next });
@@ -72,7 +72,7 @@ const AmityGlobalFeedComponent: FC<AmityGlobalFeedComponentType> = ({
     useCallback(() => {
       if (isConnected) {
         FeedRepository.getCustomRankingGlobalFeed({
-          limit: 20,
+          limit: 10,
         }).then(({ data, paging: { next } }) => {
           setPostData({ data, nextPage: next });
         });
@@ -126,37 +126,44 @@ const AmityGlobalFeedComponent: FC<AmityGlobalFeedComponentType> = ({
   if (isExcluded) return null;
 
   return (
-    <FlatList
-      initialNumToRender={20}
-      testID={accessibilityId}
-      accessibilityLabel={accessibilityId}
-      style={styles.feedWrap}
-      data={postList}
-      renderItem={({ item }) => (
-        <AmityPostContentComponent
-          post={item}
-          AmityPostContentComponentStyle={
-            AmityPostContentComponentStyleEnum.feed
-          }
-        />
-      )}
-      keyExtractor={(item) => item.postId.toString()}
-      onEndReachedThreshold={0.5}
-      onEndReached={handleLoadMore}
-      ref={flatListRef}
-      refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-          colors={['lightblue']}
-          tintColor="lightblue"
-        />
-      }
-      keyboardShouldPersistTaps="handled"
-      viewabilityConfig={{ viewAreaCoveragePercentThreshold: 60 }}
-      onViewableItemsChanged={handleViewChange}
-      extraData={postList}
-    />
+
+    postData ?
+      <FlatList
+        initialNumToRender={10}
+        testID={accessibilityId}
+        accessibilityLabel={accessibilityId}
+        style={styles.feedWrap}
+        data={postList}
+        renderItem={({ item }) => (
+          <AmityPostContentComponent
+            post={item}
+            AmityPostContentComponentStyle={
+              AmityPostContentComponentStyleEnum.feed
+            }
+          />
+        )}
+        keyExtractor={(item) => item.postId.toString()}
+        onEndReachedThreshold={0.5}
+        onEndReached={handleLoadMore}
+        ref={flatListRef}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={['lightblue']}
+            tintColor="lightblue"
+          />
+        }
+        keyboardShouldPersistTaps="handled"
+        viewabilityConfig={{ viewAreaCoveragePercentThreshold: 60 }}
+        onViewableItemsChanged={handleViewChange}
+        extraData={postList}
+      /> :
+      <View  style={styles.feedWrap}>
+        <NewsFeedLoadingComponent />
+      </View>
+
+
   );
 };
 

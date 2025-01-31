@@ -7,11 +7,12 @@ import {
   Modal,
   Image,
   ScrollView,
+  FlatList,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { getAmityUser } from '../../providers/user-provider';
 import type { UserInterface } from '../../types/user.interface';
-import { closeIcon } from '../../svg/svg-xml-list';
+import { closeIcon, communityIcon } from '../../svg/svg-xml-list';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import useAuth from '../../hooks/useAuth';
@@ -99,8 +100,8 @@ const CreatePostChooseTargetModal = ({
           source={
             myUser
               ? {
-                  uri: `https://api.${apiRegion}.amity.co/api/v3/files/${myUser.avatarFileId}/download`,
-                }
+                uri: `https://api.${apiRegion}.amity.co/api/v3/files/${myUser.avatarFileId}/download`,
+              }
               : require('./../../../assets/icon/Placeholder.png')
           }
         />
@@ -154,31 +155,24 @@ const CreatePostChooseTargetModal = ({
         }
         style={styles.rowContainer}
       >
-        <Image
-          style={styles.avatar}
-          source={
-            item.avatarFileId
-              ? {
-                  uri: `https://api.${apiRegion}.amity.co/api/v3/files/${item.avatarFileId}/download`,
-                }
-              : require('./../../../assets/icon/Placeholder.png')
-          }
-        />
+        {item.avatarFileId ?
+          <Image
+            style={styles.avatar}
+            source={
+              { uri: `https://api.${apiRegion}.amity.co/api/v3/files/${item.avatarFileId}/download` }
+
+            }
+          /> : <View style={{ marginRight: 12 }}>
+            <SvgXml width={40} height={40} xml={communityIcon} />
+          </View>}
+
         <Text style={styles.communityText}>{item.displayName}</Text>
       </TouchableOpacity>
     );
   };
 
   const handleEndReached = () => {
-    if (
-      !isFetchingRef.current &&
-      hasNextPageFunc &&
-      !onEndReachedCalledDuringMomentumRef.current
-    ) {
-      isFetchingRef.current = true;
-      onEndReachedCalledDuringMomentumRef.current = true;
-      onNextPageRef.current && onNextPageRef.current();
-    }
+    onNextPageRef.current && onNextPageRef.current();
   };
 
   return (
@@ -199,24 +193,14 @@ const CreatePostChooseTargetModal = ({
         {renderMyTimeLine()}
         <Text style={styles.myCommunityText}>My Community</Text>
 
-        <ScrollView
-          onScroll={({ nativeEvent }) => {
-            const yOffset = nativeEvent.contentOffset.y;
-            const contentHeight = nativeEvent.contentSize.height;
-            const scrollViewHeight = nativeEvent.layoutMeasurement.height;
-            const isNearBottom =
-              contentHeight - yOffset <= scrollViewHeight * 1.7; // Adjust the multiplier as needed
-
-            if (isNearBottom) {
-              handleEndReached();
-            }
-          }}
-          scrollEventThrottle={16} // Adjust as needed
-        >
-          {communities.map((item) => renderCommunity({ item }))}
-
-          {/* You can add any additional components or content here */}
-        </ScrollView>
+        <FlatList
+          data={communities}
+          keyExtractor={(item) => item.communityId}
+          renderItem={renderCommunity}
+          onEndReached={handleEndReached}
+          onEndReachedThreshold={0.7} // Adjust as needed
+          ListFooterComponent={() => <View style={{ height: 50 }} />} // Add space
+        />
       </View>
     </Modal>
   );

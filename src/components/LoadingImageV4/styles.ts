@@ -1,16 +1,19 @@
-import { Dimensions, StyleSheet } from 'react-native';
+import { useWindowDimensions, StyleSheet } from 'react-native';
 
-export const createStyles = () => {
+export const useStyles = () => {
+  const { width } = useWindowDimensions();
   return StyleSheet.create({
     container: {
       flex: 1,
-      position: 'relative',
-      maxWidth: Dimensions.get('window').height / 4,
-      height: Dimensions.get('window').height / 5,
+      height: width - 24,
+      margin: 3,
+    },
+    image3XContainer: {
+      width: width / 3 - 16,
+      height: width / 3 - 16,
       margin: 3,
     },
     image: {
-      flex: 1,
       width: '100%',
       height: '100%',
       resizeMode: 'cover',
@@ -35,7 +38,7 @@ export const createStyles = () => {
       top: 7,
       right: 7,
       padding: 7,
-      backgroundColor: 'rgba(255, 255, 255, 0.4)',
+      backgroundColor: 'rgba(0, 0, 0, 0.4)',
       borderRadius: 72,
     },
   });

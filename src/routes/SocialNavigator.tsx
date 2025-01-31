@@ -41,6 +41,7 @@ import AmityNewsFeedComponent from '../components/AmityNewsFeedComponent/AmityNe
 import PreloadCommunityHome from '../screens/PreloadCommunityHome';
 import MyUserprofile from '../screens/MyUserProfile';
 import PostDetail from '../screens/PostDetail';
+import EditPost from '../screens/EditPost/EditPost';
 
 
 interface INavigator {
@@ -211,7 +212,11 @@ export default function SocialNavigator({ screen = 'Home' }: INavigator) {
             name="UserProfileSetting"
             component={UserProfileSetting}
           />
-
+          <Stack.Screen
+            name="EditPost"
+            component={EditPost}
+            options={{ headerShown: false }}
+          />
           {/* <Stack.Screen
             name="VideoPlayer"
             component={VideoPlayerFull}

@@ -155,8 +155,6 @@ const AmitySocialHomeTopNavigationComponent = ({ currentTab }: { currentTab: str
   });
 
   const onPressSearch = useCallback(() => {
-    if (AmitySocialHomeTopNavigationComponentBehaviour.onPressSearch)
-      return AmitySocialHomeTopNavigationComponentBehaviour.onPressSearch();
     navigation.navigate('AmitySocialGlobalSearchPage');
   }, [AmitySocialHomeTopNavigationComponentBehaviour, navigation]);
 

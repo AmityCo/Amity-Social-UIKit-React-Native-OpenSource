@@ -23,7 +23,20 @@ export type RootStackParamList = {
   Community: undefined;
   Explore: undefined;
   CategoryList: undefined;
-  CreatePost: AmityPostComposerPageType;
+  CreatePost: {
+    targetId: string;
+    targetName: string;
+    targetType: string;
+    isPublic?: boolean;
+    postSetting?: ValueOf<
+      Readonly<{
+        ONLY_ADMIN_CAN_POST: 'ONLY_ADMIN_CAN_POST';
+        ADMIN_REVIEW_POST_REQUIRED: 'ADMIN_REVIEW_POST_REQUIRED';
+        ANYONE_CAN_POST: 'ANYONE_CAN_POST';
+      }>
+    >;
+    needApprovalOnPostCreation: boolean;
+  };
   CreatePoll: {
     targetId: string;
     targetName: string;
@@ -38,7 +51,7 @@ export type RootStackParamList = {
     >;
     needApprovalOnPostCreation: boolean;
   };
-
+  EditPost: AmityPostComposerPageType;
   PostDetail: {
     postId: string;
   };
