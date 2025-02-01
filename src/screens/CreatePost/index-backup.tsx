@@ -7,27 +7,15 @@ import {
   View,
   Text,
   FlatList,
-  TextInput,
   Platform,
   KeyboardAvoidingView,
   ScrollView,
   Keyboard,
   Alert,
+  Linking,
 } from 'react-native';
-
-import { useStyles } from './styles';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import * as ImagePicker from 'expo-image-picker';
-
-import { createPostToFeed } from '../../providers/Social/feed-sdk';
-import LoadingVideo from '../../components/LoadingVideo';
-import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
-import { useTheme } from 'react-native-paper';
-import { ISearchItem } from '../../components/SearchItem';
-import { CommunityRepository } from '@amityco/ts-sdk-react-native';
-import { checkCommunityPermission } from '../../providers/Social/communities-sdk';
-import useAuth from '../../hooks/useAuth';
 import { SvgXml } from 'react-native-svg';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   arrowDown,
   cameraIcon,
@@ -35,8 +23,22 @@ import {
   galleryIcon,
   playVideoIcon,
 } from '../../svg/svg-xml-list';
+import { useStyles } from './styles';
+import * as ImagePicker from 'expo-image-picker';
+
+import { createPostToFeed } from '../../providers/Social/feed-sdk';
+import LoadingVideo from '../../components/LoadingVideo';
+import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
+import { useTheme } from 'react-native-paper';
+import { CommunityRepository } from '@amityco/ts-sdk-react-native';
+import { checkCommunityPermission } from '../../providers/Social/communities-sdk';
+import useAuth from '../../hooks/useAuth';
 import AmityMentionInput from '../../components/MentionInput/AmityMentionInput';
 import { TSearchItem } from '../../hooks/useSearch';
+import globalFeedSlice from '../../redux/slices/globalfeedSlice';
+import { useDispatch } from 'react-redux';
+import { amityPostsFormatter } from '../../util/postDataFormatter';
+import feedSlice from '../../redux/slices/feedSlice';
 import LoadingImage from '../../components/LoadingImage ';
 
 
@@ -55,8 +57,12 @@ export interface IMentionPosition {
   displayName?: string;
 }
 const CreatePost = ({ route }: any) => {
+
   const theme = useTheme() as MyMD3Theme;
   const styles = useStyles();
+  const { addPostToGlobalFeed } = globalFeedSlice.actions;
+  const { addPostToFeed } = feedSlice.actions;
+  const dispatch = useDispatch();
   const { targetId, targetType, targetName } = route.params;
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const [inputMessage, setInputMessage] = useState('');
@@ -64,25 +70,21 @@ const CreatePost = ({ route }: any) => {
   const [videoMultipleUri, setVideoMultipleUri] = useState<string[]>([]);
   const [displayImages, setDisplayImages] = useState<IDisplayImage[]>([]);
   const [displayVideos, setDisplayVideos] = useState<IDisplayImage[]>([]);
-  const [isShowMention, setIsShowMention] = useState<boolean>(false);
-  const [mentionNames, setMentionNames] = useState<TSearchItem[]>([]);
-  
-
-
   const [isScrollEnabled, setIsScrollEnabled] = useState(true);
-  const [currentSearchUserName, setCurrentSearchUserName] =
-    useState<string>('');
-  const [cursorIndex, setCursorIndex] = useState(0);
+  const [mentionNames, setMentionNames] = useState<TSearchItem[]>([]);
   const [mentionsPosition, setMentionsPosition] = useState<IMentionPosition[]>(
     []
   );
-
+  const [
+    hasCommunityManagepostPermission,
+    setHasCommunityManagepostPermission,
+  ] = useState(false);
   const [communityObject, setCommunityObject] =
     useState<Amity.LiveObject<Amity.Community>>();
   const { data: community } = communityObject ?? {};
-
+  const privateCommunityId = !community?.isPublic && community?.communityId;
   const { client, apiRegion } = useAuth();
-
+  
   const getCommunityDetail = useCallback(() => {
     if (targetType === 'community') {
       CommunityRepository.getCommunity(targetId, setCommunityObject);
@@ -92,123 +94,79 @@ const CreatePost = ({ route }: any) => {
     getCommunityDetail();
   }, [getCommunityDetail]);
 
-  const checkMention = useCallback(
-    (inputString: string) => {
-      // Check if "@" is at the first letter
-      const startsWithAt = /^@/.test(inputString);
-
-      // Check if "@" is inside the sentence without any letter before "@"
-      const insideWithoutLetterBefore = /[^a-zA-Z]@/.test(inputString);
-
-      const atSigns = inputString.match(/@/g);
-      const atSignsNumber = atSigns ? atSigns.length : 0;
-      if (
-        (startsWithAt || insideWithoutLetterBefore) &&
-        atSignsNumber > mentionNames.length
-      ) {
-        setIsShowMention(true);
-      } else {
-        setIsShowMention(false);
-      }
-    },
-    [mentionNames.length]
-  );
   useEffect(() => {
-    if (isShowMention) {
-      const substringBeforeCursor = inputMessage.substring(0, cursorIndex);
-      const lastAtsIndex = substringBeforeCursor.lastIndexOf('@');
-      if (lastAtsIndex !== -1) {
-        const searchText: string = inputMessage.substring(
-          lastAtsIndex + 1,
-          cursorIndex + 1
+    (async () => {
+      if (targetType === 'community' && community?.communityId) {
+        const res = await checkCommunityPermission(
+          community?.communityId,
+          client as Amity.Client,
+          apiRegion
         );
-        setCurrentSearchUserName(searchText);
+        setHasCommunityManagepostPermission(
+          res.permissions.length > 0 &&
+            res.permissions.includes('Post/ManagePosts')
+        );
       }
-    }
-  }, [cursorIndex, inputMessage, isShowMention]);
-
-  useEffect(() => {
-    checkMention(inputMessage);
-  }, [checkMention, inputMessage]);
+    })();
+  }, [apiRegion, client, community?.communityId, targetType]);
 
   const goBack = () => {
     navigation.goBack();
   };
+
   const handleCreatePost = async () => {
-    const mentionUserIds: string[] = mentionNames.map((item) => item.targetId);
-    if (displayImages.length > 0) {
-      const fileIdArr: (string | undefined)[] = displayImages.map(
-        (item) => item.fileId
+    const mentionUserIds = mentionNames.map((item) => item.id) as string[];
+    const files = displayImages?.length > 0 ? displayImages : displayVideos;
+    const fileIds = files.map((item) => item.fileId);
+    const type: string =
+      displayImages?.length > 0
+        ? 'image'
+        : displayVideos?.length > 0
+        ? 'video'
+        : 'text';
+    const response = await createPostToFeed(
+      targetType,
+      targetId,
+      {
+        text: inputMessage,
+        fileIds: fileIds as string[],
+      },
+      type,
+      mentionUserIds.length > 0 ? mentionUserIds : [],
+      mentionsPosition
+    );
+    if (!response) return goBack();
+    if (
+      targetType === 'community' &&
+      (community?.postSetting === 'ADMIN_REVIEW_POST_REQUIRED' ||
+        (community as Record<string, any>)?.needApprovalOnPostCreation) &&
+      !hasCommunityManagepostPermission
+    ) {
+      return Alert.alert(
+        'Post submitted',
+        'Your post has been submitted to the pending list. It will be reviewed by community moderator',
+        [
+          {
+            text: 'OK',
+            onPress: () => goBack(),
+          },
+        ],
+        { cancelable: false }
       );
-
-      const type: string = displayImages.length > 0 ? 'image' : 'text';
-      const response = await createPostToFeed(
-        targetType,
-        targetId,
-        {
-          text: inputMessage,
-          fileIds: fileIdArr as string[],
-        },
-        type,
-        mentionUserIds.length > 0 ? mentionUserIds : [],
-        mentionsPosition
-      );
-      if (response) {
-        goBack();
-      }
-    } else {
-      const fileIdArr: (string | undefined)[] = displayVideos.map(
-        (item) => item.fileId
-      );
-
-      const type: string = displayVideos.length > 0 ? 'video' : 'text';
-
-      const response = await createPostToFeed(
-        targetType,
-        targetId,
-        {
-          text: inputMessage,
-          fileIds: fileIdArr as string[],
-        },
-        type,
-        mentionUserIds.length > 0 ? mentionUserIds : [],
-        mentionsPosition
-      );
-      if (targetType === 'community') {
-        if (
-          (community?.postSetting === 'ADMIN_REVIEW_POST_REQUIRED' ||
-            (community as Record<string, any>).needApprovalOnPostCreation) &&
-          response
-        ) {
-          const res = await checkCommunityPermission(
-            community.communityId,
-            client as Amity.Client,
-            apiRegion
-          );
-
-          if (
-            res.permissions.length > 0 &&
-            res.permissions.includes('Post/ManagePosts')
-          ) {
-            goBack();
-          } else {
-            Alert.alert(
-              'Post submitted',
-              'Your post has been submitted to the pending list. It will be reviewed by community moderator',
-              [
-                {
-                  text: 'OK',
-                  onPress: () => goBack(),
-                },
-              ],
-              { cancelable: false }
-            );
-          }
-        }
-      } else {
-        goBack();
-      }
     }
+    const formattedPost = await amityPostsFormatter([response]);
+    dispatch(addPostToFeed(formattedPost[0]));
+    dispatch(addPostToGlobalFeed(formattedPost[0]));
+    goBack();
+    return;
+  };
+
+  const onPressCamera = async () => {
+    // if (Platform.OS === 'ios') return pickCamera('mixed');
+    // Alert.alert('Open Camera', null, [
+    //   { text: 'Photo', onPress: async () => await pickCamera('photo') },
+    //   { text: 'Video', onPress: async () => await pickCamera('video') },
+    // ]);
   };
 
   const pickCamera = async () => {
@@ -233,6 +191,7 @@ const CreatePost = ({ route }: any) => {
       }
     }
   };
+
   useEffect(() => {
     if (imageMultipleUri.length > 0 && displayImages.length === 0) {
       const imagesObject: IDisplayImage[] = imageMultipleUri.map(
@@ -326,6 +285,7 @@ const CreatePost = ({ route }: any) => {
       setImageMultipleUri(totalImages);
     }
   };
+
   const pickVideo = async () => {
 
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -343,6 +303,7 @@ const CreatePost = ({ route }: any) => {
       setVideoMultipleUri(totalVideos);
     }
   };
+
   const handleOnCloseImage = (originalPath: string) => {
     setDisplayImages((prevData) => {
       const newData = prevData.filter(
@@ -408,188 +369,136 @@ const CreatePost = ({ route }: any) => {
     });
   };
 
-
- 
-
-  const renderTextWithMention = () => {
-    if (mentionsPosition.length === 0) {
-      return <Text style={styles.inputText}>{inputMessage}</Text>;
-    }
-
-    let currentPosition = 0;
-    const result: (string | JSX.Element)[][] = mentionsPosition.map(
-      ({ index, length }, i) => {
-        // Add non-highlighted text before the mention
-        const nonHighlightedText = inputMessage.slice(currentPosition, index);
-
-        // Add highlighted text
-        const highlightedText = (
-          <Text key={`highlighted-${i}`} style={styles.mentionText}>
-            {inputMessage.slice(index, index + length)}
-          </Text>
-        );
-
-        // Update currentPosition for the next iteration
-        currentPosition = index + length;
-
-        // Return an array of non-highlighted and highlighted text
-        return [nonHighlightedText, highlightedText];
-      }
-    );
-
-    // Add any remaining non-highlighted text after the mentions
-    const remainingText = inputMessage.slice(currentPosition);
-    result.push([
-      <Text key="nonHighlighted-last" style={styles.inputText}>
-        {remainingText}
-      </Text>,
-    ]);
-
-    // Flatten the array and render
-    return <Text style={styles.inputText}>{result.flat()}</Text>;
-  };
-
-  useEffect(() => {
-    const checkMentionNames = mentionNames.filter((item) => {
-      return inputMessage.includes(item.displayName);
-    });
-    const checkMentionPosition = mentionsPosition.filter((item) => {
-      return inputMessage.includes(item.displayName as string);
-    });
-    setMentionNames(checkMentionNames);
-    setMentionsPosition(checkMentionPosition);
-  }, [inputMessage]);
-
   return (
     <View style={styles.AllInputWrap}>
-    <SafeAreaView style={styles.barContainer} edges={['top']}>
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.closeButton} onPress={goBack}>
-          <SvgXml xml={closeIcon(theme.colors.base)} width="17" height="17" />
-        </TouchableOpacity>
-        <View style={styles.headerTextContainer}>
-          <Text style={styles.headerText}>{targetName}</Text>
-        </View>
-        <TouchableOpacity
-          disabled={
-            inputMessage.length > 0 ||
-            displayImages.length > 0 ||
-            displayVideos.length > 0
-              ? false
-              : true
-          }
-          onPress={handleCreatePost}
-        >
-          <Text
-            style={
+      <SafeAreaView style={styles.barContainer} edges={['top']}>
+        <View style={styles.header}>
+          <TouchableOpacity style={styles.closeButton} onPress={goBack}>
+            <SvgXml xml={closeIcon(theme.colors.base)} width="17" height="17" />
+          </TouchableOpacity>
+          <View style={styles.headerTextContainer}>
+            <Text style={styles.headerText}>{targetName}</Text>
+          </View>
+          <TouchableOpacity
+            disabled={
               inputMessage.length > 0 ||
               displayImages.length > 0 ||
               displayVideos.length > 0
-                ? styles.postText
-                : [styles.postText, styles.disabled]
+                ? false
+                : true
             }
+            onPress={handleCreatePost}
           >
-            Post
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={styles.AllInputWrap}
-    >
-      <ScrollView
-        style={styles.container}
-        scrollEnabled={isScrollEnabled}
-        keyboardShouldPersistTaps="handled"
-      >
-        <AmityMentionInput
-          privateCommunityId={privateCommunityId}
-          onFocus={() => {
-            setIsScrollEnabled(false);
-          }}
-          onBlur={() => {
-            setIsScrollEnabled(true);
-          }}
-          multiline
-          placeholder="What's going on..."
-          placeholderTextColor={theme.colors.baseShade3}
-          setInputMessage={setInputMessage}
-          mentionsPosition={mentionsPosition}
-          setMentionsPosition={setMentionsPosition}
-          mentionUsers={mentionNames}
-          setMentionUsers={setMentionNames}
-          isBottomMentionSuggestionsRender={true}
-        />
-        <View style={styles.imageContainer}>
-          {displayImages.length > 0 && (
-            <FlatList
-              data={displayImages}
-              renderItem={({ item, index }) => (
-                <LoadingImage
-                  source={item.url}
-                  onClose={handleOnCloseImage}
-                  index={index}
-                  onLoadFinish={handleOnFinishImage}
-                  isUploaded={item.isUploaded}
-                  fileId={item.fileId}
-                />
-              )}
-              numColumns={3}
-            />
-          )}
-          {displayVideos.length > 0 && (
-            <FlatList
-              data={displayVideos}
-              renderItem={({ item, index }) => (
-                <LoadingVideo
-                  source={item.url}
-                  onClose={handleOnCloseVideo}
-                  index={index}
-                  onLoadFinish={handleOnFinishVideo}
-                  isUploaded={item.isUploaded}
-                  fileId={item.fileId}
-                  thumbNail={item.thumbNail as string}
-                />
-              )}
-              numColumns={3}
-            />
-          )}
+            <Text
+              style={
+                inputMessage.length > 0 ||
+                displayImages.length > 0 ||
+                displayVideos.length > 0
+                  ? styles.postText
+                  : [styles.postText, styles.disabled]
+              }
+            >
+              Post
+            </Text>
+          </TouchableOpacity>
         </View>
-      </ScrollView>
+      </SafeAreaView>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.AllInputWrap}
+      >
+        <ScrollView
+          style={styles.container}
+          scrollEnabled={isScrollEnabled}
+          keyboardShouldPersistTaps="handled"
+        >
+          <AmityMentionInput
+            privateCommunityId={privateCommunityId}
+            onFocus={() => {
+              setIsScrollEnabled(false);
+            }}
+            onBlur={() => {
+              setIsScrollEnabled(true);
+            }}
+            multiline
+            placeholder="What's going on..."
+            placeholderTextColor={theme.colors.baseShade3}
+            setInputMessage={setInputMessage}
+            mentionsPosition={mentionsPosition}
+            setMentionsPosition={setMentionsPosition}
+            mentionUsers={mentionNames}
+            setMentionUsers={setMentionNames}
+            isBottomMentionSuggestionsRender={true}
+          />
+          <View style={styles.imageContainer}>
+            {displayImages.length > 0 && (
+              <FlatList
+                data={displayImages}
+                renderItem={({ item, index }) => (
+                  <LoadingImage
+                    source={item.url}
+                    onClose={handleOnCloseImage}
+                    index={index}
+                    onLoadFinish={handleOnFinishImage}
+                    isUploaded={item.isUploaded}
+                    fileId={item.fileId}
+                  />
+                )}
+                numColumns={3}
+              />
+            )}
+            {displayVideos.length > 0 && (
+              <FlatList
+                data={displayVideos}
+                renderItem={({ item, index }) => (
+                  <LoadingVideo
+                    source={item.url}
+                    onClose={handleOnCloseVideo}
+                    index={index}
+                    onLoadFinish={handleOnFinishVideo}
+                    isUploaded={item.isUploaded}
+                    fileId={item.fileId}
+                    thumbNail={item.thumbNail as string}
+                  />
+                )}
+                numColumns={3}
+              />
+            )}
+          </View>
+        </ScrollView>
 
-      <View style={styles.InputWrap}>
-        <TouchableOpacity
-          disabled={displayVideos.length > 0 ? true : false}
-          onPress={pickCamera}
-        >
-          <View style={styles.iconWrap}>
-            <SvgXml xml={cameraIcon} width="27" height="27" />
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity
-          disabled={displayVideos.length > 0 ? true : false}
-          onPress={pickImage}
-        >
-          <View style={styles.iconWrap}>
-            <SvgXml xml={galleryIcon} width="27" height="27" />
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity
-          disabled={displayImages.length > 0 ? true : false}
-          onPress={pickVideo}
-          style={displayImages.length > 0 ? styles.disabled : []}
-        >
-          <View style={styles.iconWrap}>
-            <SvgXml xml={playVideoIcon} width="27" height="27" />
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => Keyboard.dismiss()}>
-          <SvgXml xml={arrowDown(theme.colors.base)} width="20" height="20" />
-        </TouchableOpacity>
-      </View>
-    </KeyboardAvoidingView>
-  </View>
+        <View style={styles.InputWrap}>
+          <TouchableOpacity
+            disabled={displayVideos.length > 0 ? true : false}
+            onPress={onPressCamera}
+          >
+            <View style={styles.iconWrap}>
+              <SvgXml xml={cameraIcon} width="27" height="27" />
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            disabled={displayVideos.length > 0 ? true : false}
+            onPress={pickImage}
+          >
+            <View style={styles.iconWrap}>
+              <SvgXml xml={galleryIcon} width="27" height="27" />
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            disabled={displayImages.length > 0 ? true : false}
+            onPress={pickVideo}
+            style={displayImages.length > 0 ? styles.disabled : []}
+          >
+            <View style={styles.iconWrap}>
+              <SvgXml xml={playVideoIcon} width="27" height="27" />
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => Keyboard.dismiss()}>
+            <SvgXml xml={arrowDown(theme.colors.base)} width="20" height="20" />
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
+    </View>
   );
 };
 

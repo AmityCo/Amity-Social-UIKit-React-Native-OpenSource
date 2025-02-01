@@ -92,7 +92,7 @@ const CreatePostChooseTargetModal = ({
   const renderMyTimeLine = () => {
     return (
       <TouchableOpacity
-        onPress={() => onSelectFeed(userId as string, 'My Timeline', 'user')}
+        onPress={() => onSelectFeed(userId as string, 'user')}
         style={styles.rowContainerMyTimeLine}
       >
         <Image
@@ -111,17 +111,8 @@ const CreatePostChooseTargetModal = ({
   };
   const onSelectFeed = (
     targetId: string,
-    targetName: string,
-    targetType: string,
-    isPublic?: boolean,
-    postSetting?: ValueOf<
-      Readonly<{
-        ONLY_ADMIN_CAN_POST: 'ONLY_ADMIN_CAN_POST';
-        ADMIN_REVIEW_POST_REQUIRED: 'ADMIN_REVIEW_POST_REQUIRED';
-        ANYONE_CAN_POST: 'ANYONE_CAN_POST';
-      }>
-    >,
-    needApprovalOnPostCreation?: string
+    targetType?: string,
+    community?: Amity.Community
   ) => {
     onSelect && onSelect();
     const targetscreen = () => {
@@ -131,12 +122,10 @@ const CreatePostChooseTargetModal = ({
       return null;
     };
     navigation.navigate(targetscreen(), {
-      targetId: targetId,
-      targetName: targetName,
-      targetType: targetType,
-      postSetting: postSetting,
-      isPublic: isPublic,
-      needApprovalOnPostCreation: needApprovalOnPostCreation,
+      targetId,
+      targetType,
+      community
+
     });
   };
   const renderCommunity = ({ item }: { item: Amity.Community }) => {
@@ -146,11 +135,8 @@ const CreatePostChooseTargetModal = ({
         onPress={() =>
           onSelectFeed(
             item.communityId,
-            item.displayName,
             'community',
-            item.isPublic,
-            item.postSetting,
-            (item as Record<string, any>).needApprovalOnPostCreation
+            item
           )
         }
         style={styles.rowContainer}

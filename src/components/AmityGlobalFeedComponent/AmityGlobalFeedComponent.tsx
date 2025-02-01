@@ -57,9 +57,9 @@ const AmityGlobalFeedComponent: FC<AmityGlobalFeedComponentType> = ({
     }
   };
   const handleLoadMore = () => {
-    if (nextPage) {
+
       getGlobalFeedList(nextPage);
-    }
+  
   };
   const onRefresh = useCallback(async () => {
     setRefreshing(true);

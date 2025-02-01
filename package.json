@@ -159,7 +159,7 @@
     ]
   },
   "dependencies": {
-    "@amityco/ts-sdk-react-native": "^6.33.1",
+    "@amityco/ts-sdk-react-native": "^6.34.0",
     "@fawazahmed/react-native-read-more": "^3.0.4",
     "@react-native-async-storage/async-storage": "^1.19.0",
     "@react-navigation/native": "6.1.6",

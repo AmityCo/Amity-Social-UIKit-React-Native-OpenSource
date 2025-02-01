@@ -9,7 +9,7 @@ import {
 } from '../../providers/file-provider';
 import { closeIcon, playBtn, toastIcon } from '../../svg/svg-xml-list';
 import { useStyles } from './styles';
-import { createThumbnail, type Thumbnail } from 'react-native-create-thumbnail';
+// import { createThumbnail, type Thumbnail } from 'react-native-create-thumbnail';
 import Video from 'react-native-video';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -85,10 +85,10 @@ const LoadingVideo = ({
   };
 
   const processThumbNail = async () => {
-    const thumbNail: Thumbnail = await createThumbnail({
-      url: source,
-    });
-    setThumbNailImage(thumbNail.path);
+    // const thumbNail: Thumbnail = await createThumbnail({
+    //   url: source,
+    // });
+    // setThumbNailImage(thumbNail.path);
   };
   useEffect(() => {
     processThumbNail();

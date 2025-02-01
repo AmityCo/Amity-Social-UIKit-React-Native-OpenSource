@@ -42,6 +42,7 @@ import PreloadCommunityHome from '../screens/PreloadCommunityHome';
 import MyUserprofile from '../screens/MyUserProfile';
 import PostDetail from '../screens/PostDetail';
 import EditPost from '../screens/EditPost/EditPost';
+import Toast from '../components/Toast/Toast';
 
 
 interface INavigator {
@@ -225,6 +226,7 @@ export default function SocialNavigator({ screen = 'Home' }: INavigator) {
         </Stack.Navigator>
       )}
       <PostTypeChoiceModal />
+      <Toast/>
     </NavigationContainer>
   );
 }

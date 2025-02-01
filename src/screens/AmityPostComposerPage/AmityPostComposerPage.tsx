@@ -36,12 +36,8 @@ import {
   editPost,
   getPostById,
 } from '../../providers/Social/feed-sdk';
+import * as ImagePicker from 'expo-image-picker';
 
-import ImagePicker, {
-  launchImageLibrary,
-  type Asset,
-  launchCamera,
-} from 'react-native-image-picker';
 
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../routes/RouteParamList';
@@ -50,13 +46,12 @@ import { AmityPostComposerMode, AmityPostComposerPageType, IDisplayImage } from 
 import { TSearchItem, useAmityPage, useIsCommunityModerator, useKeyboardStatus } from '../../hooks';
 import { IMentionPosition } from '../../types/type';
 import AmityMentionInput from '../../components/MentionInput/AmityMentionInput';
-import LoadingImage from '../../components/LoadingImage ';
-import LoadingVideo from '../../components/LoadingVideo';
+import LoadingImage from '../../components/LoadingImageV4';
+import LoadingVideo from '../../components/LoadingVideoV4';
 import AmityMediaAttachmentComponent from '../../components/AmityMediaAttachmentComponent/AmityMediaAttachmentComponent';
 import AmityDetailedMediaAttachmentComponent from '../../components/AmityDetailedMediaAttachmentComponent/AmityDetailedMediaAttachmentComponent';
-import TextKeyElement from '../../Elements/TextKeyElement/TextKeyElement';
-import CloseButtonIconElement from '../../Elements/CloseButtonIconElement/CloseButtonIconElement';
 import { useFileV4 } from '../../hooks/useFilev4';
+import CloseIcon from '../../svg/CloseIcon';
 
 
 const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
@@ -258,10 +253,7 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
   }, [getMentionPositions, getMentionUsers, post]);
 
   const onPressClose = useCallback(() => {
-    const routes = navigation.getState().routes;
-    if (routes[routes.length - 2].name === 'PostTargetSelection') {
-      navigation.pop(2);
-    } else navigation.pop();
+    navigation.pop();
   }, [navigation]);
 
   const onClose = useCallback(() => {
@@ -269,7 +261,7 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
       'Discard this post',
       'The post will be permanently deleted. It cannot be undone',
       [
-        { text: 'Keey Editing', style: 'cancel' },
+        { text: 'Keep Editing', style: 'cancel' },
         {
           text: 'Discard',
           style: 'destructive',
@@ -299,15 +291,15 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
       chosenMediaType === mediaAttachment.image
         ? displayImages
         : chosenMediaType === mediaAttachment.video
-        ? displayVideos
-        : [];
+          ? displayVideos
+          : [];
     const fileIds = files.map((item) => item.fileId);
     const type: string =
       displayImages?.length > 0
         ? 'image'
         : displayVideos?.length > 0
-        ? 'video'
-        : 'text';
+          ? 'video'
+          : 'text';
     try {
       let response;
       if (isEditMode) {
@@ -513,15 +505,16 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
         'Maximum upload limit reached',
         "You've reached the upload limit of 10 images. Any additional images will not be saved."
       );
-    const result: ImagePicker.ImagePickerResponse = await launchImageLibrary({
-      mediaType: 'photo',
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: false,
       quality: 1,
-      selectionLimit: 10 - displayImages.length,
+      allowsMultipleSelection: true,
     });
-    if (!result.didCancel && result.assets && result.assets.length > 0) {
-      const imageUriArr: string[] = result.assets.map(
-        (item: Asset) => item.uri
-      ) as string[];
+
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+      const selectedImages = result.assets;
+      const imageUriArr: string[] = selectedImages.map((item) => item.uri);
       const mediaOj = processMedia(imageUriArr);
       setDisplayImages((prev) => {
         const updatedArray = [...prev, ...mediaOj];
@@ -543,15 +536,15 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
         'Maximum upload limit reached',
         "You've reached the upload limit of 10 videos. Any additional videos will not be saved."
       );
-    const result: ImagePicker.ImagePickerResponse = await launchImageLibrary({
-      mediaType: 'video',
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+      allowsEditing: false,
       quality: 1,
-      selectionLimit: 10 - displayVideos.length,
+      allowsMultipleSelection: true,
     });
-    if (!result.didCancel && result.assets && result.assets.length > 0) {
-      const videoUriArr: string[] = result.assets.map(
-        (item: Asset) => item.uri
-      ) as string[];
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+      const selectedVideos = result.assets;
+      const videoUriArr: string[] = selectedVideos.map((item) => item.uri);
       const mediaOj = processMedia(videoUriArr);
       setDisplayVideos((prev) => {
         const updatedArray = [...prev, ...mediaOj];
@@ -674,7 +667,7 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
     >
       <View style={styles.headerContainer}>
         <TouchableOpacity onPress={onClose} hitSlop={20}>
-          <CloseButtonIconElement pageID={pageId} style={styles.closeBtn} />
+          <CloseIcon />
         </TouchableOpacity>
         <Text style={styles.title}>{title}</Text>
         <TouchableOpacity
@@ -691,12 +684,14 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
               Save
             </Text>
           ) : (
-            <TextKeyElement
-              pageID={pageId}
-              componentID={ComponentID.WildCardComponent}
-              elementID={ElementID.create_new_post_button}
-              style={[styles.postBtnText, isInputValid && styles.activePostBtn]}
-            />
+            <Text
+              style={[
+                styles.postBtnText,
+                checkIsEditValid() && styles.activePostBtn,
+              ]}
+            >
+              Post
+            </Text>
           )}
         </TouchableOpacity>
       </View>

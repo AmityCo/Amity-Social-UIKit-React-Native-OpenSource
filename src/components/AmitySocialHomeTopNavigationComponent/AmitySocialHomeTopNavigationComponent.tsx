@@ -43,33 +43,14 @@ const AmitySocialHomeTopNavigationComponent = ({ currentTab }: { currentTab: str
 
   const {
     userId,
-    targetId,
-    targetName,
-    targetType,
-    postSetting,
-    needApprovalOnPostCreation,
   } = useSelector((state: RootState) => state.ui);
   const [postType, setPostType] = useState<string>();
   const [createPostModalVisible, setCreatePostModalVisible] = useState(false);
 
   const onChooseType = (type: string) => {
     setOpenPostCreationMenu(false)
-    if (targetId && targetName && targetType) {
-
-      const targetscreen =
-        type === 'post' ? 'CreatePost' : type === 'poll' ? 'CreatePoll' : null;
-      navigation.navigate(targetscreen, {
-        targetId,
-        targetName,
-        targetType,
-        postSetting,
-        needApprovalOnPostCreation,
-      });
-      closeCreatePostModal();
-    } else {
-      setPostType(type);
-      setCreatePostModalVisible(true);
-    }
+    setPostType(type);
+    setCreatePostModalVisible(true);
   };
   const closeCreatePostModal = () => {
     setCreatePostModalVisible(false);

@@ -4,6 +4,9 @@ import { PageID, ComponentID, ElementID, mediaAttachment } from '../../enum';
 import { useAmityComponent } from '../../hooks';
 import { useStyles } from './styles';
 import ImageKeyElement from '../../Elements/ImageKeyElement/ImageKeyElement';
+import PlayVideoIcon from '../../svg/PlayVideoIcon';
+import GalleryIcon from '../../svg/GalleryIcon';
+import CameraIcon from '../../svg/CameraIcon';
 
 type AmityMediaAttachmentComponentType = {
   onPressCamera: () => void;
@@ -61,32 +64,17 @@ const AmityMediaAttachmentComponent: FC<AmityMediaAttachmentComponentType> = ({
       <View style={styles.handleBar} />
       <View style={styles.buttonsContainer}>
         <Pressable onPress={onPressCamera}>
-          <ImageKeyElement
-            pageID={pageId}
-            componentID={componentId}
-            elementID={ElementID.camera_button}
-            style={styles.iconBtn}
-          />
+          <CameraIcon style={styles.iconBtn} />
         </Pressable>
 
         {(!chosenMediaType || chosenMediaType === mediaAttachment.image) && (
           <Pressable onPress={onPressImage}>
-            <ImageKeyElement
-              pageID={pageId}
-              componentID={componentId}
-              elementID={ElementID.image_button}
-              style={styles.iconBtn}
-            />
+            <GalleryIcon style={styles.iconBtn} />
           </Pressable>
         )}
         {(!chosenMediaType || chosenMediaType === mediaAttachment.video) && (
           <Pressable onPress={onPressVideo}>
-            <ImageKeyElement
-              pageID={pageId}
-              componentID={componentId}
-              elementID={ElementID.video_button}
-              style={styles.iconBtn}
-            />
+            <PlayVideoIcon style={styles.iconBtn} />
           </Pressable>
         )}
         {/* //will use later
