@@ -12822,11 +12822,11 @@ __metadata:
   linkType: hard
 
 "expo-modules-core@npm:^1.5.4":
-  version: 1.12.14
-  resolution: "expo-modules-core@npm:1.12.14"
+  version: 1.12.26
+  resolution: "expo-modules-core@npm:1.12.26"
   dependencies:
     invariant: ^2.2.4
-  checksum: 4281a68f7fd0983cf31e267135ad23b33e3a17867a384085ccac8f0a93f7ca867f3ae9958e24ce4e346e180af4c98468d0a8e4e4e4f81b89f98ebd4f215a3a96
+  checksum: 9fe31a57ccf47205aff939f185c402860f4e3e36d93ffddb06743e086066115edf52f7e3b2253ed4690ec8daa7c008165c338aaa3806f6e4447722d661823e6b
   languageName: node
   linkType: hard
 

@@ -30,7 +30,6 @@ import { useStyles } from '../routes/style';
 import BackButton from '../components/BackButton';
 import CloseButton from '../components/CloseButton';
 import EditCommunity from '../screens/EditCommunity/EditCommunity';
-// import VideoPlayerFull from '../screens/VideoPlayerFullScreen';
 import PostTypeChoiceModal from '../components/PostTypeChoiceModal/PostTypeChoiceModal';
 import CreatePoll from '../screens/CreatePoll/CreatePoll';
 import { ThreeDotsIcon } from '../svg/ThreeDotsIcon';
@@ -218,11 +217,6 @@ export default function SocialNavigator({ screen = 'Home' }: INavigator) {
             component={EditPost}
             options={{ headerShown: false }}
           />
-          {/* <Stack.Screen
-            name="VideoPlayer"
-            component={VideoPlayerFull}
-            options={{ headerShown: false }}
-          /> */}
         </Stack.Navigator>
       )}
       <PostTypeChoiceModal />

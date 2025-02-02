@@ -455,12 +455,14 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
           "You've reached the upload limit of 10 videos. Any additional videos will not be saved."
         );
       try {
-        const result: ImagePicker.ImagePickerResponse = await launchCamera({
-          mediaType: mediaType,
-          quality: 1,
-          presentationStyle: 'fullScreen',
-          videoQuality: 'high',
-        });
+        const permission = await ImagePicker.requestCameraPermissionsAsync();
+        if (permission.granted) {
+          let result: ImagePicker.ImagePickerResult =
+            await ImagePicker.launchCameraAsync({
+              mediaTypes: ImagePicker.MediaTypeOptions.All,
+              allowsEditing: false,
+              aspect: [4, 3],
+            });
         if (
           result.assets &&
           result.assets.length > 0 &&
@@ -473,9 +475,9 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
             const mediaOj = processMedia(imagesArr);
             setDisplayImages((prev) => [...prev, ...mediaOj]);
           } else {
-            const selectedVideos: Asset[] = result.assets;
+            const selectedVideos = result.assets;
             const imageUriArr: string[] = selectedVideos.map(
-              (item: Asset) => item.uri
+              (item) => item.uri
             ) as string[];
             const videosArr: string[] = [];
             const totalVideos: string[] = videosArr.concat(imageUriArr);
@@ -483,6 +485,7 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
             setDisplayVideos((prev) => [...prev, ...mediaOj]);
           }
         }
+      }
       } catch (error) {
         console.log(error);
       }

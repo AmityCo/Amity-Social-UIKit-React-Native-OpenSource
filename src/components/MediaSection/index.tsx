@@ -33,7 +33,7 @@ const MediaSection: React.FC<IMediaSection> = ({ childrenPosts }) => {
   const [videoPostsFullSize, setVideoPostsFullSize] = useState<MediaUri[]>([]);
   const [visibleFullImage, setIsVisibleFullImage] = useState<boolean>(false);
   const [imageIndex, setImageIndex] = useState<number>(0);
-  const [snackBarVisible, setSnackBarVisible] = useState<boolean>(false);
+  
 
   const styles = useStyles();
   let imageStyle: any =
@@ -106,12 +106,8 @@ const MediaSection: React.FC<IMediaSection> = ({ childrenPosts }) => {
   }, [childrenPosts, currentPostdetail, postList, postListGlobal, getPostInfo]);
 
   function onClickImage(index: number): void {
-    if (Platform.OS === 'web') {
-      setSnackBarVisible(true)
-    } else {
       setIsVisibleFullImage(true);
       setImageIndex(index);
-    }
 
   }
 
@@ -272,18 +268,6 @@ const MediaSection: React.FC<IMediaSection> = ({ childrenPosts }) => {
         isVideoButton={videoPosts.length > 0 ? true : false}
         videoPosts={videoPosts}
       />
-      <Snackbar
-        visible={snackBarVisible}
-        onDismiss={() => setSnackBarVisible(false)}
-        action={{
-          label: 'Hide',
-          labelStyle: { color: theme.colors.primary },
-          onPress: () => {
-            // Do something
-          },
-        }}>
-        Image Gallery View isn't in the playground yet. Install UIkit to explore it 😊
-      </Snackbar>
     </View>
   );
 };
