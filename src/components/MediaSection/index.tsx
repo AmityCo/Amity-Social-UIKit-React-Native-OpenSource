@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   Image,
-  Platform,
   Text,
   TouchableWithoutFeedback,
   View,
@@ -15,7 +14,7 @@ import ImageView from '../../components/react-native-image-viewing/dist';
 import { RootState } from '../../redux/store';
 import PollSection from '../PollSection/PollSection';
 import PlayIcon from '../../svg/PlayIcon';
-import { Snackbar, useTheme } from 'react-native-paper';
+import {  useTheme } from 'react-native-paper';
 import { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 
 interface IMediaSection {

@@ -1,6 +1,6 @@
 import { StyleSheet, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
+import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import { useTheme } from 'react-native-paper';
 export const useStyles = () => {
   const theme = useTheme() as MyMD3Theme;

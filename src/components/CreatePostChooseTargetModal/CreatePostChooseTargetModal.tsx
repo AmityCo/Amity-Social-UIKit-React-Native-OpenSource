@@ -6,7 +6,6 @@ import {
   Text,
   Modal,
   Image,
-  ScrollView,
   FlatList,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
@@ -37,11 +36,9 @@ const CreatePostChooseTargetModal = ({
   const styles = useStyles();
   const { apiRegion } = useAuth();
   const [communities, setCommunities] = useState<Amity.Community[]>([]);
-  const [hasNextPageFunc, setHasNextPageFunc] = useState(false);
   const [myUser, setMyUser] = useState<UserInterface>();
   const onNextPageRef = useRef<(() => void) | null>(null);
   const isFetchingRef = useRef(false);
-  const onEndReachedCalledDuringMomentumRef = useRef(true);
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const getMyUserDetail = useCallback(async () => {
     if (userId) {
@@ -68,13 +65,12 @@ const CreatePostChooseTargetModal = ({
       try {
         const unsubscribe = CommunityRepository.getCommunities(
           { membership: 'member', limit: 10, sortBy: 'displayName' },
-          ({ data: communitiesList, onNextPage, hasNextPage, loading }) => {
+          ({ data: communitiesList, onNextPage, loading }) => {
             if (!loading) {
               setCommunities((prevCommunities: Amity.Community[]) => [
                 ...prevCommunities,
                 ...communitiesList,
               ]);
-              setHasNextPageFunc(hasNextPage);
               onNextPageRef.current = onNextPage;
               isFetchingRef.current = false;
               unsubscribe();

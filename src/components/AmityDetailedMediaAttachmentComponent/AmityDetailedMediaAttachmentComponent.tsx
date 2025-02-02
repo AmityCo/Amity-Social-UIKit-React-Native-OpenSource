@@ -1,13 +1,10 @@
 import { Animated, Easing, Pressable, Text, View } from 'react-native';
 import React, { FC, memo, useCallback, useEffect, useRef } from 'react';
-import { PageID, ComponentID, ElementID, mediaAttachment } from '../../enum';
+import { PageID, ComponentID, mediaAttachment } from '../../enum';
 import { useAmityComponent } from '../../hooks';
 import { useStyles } from './styles';
-import ImageKeyElement from '../../Elements/ImageKeyElement/ImageKeyElement';
-import TextKeyElement from '../../Elements/TextKeyElement/TextKeyElement';
 import CameraIcon from '../../svg/CameraIcon';
 import GalleryIcon from '../../svg/GalleryIcon';
-import VideoIcon from '../../svg/VideoIcon';
 import PlayVideoIcon from '../../svg/PlayVideoIcon';
 
 type AmityDetailedMediaAttachmentComponentType = {

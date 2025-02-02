@@ -13,7 +13,7 @@ import {
 import { SvgXml } from 'react-native-svg';
 import { closeIcon } from '../../svg/svg-xml-list';
 import { useStyles } from './styles';
-import type { IDisplayImage, IMentionPosition } from '../../screens/CreatePost';
+
 import { editPost, getPostById } from '../../providers/Social/feed-sdk';
 import LoadingImage from '../LoadingImageV4';
 import LoadingVideo from '../LoadingVideo';
@@ -29,6 +29,8 @@ import feedSlice from '../../redux/slices/feedSlice';
 import { useDispatch } from 'react-redux';
 import MentionInput from '../MentionInput/AmityMentionInput';
 import { TSearchItem } from '../../hooks';
+import { IDisplayImage } from '../../types/global.interface';
+import { IMentionPosition } from '../../types/type';
 
 interface IModal {
   visible: boolean;
