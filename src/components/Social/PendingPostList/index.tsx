@@ -11,9 +11,10 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import useAuth from '../../../hooks/useAuth';
 import MediaSection from '../../../components/MediaSection';
-import { IMentionPosition } from '../../../screens/CreatePost';
+
 import { PostRepository } from '@amityco/ts-sdk-react-native';
 import PersonIcon from '../../../svg/PersonIcon';
+import { IMentionPosition } from '../../../types/type';
 
 export interface IPost {
   postId: string;

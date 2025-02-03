@@ -1,12 +1,29 @@
 import { PostRepository } from '@amityco/ts-sdk-react-native';
-import { useCallback, useEffect, useState } from 'react';
-import { getPostById } from '../providers/Social/feed-sdk';
+import { useCallback, useEffect, useState, useRef } from 'react';
 import useAuth from './useAuth';
 
-export const useGallery = (userId: string) => {
+type ElementOf<T> = T extends Array<infer U> ? U : never;
+
+type TUseGallery = Partial<
+  Pick<
+    Parameters<typeof PostRepository.getPosts>[0],
+    'targetId' | 'targetType' | 'limit'
+  >
+> & {
+  dataType: ElementOf<
+    Parameters<typeof PostRepository.getPosts>[0]['dataTypes']
+  >;
+};
+
+export const useGallery = ({
+  targetId,
+  targetType,
+  dataType,
+  limit,
+}: TUseGallery) => {
   const { apiRegion } = useAuth();
-  const [images, setImages] = useState([]);
-  const [videos, setVideos] = useState([]);
+  const onNextPageRef = useRef<(() => void) | undefined | null>(null);
+  const [mediaFiles, setMediaFiles] = useState<any[]>([]);
   const getFile = useCallback(
     (fileId: string): string => {
       return `https://api.${apiRegion}.amity.co/api/v3/files/${fileId}/download?size=medium`;
@@ -16,51 +33,37 @@ export const useGallery = (userId: string) => {
   useEffect(() => {
     const unsubscribe = PostRepository.getPosts(
       {
-        targetId: userId,
-        targetType: 'user',
-        sortBy: 'lastCreated',
-        feedType: 'published',
+        targetId: targetId as string,
+        targetType,
+        dataTypes: [dataType],
+        limit,
       },
-      async ({ data, error }) => {
+      async ({ data, error, onNextPage, hasNextPage, loading }) => {
         if (error) return null;
-        const childredIds = data.flatMap((item) => item.children);
-        const response = await Promise.all(
-          childredIds.map(async (id: string) => {
-            const { data: post } = await getPostById(id);
+        if (!loading) {
+          onNextPageRef.current = hasNextPage ? onNextPage : null;
+          const mappedMediaFiles = data.map((mediaData) => {
             const uri =
-              post.dataType === 'image'
-                ? getFile(post.data.fileId)
-                : post.dataType === 'video'
-                ? getFile(post.data.thumbnailFileId)
+              dataType === 'image'
+                ? getFile(mediaData.data.fileId)
+                : dataType === 'video'
+                ? getFile(mediaData.data.thumbnailFileId)
                 : null;
             return {
-              dataType: post.dataType,
-              ...post.data,
+              dataType,
+              ...mediaData.data,
               uri,
             };
-          })
-        );
-        if (!response) return null;
-        const categorizedData: {
-          [key in 'image' | 'video' | 'poll']: any[];
-        } = response.reduce(
-          (acc, curr) => {
-            if (!acc[curr.dataType]) {
-              acc[curr.dataType] = [];
-            }
-            acc[curr.dataType].push(curr);
-            return acc;
-          },
-          { image: [], video: [], poll: [] }
-        );
-        setImages(categorizedData.image);
-        setVideos(categorizedData.video);
+          });
+          setMediaFiles(mappedMediaFiles);
+        }
       }
     );
+
     return () => unsubscribe();
-  }, [getFile, userId]);
+  }, [dataType, getFile, limit, targetId, targetType]);
   return {
-    images,
-    videos,
+    mediaFiles,
+    getNextPage: onNextPageRef.current,
   };
 };

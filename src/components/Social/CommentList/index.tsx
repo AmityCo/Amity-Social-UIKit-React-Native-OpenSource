@@ -32,7 +32,6 @@ import {
 import EditCommentModal from '../../../components/EditCommentModal';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../../providers/amity-ui-kit-provider';
-import { IMentionPosition } from '../../../screens/CreatePost';
 import { useNavigation } from '@react-navigation/native';
 import ReplyCommentList from '../ReplyCommentList';
 import { CommentRepository } from '@amityco/ts-sdk-react-native';
@@ -42,6 +41,7 @@ import { LikeIcon } from '../../../svg/LikeIcon';
 import ReplyIcon from '../../../svg/ReplyIcon';
 import { ThreeDotsIcon } from '../../../svg/ThreeDotsIcon';
 import ExpandIcon from '../../../svg/ExpandIcon';
+import { IMentionPosition } from '../../../types/type';
 
 export interface IComment {
   commentId: string;

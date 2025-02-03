@@ -7,9 +7,10 @@ import {
   PostRepository,
   ReactionRepository,
 } from '@amityco/ts-sdk-react-native';
-import { IMentionPosition } from '../../screens/CreatePost';
+
 import { Alert } from 'react-native';
 import { text_contain_blocked_word } from '../../util/constants';
+import { IMentionPosition } from '../../types/type';
 
 
 export interface IGlobalFeedRes {

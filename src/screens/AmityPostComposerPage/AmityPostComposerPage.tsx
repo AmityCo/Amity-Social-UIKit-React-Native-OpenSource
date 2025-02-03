@@ -14,8 +14,6 @@ import {
 } from 'react-native';
 import React, { FC, memo, useCallback, useEffect, useState } from 'react';
 import {
-  ComponentID,
-  ElementID,
   ImageSizeState,
   PageID,
   mediaAttachment,

@@ -13,9 +13,6 @@ import { useTheme } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import uiSlice from '../../redux/slices/uiSlice';
 import { RootState } from '../../redux/store';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../routes/RouteParamList';
 import { PostIconOutlined } from '../../svg/PostIconOutlined';
 import { PollIcon } from '../../svg/PollIcon';
 
@@ -23,8 +20,6 @@ const PostTypeChoiceModal = () => {
   const styles = useStyles();
   const theme = useTheme() as MyMD3Theme;
   const dispatch = useDispatch();
-  const navigation =
-    useNavigation() as NativeStackNavigationProp<RootStackParamList>;
   const { closePostTypeChoiceModal } = uiSlice.actions;
   const {
     showPostTypeChoiceModal,
@@ -32,23 +27,12 @@ const PostTypeChoiceModal = () => {
     targetId,
     targetName,
     targetType,
-    postSetting,
-    needApprovalOnPostCreation,
   } = useSelector((state: RootState) => state.ui);
   const [postType, setPostType] = useState<string>();
   const [createPostModalVisible, setCreatePostModalVisible] = useState(false);
 
   const onChooseType = (type: string) => {
     if (targetId && targetName && targetType) {
-      const targetscreen =
-        type === 'post' ? 'CreatePost' : type === 'poll' ? 'CreatePoll' : null;
-      navigation.navigate(targetscreen, {
-        targetId,
-        targetName,
-        targetType,
-        postSetting,
-        needApprovalOnPostCreation,
-      });
       closeCreatePostModal();
     } else {
       setPostType(type);

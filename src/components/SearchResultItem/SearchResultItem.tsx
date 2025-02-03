@@ -43,11 +43,7 @@ const SearchResultItem: FC<SearchResultItemType> = ({
   const memberText = item?.membersCount > 1 ? 'members' : 'member';
 
   const onPressSearchResultItem = useCallback(() => {
-    if (AmityCommunitySearchResultComponent.onPressSearchResultItem)
-      return AmityCommunitySearchResultComponent.onPressSearchResultItem({
-        targetId: item.communityId ?? item.userId,
-        targetType: searchType as TabName.Communities | TabName.Users,
-      });
+
     if (searchType === TabName.Communities) {
       navigation.navigate('CommunityHome', {
         communityId: item.communityId,

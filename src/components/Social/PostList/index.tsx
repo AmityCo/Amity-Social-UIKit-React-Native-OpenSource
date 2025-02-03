@@ -39,13 +39,14 @@ import MediaSection from '../../../components/MediaSection';
 import postDetailSlice from '../../../redux/slices/postDetailSlice';
 import { useDispatch } from 'react-redux';
 import globalFeedSlice from '../../../redux/slices/globalfeedSlice';
-import { IMentionPosition } from '../../../screens/CreatePost';
+
 import feedSlice from '../../../redux/slices/feedSlice';
 import { RootStackParamList } from '../../../routes/RouteParamList';
 import { useTimeDifference } from '../../../hooks/useTimeDifference';
 import { CommunityRepository } from '@amityco/ts-sdk-react-native';
 import RenderTextWithMention from '../../RenderTextWithMention /RenderTextWithMention';
 import { LinkPreview } from '../../PreviewLink/LinkPreview';
+import { IMentionPosition } from '../../../types/type';
 
 
 
@@ -86,9 +87,7 @@ export interface IVideoPost {
 }
 export default function PostList({
   postDetail,
-  postIndex,
   onDelete,
-  isGlobalfeed,
 }: IPostList) {
   const theme = useTheme() as MyMD3Theme;
   const { client, apiRegion } = useAuth();
@@ -266,11 +265,7 @@ export default function PostList({
         commentsCount: commentsCount,
       })
     );
-    navigation.navigate('PostDetail', {
-      postId: postDetail.postId,
-      postIndex: postIndex,
-      isFromGlobalfeed: isGlobalfeed,
-    });
+
   }
   const handleDisplayNamePress = () => {
     if (user?.userId) {

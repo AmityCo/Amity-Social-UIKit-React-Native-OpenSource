@@ -14,15 +14,12 @@ import ImageView from '../../components/react-native-image-viewing/dist';
 import { RootState } from '../../redux/store';
 import PollSection from '../PollSection/PollSection';
 import PlayIcon from '../../svg/PlayIcon';
-import {  useTheme } from 'react-native-paper';
-import { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 
 interface IMediaSection {
   childrenPosts: string[];
 }
 const MediaSection: React.FC<IMediaSection> = ({ childrenPosts }) => {
 
-  const theme = useTheme() as MyMD3Theme;
   const { apiRegion } = useAuth();
   const [imagePosts, setImagePosts] = useState<string[]>([]);
   const [videoPosts, setVideoPosts] = useState<IVideoPost[]>([]);

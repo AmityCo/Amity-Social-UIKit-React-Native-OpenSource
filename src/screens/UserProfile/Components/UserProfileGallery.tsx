@@ -1,94 +1,107 @@
 import { FlatList, Text, View, TouchableOpacity, Image } from 'react-native';
-import React, { FC, memo, useCallback, useState } from 'react';
+import React, {
+  memo,
+  useCallback,
+  useState,
+  forwardRef,
+  useImperativeHandle,
+} from 'react';
 import { useGallery } from '../../../hooks/useGallery';
 import GalleryTab from './GalleryTab';
 import { TabName } from '../../../enum/tabNameState';
+import { SvgXml } from 'react-native-svg';
+import { photo, playBtn, video } from '../../../svg/svg-xml-list';
 import { useStyles } from '../styles';
 import ImageView from '../../../components/react-native-image-viewing/dist';
-import PlayIcon from '../../../svg/PlayIcon';
-import PhotoIcon from '../../../svg/PhotoIcon';
-import VideoIcon from '../../../svg/VideoIcon';
+import { FeedRefType } from '../../CommunityHome';
 
 interface IUserProfileGallery {
   userId: string;
 }
 
-const UserProfileGallery: FC<IUserProfileGallery> = ({ userId }) => {
-  const { images, videos } = useGallery(userId);
-  const [showFullImage, setShowFullImage] = useState(false);
-  const [imageIndex, setImageIndex] = useState(0);
-  const [tabName, setTabName] = useState<TabName>(TabName.Photos);
-  const styles = useStyles();
-  const data = tabName === TabName.Photos ? images : videos;
+const UserProfileGallery = forwardRef(
+  ({ userId }: IUserProfileGallery, ref: React.Ref<FeedRefType>) => {
+    const [showFullImage, setShowFullImage] = useState(false);
+    const [imageIndex, setImageIndex] = useState(0);
+    const [tabName, setTabName] = useState<TabName>(TabName.Photos);
+    const dataType = tabName === TabName.Photos ? 'image' : 'video';
+    const { mediaFiles, getNextPage } = useGallery({
+      targetId: userId,
+      targetType: 'user',
+      dataType: dataType,
+      limit: 21,
+    });
+    const styles = useStyles();
+    const handleLoadMore = useCallback(() => {
+      getNextPage && getNextPage();
+    }, [getNextPage]);
+    useImperativeHandle(ref, () => ({
+      handleLoadMore,
+    }));
 
-  const onPressThumbnail = useCallback((index) => {
-    setImageIndex(index);
-    setShowFullImage(true);
-  }, []);
+    const onPressThumbnail = useCallback((index) => {
+      setImageIndex(index);
+      setShowFullImage(true);
+    }, []);
 
-  const renderGalleryContent = useCallback(
-    ({ item, index }) => {
+    const renderGalleryContent = ({ item, index }) => {
       return (
         <TouchableOpacity onPress={() => onPressThumbnail(index)}>
           <Image source={{ uri: item.uri }} style={styles.thumbnail} />
           {item.dataType === 'video' && (
             <View style={styles.playButton}>
-              <PlayIcon width={50} height={50} />
+              <SvgXml xml={playBtn} width="50" height="50" />
             </View>
           )}
         </TouchableOpacity>
       );
-    },
-    [onPressThumbnail, styles.playButton, styles.thumbnail]
-  );
+    };
 
-  const renderGallery = useCallback(() => {
-    if (!data || data?.length === 0) {
-      const icon = tabName === TabName.Photos ? <PhotoIcon width={50} height={50} /> : <VideoIcon width={50} height={50} />;
+    const renderGallery = () => {
+      if (!mediaFiles || mediaFiles?.length === 0) {
+        const icon = tabName === TabName.Photos ? photo() : video();
+        return (
+          <View style={styles.emptyContentContainer}>
+            <SvgXml xml={icon} width={50} height={50} />
+            <Text style={styles.emptyContentText}>No {tabName} yet</Text>
+          </View>
+        );
+      }
       return (
-        <View style={styles.emptyContentContainer}>
-          {icon}
-          <Text style={styles.emptyContentText}>No {tabName} yet</Text>
-        </View>
+        <FlatList
+          onEndReached={() => {
+            getNextPage && getNextPage();
+          }}
+          scrollEnabled={false}
+          data={mediaFiles}
+          renderItem={renderGalleryContent}
+          keyExtractor={(item) => item.uri}
+          initialNumToRender={10}
+          maxToRenderPerBatch={10}
+          numColumns={2}
+          showsVerticalScrollIndicator={false}
+        />
       );
-    }
+    };
     return (
-      <FlatList
-        scrollEnabled={false}
-        data={data}
-        renderItem={renderGalleryContent}
-        keyExtractor={(item) => item}
-        initialNumToRender={10}
-        maxToRenderPerBatch={10}
-        numColumns={2}
-        showsVerticalScrollIndicator={false}
-      />
+      <View style={styles.container}>
+        <GalleryTab
+          tabName={[TabName.Photos, TabName.Videos]}
+          onTabChange={setTabName}
+          curerntTab={tabName}
+        />
+        {renderGallery()}
+        <ImageView
+          images={mediaFiles}
+          imageIndex={imageIndex}
+          visible={showFullImage}
+          onRequestClose={() => setShowFullImage(false)}
+          isVideoButton={dataType === 'video'}
+          videoPosts={dataType === 'video' ? mediaFiles : undefined}
+        />
+      </View>
     );
-  }, [
-    data,
-    renderGalleryContent,
-    styles.emptyContentContainer,
-    styles.emptyContentText,
-    tabName,
-  ]);
-  return (
-    <View style={styles.galleryContainer}>
-      <GalleryTab
-        tabName={[TabName.Photos, TabName.Videos]}
-        onTabChange={setTabName}
-        curerntTab={tabName}
-      />
-      {renderGallery()}
-      <ImageView
-        images={data}
-        imageIndex={imageIndex}
-        visible={showFullImage}
-        onRequestClose={() => setShowFullImage(false)}
-        isVideoButton={data[imageIndex]?.dataType === 'video'}
-        videoPosts={videos}
-      />
-    </View>
-  );
-};
+  }
+);
 
 export default memo(UserProfileGallery);
