@@ -1,6 +1,6 @@
 {
   "name": "@amityco/react-native-social-ui-kit",
-  "version": "0.5.5",
+  "version": "0.5.6",
   "description": "Social UIKit",
   "main": "lib/commonjs/index.js",
   "module": "lib/module/index.js",
@@ -23,7 +23,8 @@
     "!**/__tests__",
     "!**/__fixtures__",
     "!**/__mocks__",
-    "uikit.config.json"
+    "uikit.config.json",
+    "assets"
   ],
   "scripts": {
     "example": "yarn workspace @amityco/react-native-social-ui-kit-example",
@@ -70,7 +71,6 @@
     "react": "18.2.0",
     "react-native": "0.73.4",
     "react-native-builder-bob": "^0.20.0",
-    "react-native-video": "^5.2.1",
     "release-it": "^15.0.0",
     "typescript": "^5.2.2"
   },
@@ -172,7 +172,7 @@
     "expo-constants": "^14.2.1",
     "expo-image-picker": "^14.1.1",
     "expo-modules-core": "^1.5.4",
-    "expo-video-thumbnails": "^7.2.1",
+    "expo-video-thumbnails": "^9.0.3",
     "i18next": "22.4.10",
     "lodash.debounce": "^4.0.8",
     "moment": "2.29.4",
@@ -182,7 +182,6 @@
     "react-hook-form": "^7.49.3",
     "react-i18next": "12.1.5",
     "react-native-controlled-mentions": "^2.2.5",
-    "react-native-create-thumbnail": "^1.6.4",
     "react-native-image-picker": "5.1.0",
     "react-native-modal-selector": "^2.1.2",
     "react-native-modalbox": "^2.0.2",

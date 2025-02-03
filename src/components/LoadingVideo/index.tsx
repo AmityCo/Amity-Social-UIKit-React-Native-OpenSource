@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Image, TouchableOpacity, Platform } from 'react-native';
+import { View, Image, TouchableOpacity } from 'react-native';
 import * as Progress from 'react-native-progress';
 import { SvgXml } from 'react-native-svg';
 import {
@@ -9,10 +9,8 @@ import {
 } from '../../providers/file-provider';
 import { closeIcon, playBtn } from '../../svg/svg-xml-list';
 import { createStyles } from './styles';
-// import { createThumbnail, type Thumbnail } from 'react-native-create-thumbnail';
-import Video from 'react-native-video';
-import { useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
+import { Video, ResizeMode } from 'expo-av';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 
@@ -41,7 +39,7 @@ const LoadingVideo = ({
   onLoadFinish,
   isUploaded = false,
   thumbNail,
-  onPlay,
+
   fileId,
   isEditMode = false,
 }: OverlayImageProps) => {
@@ -51,22 +49,12 @@ const LoadingVideo = ({
   const [isProcess, setIsProcess] = useState<boolean>(false);
   const [thumbNailImage] = useState(thumbNail ?? '');
   const styles = createStyles();
-  const [playingUri, setPlayingUri] = useState<string>('');
-  const [isPause, setIsPause] = useState<boolean>(true);
-  const navigation = useNavigation<NativeStackNavigationProp<any>>();
+  const [playingUri] = useState<string>('');
+  const [isPause] = useState<boolean>(true);
 
-  const playVideoFullScreen = (fileUrl: string) => {
-    if (Platform.OS === 'ios') {
-      setPlayingUri(fileUrl);
-    } else {
-      setIsPause(true);
-      navigation.navigate('VideoPlayer', { source: source });
-    }
-  };
-  const onClosePlayer = () => {
-    setIsPause(true);
-    setPlayingUri('');
-  };
+  const videoRef = React.useRef(null);
+
+
 
   const handleLoadEnd = () => {
     setLoading(false);
@@ -127,10 +115,15 @@ const LoadingVideo = ({
     }
   }, [fileId, isUploaded, source]);
 
-  const handleOnPlay = () => {
-    setIsPause(!isPause);
-    playVideoFullScreen(source);
-    onPlay && onPlay(source);
+  const handleOnPlay = async () => {
+    // if (videoRef) {
+    //   await videoRef.current.loadAsync({
+    //     uri: `https://api.${apiRegion}.amity.co/api/v3/files/${videoPosts[currentImageIndex]?.videoFileId?.original}/download`,
+    //   });
+
+    //   await videoRef.current.presentFullscreenPlayer();
+    //   await videoRef.current.playAsync();
+    // }
   };
 
   return (
@@ -140,14 +133,8 @@ const LoadingVideo = ({
           <SvgXml xml={playBtn} width="50" height="50" />
         </TouchableOpacity>
       )}
-      {playingUri && !isPause ? (
-        <Video
-          controls
-          style={styles.image}
-          source={{ uri: playingUri }}
-          onFullscreenPlayerWillDismiss={onClosePlayer}
-          paused={isPause}
-        />
+      {playingUri ? (
+        <Video ref={videoRef} resizeMode={ResizeMode.CONTAIN} style={styles.image} />
       ) : thumbNailImage ? (
         <Image
           resizeMode="cover"

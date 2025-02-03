@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Image, TouchableOpacity, Platform } from 'react-native';
+import { View, Image, TouchableOpacity } from 'react-native';
 import * as Progress from 'react-native-progress';
 import { SvgXml } from 'react-native-svg';
 import {
@@ -9,10 +9,8 @@ import {
 } from '../../providers/file-provider';
 import { closeIcon, playBtn, toastIcon } from '../../svg/svg-xml-list';
 import { useStyles } from './styles';
-// import { createThumbnail, type Thumbnail } from 'react-native-create-thumbnail';
-import Video from 'react-native-video';
-import { useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import * as VideoThumbnails from 'expo-video-thumbnails';
+import { Video, ResizeMode } from 'expo-av';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import { useDispatch } from 'react-redux';
@@ -60,23 +58,24 @@ const LoadingVideo = ({
   const [progress, setProgress] = useState(0);
   const [isProcess, setIsProcess] = useState<boolean>(false);
   const [isUploadError, setIsUploadError] = useState(false);
-  const [thumbNailImage] = useState(thumbNail ?? '');
+  const [thumbNailImage, setThumbNailImage] = useState(thumbNail ?? '');
   const styles = useStyles();
-  const [playingUri, setPlayingUri] = useState<string>('');
   const [isPause, setIsPause] = useState<boolean>(true);
-  const navigation = useNavigation<NativeStackNavigationProp<any>>();
+  const videoRef = React.useRef(null);
 
-  const playVideoFullScreen = (fileUrl: string) => {
-    if (Platform.OS === 'ios') {
-      setPlayingUri(fileUrl);
-    } else {
-      setIsPause(true);
-      navigation.navigate('VideoPlayer', { source: source });
+  const playVideoFullScreen = async (fileUrl: string) => {
+    console.log('fileUrl: ', fileUrl);
+
+    if (videoRef) {
+      console.log('fileUrl2: ', fileUrl);
+      await videoRef.current.loadAsync({
+        uri: fileUrl,
+      });
+
+      await videoRef.current.presentFullscreenPlayer();
+      await videoRef.current.playAsync();
     }
-  };
-  const onClosePlayer = () => {
-    setIsPause(true);
-    setPlayingUri('');
+
   };
 
   const handleLoadEnd = () => {
@@ -85,10 +84,11 @@ const LoadingVideo = ({
   };
 
   const processThumbNail = async () => {
+    const thumbnail = await VideoThumbnails.getThumbnailAsync(source);
     // const thumbNail: Thumbnail = await createThumbnail({
     //   url: source,
     // });
-    // setThumbNailImage(thumbNail.path);
+    setThumbNailImage(thumbnail.uri);
   };
   useEffect(() => {
     processThumbNail();
@@ -166,26 +166,21 @@ const LoadingVideo = ({
           <SvgXml xml={playBtn} width="50" height="50" />
         </TouchableOpacity>
       )}
-      {playingUri && !isPause ? (
-        <Video
-          controls
-          style={styles.image}
-          source={{ uri: playingUri }}
-          onFullscreenPlayerWillDismiss={onClosePlayer}
-          paused={isPause}
-        />
-      ) : thumbNailImage ? (
-        <Image
-          resizeMode="cover"
-          source={{ uri: thumbNailImage }}
-          style={[
-            styles.image,
-            loading ? styles.loadingImage : styles.loadedImage,
-          ] as any}
-        />
-      ) : (
-        <View style={styles.image} />
-      )}
+
+      <Video style={{display: 'none'}} ref={videoRef} resizeMode={ResizeMode.CONTAIN} />
+      {
+        thumbNailImage ? (
+          <Image
+            resizeMode="cover"
+            source={{ uri: thumbNailImage }}
+            style={[
+              styles.image,
+              loading ? styles.loadingImage : styles.loadedImage,
+            ] as any}
+          />
+        ) : (
+          <View style={styles.image} />
+        )}
 
       {loading ? (
         <View style={styles.overlay}>
