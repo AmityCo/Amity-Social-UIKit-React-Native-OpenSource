@@ -28,7 +28,8 @@ import {
 import useAuth from '../../hooks/useAuth';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
-import ImagePicker, { launchImageLibrary } from 'react-native-image-picker';
+// import ImagePicker, { launchImageLibrary } from 'react-native-image-picker';
+import * as ImagePicker from 'expo-image-picker'
 import { uploadImageFile } from '../../providers/file-provider';
 import { PrivacyState } from '../../enum/privacyState';
 import CloseIcon from '../../svg/CloseIcon';
@@ -106,12 +107,13 @@ export default function CreateCommunity() {
   }, [image, uploadFile]);
 
   const pickImage = async () => {
-    const result: ImagePicker.ImagePickerResponse = await launchImageLibrary({
-      mediaType: 'photo',
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: false,
       quality: 1,
-      selectionLimit: 1,
+      allowsMultipleSelection: true,
     });
-    if (!result.didCancel && result.assets && result.assets.length > 0) {
+    if (!result.canceled && result.assets && result.assets.length > 0) {
       setImage(result.assets[0]?.uri);
     }
   };

@@ -1,7 +1,7 @@
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
 
-import { useNavigation } from '@react-navigation/native';
+import { StackActions, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { useTheme } from 'react-native-paper';
@@ -11,16 +11,20 @@ import ArrowBackIcon from '../../svg/ArrowBackIcon';
 interface IBackBtn {
   onPress?: () => any;
   goBack?: boolean;
+  backTwice?: boolean
 }
-export default function BackButton({ onPress, goBack = true }: IBackBtn) {
+export default function BackButton({ onPress, goBack = true, backTwice = false }: IBackBtn) {
   const theme = useTheme() as MyMD3Theme;
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   return (
     <TouchableOpacity
       onPress={() => {
-        if (goBack) {
+        if(backTwice){
+          navigation.dispatch(StackActions.pop(2));
+        }else if(goBack){
           navigation.goBack();
         }
+    
 
         onPress && onPress();
       }}

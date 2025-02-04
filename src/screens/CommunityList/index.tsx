@@ -13,6 +13,8 @@ import { useStyles } from './styles';
 import CloseButton from '../../components/BackButton';
 import useAuth from '../../hooks/useAuth';
 import CommunityIcon from '../../svg/CommunityIcon';
+import { SvgXml } from 'react-native-svg';
+import { communityIcon } from '../../svg/svg-xml-list';
 
 export default function CommunityList({ navigation, route }: any) {
   const { apiRegion } = useAuth();
@@ -97,7 +99,7 @@ export default function CommunityList({ navigation, route }: any) {
                 }
 
               }
-            /> : <View style={styles.avatar}> <CommunityIcon /></View>
+            /> : <View style={styles.avatar}><SvgXml xml={communityIcon} /></View>
         }
 
         <Text style={styles.categoryText}>{item.displayName}</Text>
@@ -133,7 +135,6 @@ export default function CommunityList({ navigation, route }: any) {
         renderItem={renderCommunity}
         keyExtractor={(item) => item.communityId.toString()}
         ListFooterComponent={renderFooter}
-        // onEndReached={handleEndReached}
         onEndReached={handleEndReached}
         onMomentumScrollBegin={() =>
           (onEndReachedCalledDuringMomentumRef.current = false)

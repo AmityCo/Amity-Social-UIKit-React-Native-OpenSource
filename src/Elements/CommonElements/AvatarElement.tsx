@@ -25,7 +25,7 @@ const AvatarElement: FC<AvatarElementType> = ({
   ...props
 }) => {
   const defaultAvatar =
-    targetType === 'community' ? <SvgXml style={{marginRight: 12}} width={40} height={40} xml={communityIcon} /> : <SvgXml style={{marginRight: 12}} width={40} height={40} xml={userIcon()} />;
+    targetType === 'community' ? <SvgXml  width={40} height={40} xml={communityIcon} /> : <SvgXml style={{marginRight: 12}} width={40} height={40} xml={userIcon()} />;
   const [avatarUrl, setAvatarUrl] = useState<string>('');
   const { excludes } = useConfig();
   const configId = `${pageID}/${componentID}/${elementID}`;

@@ -19,7 +19,7 @@ import type { UserInterface } from '../../types/user.interface';
 import useAuth from '../../hooks/useAuth';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
-import ImagePicker, { launchImageLibrary } from 'react-native-image-picker';
+import * as ImagePicker from 'expo-image-picker'
 import { uploadImageFile } from '../../providers/file-provider';
 import { getAvatarURL } from '../../util/apiUtil';
 import { updateCommunity } from '../../providers/Social/communities-sdk';
@@ -142,17 +142,13 @@ const EditCommunity = ({ navigation, route }) => {
   }, [image, uploadFile]);
 
   const pickImage = async () => {
-    const result: ImagePicker.ImagePickerResponse = await launchImageLibrary({
-      mediaType: 'photo',
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: false,
       quality: 1,
-      selectionLimit: 1,
+      allowsMultipleSelection: true,
     });
-    if (
-      !result.didCancel &&
-      result.assets &&
-      result.assets.length > 0 &&
-      result.assets[0]?.uri
-    ) {
+    if (!result.canceled && result.assets && result.assets.length > 0) {
       setImage(result.assets[0]?.uri);
     }
   };

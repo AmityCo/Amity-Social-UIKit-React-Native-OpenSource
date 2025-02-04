@@ -30,7 +30,7 @@ const CategoryElement: FC<CategoryElementType> = ({
 
   if (excludes.includes(configId)) return null;
   return (
-    <Text testID={configId} accessibilityLabel={configId} {...props}>
+    <Text testID={configId} accessibilityLabel={configId} numberOfLines={1} {...props}>
       {categoryData?.name}
     </Text>
   );

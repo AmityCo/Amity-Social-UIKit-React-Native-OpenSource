@@ -104,7 +104,7 @@ export default function SocialNavigator({ screen = 'Home' }: INavigator) {
                 params: { communityName, communityId, isModerator, isBackEnabled = true },
               },
             }: any) => ({
-              headerLeft: () => isBackEnabled && <BackButton />,
+              headerLeft: () => isBackEnabled && <BackButton backTwice />,
               title: communityName,
               headerRight: () => (
                 <TouchableOpacity

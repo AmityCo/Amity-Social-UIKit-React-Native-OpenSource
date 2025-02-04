@@ -12,6 +12,8 @@ import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import ArrowOutlinedIcon from '../../svg/ArrowOutlinedIcon';
 import CommunityIcon from '../../svg/CommunityIcon';
+import { SvgXml } from 'react-native-svg';
+import { communityIcon, communitySettingMemberIcon } from '../../svg/svg-xml-list';
 
 interface ChatDetailProps {
   navigation: any;
@@ -82,7 +84,7 @@ export const CommunitySetting: React.FC<ChatDetailProps> = ({
       data: [
         {
           name: 'Members',
-          leftIcon: <CommunityIcon color={theme.colors.base}/>,
+          leftIcon: <SvgXml width={30} height={30} xml={communitySettingMemberIcon} color={theme.colors.base}/>,
           callBack: handleMembersPress,
           rightIcon: <ArrowOutlinedIcon width={24} color={theme.colors.base}/>,
           type: SettingType.basicInfo,

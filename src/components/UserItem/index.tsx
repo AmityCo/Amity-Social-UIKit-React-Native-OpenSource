@@ -6,6 +6,8 @@ import type { UserInterface } from '../../types/user.interface';
 import useAuth from '../../hooks/useAuth';
 import { ThreeDotsIcon } from '../../svg/ThreeDotsIcon';
 import { AvatarIcon } from '../../svg/AvatarIcon';
+import { SvgXml } from 'react-native-svg';
+import { userIcon } from '../../svg/svg-xml-list';
 
 export default function UserItem({
   user,
@@ -41,6 +43,7 @@ export default function UserItem({
     return 'Display name';
   };
   const avatarFileURL = (fileId: string) => {
+    console.log('fileId: ', fileId);
     return `https://api.${apiRegion}.amity.co/api/v3/files/${fileId}/download?size=medium`;
   };
 
@@ -57,7 +60,7 @@ export default function UserItem({
                 }
 
               }
-            /> : <View style={styles.avatar}> <AvatarIcon /></View>
+            /> :   <SvgXml style={styles.avatar} xml={userIcon()} />
         }
 
         <Text style={styles.itemText}>{displayName()}</Text>

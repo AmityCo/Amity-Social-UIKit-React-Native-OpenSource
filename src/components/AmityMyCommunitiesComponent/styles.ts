@@ -29,6 +29,7 @@ export const useStyles = (theme: MyMD3Theme) => {
       fontSize: 14,
       fontWeight: '600',
       color: theme.colors.base,
+      
     },
     privateBadge: {
       width: 24,
@@ -54,7 +55,7 @@ export const useStyles = (theme: MyMD3Theme) => {
       overflow: 'hidden',
       marginHorizontal: 2,
       fontSize: 12,
-      maxWidth: '26%',
+      maxWidth: '30%',
     },
     avatar: {
       width: 40,
