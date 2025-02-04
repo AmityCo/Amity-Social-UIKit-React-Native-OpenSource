@@ -10,7 +10,8 @@ import {
   ActivityIndicator,
   ViewStyle,
 } from 'react-native';
-
+import { SvgXml } from 'react-native-svg';
+import { circleCloseIcon, plusIcon } from '../../svg/svg-xml-list';
 import { useStyles } from './styles';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import { useTheme } from 'react-native-paper';
@@ -22,8 +23,7 @@ import useAuth from '../../hooks/useAuth';
 import AmityMentionInput from '../../components/MentionInput/AmityMentionInput';
 import { TSearchItem } from '../../hooks/useSearch';
 import { text_contain_blocked_word } from '../../util/constants';
-import CircleCloseIcon from '../../svg/CircleCloseIcon';
-import { PlusIcon } from '../../svg/PlusIcon';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 const CreatePoll = ({ navigation, route }) => {
@@ -181,7 +181,7 @@ const CreatePoll = ({ navigation, route }) => {
     pollOptions[1].data.length === 0;
 
   return (
-    <View style={styles.AllInputWrap}>
+    <SafeAreaView style={styles.AllInputWrap}>
       <Header
         targetName={targetName}
         goBack={goBack}
@@ -264,10 +264,12 @@ const CreatePoll = ({ navigation, route }) => {
                       style={styles.optionInput}
                       onChangeText={(text) => onChangeOptionText(text, index)}
                     />
-                    <TouchableOpacity onPress={() => onPressRemoveOption(index)}>
-                      <CircleCloseIcon width={20} height={20} />
-                    </TouchableOpacity>
-
+                    <SvgXml
+                      xml={circleCloseIcon}
+                      width="20"
+                      height="20"
+                      onPress={() => onPressRemoveOption(index)}
+                    />
                   </View>
                 </View>
                 {onReachMaxChar && (
@@ -283,7 +285,11 @@ const CreatePoll = ({ navigation, route }) => {
               style={styles.addOptionBtn}
               onPress={onPressAddOption}
             >
-              <PlusIcon color={theme.colors.base} />
+              <SvgXml
+                xml={plusIcon(theme.colors.base)}
+                width="20"
+                height="20"
+              />
               <Text style={styles.addOptionText}>Add option</Text>
             </TouchableOpacity>
           )}
@@ -325,7 +331,7 @@ const CreatePoll = ({ navigation, route }) => {
           />
         </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 

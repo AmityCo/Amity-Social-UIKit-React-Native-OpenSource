@@ -1,7 +1,7 @@
 import { View, useWindowDimensions } from 'react-native';
 import React from 'react';
 import { useStyles } from './styles';
-import  {
+import {
   Facebook,
 } from 'react-content-loader/native';
 import { Divider } from 'react-native-paper';

@@ -123,16 +123,6 @@ const FeedStyle: FC<AmityPostEngagementActionsSubComponentType> = ({
           <Text style={styles.btnText}>{postData?.commentsCount}</Text>
         </TouchableOpacity>
       </View>
-      <TouchableOpacity style={styles.commentBtn}>
-        <ShareButtonIconElement
-          pageID={pageId}
-          componentID={componentId}
-          width={20}
-          height={20}
-          resizeMode="contain"
-        />
-        <Text style={styles.btnText}>Share</Text>
-      </TouchableOpacity>
     </View>
   );
 };

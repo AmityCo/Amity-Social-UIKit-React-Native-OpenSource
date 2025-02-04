@@ -23,6 +23,8 @@ import type { FeedRefType } from '../CommunityHome';
 import { deletePostById } from '../../providers/Social/feed-sdk';
 import { amityPostsFormatter } from '../../util/postDataFormatter';
 import { useFocusEffect } from '@react-navigation/native';
+import AmityPostContentComponent from '../../components/AmityPostContentComponent/AmityPostContentComponent';
+import { AmityPostContentComponentStyleEnum } from '../../enum/AmityPostContentComponentStyle';
 
 interface IFeed {
   targetId: string;
@@ -115,12 +117,12 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
       <FlatList
         scrollEnabled={false}
         data={postData ?? []}
-        renderItem={({ item, index }) => (
-          <PostList
-            onDelete={onDeletePost}
-            postDetail={item}
-            isGlobalfeed={false}
-            postIndex={index}
+        renderItem={({ item }) => (
+          <AmityPostContentComponent
+            post={item}
+            AmityPostContentComponentStyle={
+              AmityPostContentComponentStyleEnum.feed
+            }
           />
         )}
         keyExtractor={(_, index) => index.toString()}

@@ -11,11 +11,11 @@ export default function App() {
   return (
     <AmityUiKitProvider
       configs={config} //put your config json object
-      apiKey="b3babb0b3a89f4341d31dc1a01091edcd70f8de7b23d697f"
-      apiRegion="sg"
-      userId="top"
-      displayName="top"
-      apiEndpoint="https://api.sg.amity.co"
+      apiKey="b0eaba093fdbf1361f36d849000b4289d80e8ae3b8636d29"
+      apiRegion="us"
+      userId="topAmity"
+      displayName="topAmityDisplayName"
+      apiEndpoint="https://api.us.amity.co"
     >
       <AmityUiKitSocial />
     </AmityUiKitProvider>
