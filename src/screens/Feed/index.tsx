@@ -8,7 +8,6 @@ import React, {
 } from 'react';
 
 import { FlatList, View } from 'react-native';
-import PostList from '../../components/Social/PostList';
 import { useStyles } from './styles';
 import {
   CommunityRepository,
@@ -20,7 +19,6 @@ import {
   subscribeTopic,
 } from '@amityco/ts-sdk-react-native';
 import type { FeedRefType } from '../CommunityHome';
-import { deletePostById } from '../../providers/Social/feed-sdk';
 import { amityPostsFormatter } from '../../util/postDataFormatter';
 import { useFocusEffect } from '@react-navigation/native';
 import AmityPostContentComponent from '../../components/AmityPostContentComponent/AmityPostContentComponent';
@@ -109,9 +107,6 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
     handleLoadMore,
   }));
 
-  const onDeletePost = async (postId: string) => {
-    await deletePostById(postId);
-  };
   return (
     <View style={styles.feedWrap}>
       <FlatList

@@ -5,7 +5,6 @@ import RoundCheckbox from '../RoundCheckbox/index';
 import type { UserInterface } from '../../types/user.interface';
 import useAuth from '../../hooks/useAuth';
 import { ThreeDotsIcon } from '../../svg/ThreeDotsIcon';
-import { AvatarIcon } from '../../svg/AvatarIcon';
 import { SvgXml } from 'react-native-svg';
 import { userIcon } from '../../svg/svg-xml-list';
 

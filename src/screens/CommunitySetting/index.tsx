@@ -11,9 +11,8 @@ import { CommunityRepository } from '@amityco/ts-sdk-react-native';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import ArrowOutlinedIcon from '../../svg/ArrowOutlinedIcon';
-import CommunityIcon from '../../svg/CommunityIcon';
 import { SvgXml } from 'react-native-svg';
-import { communityIcon, communitySettingMemberIcon } from '../../svg/svg-xml-list';
+import {  communitySettingMemberIcon } from '../../svg/svg-xml-list';
 
 interface ChatDetailProps {
   navigation: any;

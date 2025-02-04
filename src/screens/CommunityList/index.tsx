@@ -12,7 +12,6 @@ import {
 import { useStyles } from './styles';
 import CloseButton from '../../components/BackButton';
 import useAuth from '../../hooks/useAuth';
-import CommunityIcon from '../../svg/CommunityIcon';
 import { SvgXml } from 'react-native-svg';
 import { communityIcon } from '../../svg/svg-xml-list';
 
