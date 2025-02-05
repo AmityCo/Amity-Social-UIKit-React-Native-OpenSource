@@ -10,7 +10,7 @@ export const useStyles = () => {
       paddingHorizontal: 12,
       width: '100%',
       alignSelf: 'center',
-    },
+    }, 
     replyCommentWrap: {
       backgroundColor: theme.colors.background,
       width: '100%',

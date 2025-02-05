@@ -28,7 +28,6 @@ import {
 import useAuth from '../../hooks/useAuth';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
-// import ImagePicker, { launchImageLibrary } from 'react-native-image-picker';
 import * as ImagePicker from 'expo-image-picker'
 import { uploadImageFile } from '../../providers/file-provider';
 import { PrivacyState } from '../../enum/privacyState';

@@ -5,9 +5,14 @@ export const useStyles = () => {
   const theme = useTheme() as MyMD3Theme;
   const styles = StyleSheet.create({
     container: {
-      padding: 16,
+      paddingVertical: 16,
       flex: 1,
+      gap: 8,
+
+    },
+    postCard:{
       backgroundColor: theme.colors.background,
+      paddingHorizontal: 16
     },
     storiesContainer: {
       flexDirection: 'row',

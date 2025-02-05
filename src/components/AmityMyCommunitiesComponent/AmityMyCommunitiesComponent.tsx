@@ -134,8 +134,7 @@ const AmityMyCommunitiesComponent: FC<AmityMyCommunitiesComponentType> = ({
             height={70}
             speed={1}
             width={380}
-            backgroundColor={themeStyles.colors.baseShade1}
-            foregroundColor={themeStyles.colors.baseShade4}
+            backgroundColor={themeStyles.colors.baseShade4}
             viewBox="-10 -10 380 70"
           >
             <Rect x="48" y="8" rx="3" ry="3" width="188" height="8" />

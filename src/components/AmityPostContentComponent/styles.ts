@@ -38,7 +38,6 @@ export const useStyles = (theme: MyMD3Theme) => {
       fontSize: 13,
       fontWeight: '400',
       color: theme.colors.baseShade1,
-      marginVertical: 4,
     },
     bodySection: {
       justifyContent: 'center',
