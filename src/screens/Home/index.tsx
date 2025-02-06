@@ -45,7 +45,6 @@ export default function Home() {
   // const { openPostTypeChoiceModal } = uiSlice.actions;
   // const { excludes } = useConfig();
   const [activeTab, setActiveTab] = useState<string>(newsFeedTab);
-  console.log('activeTab: ', activeTab);
   const [myCommunities, setMyCommunities] = useState<Amity.Community[]>(null);
   const [pageLoading, setPageLoading] = useState(true);
 

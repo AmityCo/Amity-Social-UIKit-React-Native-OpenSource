@@ -351,7 +351,6 @@ const AmityPostDetailPage: FC<AmityPostDetailPageType> = ({ postId }) => {
             hasSubscribed = true;
           }
           const posts = await amityPostsFormatter([data]);
-          console.log('posts: ', posts);
           setPostData(posts[0]);
         }
       }

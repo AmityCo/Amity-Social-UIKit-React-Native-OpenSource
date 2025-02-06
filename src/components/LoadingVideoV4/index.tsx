@@ -64,10 +64,8 @@ const LoadingVideo = ({
   const videoRef = React.useRef(null);
 
   const playVideoFullScreen = async (fileUrl: string) => {
-    console.log('fileUrl: ', fileUrl);
 
     if (videoRef) {
-      console.log('fileUrl2: ', fileUrl);
       await videoRef.current.loadAsync({
         uri: fileUrl,
       });

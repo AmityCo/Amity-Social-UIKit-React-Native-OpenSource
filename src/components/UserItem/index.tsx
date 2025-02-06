@@ -42,7 +42,6 @@ export default function UserItem({
     return 'Display name';
   };
   const avatarFileURL = (fileId: string) => {
-    console.log('fileId: ', fileId);
     return `https://api.${apiRegion}.amity.co/api/v3/files/${fileId}/download?size=medium`;
   };
 

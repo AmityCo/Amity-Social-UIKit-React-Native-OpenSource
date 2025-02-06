@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import React, { memo, useEffect, useRef, useState } from 'react';
-import CreatePostChooseTargetModal from '../CreatePostChooseTargetModal/CreatePostChooseTargetModal';
 import { useStyles } from './style';
 import { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import { useTheme } from 'react-native-paper';
@@ -27,33 +26,36 @@ const PostTypeChoiceModal = () => {
   const { closePostTypeChoiceModal } = uiSlice.actions;
   const {
     showPostTypeChoiceModal,
-    userId,
     targetId,
     targetName,
     targetType,
   } = useSelector((state: RootState) => state.ui);
-  const [postType, setPostType] = useState<string>();
-  const [createPostModalVisible, setCreatePostModalVisible] = useState(false);
-  const navigation = useNavigation<NativeStackNavigationProp<any>>();
-  const {community} = useCommunity(targetId)
 
-  
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
+  const { community } = useCommunity(targetId)
+
+
   const onChooseType = (type: string) => {
-    if (targetId && targetName && targetType && community) {
+    if (targetId && targetName && targetType && community && type == 'post') {
       closeCreatePostModal();
       navigation.navigate('CreatePost', {
         targetId,
         targetType,
-        community: targetType === 'community'? community: undefined
-  
+        community: targetType === 'community' ? community : undefined
+
       });
-    } else {
-      setPostType(type);
-      setCreatePostModalVisible(true);
+    } else if (targetId && targetName && targetType && community && type == 'poll') {
+      closeCreatePostModal();
+      navigation.navigate('CreatePoll', {
+        targetId,
+        targetType,
+        community: targetType === 'community' ? community : undefined
+
+      });
     }
   };
   const closeCreatePostModal = () => {
-    setCreatePostModalVisible(false);
+
     closeModal();
   };
 
@@ -112,13 +114,6 @@ const PostTypeChoiceModal = () => {
             <PollIcon color={theme.colors.base} />
             <Text style={styles.postText}>Poll</Text>
           </TouchableOpacity>
-          <CreatePostChooseTargetModal
-            visible={createPostModalVisible}
-            onClose={closeCreatePostModal}
-            userId={userId}
-            onSelect={closeCreatePostModal}
-            postType={postType}
-          />
         </Animated.View>
       </Pressable>
     </Modal>
