@@ -83,7 +83,7 @@ type AmityPostDetailPageType = {
 };
 
 const AmityPostDetailPage: FC<AmityPostDetailPageType> = ({ postId }) => {
-  console.log('postId: ', postId);
+
   const { top, bottom } = useSafeAreaInsets();
   const { height } = useWindowDimensions();
 
