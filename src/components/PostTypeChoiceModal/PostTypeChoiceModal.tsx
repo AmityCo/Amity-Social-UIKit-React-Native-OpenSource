@@ -15,6 +15,10 @@ import uiSlice from '../../redux/slices/uiSlice';
 import { RootState } from '../../redux/store';
 import { PostIconOutlined } from '../../svg/PostIconOutlined';
 import { PollIcon } from '../../svg/PollIcon';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useCommunity } from '../../hooks';
+
 
 const PostTypeChoiceModal = () => {
   const styles = useStyles();
@@ -30,10 +34,19 @@ const PostTypeChoiceModal = () => {
   } = useSelector((state: RootState) => state.ui);
   const [postType, setPostType] = useState<string>();
   const [createPostModalVisible, setCreatePostModalVisible] = useState(false);
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
+  const {community} = useCommunity(targetId)
 
+  
   const onChooseType = (type: string) => {
-    if (targetId && targetName && targetType) {
+    if (targetId && targetName && targetType && community) {
       closeCreatePostModal();
+      navigation.navigate('CreatePost', {
+        targetId,
+        targetType,
+        community: targetType === 'community'? community: undefined
+  
+      });
     } else {
       setPostType(type);
       setCreatePostModalVisible(true);

@@ -9,6 +9,7 @@ type ICreatePost = NativeStackScreenProps<RootStackParamList, 'CreatePost'>;
 
 const CreatePost: FC<ICreatePost> = ({ route }) => {
   const { community, targetId, targetType } = route.params;
+
   return (
     <AmityPostComposerPage
       mode={AmityPostComposerMode.CREATE}

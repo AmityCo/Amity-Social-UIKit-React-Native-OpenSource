@@ -59,7 +59,7 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
   community,
   post,
 }) => {
-
+  console.log('community test: ', community);
   const pageId = PageID.post_composer_page;
   const { isExcluded, themeStyles, accessibilityId } = useAmityPage({ pageId });
   const styles = useStyles(themeStyles);
