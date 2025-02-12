@@ -67,7 +67,7 @@ const AmityMyCommunitiesComponent: FC<AmityMyCommunitiesComponentType> = ({
         />
         <View style={styles.communityInfoContainer}>
           <View style={styles.communityNameContainer}>
-            {!item.isPublic && (
+            {/* {!item.isPublic && (
               <ImageElement
                 pageID={pageId}
                 componentID={componentId}
@@ -75,7 +75,7 @@ const AmityMyCommunitiesComponent: FC<AmityMyCommunitiesComponentType> = ({
                 style={styles.privateBadge}
                 configKey="icon"
               />
-            )}
+            )} */}
             <TextElement
               ellipsizeMode="tail"
               numberOfLines={1}
@@ -85,7 +85,7 @@ const AmityMyCommunitiesComponent: FC<AmityMyCommunitiesComponentType> = ({
               style={[styles.communityName, privateCommunityTextlength]}
               text={item.displayName}
             />
-            {item.isOfficial && (
+            {/* {item.isOfficial && (
               <ImageElement
                 pageID={pageId}
                 componentID={componentId}
@@ -93,7 +93,7 @@ const AmityMyCommunitiesComponent: FC<AmityMyCommunitiesComponentType> = ({
                 style={styles.officialBadge}
                 configKey="icon"
               />
-            )}
+            )} */}
           </View>
           <View style={styles.communityCategoryContainer}>
             {item.categoryIds.slice(0, 3).map((categoryId) => {

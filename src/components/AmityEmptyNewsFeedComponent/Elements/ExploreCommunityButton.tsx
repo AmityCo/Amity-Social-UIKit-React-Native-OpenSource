@@ -5,6 +5,7 @@ import { ComponentID, ElementID, PageID } from '../../../enum';
 import useConfig from '../../../hooks/useConfig';
 import { useStyles } from './styles/styles';
 import { useConfigImageUri } from '../../../hooks/useConfigImageUri';
+import { Asset } from 'expo-asset';
 
 type ExploreCommunityButtonType = {
   onPressExploreCommunity?: () => void;
@@ -44,7 +45,7 @@ const ExploreCommunityButton: FC<ExploreCommunityButtonType> = ({
       style={styles.exploreBtn}
       onPress={() => onPressExploreCommunity && onPressExploreCommunity()}
     >
-      <Image source={icon} style={styles.exploreIcon} resizeMode="contain" />
+
       <Text style={styles.exploreText}>{text}</Text>
     </TouchableOpacity>
   );
