@@ -4,9 +4,10 @@ import {
   ComponentID,
   ElementID,
   PageID,
-  UiKitConfigKeys,
+
 } from '../../enum/enumUIKitID';
-import { useAmityElement, useConfigImageUri } from '../../hooks';
+import { useAmityElement } from '../../hooks';
+import BackButton from '../../components/BackButton';
 
 type CloseButtonIconElementType = Partial<ImageProps> & {
   pageID?: PageID;
@@ -19,29 +20,16 @@ const CloseButtonIconElement: FC<CloseButtonIconElementType> = ({
   ...props
 }) => {
   const elementID = ElementID.close_button;
-  const configKey: keyof UiKitConfigKeys = 'image';
-  const { accessibilityId, isExcluded } = useAmityElement({
+  const { isExcluded } = useAmityElement({
     pageId: pageID,
     componentId: componentID,
     elementId: elementID,
   });
-  const imageSource = useConfigImageUri({
-    configPath: {
-      page: pageID,
-      component: componentID,
-      element: elementID,
-    },
-    configKey: configKey,
-  });
+
   if (isExcluded) return null;
 
   return (
-    <Image
-      testID={accessibilityId}
-      accessibilityLabel={accessibilityId}
-      source={props.source ?? imageSource}
-      {...props}
-    />
+    <BackButton {...props}/>
   );
 };
 

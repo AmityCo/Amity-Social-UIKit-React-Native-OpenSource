@@ -21,6 +21,8 @@ import { formatNumber } from '../../util/numberUtil';
 import ContentLoader, { Circle, Rect } from 'react-content-loader/native';
 import { useCommunities } from '../../hooks/useCommunities';
 import { useAmityComponent } from '../../hooks/useUiKitReference';
+import { SvgXml } from 'react-native-svg';
+import { officialIcon, privateIcon } from '../../svg/svg-xml-list';
 type AmityMyCommunitiesComponentType = {
   pageId?: PageID;
   componentId?: ComponentID;
@@ -67,15 +69,10 @@ const AmityMyCommunitiesComponent: FC<AmityMyCommunitiesComponentType> = ({
         />
         <View style={styles.communityInfoContainer}>
           <View style={styles.communityNameContainer}>
-            {/* {!item.isPublic && (
-              <ImageElement
-                pageID={pageId}
-                componentID={componentId}
-                elementID={ElementID.community_private_badge}
-                style={styles.privateBadge}
-                configKey="icon"
-              />
-            )} */}
+            {!item.isPublic && (
+              <SvgXml xml={privateIcon()} style={styles.privateBadge}/>
+            )}
+        
             <TextElement
               ellipsizeMode="tail"
               numberOfLines={1}
@@ -85,15 +82,9 @@ const AmityMyCommunitiesComponent: FC<AmityMyCommunitiesComponentType> = ({
               style={[styles.communityName, privateCommunityTextlength]}
               text={item.displayName}
             />
-            {/* {item.isOfficial && (
-              <ImageElement
-                pageID={pageId}
-                componentID={componentId}
-                elementID={ElementID.community_official_badge}
-                style={styles.officialBadge}
-                configKey="icon"
-              />
-            )} */}
+            {item.isOfficial && (
+              <SvgXml xml={officialIcon()} width={20} height={20}  style={styles.officialBadge}/>
+            )}
           </View>
           <View style={styles.communityCategoryContainer}>
             {item.categoryIds.slice(0, 3).map((categoryId) => {

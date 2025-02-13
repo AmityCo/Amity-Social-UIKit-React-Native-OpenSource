@@ -8,6 +8,8 @@ import {
 } from '../../enum';
 import useConfig from '../../hooks/useConfig';
 import { useConfigImageUri } from '../../hooks/useConfigImageUri';
+import { SvgXml } from 'react-native-svg';
+import { ThreeDotsIcon } from '../../svg/ThreeDotsIcon';
 
 
 type MenuButtonIconElementType = Partial<ImageProps> & {
@@ -35,12 +37,7 @@ const MenuButtonIconElement: FC<MenuButtonIconElementType> = ({
   if (excludes.includes(configId)) return null;
 
   return (
-    <Image
-      testID={configId}
-      accessibilityLabel={configId}
-      source={props.source ?? imageSource}
-      {...props}
-    />
+    <ThreeDotsIcon {...props} />
   );
 };
 

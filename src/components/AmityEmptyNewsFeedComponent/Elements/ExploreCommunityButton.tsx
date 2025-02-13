@@ -1,11 +1,9 @@
-import { Image, Text, TouchableOpacity } from 'react-native';
+import {  Text, TouchableOpacity } from 'react-native';
 import React, { FC, memo } from 'react';
 import { useUiKitConfig } from '../../../hooks/useUiKitConfig';
 import { ComponentID, ElementID, PageID } from '../../../enum';
 import useConfig from '../../../hooks/useConfig';
 import { useStyles } from './styles/styles';
-import { useConfigImageUri } from '../../../hooks/useConfigImageUri';
-import { Asset } from 'expo-asset';
 
 type ExploreCommunityButtonType = {
   onPressExploreCommunity?: () => void;
@@ -24,14 +22,6 @@ const ExploreCommunityButton: FC<ExploreCommunityButtonType> = ({
     element: ElementID.explore_communities_button,
   }) as string[];
 
-  const icon = useConfigImageUri({
-    configKey: 'icon',
-    configPath: {
-      page: PageID.social_home_page,
-      component: ComponentID.empty_newsfeed,
-      element: ElementID.explore_communities_button,
-    },
-  });
 
   if (
     excludes.includes(

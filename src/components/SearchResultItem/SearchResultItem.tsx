@@ -11,6 +11,8 @@ import { useAmityComponent } from '../../hooks/useUiKitReference';
 import AvatarElement from '../../Elements/CommonElements/AvatarElement';
 import ImageElement from '../../Elements/CommonElements/ImageElement';
 import TextElement from '../../Elements/CommonElements/TextElement';
+import { SvgXml } from 'react-native-svg';
+import { officialIcon, privateIcon } from '../../svg/svg-xml-list';
 
 
 type SearchResultItemType = {
@@ -89,13 +91,7 @@ const SearchResultItem: FC<SearchResultItemType> = ({
       <View style={styles.profileInfoContainer}>
         <View style={styles.rowContainer}>
           {showPrivateIcon && (
-            <ImageElement
-              pageID={pageId}
-              componentID={componentId}
-              elementID={ElementID.community_private_badge}
-              style={styles.lockIcon}
-              configKey="icon"
-            />
+            <SvgXml xml={privateIcon()} style={styles.lockIcon} />
           )}
           <TextElement
             pageID={pageId}
@@ -106,13 +102,7 @@ const SearchResultItem: FC<SearchResultItemType> = ({
           />
 
           {showOfficialBadgeIcon && (
-            <ImageElement
-              pageID={pageId}
-              componentID={componentId}
-              elementID={ElementID.community_official_badge}
-              style={styles.badgeIcon}
-              configKey="icon"
-            />
+            <SvgXml xml={officialIcon()}  style={styles.badgeIcon}/>
           )}
         </View>
         {isCommunity && (

@@ -4,9 +4,9 @@ import { useStyles } from './styles';
 import { useNavigation } from '@react-navigation/native';
 
 import { ComponentID, ElementID, PageID } from '../../enum';
-import { useConfigImageUri } from '../../hooks/useConfigImageUri';
 import { useUiKitConfig } from '../../hooks/useUiKitConfig';
 import { SearchIcon } from '../../svg/SearchIcon';
+import CircleCloseIcon from '../../svg/CircleCloseIcon';
 
 type AmityTopSearchBarComponentType = {
   setSearchValue: (arg: string) => void;
@@ -18,22 +18,8 @@ const AmityTopSearchBarComponent = ({
   const styles = useStyles();
   const navigation = useNavigation();
   const [inputValue, setInputValue] = useState('');
-  // const searchIcon = useConfigImageUri({
-  //   configPath: {
-  //     page: PageID.social_global_search_page,
-  //     component: ComponentID.top_search_bar,
-  //     element: ElementID.search_icon,
-  //   },
-  //   configKey: 'icon',
-  // });
-  const clearIcon = useConfigImageUri({
-    configPath: {
-      page: PageID.social_global_search_page,
-      component: ComponentID.top_search_bar,
-      element: ElementID.clear_button,
-    },
-    configKey: 'icon',
-  });
+
+
   const cancelText = useUiKitConfig({
     keys: ['text'],
     page: PageID.social_global_search_page,
@@ -61,12 +47,6 @@ const AmityTopSearchBarComponent = ({
   return (
     <View style={styles.headerWrap}>
       <View style={styles.inputWrap}>
-        {/* <Image
-          source={searchIcon}
-          style={styles.searchIcon}
-          testID="top_search_bar/search_icon"
-          accessibilityLabel="top_search_bar/search_icon"
-        /> */}
         <SearchIcon/>
         <TextInput
           value={inputValue}
@@ -81,7 +61,8 @@ const AmityTopSearchBarComponent = ({
             testID="top_search_bar/clear_button"
             accessibilityLabel="top_search_bar/clear_button"
           >
-            <Image source={clearIcon} width={20} height={20} />
+          
+            <CircleCloseIcon/>
           </TouchableOpacity>
         )}
       </View>

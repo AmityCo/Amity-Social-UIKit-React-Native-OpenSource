@@ -29,12 +29,13 @@ export const useStyles = (theme: MyMD3Theme) => {
       fontSize: 14,
       fontWeight: '600',
       color: theme.colors.base,
-      
+
     },
     privateBadge: {
       width: 24,
       height: 24,
       tintColor: theme.colors.base,
+      marginRight: 4
     },
     officialBadge: {
       width: 24,
