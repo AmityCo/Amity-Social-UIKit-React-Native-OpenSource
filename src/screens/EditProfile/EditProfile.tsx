@@ -69,7 +69,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
   const MAX_CHARACTER_COUNT = 100;
   const { apiRegion } = useAuth();
   const imageUriRef = useRef<string | undefined>(undefined);
-  const [imageUri, setImageUri] = useState<string | undefined>();
+  const [imageUri, setImageUri] = useState<string | undefined>('');
   const [displayName, setDisplayName] = useState<string | undefined>();
   const [about, setAbout] = useState<string | undefined>();
   const displayNameRef = useRef(displayName);
@@ -234,11 +234,11 @@ export const EditProfile: React.FC<EditProfileProps> = ({
               style={styles.avatar}
               source={
                 {
-                  uri: imageUri && imageUri,
+                  uri: imageUri ? imageUri : '',
                 }
 
               }
-            /> : <View style={styles.avatar}> <AvatarIcon /></View>
+            /> : <Text ><AvatarIcon width={64} height={64}/></Text>
           }
 
         </TouchableOpacity>
