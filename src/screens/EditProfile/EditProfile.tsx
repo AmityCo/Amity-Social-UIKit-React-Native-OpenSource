@@ -11,13 +11,7 @@ import {
   Alert,
   TextInput,
 } from 'react-native';
-import {
-  launchCamera,
-  launchImageLibrary,
-  type CameraOptions,
-  type ImageLibraryOptions,
-  type ImagePickerResponse,
-} from 'react-native-image-picker';
+
 import { useStyles } from './styles';
 import CloseButton from '../../components/BackButton/index';
 import DoneButton from '../../components/DoneButton/index';
@@ -28,38 +22,14 @@ import { uploadImageFile } from '../../providers/file-provider';
 import { useFocusEffect } from '@react-navigation/native';
 import { AvatarIcon } from '../../svg/AvatarIcon';
 import CameraIcon from '../../svg/CameraIcon';
-
+import * as ImagePicker from 'expo-image-picker';
 interface EditProfileProps {
   navigation: any;
   route: any;
 }
 
-export interface Action {
-  title: string;
-  type: 'capture' | 'library';
-  options: CameraOptions | ImageLibraryOptions;
-}
 
-const actions: Action[] = [
-  {
-    title: 'Take Image',
-    type: 'capture',
-    options: {
-      saveToPhotos: true,
-      mediaType: 'photo',
-      includeBase64: false,
-    },
-  },
-  {
-    title: 'Select Image',
-    type: 'library',
-    options: {
-      selectionLimit: 1,
-      mediaType: 'photo',
-      includeBase64: false,
-    },
-  },
-];
+
 
 export const EditProfile: React.FC<EditProfileProps> = ({
   navigation,
@@ -152,38 +122,33 @@ export const EditProfile: React.FC<EditProfileProps> = ({
   };
 
   const openCamera = async () => {
-    await launchCamera(
-      actions[0] as unknown as CameraOptions,
-      (response: ImagePickerResponse) => {
-        if (!response.didCancel && !response.errorCode) {
-          if (response.assets) {
-            imageUriRef.current = response.assets[0].uri;
-            setImageUri(response.assets[0].uri);
-          }
-        }
-      }
-    );
+    let result: ImagePicker.ImagePickerResult =
+    await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: false,
+      aspect: [4, 3],
+    });
+    if (
+      result.assets &&
+      result.assets.length > 0 &&
+      result.assets[0] !== null &&
+      result.assets[0]
+    ) {
+      setImageUri(result.assets[0].uri);
+    }
+
   };
 
   const openImageGallery = async () => {
-    await launchImageLibrary(
-      actions[1] as unknown as ImageLibraryOptions,
-      (response) => {
-        if (response.didCancel) {
-          console.log('User cancelled image picker');
-        } else if (response.errorCode) {
-          console.log(
-            'ImagePicker Error: ',
-            response.errorCode + ', ' + response.errorMessage
-          );
-        } else {
-          if (response.assets) {
-            imageUriRef.current = response.assets[0].uri;
-            setImageUri(response.assets[0].uri);
-          }
-        }
-      }
-    );
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: false,
+      quality: 1,
+      allowsMultipleSelection: true,
+    });
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+      setImageUri(result.assets[0].uri);
+    }
   };
 
   const handleAvatarPress = () => {

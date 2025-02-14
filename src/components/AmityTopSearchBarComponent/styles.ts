@@ -1,4 +1,4 @@
-import { Platform, StyleSheet } from 'react-native';
+import {  StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 

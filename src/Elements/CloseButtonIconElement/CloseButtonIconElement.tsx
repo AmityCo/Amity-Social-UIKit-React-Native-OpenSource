@@ -1,4 +1,4 @@
-import { ImageProps, Image } from 'react-native';
+import { ImageProps } from 'react-native';
 import React, { FC, memo } from 'react';
 import {
   ComponentID,

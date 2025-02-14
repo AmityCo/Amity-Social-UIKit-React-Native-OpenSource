@@ -11,7 +11,6 @@ import { useStyles } from './styles';
 import { PageID, ComponentID, ElementID } from '../../enum';
 import AvatarElement from '../../Elements/CommonElements/AvatarElement';
 import TextElement from '../../Elements/CommonElements/TextElement';
-import ImageElement from '../../Elements/CommonElements/ImageElement';
 import CategoryElement from '../../Elements/CommonElements/CategoryElement';
 import { useNavigation } from '@react-navigation/native';
 import { useBehaviour } from '../../providers/BehaviourProvider';

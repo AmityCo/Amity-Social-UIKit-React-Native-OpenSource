@@ -9,7 +9,6 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useBehaviour } from '../../providers/BehaviourProvider';
 import { useAmityComponent } from '../../hooks/useUiKitReference';
 import AvatarElement from '../../Elements/CommonElements/AvatarElement';
-import ImageElement from '../../Elements/CommonElements/ImageElement';
 import TextElement from '../../Elements/CommonElements/TextElement';
 import { SvgXml } from 'react-native-svg';
 import { officialIcon, privateIcon } from '../../svg/svg-xml-list';
