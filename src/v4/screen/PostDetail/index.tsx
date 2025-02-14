@@ -7,7 +7,7 @@ type IPostDetailPage = {
   route: RouteProp<RootStackParamList, 'PostDetail'>;
 };
 
-const PostDetail = ({ route }: IPostDetailPage) => {
+const PostDetail: React.FC<IPostDetailPage> = ({ route }) => {
   const { postId } = route.params;
   return <AmityPostDetailPage postId={postId} />;
 };
