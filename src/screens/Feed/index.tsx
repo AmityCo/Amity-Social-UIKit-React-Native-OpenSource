@@ -90,7 +90,6 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
             const filterData: any[] = data.map((item) => {
               if (item.dataType === 'text') return item;
             });
-            console.log(data.length);
             setOnNextPage(hasNextPage ? () => nextPage : null);
             const formattedPostList = await amityPostsFormatter(filterData);
             setPostData(formattedPostList);
