@@ -21,10 +21,10 @@ const ImageDefaultHeader = ({ onRequestClose }) => (
 );
 const styles = StyleSheet.create({
   root: {
-    alignItems: 'flex-end',
+    alignItems: 'flex-start',
   },
   closeButton: {
-    marginRight: 8,
+    marginLeft: 8,
     marginTop: 8,
     width: 44,
     height: 44,

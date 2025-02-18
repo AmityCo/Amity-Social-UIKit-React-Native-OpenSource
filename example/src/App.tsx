@@ -13,8 +13,8 @@ export default function App() {
       configs={config} //put your config json object
       apiKey="b3babb0b3a89f4341d31dc1a01091edcd70f8de7b23d697f"
       apiRegion="sg"
-      userId="topAmity3"
-      displayName="topAmity3"
+      userId="topAmity"
+      displayName="topAmity"
       apiEndpoint="https://api.sg.amity.co"
     >
       <AmityUiKitSocial />
