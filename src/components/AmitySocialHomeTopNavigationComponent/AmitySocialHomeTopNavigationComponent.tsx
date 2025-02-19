@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../routes/RouteParamList';
 
-import { ComponentID, ElementID, PageID, TabName } from '../../enum';
+import { ComponentID, ElementID, PageID } from '../../enum';
 import { useBehaviour } from '../../providers/BehaviourProvider';
 // import { useConfigImageUri } from '../../hooks/useConfigImageUri';
 import { useUiKitConfig } from '../../hooks/useUiKitConfig';
@@ -26,6 +26,7 @@ import { PollIcon } from '../../svg/PollIcon';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import CreatePostChooseTargetModal from '../CreatePostChooseTargetModal/CreatePostChooseTargetModal';
+import { TabName } from '../../enum/tabNameState';
 
 
 const AmitySocialHomeTopNavigationComponent = ({ currentTab }: { currentTab: string }) => {
@@ -55,23 +56,6 @@ const AmitySocialHomeTopNavigationComponent = ({ currentTab }: { currentTab: str
   const closeCreatePostModal = () => {
     setCreatePostModalVisible(false);
   };
-  // const searchIcon = useConfigImageUri({
-  //   configPath: {
-  //     page: PageID.social_home_page,
-  //     component: ComponentID.top_navigation,
-  //     element: ElementID.global_search_button,
-  //   },
-  //   configKey: 'icon',
-  // });
-
-  // const createIcon = useConfigImageUri({
-  //   configPath: {
-  //     page: PageID.social_home_page,
-  //     component: ComponentID.top_navigation,
-  //     element: ElementID.post_creation_button,
-  //   },
-  //   configKey: 'icon',
-  // });
   const navigation =
     useNavigation() as NativeStackNavigationProp<RootStackParamList>;
   const styles = StyleSheet.create({

@@ -1,7 +1,7 @@
 import { Text, TouchableOpacity, View } from 'react-native';
 import React, { FC, memo, useCallback, useEffect, useState } from 'react';
 import { useStyles } from './styles';
-import { ComponentID, ElementID, PageID, TabName } from '../../enum';
+import { ComponentID, ElementID, PageID } from '../../enum';
 import { CategoryRepository } from '@amityco/ts-sdk-react-native';
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../../routes/RouteParamList';
@@ -12,6 +12,7 @@ import AvatarElement from '../../Elements/CommonElements/AvatarElement';
 import TextElement from '../../Elements/CommonElements/TextElement';
 import { SvgXml } from 'react-native-svg';
 import { officialIcon, privateIcon } from '../../svg/svg-xml-list';
+import { TabName } from '../../enum/tabNameState';
 
 
 type SearchResultItemType = {

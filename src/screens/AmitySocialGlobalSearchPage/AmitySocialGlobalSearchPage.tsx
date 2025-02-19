@@ -6,11 +6,12 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 
 import { useAmityPage } from '../../hooks/useUiKitReference';
-import { PageID, TabName } from '../../enum';
+import { PageID } from '../../enum/';
 import CustomTab from '../../components/CustomTab';
 import { useAmityGlobalSearchViewModel } from '../../hooks/useAmityGlobalSearchViewModel';
 import AmityCommunitySearchResultComponent from '../../components/AmityCommunitySearchResultComponent/AmityCommunitySearchResultComponent';
 import AmityTopSearchBarComponent from '../../components/AmityTopSearchBarComponent/AmityTopSearchBarComponent';
+import { TabName } from '../../enum/tabNameState';
 
 
 const AmitySocialGlobalSearchPage = () => {

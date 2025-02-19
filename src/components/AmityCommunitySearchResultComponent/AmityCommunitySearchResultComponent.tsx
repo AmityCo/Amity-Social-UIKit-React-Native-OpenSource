@@ -1,6 +1,6 @@
 import { FlatList, StyleSheet, View } from 'react-native';
 import React, { FC, memo } from 'react';
-import { TabName } from '../../enum/enumTabName';
+import { TabName } from '../../enum/tabNameState';
 
 import { ComponentID, PageID } from '../../enum';
 

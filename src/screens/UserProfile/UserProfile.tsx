@@ -50,7 +50,7 @@ import { ImageSizeState } from '../../enum';
 
 import GalleryComponent from '../../components/Gallery/GalleryComponent';
 import {  } from '../../hooks';
-import { TabName } from '../../enum/enumTabName';
+import { TabName } from '../../enum/tabNameState';
 import { useFileV4 } from '../../hooks/useFilev4';
 
 export default function UserProfile({ route }: any) {

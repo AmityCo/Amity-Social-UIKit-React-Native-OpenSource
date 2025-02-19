@@ -31,6 +31,7 @@ export async function getGlobalFeed(
           });
         resolve({ data, nextPage, prevPage });
       } catch (error) {
+        console.log('error: ', error);
         reject(error);
       }
     }

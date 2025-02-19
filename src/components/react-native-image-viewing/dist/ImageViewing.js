@@ -1,11 +1,4 @@
-/**
- * Copyright (c) JOB TODAY S.A. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- */
-import React, { useCallback, useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import {
   Animated,
   Dimensions,
@@ -23,7 +16,7 @@ import StatusBarManager from './components/StatusBarManager';
 import useAnimatedComponents from './hooks/useAnimatedComponents';
 import useImageIndexChange from './hooks/useImageIndexChange';
 import useRequestClose from './hooks/useRequestClose';
-import { Video, ResizeMode } from 'expo-av';
+import { useVideoPlayer, VideoView, } from 'expo-video';
 import useAuth from '../../../hooks/useAuth';
 
 const DEFAULT_ANIMATION_TYPE = 'fade';
@@ -31,13 +24,14 @@ const DEFAULT_BG_COLOR = '#000';
 const DEFAULT_DELAY_LONG_PRESS = 800;
 const SCREEN = Dimensions.get('screen');
 const SCREEN_WIDTH = SCREEN.width;
+
 function ImageViewing({
   images,
   keyExtractor,
   imageIndex,
   visible,
   onRequestClose,
-  onLongPress = () => {},
+  onLongPress = () => { },
   onImageIndexChange,
   animationType = DEFAULT_ANIMATION_TYPE,
   backgroundColor = DEFAULT_BG_COLOR,
@@ -48,46 +42,45 @@ function ImageViewing({
   HeaderComponent,
   FooterComponent,
   isVideoButton,
-  onClickPlayButton = () => {},
+  onClickPlayButton = () => { },
   videoPosts,
 }) {
   const { apiRegion } = useAuth();
   const imageList = useRef(null);
   const [opacity, onRequestCloseEnhanced] = useRequestClose(onRequestClose);
   const [currentImageIndex, onScroll] = useImageIndexChange(imageIndex, SCREEN);
+  const [videoSource, setVideoSource] = useState('')
   const [headerTransform, footerTransform, toggleBarsVisible] =
     useAnimatedComponents();
-  const videoRef = React.useRef(null);
+  const videoRef = useRef(null);
+  const player = useVideoPlayer(videoSource);
+
+
   useEffect(() => {
     if (onImageIndexChange) {
       onImageIndexChange(currentImageIndex);
     }
   }, [currentImageIndex]);
 
-  const onZoom = useCallback(
-    (isScaled) => {
-      var _a, _b;
-      // @ts-ignore
-      (_b =
-        (_a = imageList) === null || _a === void 0 ? void 0 : _a.current) ===
-        null || _b === void 0
-        ? void 0
-        : _b.setNativeProps({ scrollEnabled: !isScaled });
-      toggleBarsVisible(!isScaled);
-    },
-    [imageList]
-  );
+  const onZoom = (isScaled) => {
+    imageList?.current?.setNativeProps({ scrollEnabled: !isScaled });
+    toggleBarsVisible(!isScaled);
+  };
+
   const playVideoFullScreen = async () => {
     onClickPlayButton(currentImageIndex);
-    if (videoRef) {
-      await videoRef.current.loadAsync({
-        uri: `https://api.${apiRegion}.amity.co/api/v3/files/${videoPosts[currentImageIndex]?.videoFileId?.original}/download`,
-      });
 
-      await videoRef.current.presentFullscreenPlayer();
-      await videoRef.current.playAsync();
+    const videoUri = `https://api.${apiRegion}.amity.co/api/v3/files/${videoPosts[currentImageIndex]?.videoFileId?.original}/download`;
+    setVideoSource(videoUri)
+
+    if (videoRef) {
+      if (videoRef.current) {
+        videoRef.current.enterFullscreen();
+      }
     }
   };
+
+
   if (!visible) {
     return null;
   }
@@ -105,10 +98,8 @@ function ImageViewing({
       <StatusBarManager presentationStyle={presentationStyle} />
       <View style={[styles.container, { opacity, backgroundColor }]}>
         <Animated.View style={[styles.header, { transform: headerTransform }]}>
-          {typeof HeaderComponent !== 'undefined' ? (
-            React.createElement(HeaderComponent, {
-              imageIndex: currentImageIndex,
-            })
+          {HeaderComponent ? (
+            <HeaderComponent imageIndex={currentImageIndex} />
           ) : (
             <ImageDefaultHeader onRequestClose={onRequestCloseEnhanced} />
           )}
@@ -133,8 +124,6 @@ function ImageViewing({
           })}
           renderItem={({ item: imageSrc }) => (
             <View>
-              {/* Your overlay content */}
-
               <ImageItem
                 onZoom={onZoom}
                 imageSrc={imageSrc}
@@ -155,31 +144,34 @@ function ImageViewing({
             </View>
           )}
           onMomentumScrollEnd={onScroll}
-          //@ts-ignore
           keyExtractor={(imageSrc, index) =>
             keyExtractor
               ? keyExtractor(imageSrc, index)
               : typeof imageSrc === 'number'
-              ? `${imageSrc}`
-              : imageSrc.uri
+                ? `${imageSrc}`
+                : imageSrc.uri
           }
         />
-        {typeof FooterComponent !== 'undefined' && (
-          <Animated.View
-            style={[styles.footer, { transform: footerTransform }]}
-          >
-            {React.createElement(FooterComponent, {
-              imageIndex: currentImageIndex,
-            })}
+        {FooterComponent && (
+          <Animated.View style={[styles.footer, { transform: footerTransform }]}>
+            <FooterComponent imageIndex={currentImageIndex} />
           </Animated.View>
         )}
       </View>
-      <View style={styles.videoContainer}>
-        <Video ref={videoRef} resizeMode={ResizeMode.CONTAIN} />
-      </View>
+
+      <VideoView
+        player={player}
+        ref={videoRef}
+        style={styles.videoContainer}
+        onFullscreenExit={()=> setVideoSource('')}
+        onFullscreenEnter={()=> player.play()}
+
+      />
+
     </Modal>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -206,12 +198,8 @@ const styles = StyleSheet.create({
     left: '50%',
     transform: [{ translateX: -25 }, { translateY: -25 }],
   },
-  playButtonImage: {
-    width: 50,
-    height: 50,
-  },
   videoContainer: {
-    display: 'none',
+    display: 'none'
   },
   video: {
     alignSelf: 'center',
@@ -219,7 +207,9 @@ const styles = StyleSheet.create({
     height: 200,
   },
 });
+
 const EnhancedImageViewing = (props) => (
   <ImageViewing key={props.imageIndex} {...props} />
 );
+
 export default EnhancedImageViewing;
