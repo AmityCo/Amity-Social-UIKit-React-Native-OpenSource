@@ -67,7 +67,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@amityco/react-native-social-ui-kit@workspace:."
   dependencies:
-    "@amityco/ts-sdk-react-native": 6.30.0
+    "@amityco/ts-sdk-react-native": ^6.35.0
     "@commitlint/config-conventional": ^17.0.2
     "@evilmartians/lefthook": ^1.5.0
     "@fawazahmed/react-native-read-more": ^3.0.4
@@ -131,9 +131,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@amityco/ts-sdk-react-native@npm:6.30.0":
-  version: 6.30.0
-  resolution: "@amityco/ts-sdk-react-native@npm:6.30.0"
+"@amityco/ts-sdk-react-native@npm:^6.35.0":
+  version: 6.35.0
+  resolution: "@amityco/ts-sdk-react-native@npm:6.35.0"
   dependencies:
     "@react-native-async-storage/async-storage": ^1.17.7
     "@react-native-community/netinfo": ^9.4.1
@@ -150,8 +150,8 @@ __metadata:
     socket.io-client: 2.2.0
     ts-jest: ^28.0.3
   peerDependencies:
-    react-native: ^0.70.13
-  checksum: 7a6161442ea4d92bcf5031dae94db782f0b6a5ba36dd73d0d6e672cf3814a80da7eb2758c022ba78e8f046db22f029c52e8673e9c45d37bdc031709d6b40d9c0
+    react-native: "*"
+  checksum: 003a0458854b66e97cde543c25673d3388075a0dea699a4f6b76ca5f1d4c4d9fcc226e6a3964fae59b443a639b44623467513597d5209e675b529e39bedf08c8
   languageName: node
   linkType: hard
 
