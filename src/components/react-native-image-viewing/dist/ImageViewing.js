@@ -53,21 +53,7 @@ function ImageViewing({
   const [headerTransform, footerTransform, toggleBarsVisible] =
     useAnimatedComponents();
   const videoRef = useRef(null);
-  console.log('videoRef: ', videoRef);
-  // Use expo-video player
   const player = useVideoPlayer(videoSource);
-  console.log('player: ', player);
-
-  // useEffect(() => {
-
-
-  //   if (videoRef) {
-  //     if (videoRef.current) {
-  //       player.play();
-  //       videoRef.current.enterFullscreen();
-  //     }
-  //   }
-  // }, [videoSource]);
 
 
   useEffect(() => {

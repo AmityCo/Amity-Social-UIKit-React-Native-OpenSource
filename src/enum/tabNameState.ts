@@ -10,4 +10,7 @@ export enum TabName {
   MyCommunities = 'MyCommunities',
   Videos = 'Videos',
   Photos = 'Photos',
+  Following = 'Following',
+  Followers = 'Followers',
+  Users = 'Users',
 }

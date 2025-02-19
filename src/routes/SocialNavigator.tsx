@@ -42,6 +42,8 @@ import MyUserprofile from '../screens/MyUserProfile';
 import PostDetail from '../screens/PostDetail';
 import EditPost from '../screens/EditPost/EditPost';
 import Toast from '../components/Toast/Toast';
+import FollowerList from '../screens/FollowerList/FollowerList';
+import UserPendingRequest from '../screens/UserPendingRequest/UserPendingRequest';
 
 
 interface INavigator {
@@ -217,10 +219,30 @@ export default function SocialNavigator({ screen = 'Home' }: INavigator) {
             component={EditPost}
             options={{ headerShown: false }}
           />
+          <Stack.Screen
+            name="FollowerList"
+            component={FollowerList}
+            options={({
+              route: {
+                params: { displayName },
+              },
+            }: any) => ({
+              title: displayName,
+              headerLeft: () => <BackButton />,
+            })}
+          />
+          <Stack.Screen
+            name="UserPendingRequest"
+            component={UserPendingRequest}
+            options={{
+              title: 'Follow Requests',
+              headerLeft: () => <BackButton />,
+            }}
+          />
         </Stack.Navigator>
       )}
       <PostTypeChoiceModal />
-      <Toast/>
+      <Toast />
     </NavigationContainer>
   );
 }

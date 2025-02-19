@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { View, Image, TouchableOpacity } from 'react-native';
 import * as Progress from 'react-native-progress';
 import { SvgXml } from 'react-native-svg';
@@ -10,12 +10,12 @@ import {
 import { closeIcon, playBtn, toastIcon } from '../../svg/svg-xml-list';
 import { useStyles } from './styles';
 import * as VideoThumbnails from 'expo-video-thumbnails';
-import { Video, ResizeMode } from 'expo-av';
+
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import { useDispatch } from 'react-redux';
 import uiSlice from '../../redux/slices/uiSlice';
-
+import { useVideoPlayer, VideoView, } from 'expo-video';
 interface OverlayImageProps {
   source: string;
   onClose?: (originalPath: string, fileId?: string, postId?: string) => void;
@@ -61,17 +61,21 @@ const LoadingVideo = ({
   const [thumbNailImage, setThumbNailImage] = useState(thumbNail ?? '');
   const styles = useStyles();
   const [isPause, setIsPause] = useState<boolean>(true);
-  const videoRef = React.useRef(null);
+  const videoRef = useRef(null);
+
+  const [videoSource, setVideoSource] = useState('')
+  const player = useVideoPlayer(videoSource);
 
   const playVideoFullScreen = async (fileUrl: string) => {
 
-    if (videoRef) {
-      await videoRef.current.loadAsync({
-        uri: fileUrl,
-      });
 
-      await videoRef.current.presentFullscreenPlayer();
-      await videoRef.current.playAsync();
+
+    setVideoSource(fileUrl)
+
+    if (videoRef) {
+      if (videoRef.current) {
+        videoRef.current.enterFullscreen();
+      }
     }
 
   };
@@ -159,13 +163,20 @@ const LoadingVideo = ({
 
   return (
     <View style={fileCount >= 3 ? styles.image3XContainer : styles.container}>
-      {!loading && !isUploadError && isPause && (
+      {!loading && (
         <TouchableOpacity style={styles.playButton} onPress={handleOnPlay}>
           <SvgXml xml={playBtn} width="50" height="50" />
         </TouchableOpacity>
       )}
 
-      <Video style={{display: 'none'}} ref={videoRef} resizeMode={ResizeMode.CONTAIN} />
+      <VideoView
+        player={player}
+        ref={videoRef}
+        style={{display: 'none'}}
+        onFullscreenExit={()=> setVideoSource('')}
+        onFullscreenEnter={()=> player.play()}
+
+      />
       {
         thumbNailImage ? (
           <Image
