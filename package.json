@@ -167,7 +167,6 @@
     "@react-navigation/stack": "6.3.16",
     "@reduxjs/toolkit": "^1.9.7",
     "@rntext/more-or-less": "^2.0.2",
-    "expo-av": "^13.10.5",
     "expo-constants": "^14.2.1",
     "expo-image": "^2.0.5",
     "expo-image-picker": "^14.1.1",

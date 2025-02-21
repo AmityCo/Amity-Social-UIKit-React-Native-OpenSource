@@ -47,7 +47,6 @@ __metadata:
     babel-plugin-module-resolver: ^5.0.0
     expo: ~51.0.39
     expo-asset: ~10.0.10
-    expo-av: ~14.0.7
     expo-dev-client: ~4.0.29
     expo-image-picker: ~15.1.0
     expo-status-bar: ~1.12.1
@@ -86,7 +85,6 @@ __metadata:
     eslint: ^8.51.0
     eslint-config-prettier: ^9.0.0
     eslint-plugin-prettier: ^5.0.1
-    expo-av: ^13.10.5
     expo-constants: ^14.2.1
     expo-image: ^2.0.5
     expo-image-picker: ^14.1.1
@@ -13294,24 +13292,6 @@ __metadata:
   peerDependencies:
     expo: "*"
   checksum: abf6afee29db1df356008b2260ecfd37eafdeeda989deeaf546d6c6857f82f71efe6d2f6e348d5bf0f077325f9ce2c8dad006ad5d8d2df35cdd9bf3dc15e714a
-  languageName: node
-  linkType: hard
-
-"expo-av@npm:^13.10.5":
-  version: 13.10.6
-  resolution: "expo-av@npm:13.10.6"
-  peerDependencies:
-    expo: "*"
-  checksum: 66f4b2e885f574e0815d2340e6ea9aa82b2599f4796fe84a8ca08795f3076c306d6b6983599d7be9c246cdc787f9d682f15f236d295606ef31089c5c6e9f78f4
-  languageName: node
-  linkType: hard
-
-"expo-av@npm:~14.0.7":
-  version: 14.0.7
-  resolution: "expo-av@npm:14.0.7"
-  peerDependencies:
-    expo: "*"
-  checksum: 7518a8972b0d1b3b362d4dc9c4d21a39c7cf98b46abbdbb2349451115f4edf6e97fb6c723674fd3c62fa037fc77e00172955082d21b1c3fdf5273f33781ce78d
   languageName: node
   linkType: hard
 
