@@ -36,6 +36,14 @@ const PostTypeChoiceModal = () => {
 
 
   const onChooseType = (type: string) => {
+    if(targetType === 'user' &&   targetName && targetType && targetId){
+      closeCreatePostModal();
+      navigation.navigate('CreatePost', {
+        targetId,
+        targetType,
+
+      });
+    }
     if (targetId && targetName && targetType && community && type == 'post') {
       closeCreatePostModal();
       navigation.navigate('CreatePost', {
