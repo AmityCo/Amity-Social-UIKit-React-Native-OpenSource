@@ -34,7 +34,7 @@ export type SelectUserList = {
   data: UserInterface[];
 };
 const AddMembersModal = ({
-  visible,
+  visible = false,
   onClose,
   onSelect,
   initUserList,

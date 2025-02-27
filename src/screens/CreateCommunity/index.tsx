@@ -36,7 +36,8 @@ import ArrowOutlinedIcon from '../../svg/ArrowOutlinedIcon';
 import PublicIcon from '../../svg/PublicIcon';
 import PrivateIcon from '../../svg/PrivateIcon';
 import { PlusIcon } from '../../svg/PlusIcon';
-import { AvatarIcon } from '../../svg/AvatarIcon';
+import { SvgXml } from 'react-native-svg';
+import { userIcon } from '../../svg/svg-xml-list';
 
 export default function CreateCommunity() {
   const styles = useStyles();
@@ -177,6 +178,7 @@ export default function CreateCommunity() {
     selectedUserList,
     uploadingImage,
   ]);
+
 
   return (
     <ScrollView
@@ -335,7 +337,7 @@ export default function CreateCommunity() {
                                     }
 
                                   }
-                                /> : <View style={styles.avatar}> <AvatarIcon /></View>
+                                /> : <SvgXml width={28} height={28} xml={userIcon()}/>
                             }
 
                           </View>
@@ -387,13 +389,15 @@ export default function CreateCommunity() {
         onClose={() => setCategoryModal(false)}
         visible={categoryModal}
       />
-      <AddMembersModal
-        onSelect={handleAddMembers}
-        onClose={() => setAddMembersModal(false)}
-        visible={addMembersModal}
-        initUserList={selectedUserList}
-        excludeUserList={[]}
-      />
+      {addMembersModal &&
+        <AddMembersModal
+          onSelect={handleAddMembers}
+          onClose={() => setAddMembersModal(false)}
+          visible={addMembersModal}
+          initUserList={selectedUserList}
+          excludeUserList={[]}
+        />}
+
     </ScrollView>
   );
 }

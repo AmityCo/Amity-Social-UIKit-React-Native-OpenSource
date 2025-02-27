@@ -26,10 +26,21 @@ import { PollIcon } from '../../svg/PollIcon';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import CreatePostChooseTargetModal from '../CreatePostChooseTargetModal/CreatePostChooseTargetModal';
-import { TabName } from '../../enum/tabNameState';
 
 
 const AmitySocialHomeTopNavigationComponent = ({ currentTab }: { currentTab: string }) => {
+  const [myCommunitiesTab] = useUiKitConfig({
+    page: PageID.social_home_page,
+    component: ComponentID.WildCardComponent,
+    element: ElementID.my_communities_button,
+    keys: ['text'],
+  }) as string[];
+  const [exploreTab] = useUiKitConfig({
+    page: PageID.social_home_page,
+    component: ComponentID.WildCardComponent,
+    element: ElementID.explore_button,
+    keys: ['text'],
+  }) as string[];
 
   const theme = useTheme() as MyMD3Theme;
   const { AmitySocialHomeTopNavigationComponentBehaviour } = useBehaviour();
@@ -125,7 +136,7 @@ const AmitySocialHomeTopNavigationComponent = ({ currentTab }: { currentTab: str
 
   const onClickPlusIcon = useCallback(() => {
 
-    if (currentTab === TabName.MyCommunities) {
+    if (currentTab === myCommunitiesTab) {
       navigation.navigate('CreateCommunity');
     } else {
       setOpenPostCreationMenu(true)
@@ -164,7 +175,7 @@ const AmitySocialHomeTopNavigationComponent = ({ currentTab }: { currentTab: str
 
 
         {/* <Image source={searchIcon} style={styles.icon} /> */}
-        {currentTab !== TabName.Explore &&
+        {currentTab !== exploreTab &&
           <Menu opened={openPostCreationMenu} onBackdropPress={() => setOpenPostCreationMenu(false)}>
             <MenuTrigger >
               <TouchableOpacity

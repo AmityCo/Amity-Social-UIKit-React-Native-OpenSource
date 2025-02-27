@@ -271,7 +271,7 @@ export default function CommunityHome({ route }: any) {
 
   const onEditProfileTap = () => {
     navigation.navigate('EditCommunity', {
-      communityData,
+      communityData: communityData?.data,
     });
   };
 
