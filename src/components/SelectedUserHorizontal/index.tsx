@@ -4,6 +4,8 @@ import { useStyles } from './styles';
 import type { UserInterface } from '../../types/user.interface';
 import useAuth from '../../hooks/useAuth';
 import { AvatarIcon } from '../../svg/AvatarIcon';
+import { SvgXml } from 'react-native-svg';
+import { userIcon } from '../../svg/svg-xml-list';
 
 const maxLength = 10;
 const displayName = (user: UserInterface) => {
@@ -42,7 +44,7 @@ const AvatarListItem = ({
                   }
 
                 }
-              /> : <View style={styles.avatar}> <AvatarIcon /></View>
+              /> : <SvgXml xml={userIcon()}/>
 
           }
 

@@ -81,7 +81,7 @@ export const useStyle = () => {
     inputWrap: {
       marginHorizontal: 16,
       backgroundColor: '#EBECEF',
-      paddingHorizontal: 10,
+      padding: 10,
       borderRadius: 4,
       flexDirection: 'row',
       justifyContent: 'space-between',
