@@ -8,14 +8,13 @@ import {
   TextInput,
   ScrollView,
   Pressable,
-  FlatList,
+  ActivityIndicator,
 } from 'react-native';
-
+import { SvgXml } from 'react-native-svg';
+import { arrowOutlined, privateIcon, publicIcon } from '../../svg/svg-xml-list';
 import { useStyles } from './styles';
 import ChooseCategoryModal from '../../components/ChooseCategoryModal';
 import { RadioButton } from 'react-native-radio-buttons-group';
-import AddMembersModal from '../../components/AddMembersModal';
-import type { UserInterface } from '../../types/user.interface';
 import useAuth from '../../hooks/useAuth';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
@@ -25,19 +24,15 @@ import { getAvatarURL } from '../../util/apiUtil';
 import { updateCommunity } from '../../providers/Social/communities-sdk';
 import { PrivacyState } from '../../enum/privacyState';
 import { useForm, Controller } from 'react-hook-form';
-import CloseIcon from '../../svg/CloseIcon';
-import PrivateIcon from '../../svg/PrivateIcon';
-import PublicIcon from '../../svg/PublicIcon';
-import { PlusIcon } from '../../svg/PlusIcon';
-import ArrowOutlinedIcon from '../../svg/ArrowOutlinedIcon';
-import { AvatarIcon } from '../../svg/AvatarIcon';
 
 const EditCommunity = ({ navigation, route }) => {
   const styles = useStyles();
   const theme = useTheme() as MyMD3Theme;
-  const {
-    communityData: { data },
-  }: { communityData: { data: Amity.RawCommunity } } = route.params;
+  const { communityData: data }: { communityData: Amity.RawCommunity } =
+
+    route.params;
+
+
   const { apiRegion } = useAuth();
   const {
     control,
@@ -54,9 +49,7 @@ const EditCommunity = ({ navigation, route }) => {
   const [categoryName, setCategoryName] = useState<string>('');
   const [categoryId, setCategoryId] = useState<string>(data.categoryIds[0]);
   const [categoryModal, setCategoryModal] = useState<boolean>(false);
-  const [addMembersModal, setAddMembersModal] = useState<boolean>(false);
   const [isPublic, setisPublic] = useState(data.isPublic);
-  const [selectedUserList, setSelectedUserList] = useState<UserInterface[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [imageFileId, setImageFileId] = useState<string>(data.avatarFileId);
 
@@ -100,14 +93,19 @@ const EditCommunity = ({ navigation, route }) => {
 
   useEffect(() => {
     navigation.setOptions({
-      headerRight: () => (
-        <TouchableOpacity
-          disabled={loading}
-          onPress={handleSubmit(onPressUpdateCommunity)}
-        >
-          <Text style={styles.saveText}>Save</Text>
-        </TouchableOpacity>
-      ),
+      headerRight: () => {
+        if (loading) {
+          return <ActivityIndicator animating={loading} size="small" />;
+        }
+        return (
+          <TouchableOpacity
+            disabled={loading}
+            onPress={handleSubmit(onPressUpdateCommunity)}
+          >
+            <Text style={styles.saveText}>Save</Text>
+          </TouchableOpacity>
+        );
+      },
     });
   }, [
     handleSubmit,
@@ -136,19 +134,19 @@ const EditCommunity = ({ navigation, route }) => {
 
   useEffect(() => {
     if (image) {
-      setLoading(true);
       uploadFile();
     }
   }, [image, uploadFile]);
 
   const pickImage = async () => {
+
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: false,
       quality: 1,
-      allowsMultipleSelection: true,
     });
     if (!result.canceled && result.assets && result.assets.length > 0) {
+      setLoading(true);
       setImage(result.assets[0]?.uri);
     }
   };
@@ -156,29 +154,6 @@ const EditCommunity = ({ navigation, route }) => {
   const handleSelectCategory = (categoryId: string, categoryName: string) => {
     setCategoryId(categoryId);
     setCategoryName(categoryName);
-  };
-
-  const handleAddMembers = (users: UserInterface[]) => {
-    setSelectedUserList(users);
-  };
-
-  const displayName = (user: string) => {
-    const maxLength = 10;
-    if (user) {
-      if (user!.length > maxLength) {
-        return user!.substring(0, maxLength) + '..';
-      }
-      return user!;
-    }
-    return 'Display name';
-  };
-
-  const onDeleteUserPressed = (user: UserInterface) => {
-    const removedUser = selectedUserList.filter((item) => item !== user);
-    setSelectedUserList(removedUser);
-  };
-  const avatarFileURL = (fileId: string) => {
-    return `https://api.${apiRegion}.amity.co/api/v3/files/${fileId}/download?size=medium`;
   };
 
   return (
@@ -276,7 +251,12 @@ const EditCommunity = ({ navigation, route }) => {
               >
                 {categoryName.length > 0 ? categoryName : 'Select Category'}
               </Text>
-              <ArrowOutlinedIcon width={15} height={15} color={theme.colors.base} />
+              <SvgXml
+                style={styles.arrowIcon}
+                xml={arrowOutlined(theme.colors.base)}
+                width={15}
+                height={15}
+              />
             </Pressable>
           </View>
           <View style={styles.radioGroup}>
@@ -285,7 +265,7 @@ const EditCommunity = ({ navigation, route }) => {
               style={styles.listItem}
             >
               <View style={styles.avatar}>
-                <PublicIcon width={20} height={20} />
+                <SvgXml width={20} height={20} xml={publicIcon} />
               </View>
 
               <View style={styles.optionDescription}>
@@ -309,8 +289,7 @@ const EditCommunity = ({ navigation, route }) => {
               style={styles.listItem}
             >
               <View style={styles.avatar}>
-                <PrivateIcon width={24} height={24} />
-
+                <SvgXml width={24} height={24} xml={privateIcon()} />
               </View>
 
               <View style={styles.optionDescription}>
@@ -330,61 +309,6 @@ const EditCommunity = ({ navigation, route }) => {
               />
             </Pressable>
           </View>
-          {!isPublic && (
-            <View style={styles.inputContainer}>
-              <View style={styles.titleRow}>
-                <Text style={styles.inputTitle}>
-                  Add members<Text style={styles.requiredField}> *</Text>
-                </Text>
-              </View>
-              <View style={styles.addUsersContainer}>
-                {selectedUserList.length > 0 && (
-                  <FlatList
-                    data={selectedUserList}
-                    renderItem={({ item }) => (
-                      <View style={styles.userItemWrap}>
-                        <View style={styles.avatarRow}>
-                          <View style={styles.avatarImageContainer}>
-
-                            {
-                              item?.avatarFileId ?
-                                <Image
-                                  style={styles.avatar}
-                                  source={
-                                    {
-                                      uri: item.avatarFileId && avatarFileURL(item.avatarFileId),
-                                    }
-
-                                  }
-                                /> : <View style={styles.avatar}> <AvatarIcon /></View>
-                            }
-
-                          </View>
-                          <Text>{displayName(item.displayName)}</Text>
-                        </View>
-                        <TouchableOpacity
-                          onPress={() => onDeleteUserPressed(item)}
-                        >
-                          <CloseIcon width={12} height={12} color={theme.colors.base} />
-                        </TouchableOpacity>
-                      </View>
-                    )}
-                    keyExtractor={(item) => item.userId.toString()}
-                    numColumns={2}
-                  />
-                )}
-
-                <Pressable
-                  onPress={() => setAddMembersModal(true)}
-                  style={styles.addIcon}
-                >
-                  <View style={styles.avatar}>
-                    <PlusIcon style={styles.arrowIcon} width={24} height={24} color={theme.colors.base} />
-                  </View>
-                </Pressable>
-              </View>
-            </View>
-          )}
         </View>
       </View>
       <ChooseCategoryModal
@@ -392,13 +316,6 @@ const EditCommunity = ({ navigation, route }) => {
         onClose={() => setCategoryModal(false)}
         visible={categoryModal}
         categoryId={categoryId}
-      />
-      <AddMembersModal
-        onSelect={handleAddMembers}
-        onClose={() => setAddMembersModal(false)}
-        visible={addMembersModal}
-        initUserList={[]}
-        excludeUserList={[]}
       />
     </ScrollView>
   );

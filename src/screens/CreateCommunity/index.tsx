@@ -36,7 +36,8 @@ import ArrowOutlinedIcon from '../../svg/ArrowOutlinedIcon';
 import PublicIcon from '../../svg/PublicIcon';
 import PrivateIcon from '../../svg/PrivateIcon';
 import { PlusIcon } from '../../svg/PlusIcon';
-import { AvatarIcon } from '../../svg/AvatarIcon';
+import { SvgXml } from 'react-native-svg';
+import { userIcon } from '../../svg/svg-xml-list';
 
 export default function CreateCommunity() {
   const styles = useStyles();
@@ -52,7 +53,7 @@ export default function CreateCommunity() {
   const [selectedId, setSelectedId] = useState<string>();
   const [selectedUserList, setSelectedUserList] = useState<UserInterface[]>([]);
   const [uploadingImage, setUploadingImage] = useState<boolean>(false);
-  const [isCreating, setIsCreating] = useState<boolean>(false);
+  const [isCreateReady, setIsCreateReady] = useState<boolean>(false);
   const [imageFileId, setImageFileId] = useState<string>('');
 
   const MAX_COMMUNITY_NAME_LENGTH = 30;
@@ -77,20 +78,6 @@ export default function CreateCommunity() {
     });
   }, []);
 
-  // const pickImage = async () => {
-  //   let result = await ImagePicker.launchImageLibraryAsync({
-  //     mediaTypes: ImagePicker.MediaTypeOptions.Images,
-  //     allowsEditing: false,
-  //     quality: 1,
-  //   });
-
-  //   if (!result.canceled && result.assets &&
-  //     result.assets.length > 0 &&
-  //     result.assets[0] !== null &&
-  //     result.assets[0]) {
-  //     setImage(result.assets[0]?.uri);
-  //   }
-  // };
   const uploadFile = useCallback(async () => {
     const file: Amity.File<any>[] = await uploadImageFile(image);
     if (file) {
@@ -110,9 +97,9 @@ export default function CreateCommunity() {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: false,
       quality: 1,
-      allowsMultipleSelection: true,
     });
     if (!result.canceled && result.assets && result.assets.length > 0) {
+      setIsCreateReady(false);
       setImage(result.assets[0]?.uri);
     }
   };
@@ -145,9 +132,20 @@ export default function CreateCommunity() {
     setSelectedUserList(removedUser);
   };
 
-  const onCreateCommunity = useCallback(async () => {
-    setIsCreating(true);
-    if (!uploadingImage) {
+  useEffect(() => {
+    if (selectedId === PrivacyState.public && communityName.length > 0 && categoryId.length > 0 && !uploadingImage) {
+      setIsCreateReady(true)
+
+    } else if (selectedId === PrivacyState.private && communityName.length > 0 && categoryId.length > 0 && selectedUserList.length > 0 && !uploadingImage) {
+      setIsCreateReady(true)
+    }
+
+  }, [communityName, categoryId, selectedId, selectedUserList, uploadingImage])
+
+
+  const onCreateCommunity = async () => {
+    if (!uploadingImage && isCreateReady) {
+      console.log('pass: ');
       const userIds: string[] = selectedUserList.map((item) => item.userId);
       const isPublic: boolean =
         selectedId === PrivacyState.private ? false : true;
@@ -167,16 +165,9 @@ export default function CreateCommunity() {
         });
       }
     }
-  }, [
-    aboutText,
-    categoryId,
-    communityName,
-    imageFileId,
-    navigation,
-    selectedId,
-    selectedUserList,
-    uploadingImage,
-  ]);
+  }
+
+
 
   return (
     <ScrollView
@@ -335,7 +326,7 @@ export default function CreateCommunity() {
                                     }
 
                                   }
-                                /> : <View style={styles.avatar}> <AvatarIcon /></View>
+                                /> : <SvgXml width={28} height={28} xml={userIcon()} />
                             }
 
                           </View>
@@ -367,12 +358,12 @@ export default function CreateCommunity() {
           )}
 
           <TouchableOpacity
-            disabled={isCreating && uploadingImage ? true : false}
+            disabled={(!isCreateReady) ? true : false}
             onPress={onCreateCommunity}
-            style={styles.createButton}
+            style={(!isCreateReady) ? [styles.disableBtn, styles.createButton] : styles.createButton}
           >
             <Text style={styles.createText}>Create community </Text>
-            {isCreating && uploadingImage && (
+            {uploadingImage && (
               <ActivityIndicator
                 style={styles.loading}
                 animating={true}
@@ -387,13 +378,15 @@ export default function CreateCommunity() {
         onClose={() => setCategoryModal(false)}
         visible={categoryModal}
       />
-      <AddMembersModal
-        onSelect={handleAddMembers}
-        onClose={() => setAddMembersModal(false)}
-        visible={addMembersModal}
-        initUserList={selectedUserList}
-        excludeUserList={[]}
-      />
+      {addMembersModal &&
+        <AddMembersModal
+          onSelect={handleAddMembers}
+          onClose={() => setAddMembersModal(false)}
+          visible={addMembersModal}
+          initUserList={selectedUserList}
+          excludeUserList={[]}
+        />}
+
     </ScrollView>
   );
 }

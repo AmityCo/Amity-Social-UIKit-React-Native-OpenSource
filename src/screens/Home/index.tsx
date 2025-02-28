@@ -37,18 +37,13 @@ export default function Home() {
     keys: ['text'],
   }) as string[];
 
+
   const { AmitySocialHomePageBehaviour } = useBehaviour();
-  // const styles = useStyles();
-  // const { client } = useAuth();
   const theme = useTheme() as MyMD3Theme;
-  // const dispatch = useDispatch();
-  // const { openPostTypeChoiceModal } = uiSlice.actions;
-  // const { excludes } = useConfig();
   const [activeTab, setActiveTab] = useState<string>(newsFeedTab);
   const [myCommunities, setMyCommunities] = useState<Amity.Community[]>(null);
   const [pageLoading, setPageLoading] = useState(true);
 
-  // const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
   useEffect(() => {
     const unsubscribe = CommunityRepository.getCommunities(

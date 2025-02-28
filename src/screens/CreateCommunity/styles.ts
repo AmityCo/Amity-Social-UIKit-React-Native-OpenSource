@@ -185,6 +185,9 @@ export const useStyles = () => {
     loading: {
       marginLeft: 6,
     },
+    disableBtn:{
+      opacity: 0.5
+    }
   });
 
   return styles;
