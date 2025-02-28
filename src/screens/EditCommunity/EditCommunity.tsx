@@ -139,13 +139,14 @@ const EditCommunity = ({ navigation, route }) => {
   }, [image, uploadFile]);
 
   const pickImage = async () => {
+
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: false,
       quality: 1,
-      allowsMultipleSelection: true,
     });
     if (!result.canceled && result.assets && result.assets.length > 0) {
+      setLoading(true);
       setImage(result.assets[0]?.uri);
     }
   };
@@ -179,9 +180,8 @@ const EditCommunity = ({ navigation, route }) => {
               </Text>
               <Text style={styles.inputLengthMeasure}>
                 {watch('community_name')
-                  ? `${
-                      watch('community_name').length
-                    } / ${MAX_COMMUNITY_NAME_LENGTH}`
+                  ? `${watch('community_name').length
+                  } / ${MAX_COMMUNITY_NAME_LENGTH}`
                   : `0/ ${MAX_COMMUNITY_NAME_LENGTH}`}
               </Text>
             </View>
@@ -212,9 +212,8 @@ const EditCommunity = ({ navigation, route }) => {
               <Text style={styles.inputTitle}>About</Text>
               <Text style={styles.inputLengthMeasure}>
                 {watch('community_description')
-                  ? `${
-                      watch('community_description').length
-                    } / ${MAX_ABOUT_TEXT_LENGTH}`
+                  ? `${watch('community_description').length
+                  } / ${MAX_ABOUT_TEXT_LENGTH}`
                   : `0/ ${MAX_ABOUT_TEXT_LENGTH}`}
               </Text>
             </View>
