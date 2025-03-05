@@ -118,6 +118,7 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
             AmityPostContentComponentStyle={
               AmityPostContentComponentStyleEnum.feed
             }
+            isFromCommunityFeed
           />
         )}
         keyExtractor={(_, index) => index.toString()}
