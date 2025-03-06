@@ -13,9 +13,10 @@ import React, {
   useEffect,
   useMemo,
   useRef,
+  useState,
 } from 'react';
 import { useStyles } from '../styles';
-import { createReport } from '@amityco/ts-sdk-react-native';
+import { createReport, deleteReport, isReportedByMe } from '@amityco/ts-sdk-react-native';
 import {
   assignRolesToUsers,
   removeRolesFromUsers,
@@ -43,7 +44,21 @@ const MemberActionModal: FC<IMemberActionModal> = ({
   const styles = useStyles();
   const slideAnimation = useRef(new Animated.Value(0)).current;
   const { client } = useAuth() as { client: { userId: string } };
+  const [isReported, setIsReported] = useState<boolean>(false)
+
   const currentUserId = client.userId ?? '';
+
+  async function isUserReportedByMe() {
+    const isReport = await isReportedByMe('user', userId);
+    setIsReported(isReport)
+
+  }
+
+  useEffect(() => {
+    if (isVisible) isUserReportedByMe()
+  }, [isVisible])
+
+
   const actionData = useMemo(
     () => [
       {
@@ -77,8 +92,20 @@ const MemberActionModal: FC<IMemberActionModal> = ({
       {
         id: 'report',
         label: 'Report User',
-        shouldShow: currentUserId !== userId,
-        callBack: async () => await createReport('user', userId),
+        shouldShow:  !isReported && true,
+        callBack: async () => {
+        await createReport('user', userId)
+
+        },
+        
+      },
+      {
+        id: 'unreport',
+        label: 'Undo Report',
+        shouldShow:  isReported && true,
+        callBack: async () => {
+         await deleteReport('user', userId)
+        },
       },
       {
         id: 'remove',
@@ -98,6 +125,7 @@ const MemberActionModal: FC<IMemberActionModal> = ({
       hasModeratorPermission,
       isInModeratorTab,
       userId,
+      isReported
     ]
   );
 
@@ -113,7 +141,7 @@ const MemberActionModal: FC<IMemberActionModal> = ({
     async ({ callBack }) => {
       try {
         await callBack();
-      } catch (error) {}
+      } catch (error) { }
       closeModal();
     },
     [closeModal]
