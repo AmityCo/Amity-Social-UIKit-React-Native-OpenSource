@@ -111,8 +111,8 @@ export async function createPostToFeed(
     mentionees:
       mentionees.length > 0
         ? ([
-            { type: 'user', userIds: mentionees },
-          ] as Amity.MentionType['user'][])
+          { type: 'user', userIds: mentionees },
+        ] as Amity.MentionType['user'][])
         : [],
     metadata: { mentioned: mentionPosition },
   };
@@ -178,8 +178,8 @@ export async function editPost(
     mentionees:
       mentionees.length > 0
         ? ([
-            { type: 'user', userIds: mentionees },
-          ] as Amity.MentionType['user'][])
+          { type: 'user', userIds: mentionees },
+        ] as Amity.MentionType['user'][])
         : [],
     metadata: { mentioned: mentionPosition },
   };
@@ -272,9 +272,8 @@ export async function isReportTarget(
   const isReport: Promise<boolean> = new Promise(async (resolve, reject) => {
     try {
       const isReportByMe = await isReportedByMe(targetType, targetId);
-      if (isReportByMe) {
-        resolve(isReportByMe);
-      }
+      resolve(isReportByMe);
+
     } catch (error) {
       reject(error);
     }

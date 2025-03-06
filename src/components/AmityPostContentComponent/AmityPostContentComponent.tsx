@@ -35,7 +35,7 @@ import AmityPostEngagementActionsComponent from '../AmityPostEngagementActionsCo
 import { AmityPostContentComponentStyleEnum } from '../../enum/AmityPostContentComponentStyle';
 import { PostTargetType } from '../../enum/postTargetType';
 import TimestampElement from '../../Elements/TimestampElement/TimestampElement';
-
+import ContentLoader, { Rect } from 'react-content-loader/native';
 
 import {
   deletePostById,
@@ -76,6 +76,7 @@ export interface IPostList {
   post: IPost;
   pageId?: PageID;
   AmityPostContentComponentStyle?: AmityPostContentComponentStyleEnum;
+  isFromCommunityFeed?: boolean;
 }
 export interface MediaUri {
   uri: string;
@@ -90,6 +91,7 @@ const AmityPostContentComponent = ({
   pageId,
   post,
   AmityPostContentComponentStyle = AmityPostContentComponentStyleEnum.detail,
+  isFromCommunityFeed = false
 }: IPostList) => {
   const theme = useTheme() as MyMD3Theme;
   const {
@@ -110,11 +112,10 @@ const AmityPostContentComponent = ({
   const dispatch = useDispatch();
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const [isVisible, setIsVisible] = useState(false);
-  const [isReportByMe, setIsReportByMe] = useState(false);
-  const [mentionPositionArr, setMentionsPositionArr] = useState<
-    IMentionPosition[]
-  >([]);
+  const [isVisible, setIsVisible] = useState<boolean>(false);
+  const [isReportByMe, setIsReportByMe] = useState<boolean>(false);
+  const [isCheckReportLoading, setIsCheckReportLoading] = useState<boolean>(false);
+  const [mentionPositionArr, setMentionsPositionArr] = useState<IMentionPosition[]>([]);
 
   const slideAnimation = useRef(new Animated.Value(0)).current;
 
@@ -148,7 +149,7 @@ const AmityPostContentComponent = ({
 
   useEffect(() => {
     setTextPost(data?.text);
-    if (targetType === 'community' && targetId) {
+    if (targetType === 'community' && targetId && !isFromCommunityFeed) {
       getCommunityInfo(targetId);
     }
   }, [data?.text, myReactions, reactionCount?.like, targetId, targetType]);
@@ -205,6 +206,7 @@ const AmityPostContentComponent = ({
   };
 
   const openModal = () => {
+    checkIsReport()
     setIsVisible(true);
   };
 
@@ -216,16 +218,17 @@ const AmityPostContentComponent = ({
     }).start(() => setIsVisible(false));
   };
 
-  const checkIsReport = useCallback(async () => {
+  const checkIsReport = async () => {
+    setIsCheckReportLoading(true)
     const isReport = await isReportTarget('post', postId);
     if (isReport) {
+      setIsCheckReportLoading(false)
       setIsReportByMe(true);
+    } else {
+      setIsCheckReportLoading(false)
     }
-  }, [postId]);
+  }
 
-  useEffect(() => {
-    checkIsReport();
-  }, [checkIsReport]);
 
   const onDeletePost = useCallback(async () => {
     const deleted = await deletePostById(postId);
@@ -296,10 +299,25 @@ const AmityPostContentComponent = ({
               styles.modalContent,
               modalStyle,
               (post?.user?.userId === myId || isIAmModerator) &&
-                styles.twoOptions,
+              styles.twoOptions,
             ]}
           >
+
+
             <View style={styles.handleBar} />
+            {isCheckReportLoading && <ContentLoader
+              height={140}
+              speed={0.5}
+              backgroundColor={'#ebecef'}
+              foregroundColor={'#a5a9b5'}
+              viewBox="0 0 380 70"
+              opacity={0.4}
+            >
+
+              <Rect x="0" y="0" rx="5" ry="5" width="100%" height="20" />
+
+            </ContentLoader>}
+
             {post?.user?.userId === (client as Amity.Client).userId ? (
               <TouchableOpacity
                 onPress={openEditPostModal}
@@ -427,9 +445,9 @@ const AmityPostContentComponent = ({
           </View>
         </View>
         {AmityPostContentComponentStyle ===
-        AmityPostContentComponentStyleEnum.feed ? (
+          AmityPostContentComponentStyleEnum.feed ? (
           <Pressable onPress={openModal} hitSlop={12}>
-          <ThreeDotsIcon/>
+            <ThreeDotsIcon />
           </Pressable>
         ) : (
           <View style={styles.threeDots} />
@@ -465,7 +483,7 @@ const AmityPostContentComponent = ({
         />
       </View>
       {renderOptionModal()}
-      
+
     </View>
   );
 };

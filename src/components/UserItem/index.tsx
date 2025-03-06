@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Image, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Pressable, Text, TouchableOpacity, View } from 'react-native';
 import { useStyles } from './styles';
 import RoundCheckbox from '../RoundCheckbox/index';
 import type { UserInterface } from '../../types/user.interface';
@@ -22,8 +22,9 @@ export default function UserItem({
   onThreeDotTap?: (user: UserInterface) => void;
 }) {
   const styles = useStyles();
-  const { apiRegion } = useAuth();
+  const { apiRegion, client } = useAuth();
   const [isChecked, setIsChecked] = useState(false);
+
   const maxLength = 25;
   const handleToggle = () => {
     setIsChecked(!isChecked);
@@ -32,6 +33,8 @@ export default function UserItem({
     }
   };
 
+
+  
   const displayName = () => {
     if (user.displayName) {
       if (user.displayName!.length > maxLength) {
@@ -46,15 +49,15 @@ export default function UserItem({
   };
 
   return (
-    <TouchableOpacity style={styles.listItem} onPress={handleToggle}>
+    <Pressable style={styles.listItem} onPress={handleToggle}>
       <View style={styles.leftContainer}>
         {
-          user.avatarFileId ?
+          user?.avatarFileId ?
             <Image
               style={styles.avatar}
               source={
                 {
-                  uri: user.avatarFileId && avatarFileURL(user.avatarFileId),
+                  uri: user?.avatarFileId && avatarFileURL(user.avatarFileId),
                 }
 
               }
@@ -63,20 +66,21 @@ export default function UserItem({
 
         <Text style={styles.itemText}>{displayName()}</Text>
       </View>
-      {!showThreeDot ? (
+     { !showThreeDot ? (
         <RoundCheckbox isChecked={isCheckmark ?? false} />
-      ) : (
+      ) : (showThreeDot && user?.userId!== (client as Amity.Client)?.userId)? (
         <TouchableOpacity
           onPress={() => {
             if (onThreeDotTap) {
               onThreeDotTap(user);
             }
           }}
+          style = {styles.btnContainer}
         >
 
           <ThreeDotsIcon style={styles.dotIcon} />
         </TouchableOpacity>
-      )}
-    </TouchableOpacity>
+      ): <View/>}
+    </Pressable>
   );
 }

@@ -30,7 +30,11 @@ export const useStyles = () => {
     dotIcon: {
       width: 16,
       height: 12,
+
     },
+    btnContainer: {
+      padding: 10,
+    }
   });
   return styles;
 };
