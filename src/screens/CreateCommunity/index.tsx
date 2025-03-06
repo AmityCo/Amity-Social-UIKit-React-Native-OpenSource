@@ -145,7 +145,6 @@ export default function CreateCommunity() {
 
   const onCreateCommunity = async () => {
     if (!uploadingImage && isCreateReady) {
-      console.log('pass: ');
       const userIds: string[] = selectedUserList.map((item) => item.userId);
       const isPublic: boolean =
         selectedId === PrivacyState.private ? false : true;
