@@ -28,10 +28,8 @@ export default function GlobalFeed() {
   const { data: posts = [], nextPage } = postData ?? {};
   const flatListRef = useRef(null);
 
-  async function getGlobalFeedList(
-    page: Amity.Page<number> = { after: 0, limit: 8 }
-  ): Promise<void> {
-    const feedObject = await getGlobalFeed(page);
+  async function getGlobalFeedList(queryToken?: string): Promise<void> {
+    const feedObject = await getGlobalFeed(queryToken);
     if (feedObject) {
       setPostData(feedObject);
     }

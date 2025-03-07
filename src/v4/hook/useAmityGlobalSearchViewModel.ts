@@ -25,7 +25,7 @@ export const useAmityGlobalSearchViewModel = (
     if (searchValue?.length < 3) return setSearchResult(null);
     if (searchType === TabName.MyCommunities) {
       setSearchResult(null);
-      const unsubscribeCommunity = CommunityRepository.getCommunities(
+      const unsubscribeCommunity = CommunityRepository.searchCommunities(
         {
           displayName: searchValue,
           membership: 'member',
@@ -43,7 +43,7 @@ export const useAmityGlobalSearchViewModel = (
       return () => unsubscribeCommunity();
     } else if (searchType === TabName.Communities) {
       setSearchResult(null);
-      const unsubscribeCommunity = CommunityRepository.getCommunities(
+      const unsubscribeCommunity = CommunityRepository.searchCommunities(
         {
           displayName: searchValue,
           membership: 'all',
@@ -61,8 +61,8 @@ export const useAmityGlobalSearchViewModel = (
       return () => unsubscribeCommunity();
     } else if (searchType === TabName.Users) {
       setSearchResult(null);
-      const unsubscribeUser = UserRepository.getUsers(
-        { displayName: searchValue, limit: 20, sortBy: 'displayName' },
+      const unsubscribeUser = UserRepository.searchUserByDisplayName(
+        { displayName: searchValue, limit: 20 },
         ({ error, loading, data, hasNextPage, onNextPage }) => {
           if (error) return setSearchResult(null);
           if (!loading) {
