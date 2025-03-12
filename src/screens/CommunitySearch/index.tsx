@@ -64,7 +64,7 @@ export default function CommunitySearch() {
   }, [searchTerm, searchType]);
 
   const searchCommunities = (text: string) => {
-    const unsubscribe = CommunityRepository.getCommunities(
+    const unsubscribe = CommunityRepository.searchCommunities(
       {
         displayName: text,
         membership: 'notMember',
@@ -82,8 +82,8 @@ export default function CommunitySearch() {
   };
   const searchAccounts = (text: string = '') => {
     if (text.length > 2) {
-      const unsubscribe = UserRepository.getUsers(
-        { displayName: text, limit: 20, sortBy: 'displayName' },
+      const unsubscribe = UserRepository.searchUserByDisplayName(
+        { displayName: text, limit: 20 },
         (data) => {
           setUsersObject(data);
         }

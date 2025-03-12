@@ -17,7 +17,7 @@ const useSearch = (
   const [searchResult, setSearchResult] = useState<TSearchItem[]>([]);
   const searchPrivateCommunityMember = useCallback(
     (text: string) => {
-      return CommunityRepository.Membership.getMembers(
+      return CommunityRepository.Membership.searchMembers(
         {
           communityId: privateCommunityId,
           search: text,
@@ -44,8 +44,8 @@ const useSearch = (
   );
 
   const searchAllUsers = useCallback((text: string) => {
-    return UserRepository.getUsers(
-      { displayName: text, limit: 5, sortBy: 'displayName' },
+    return UserRepository.searchUserByDisplayName(
+      { displayName: text, limit: 5 },
       ({ data, error, hasNextPage, onNextPage }) => {
         if (error) return null;
         hasNextPage
