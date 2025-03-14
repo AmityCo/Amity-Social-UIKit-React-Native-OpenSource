@@ -1,5 +1,5 @@
 PODS:
-  - amity-react-native-social-ui-kit (4.0.0-beta-16):
+  - amity-react-native-social-ui-kit (4.0.0-beta-17):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
   - ApiVideoLiveStream (1.4.1):
@@ -877,7 +877,7 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
-  amity-react-native-social-ui-kit: 6e01558b13d978aaf4d8688a537cae5f1a54588b
+  amity-react-native-social-ui-kit: 958c2822e381ce1f49bbdd3fff1af8fef49a3ce2
   ApiVideoLiveStream: 8f9dce7f6d15d5e4bb3c7a25e406bf2a36337a5a
   boost: 64032b9e9b938fda23325e68a3771f0fabf414dc
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
