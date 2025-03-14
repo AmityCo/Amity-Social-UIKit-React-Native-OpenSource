@@ -42,7 +42,7 @@ export const isCommunityModerator = async ({
       data,
     }: Amity.LiveCollection<Amity.Membership<'community'>> = await new Promise(
       (resolve) => {
-        CommunityRepository.Membership.getMembers(
+        CommunityRepository.Membership.searchMembers(
           {
             communityId: communityId,
             search: userId,

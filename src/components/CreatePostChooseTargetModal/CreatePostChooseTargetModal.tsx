@@ -66,7 +66,7 @@ const CreatePostChooseTargetModal = ({
     const loadCommunities = async () => {
       try {
         const unsubscribe = CommunityRepository.getCommunities(
-          { membership: 'member', limit: 10, sortBy: 'displayName' },
+          { membership: 'member', limit: 10 },
           ({ data: communitiesList, onNextPage, hasNextPage, loading }) => {
             if (!loading) {
               setCommunities((prevCommunities: Amity.Community[]) => [
