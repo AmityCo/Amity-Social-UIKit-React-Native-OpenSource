@@ -10,7 +10,8 @@
       "base_shade3_color": "#a5a9b5",
       "base_shade4_color": "#ebecef",
       "alert_color": "#FA4D30",
-      "background_color": "#FFFFFF"
+      "background_color": "#FFFFFF",
+      "background_shade1_color": "#f6f7f8"
     },
     "dark": {
       "primary_color": "#1054DE",
@@ -21,7 +22,8 @@
       "base_shade3_color": "#40434e",
       "base_shade4_color": "#292b32",
       "alert_color": "#FA4D30",
-      "background_color": "#191919"
+      "background_color": "#191919",
+      "background_shade1_color": "#40434e"
     }
   },
   "excludes": [],

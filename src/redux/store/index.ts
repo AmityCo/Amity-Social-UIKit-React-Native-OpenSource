@@ -4,6 +4,7 @@ import globalFeedSlice from '../slices/globalfeedSlice';
 import feedSlice from '../slices/feedSlice';
 import postDetailSlice from '../slices/postDetailSlice';
 import uiSlice from '../slices/uiSlice';
+import bottomSheetSlice from '../slices/bottomSheetSlice';
 
 export const store: Store = configureStore({
   reducer: {
@@ -11,6 +12,7 @@ export const store: Store = configureStore({
     postDetail: postDetailSlice.reducer,
     feed: feedSlice.reducer,
     ui: uiSlice.reducer,
+    bottomSheet: bottomSheetSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

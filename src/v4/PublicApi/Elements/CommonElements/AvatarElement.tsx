@@ -1,5 +1,5 @@
 import { Image, ImageProps } from 'react-native';
-import React, { FC, useLayoutEffect, useState } from 'react';
+import React, { FC, useLayoutEffect, useMemo, useState } from 'react';
 import { defaultAvatarUri, defaultCommunityAvatarUri } from '../../../assets';
 import { useFile } from '../../../hook';
 import { ImageSizeState } from '../../../enum';
@@ -12,6 +12,8 @@ type AvatarElementType = Partial<ImageProps> & {
   componentID?: ComponentID;
   elementID: ElementID;
   targetType?: 'community' | 'user';
+  // to bypass the default avatar
+  defaultAvatar?: string;
 };
 
 const AvatarElement: FC<AvatarElementType> = ({
@@ -20,18 +22,24 @@ const AvatarElement: FC<AvatarElementType> = ({
   componentID = '*',
   elementID,
   targetType,
+  defaultAvatar,
   ...props
 }) => {
-  const defaultAvatar =
-    targetType === 'community' ? defaultCommunityAvatarUri : defaultAvatarUri;
-  const [avatarUrl, setAvatarUrl] = useState<string>(defaultAvatar);
+  const fallbackAvatar = useMemo(() => {
+    if (defaultAvatar) return defaultAvatar;
+    return targetType === 'community'
+      ? defaultCommunityAvatarUri
+      : defaultAvatarUri;
+  }, [defaultAvatar, targetType]);
+
+  const [avatarUrl, setAvatarUrl] = useState<string>(fallbackAvatar);
   const { excludes } = useConfig();
   const configId = `${pageID}/${componentID}/${elementID}`;
   const { getImage } = useFile();
 
   useLayoutEffect(() => {
     if (!avatarId) {
-      setAvatarUrl(defaultAvatar);
+      setAvatarUrl(fallbackAvatar);
       return;
     }
     (async () => {
@@ -41,7 +49,7 @@ const AvatarElement: FC<AvatarElementType> = ({
       });
       setAvatarUrl(avatar);
     })();
-  }, [avatarId, defaultAvatar, getImage]);
+  }, [avatarId, fallbackAvatar, getImage]);
 
   if (excludes.includes(configId)) return null;
 
