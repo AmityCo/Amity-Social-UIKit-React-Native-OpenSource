@@ -38,7 +38,7 @@ export const globalFeedPageLimit = 20;
 const AmityGlobalFeedComponent: FC<AmityGlobalFeedComponentType> = ({
   pageId,
 }) => {
-  const { fetch, itemWithAds, refresh } = useCustomRankingGlobalFeed();
+  const { fetch, itemWithAds, refresh, loading } = useCustomRankingGlobalFeed();
   const componentId = ComponentID.global_feed_component;
   const { isExcluded, themeStyles, accessibilityId } = useAmityComponent({
     pageId,
@@ -56,6 +56,8 @@ const AmityGlobalFeedComponent: FC<AmityGlobalFeedComponentType> = ({
   );
 
   const handleLoadMore = () => {
+    if (loading || !nextPage) return;
+
     fetch({
       queryToken: nextPage,
     });
@@ -119,7 +121,8 @@ const AmityGlobalFeedComponent: FC<AmityGlobalFeedComponentType> = ({
       }
       keyboardShouldPersistTaps="handled"
       ListHeaderComponent={
-        !refreshing && (
+        !refreshing &&
+        !loading && (
           <AmityStoryTabComponent
             type={AmityStoryTabComponentEnum.globalFeed}
           />

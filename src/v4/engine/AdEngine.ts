@@ -150,19 +150,16 @@ export class AdEngine {
     const assets = await AdAssetCache.instance.getAllAdAssets();
 
     for (const asset of assets) {
+      const fileExists = await AssetDownloader.instance.fileExists(
+        asset.fileUrl
+      );
+
       if (
         asset.downloadStatus === DownloadStatus.NOT_DOWNLOADED ||
-        asset.downloadStatus === DownloadStatus.FAILED
+        asset.downloadStatus === DownloadStatus.FAILED ||
+        (asset.downloadStatus === DownloadStatus.COMPLETED && !fileExists)
       ) {
         try {
-          // Listen to download status, to update the status when it changes
-          AssetDownloader.instance.addStatusListener(
-            asset.fileUrl,
-            (status) => {
-              AdAssetCache.instance.updateDownloadStatus(asset.fileUrl, status);
-            }
-          );
-
           const downloadId = await AssetDownloader.instance.enqueue(
             asset.fileUrl
           );
@@ -171,6 +168,14 @@ export class AdEngine {
           AdAssetCache.instance.updateDownloadStatus(
             asset.fileUrl,
             DownloadStatus.DOWNLOADING
+          );
+
+          // Listen to download status, to update the status when it changes
+          AssetDownloader.instance.addStatusListener(
+            asset.fileUrl,
+            (status) => {
+              AdAssetCache.instance.updateDownloadStatus(asset.fileUrl, status);
+            }
           );
         } catch (e) {
           console.log('error: ', e);

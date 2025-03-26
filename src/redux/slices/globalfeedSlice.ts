@@ -22,7 +22,7 @@ const globalFeedSlice = createSlice({
   initialState,
   reducers: {
     setNewGlobalFeed: (state, action: PayloadAction<IPost[]>) => {
-      state.postList = action.payload;
+      state.postList = [...action.payload];
     },
     updateGlobalFeed: (state, action: PayloadAction<IPost[]>) => {
       const getUniqueArrayById = (arr: (IPost | Amity.Ad)[]) => {

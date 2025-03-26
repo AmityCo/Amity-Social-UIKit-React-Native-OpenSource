@@ -1,4 +1,5 @@
 import RNFS from 'react-native-fs';
+import { Client as ASCClient } from '@amityco/ts-sdk-react-native';
 
 export enum DownloadStatus {
   NOT_DOWNLOADED = -1,
@@ -10,11 +11,14 @@ export enum DownloadStatus {
 
 class AssetDownloader {
   static #instance: AssetDownloader;
+  private client: Amity.Client;
   private downloadJobs: Map<string, number> = new Map();
   private statusListeners: Map<string, ((status: DownloadStatus) => void)[]> =
     new Map();
 
-  private constructor() {}
+  private constructor() {
+    this.client = ASCClient.getActiveClient();
+  }
 
   public static get instance(): AssetDownloader {
     if (!AssetDownloader.#instance) {
@@ -56,8 +60,12 @@ class AssetDownloader {
 
     try {
       // Begin download
+      const accessToken = this.client.token.accessToken;
       const downloadOptions = {
         fromUrl: url,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
         toFile: filePath,
         background: true,
         discretionary: true,
@@ -73,11 +81,13 @@ class AssetDownloader {
       const download = RNFS.downloadFile(downloadOptions);
 
       download.promise
-        .then(() => {
-          this.notifyListeners(url, DownloadStatus.COMPLETED);
+        .then((data: RNFS.DownloadResult) => {
+          if (data.statusCode !== 200) {
+            this.notifyListeners(url, DownloadStatus.FAILED);
+          } else this.notifyListeners(url, DownloadStatus.COMPLETED);
         })
         .catch((error) => {
-          console.error('Download file error:', error);
+          console.error('Download file failed:', error); // Log result
           this.notifyListeners(url, DownloadStatus.FAILED);
         });
 
@@ -95,6 +105,18 @@ class AssetDownloader {
   getFilePath(url: string): string {
     const fileName = `${Math.abs(this.hashCode(url))}.jpg`;
     return `${RNFS.DocumentDirectoryPath}/amityDir/${fileName}`;
+  }
+
+  /**
+   * Check if a file is existed
+   */
+  public async fileExists(url: string): Promise<boolean> {
+    try {
+      const localPath = this.getFilePath(url);
+      return await RNFS.exists(localPath);
+    } catch (error) {
+      return false;
+    }
   }
 
   /**

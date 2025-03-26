@@ -145,6 +145,17 @@ export const useRecommendAds = ({
   >();
   const adSettings = useAdSettings();
   const adFrequency = AdEngine.instance.getAdFrequencyByPlacement(placement);
+  const getRecommendedAds = () => {
+    AdEngine.instance
+      .getRecommendedAds({
+        placement,
+        count,
+        communityId,
+      })
+      .then((ads) => {
+        setRecommendedAds(ads);
+      });
+  };
 
   useEffect(() => {
     if (!adSettings?.enabled || ads.length === 0) {
@@ -157,16 +168,14 @@ export const useRecommendAds = ({
       return;
     }
 
-    AdEngine.instance
-      .getRecommendedAds({
-        placement,
-        count,
-        communityId,
-      })
-      .then((ads) => {
-        setRecommendedAds(ads);
-      });
+    getRecommendedAds();
   }, [ads, count, placement, communityId, adFrequency, adSettings]);
 
-  return recommendedAds;
+  return {
+    resetRecommendedAds: () => {
+      setRecommendedAds(undefined);
+      getRecommendedAds();
+    },
+    recommendedAds,
+  };
 };
