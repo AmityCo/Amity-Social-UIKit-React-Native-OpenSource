@@ -62,9 +62,9 @@ const PostAdComponent: FC<PostAdComponentType> = ({
       {ad?.image1_1?.fileUrl && (
         <Image
           source={{
-            uri: AssetDownloader.instance.getFilePath(
+            uri: `file://${AssetDownloader.instance.getFilePath(
               ad?.image1_1?.fileUrl + '?size=large'
-            ),
+            )}`,
           }}
           style={styles.image}
           resizeMode="cover"

@@ -1,8 +1,8 @@
 **Jira ticket :**
 
-- **Description :**
+**Description :**
 
-- **Check lists :**
+**Check lists :**
 
 - [ ] Test code
 - [ ] Build local pass (optional)

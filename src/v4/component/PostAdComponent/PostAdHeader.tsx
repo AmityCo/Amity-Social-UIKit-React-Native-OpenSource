@@ -1,11 +1,10 @@
 import React, { FC, memo } from 'react';
-import { View } from 'react-native';
+import { View, Text } from 'react-native';
 
 import { useStyles } from './styles';
 import AvatarElement from '../../PublicApi/Elements/CommonElements/AvatarElement';
 import { useAmityComponent } from '../../hook';
 import { PageID, ComponentID, ElementID } from '../../enum';
-import { Text } from 'react-native-paper';
 import { star } from '../../../svg/svg-xml-list';
 import { SvgXml } from 'react-native-svg';
 import { defaultAdAvatarUri } from '../../assets';

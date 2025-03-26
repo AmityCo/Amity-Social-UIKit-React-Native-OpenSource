@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
 import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
+import { hexToRgba } from '../../../util/colorUtil';
 
 export const useStyles = (theme: MyMD3Theme) => {
   const styles = StyleSheet.create({
@@ -27,12 +28,11 @@ export const useStyles = (theme: MyMD3Theme) => {
     adBadge: {
       flexDirection: 'row',
       gap: 2,
-      backgroundColor: theme.colors.baseShade1,
+      backgroundColor: hexToRgba(theme.colors.baseShade1, 0.5),
       fontSize: 11,
       borderRadius: 20,
       paddingLeft: 4,
       paddingRight: 6,
-      opacity: 0.5,
       alignItems: 'center',
       alignSelf: 'flex-start',
     },
