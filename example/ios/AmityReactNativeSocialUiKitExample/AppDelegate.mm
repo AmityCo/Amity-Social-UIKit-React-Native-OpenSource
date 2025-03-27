@@ -1,10 +1,18 @@
 #import <UserNotifications/UserNotifications.h>
 #import <RNCPushNotificationIOS.h>
+#import <RNFSManager.h>
 #import "AppDelegate.h"
 
 #import <React/RCTBundleURLProvider.h>
 
 @implementation AppDelegate
+
+
+// Required to register for background downloading
+- (void)application:(UIApplication *)application handleEventsForBackgroundURLSession:(NSString *)identifier completionHandler:(void (^)())completionHandler
+{
+  [RNFSManager setCompletionHandlerForIdentifier:identifier completionHandler:completionHandler];
+}
 
 // Required for the register event.
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken

@@ -12,6 +12,8 @@ import fallBackConfig from '../../uikit.config.json';
 import { BehaviourProvider } from '../v4/providers/BehaviourProvider';
 import { IBehaviour } from '../v4/types/behaviour.interface';
 import { lighten, parseToHsl, hslToColorString } from 'polished';
+import { AdEngineProvider } from '../v4/providers/AdEngineProvider';
+import BottomSheetComponent from '../v4/component/BottomSheetComponent/BottomSheetComponent';
 
 export type CusTomTheme = typeof DefaultTheme;
 export interface IAmityUIkitProvider {
@@ -39,6 +41,7 @@ export interface CustomColors {
   secondaryShade3?: string;
   secondaryShade4?: string;
   background?: string;
+  backgroundShade1?: string;
   base?: string;
   baseShade1?: string;
   baseShade2?: string;
@@ -97,6 +100,9 @@ export default function AmityUiKitProvider({
       secondaryShade3: validateConfigColor(secondaryShades[2]),
       secondaryShade4: validateConfigColor(secondaryShades[3]),
       background: validateConfigColor(themeColor?.background_color),
+      backgroundShade1: validateConfigColor(
+        themeColor?.background_shade1_color
+      ),
       base: validateConfigColor(themeColor?.base_color),
       baseShade1: validateConfigColor(themeColor?.base_shade1_color),
       baseShade2: validateConfigColor(themeColor?.base_shade2_color),
@@ -117,11 +123,16 @@ export default function AmityUiKitProvider({
         authToken={authToken}
         fcmToken={fcmToken}
       >
-        <ConfigProvider configs={configData}>
-          <BehaviourProvider behaviour={behaviour}>
-            <PaperProvider theme={globalTheme}>{children}</PaperProvider>
-          </BehaviourProvider>
-        </ConfigProvider>
+        <AdEngineProvider>
+          <ConfigProvider configs={configData}>
+            <BehaviourProvider behaviour={behaviour}>
+              <PaperProvider theme={globalTheme}>
+                {children}
+                <BottomSheetComponent />
+              </PaperProvider>
+            </BehaviourProvider>
+          </ConfigProvider>
+        </AdEngineProvider>
       </AuthContextProvider>
     </Provider>
   );

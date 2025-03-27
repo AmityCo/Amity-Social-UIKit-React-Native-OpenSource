@@ -23,16 +23,42 @@ import type { FeedRefType } from '../CommunityHome';
 import { deletePostById } from '../../../providers/Social/feed-sdk';
 import { amityPostsFormatter } from '../../../util/postDataFormatter';
 import { useFocusEffect } from '@react-navigation/native';
+import { usePaginatorApi } from '../../hook/usePaginator';
+import { usePostImpression } from '../../../v4/hook/usePostImpression';
+import { isAmityAd } from '../../../v4/hook/useCustomRankingGlobalFeed';
+import PostAdComponent from '../../component/PostAdComponent/PostAdComponent';
 
 interface IFeed {
   targetId: string;
   targetType: string;
 }
+
+const pageLimit = 10;
+
 function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
   const styles = useStyles();
-  const [postData, setPostData] = useState<Amity.Post>(null);
+  const [postData, setPostData] = useState<Amity.Post>([]);
   const [onNextPage, setOnNextPage] = useState(null);
   const disposers: Amity.Unsubscriber[] = useMemo(() => [], []);
+
+  const { itemWithAds } = usePaginatorApi<Amity.Post | Amity.Ad>({
+    items: postData as Amity.Post[],
+    placement: 'feed' as Amity.AdPlacement,
+    pageSize: pageLimit,
+    getItemId: (item) =>
+      isAmityAd(item) ? item?.adId.toString() : item?.postId.toString(),
+  });
+
+  const shouldShowAds = targetType !== 'user';
+  const feedItems = shouldShowAds ? itemWithAds : postData;
+
+  const { handleViewChange } = usePostImpression(
+    itemWithAds.filter(
+      (item: Amity.Post | Amity.Ad) =>
+        !!(isAmityAd(item) ? item?.adId : item?.postId)
+    ) as (Amity.Post | Amity.Ad)[]
+  );
+
   let isSubscribed = false;
 
   const subscribePostTopic = useCallback((type: string, id: string) => {
@@ -89,7 +115,7 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
             const filterData: any[] = data.map((item) => {
               if (item.dataType === 'text') return item;
             });
-            console.log(data.length);
+
             setOnNextPage(hasNextPage ? () => nextPage : null);
             const formattedPostList = await amityPostsFormatter(filterData);
             setPostData(formattedPostList);
@@ -114,17 +140,27 @@ function Feed({ targetId, targetType }: IFeed, ref: React.Ref<FeedRefType>) {
     <View style={styles.feedWrap}>
       <FlatList
         scrollEnabled={false}
-        data={postData ?? []}
-        renderItem={({ item, index }) => (
-          <PostList
-            onDelete={onDeletePost}
-            postDetail={item}
-            isGlobalfeed={false}
-            postIndex={index}
-          />
-        )}
-        keyExtractor={(_, index) => index.toString()}
-        extraData={postData}
+        data={feedItems ?? []}
+        renderItem={({ item, index }) => {
+          if (isAmityAd(item)) return <PostAdComponent ad={item as Amity.Ad} />;
+
+          return (
+            <PostList
+              onDelete={onDeletePost}
+              postDetail={item}
+              isGlobalfeed={false}
+              postIndex={index}
+            />
+          );
+        }}
+        keyExtractor={(item, index) =>
+          isAmityAd(item)
+            ? item.adId.toString() + index
+            : item.postId.toString()
+        }
+        viewabilityConfig={{ viewAreaCoveragePercentThreshold: 60 }}
+        onViewableItemsChanged={handleViewChange}
+        extraData={itemWithAds}
       />
     </View>
   );
