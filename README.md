@@ -84,7 +84,7 @@ Then, inside another project, Copy tgz file to your application folder where you
 
 ```sh
 1. yarn add ./amity-react-native-social-ui-kit-x.x.x.tgz
-2. yarn add react-native-safe-area-context react-native-image-picker @react-native-async-storage/async-storage react-native-svg react-native-gesture-handler react-native-screens react-native-video@6.0.0-beta.6 react-native-create-thumbnail @react-native-community/netinfo @react-navigation/native \@react-navigation/native-stack @react-navigation/stack react-native-vision-camera react-native-push-notification \@api.video/react-native-livestream react-native-get-random-values react-native-rsa-native react-native-vlc-media-player
+2. yarn add react-native-safe-area-context react-native-image-picker @react-native-async-storage/async-storage react-native-svg react-native-gesture-handler react-native-screens react-native-video@6.0.0-beta.6 react-native-create-thumbnail @react-native-community/netinfo @react-navigation/native \@react-navigation/native-stack @react-navigation/stack react-native-vision-camera react-native-push-notification \@api.video/react-native-livestream@2.0.0 react-native-get-random-values react-native-rsa-native react-native-vlc-media-player react-native-fs@2.20.0
 ```
 
 ### iOS Configuration
