@@ -368,8 +368,17 @@ const AmityPostContentComponent = ({
 
           <View style={styles.fillSpace}>
             <View style={styles.headerRow}>
-              <TouchableOpacity onPress={handleDisplayNamePress}>
-                <Text style={styles.headerText}>{user?.displayName}</Text>
+              <TouchableOpacity
+                style={styles.headerTextContainer}
+                onPress={handleDisplayNamePress}
+              >
+                <Text
+                  ellipsizeMode="tail"
+                  numberOfLines={1}
+                  style={styles.headerText}
+                >
+                  {user?.displayName}
+                </Text>
               </TouchableOpacity>
 
               {communityData?.displayName && (
