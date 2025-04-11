@@ -68,11 +68,11 @@ Then, inside another project, Copy tgz file to your application folder where you
 
 5. Install UIKit package to the application folder
 ```sh
- yarn add ./amityco-asc-react-native-ui-kit-3.0.0.tgz
+ yarn add ./amityco-asc-react-native-ui-kit-x.x.x.tgz
 ```
 or
 ```sh
-npm install ./amityco-asc-react-native-ui-kit-3.0.0.tgz
+npm install ./amityco-asc-react-native-ui-kit-x.x.x.tgz
 ```
 
 ### Usage
