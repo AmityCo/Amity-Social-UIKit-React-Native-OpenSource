@@ -12,6 +12,7 @@ Please go to <strong>this repo</strong> if you want only native librairies insid
 
 ## Getting started
 Our AmityUIKit include user interfaces to enable fast integration of standard Amity Social features into new or existing applications. Furthermore, our React Native UIKit supports integration with **Expo**, providing you with a flexible experience to seamlessly integrate social features into your existing React Native application.
+
 ### Try Sample app
 This repository also includes a built-in sample app which you can use to test your code while customizing it, or even explore our UIKit features with just a few installations!
 
@@ -25,7 +26,7 @@ Before you begin, ensure your development environment meets the following requir
 
 ##  Metro Config for React Native 0.76+
 
-If you're using **React Native 0.76 or above**, make sure to update your `metro.config.js` file to include custom `unstable_conditionNames`. This helps the Metro bundler resolve conditional exports correctly.
+If you're using **React Native 0.76 or above**, make sure to update your `metro.config.js` file to include `config.resolver.unstable_conditionNames = ['browser', 'require', 'react-native'];`. This helps the Metro bundler resolve conditional exports correctly.
 
 ###  Updated `metro.config.js`
 
@@ -34,12 +35,12 @@ const { getDefaultConfig } = require('@expo/metro-config');
 
 const config = getDefaultConfig(__dirname);
 
-config.resolver.unstable_conditionNames = ['browser', 'require', 'react-native'];
+config.resolver.unstable_conditionNames = ['browser', 'require', 'react-native']; // add this to your metro.config.js
 
 module.exports = config;
 ```
 
-#### Run sample app with Expo module
+### Run sample app with Expo module
 Use yarn
 
 1. Install packages
