@@ -16,30 +16,6 @@ Our AmityUIKit include user interfaces to enable fast integration of standard Am
 ### Try Sample app
 This repository also includes a built-in sample app which you can use to test your code while customizing it, or even explore our UIKit features with just a few installations!
 
-## Prerequisites
-
-Before you begin, ensure your development environment meets the following requirements:
-
-- **Expo SDK**: version **53**
-- **Node.js**: version **22** or above
--  **React Navigation**: version **7** or above
-
-
-##  Metro Config for React Native 0.76+
-
-If you're using **React Native 0.76 or above**, make sure to update your `metro.config.js` file to include `config.resolver.unstable_conditionNames = ['browser', 'require', 'react-native'];`. This helps the Metro bundler resolve conditional exports correctly.
-
-###  Updated `metro.config.js`
-
-```js
-const { getDefaultConfig } = require('@expo/metro-config');
-
-const config = getDefaultConfig(__dirname);
-
-config.resolver.unstable_conditionNames = ['browser', 'require', 'react-native']; // add this to your metro.config.js
-
-module.exports = config;
-```
 
 ### Run sample app with Expo module
 Use yarn
