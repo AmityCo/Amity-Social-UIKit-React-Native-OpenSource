@@ -64,6 +64,7 @@ const CreatePostChooseTargetModal = ({
     const loadCommunities = async () => {
       try {
         const unsubscribe = CommunityRepository.getCommunities(
+          // @ts-ignore
           { membership: 'member', limit: 10, sortBy: 'displayName' },
           ({ data: communitiesList, onNextPage, loading }) => {
             if (!loading) {

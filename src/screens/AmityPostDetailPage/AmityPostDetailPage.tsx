@@ -23,7 +23,7 @@ import React, {
   useLayoutEffect,
   useRef,
 } from 'react';
-import { ComponentID, PageID } from '../../enum/';
+import { ComponentID, PageID } from '../../enum';
 
 import { useStyles } from './styles';
 import BackButtonIconElement from '../../Elements/BackButtonIconElement/BackButtonIconElement';
@@ -282,7 +282,7 @@ const AmityPostDetailPage: FC<AmityPostDetailPageType> = ({ postId }) => {
               styles.modalContent,
               modalStyle,
               (postData?.user?.userId === myId || isIAmModerator) &&
-                styles.twoOptions,
+              styles.twoOptions,
             ]}
           >
             <View style={styles.handleBar} />
@@ -337,7 +337,7 @@ const AmityPostDetailPage: FC<AmityPostDetailPageType> = ({ postId }) => {
   };
 
   useLayoutEffect(() => {
-    if (!postId) return () => {};
+    if (!postId) return () => { };
     let unsub: () => void;
     let hasSubscribed = false;
     const postUnsub = PostRepository.getPost(
@@ -538,9 +538,9 @@ const AmityPostDetailPage: FC<AmityPostDetailPageType> = ({ postId }) => {
             paddingTop: topBarHeigh,
             paddingBottom: isKeyboardVisible
               ? (Platform.OS !== 'android' ? keyboardHeight : 0) +
-                footerHeight -
-                topBarHeigh -
-                bottom
+              footerHeight -
+              topBarHeigh -
+              bottom
               : footerHeight - topBarHeigh,
             height: adjustedHeight,
           },

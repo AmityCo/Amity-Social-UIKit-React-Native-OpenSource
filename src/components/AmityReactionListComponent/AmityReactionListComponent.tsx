@@ -29,7 +29,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../routes/RouteParamList';
 import { defaultAvatarUri } from '../../assets';
 import { UserRepository } from '@amityco/ts-sdk-react-native';
-import { formatNumber } from './../../util/numberUtil';
+import { formatNumber } from '../../util/numberUtil';
 import { useTheme } from 'react-native-paper';
 import { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import { useReaction } from '../../hooks/useReaction';
@@ -79,10 +79,10 @@ const AmityReactionListComponent: FC<AmityReactionListComponentType> = ({
         selectedReactionIndex === 0
           ? allReactionList
           : selectedReactionIndex === 1
-          ? likeReactionList
-          : selectedReactionIndex === 2
-          ? loveReactionList
-          : null;
+            ? likeReactionList
+            : selectedReactionIndex === 2
+              ? loveReactionList
+              : null;
       if (currentUsers?.length > 0) {
         const userList = currentUsers.map((item) => item.userId);
         try {
@@ -100,7 +100,7 @@ const AmityReactionListComponent: FC<AmityReactionListComponentType> = ({
       }
     })();
 
-    return () => {};
+    return () => { };
   }, [
     allReactionList,
     likeReactionList,
@@ -231,10 +231,10 @@ const AmityReactionListComponent: FC<AmityReactionListComponentType> = ({
         {loading
           ? renderContentLoading()
           : hasError
-          ? errorContent()
-          : reactors
-          ? renderReactionList()
-          : null}
+            ? errorContent()
+            : reactors
+              ? renderReactionList()
+              : null}
       </View>
     </Modal>
   );

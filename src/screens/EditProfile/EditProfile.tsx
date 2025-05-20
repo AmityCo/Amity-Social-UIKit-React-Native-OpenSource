@@ -124,7 +124,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
   const openCamera = async () => {
     let result: ImagePicker.ImagePickerResult =
     await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ['images'],
       allowsEditing: false,
       aspect: [4, 3],
     });
@@ -141,7 +141,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
 
   const openImageGallery = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ['images'],
       allowsEditing: false,
       quality: 1,
       allowsMultipleSelection: true,

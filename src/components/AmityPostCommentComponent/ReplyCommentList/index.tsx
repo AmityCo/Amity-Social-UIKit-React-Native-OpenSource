@@ -32,7 +32,7 @@ import {
   reportTargetById,
   unReportTargetById,
 } from '../../../providers/Social/feed-sdk';
-import EditCommentModal from '../../../components/EditCommentModal';
+import EditCommentModal from '../../EditCommentModal';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../../providers/amity-ui-kit-provider';
 

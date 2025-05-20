@@ -67,6 +67,7 @@ export default function AllMyCommunity() {
 
   const searchCommunities = (text: string) => {
     const unsubscribe = CommunityRepository.getCommunities(
+      // @ts-ignore
       { displayName: text, membership: 'member', limit: 20 },
       (data) => {
         setCommunities(data);

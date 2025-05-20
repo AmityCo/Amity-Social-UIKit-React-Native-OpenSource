@@ -9,7 +9,7 @@ import { IConfigRaw } from '../types/config.interface';
 import { validateConfigColor } from '../util/colorUtil';
 
 import fallBackConfig from '../../uikit.config.json';
-import { BehaviourProvider } from '../providers/BehaviourProvider';
+import { BehaviourProvider } from './BehaviourProvider';
 import { IBehaviour } from '../types/behaviour.interface';
 import { lighten, parseToHsl, hslToColorString } from 'polished';
 import { MenuProvider } from 'react-native-popup-menu';
@@ -74,7 +74,7 @@ export default function AmityUiKitProvider({
     return shades;
   };
   const isValidConfig = useValidateConfig(configs);
-  const configData = isValidConfig ? configs : (fallBackConfig as IConfigRaw);
+  const configData = isValidConfig ? configs : (fallBackConfig as any);
   const isDarkTheme =
     configData?.preferred_theme === 'dark' ||
     (configData?.preferred_theme === 'default' && colorScheme === 'dark');

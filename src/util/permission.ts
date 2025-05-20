@@ -45,6 +45,7 @@ export const isCommunityModerator = async ({
         CommunityRepository.Membership.getMembers(
           {
             communityId: communityId,
+            // @ts-ignore
             search: userId,
             limit: 1,
             sortBy: 'firstCreated',

@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useRef, useState } from 'react';
+import React, { JSX, useEffect, useRef, useState } from 'react';
 // import { useTranslation } from 'react-i18next';
 
 import {
@@ -29,7 +29,7 @@ import {
   reportTargetById,
   unReportTargetById,
 } from '../../../providers/Social/feed-sdk';
-import EditCommentModal from '../../../components/EditCommentModal';
+import EditCommentModal from '../../EditCommentModal';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../../providers/amity-ui-kit-provider';
 import { useNavigation } from '@react-navigation/native';
@@ -416,7 +416,7 @@ const CommentList = ({
               style={styles.likeBtn}
             >
               {isLike ? (
-                <LikedIcon  color={theme.colors.primary} width={20} height={16} />
+                <LikedIcon color={theme.colors.primary} width={20} height={16} />
 
               ) : (
 
@@ -439,7 +439,7 @@ const CommentList = ({
 
             <TouchableOpacity onPress={openModal} style={styles.threeDots}>
 
-              <ThreeDotsIcon color={theme.colors.baseShade2}/>
+              <ThreeDotsIcon color={theme.colors.baseShade2} />
             </TouchableOpacity>
           </View>
 
@@ -472,7 +472,7 @@ const CommentList = ({
               onPress={() => openReplyComment()}
               style={styles.viewMoreReplyBtn}
             >
-              <ExpandIcon/>
+              <ExpandIcon />
               <Text style={styles.viewMoreText}>
                 View {childrenNumber} replies
               </Text>
@@ -484,7 +484,7 @@ const CommentList = ({
               onPress={() => onNextPage()}
               style={styles.viewMoreReplyBtn}
             >
-               <ExpandIcon/>
+              <ExpandIcon />
               <Text style={styles.viewMoreText}>View more replies</Text>
             </TouchableOpacity>
           )}

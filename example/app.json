@@ -6,38 +6,26 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.topsocialplus.example",
-      "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
-      }
+      "bundleIdentifier": "amityco.reactnativesocialuikit.example"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.topsocialplus.example"
+      "edgeToEdgeEnabled": true,
+      "package": "amityco.reactnativesocialuikit.example"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    },
-    "extra": {
-      "eas": {
-        "projectId": "14459b8a-0e50-4e54-964f-dc81765a08a0"
-      }
-    },
-    "plugins": [
-      "expo-asset"
-    ]
+    }
   }
 }

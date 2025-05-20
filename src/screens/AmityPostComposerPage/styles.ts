@@ -1,4 +1,4 @@
-import { StyleSheet, useWindowDimensions } from 'react-native';
+import { Platform, StyleSheet, useWindowDimensions } from 'react-native';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -8,6 +8,7 @@ export const useStyles = (theme: MyMD3Theme) => {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
+      paddingTop: Platform.OS === 'android' ? 50 : 0,
       backgroundColor: theme.colors.background,
     },
     headerContainer: {

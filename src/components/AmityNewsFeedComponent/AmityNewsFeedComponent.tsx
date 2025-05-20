@@ -18,7 +18,7 @@ const AmityNewsFeedComponent: FC<AmityNewsFeedComponentType> = ({
   if (excludes.includes(uiReference)) return null;
 
   return (
-    <View testID={uiReference} accessibilityLabel={uiReference}>
+    <View style={{ paddingBottom: 100 }} testID={uiReference} accessibilityLabel={uiReference}>
       <AmityGlobalFeedComponent pageId={pageId} />
     </View>
   );

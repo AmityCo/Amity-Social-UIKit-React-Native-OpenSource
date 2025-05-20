@@ -10,12 +10,12 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Image,
-  type NativeSyntheticEvent,
-  type NativeScrollEvent,
   ScrollView,
   Pressable,
+  type NativeSyntheticEvent,
+  type NativeScrollEvent,
 } from 'react-native';
+import { Image } from 'expo-image';
 import { useStyles } from './styles';
 import {
   UserRepository,
@@ -36,20 +36,17 @@ import {
   editIcon,
   primaryDot,
   privateUserProfile,
+  userIcon,
 } from '../../svg/svg-xml-list';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 import { useTheme } from 'react-native-paper';
 import FloatingButton from '../../components/FloatingButton';
-
 import { useDispatch } from 'react-redux';
 import uiSlice from '../../redux/slices/uiSlice';
 import { PostTargetType } from '../../enum/postTargetType';
-
 import { defaultAvatarUri } from '../../assets';
 import { ImageSizeState } from '../../enum';
-
 import GalleryComponent from '../../components/Gallery/GalleryComponent';
-import {  } from '../../hooks';
 import { TabName } from '../../enum/tabNameState';
 import { useFileV4 } from '../../hooks/useFilev4';
 
@@ -61,53 +58,49 @@ export default function UserProfile({ route }: any) {
   const { userId } = route.params;
   const { openPostTypeChoiceModal } = uiSlice.actions;
   const dispatch = useDispatch();
+
   const [user, setUser] = useState<Amity.User>();
   const [followerCount, setFollowerCount] = useState<number>(0);
   const [followingCount, setFollowingCount] = useState<number>(0);
-  const [followStatus, setFollowStatus] =
-    useState<Amity.FollowInfo['status']>(null);
+  const [followStatus, setFollowStatus] = useState<Amity.FollowInfo['status']>(null);
   const [currentTab, setCurrentTab] = useState<TabName>(TabName.Timeline);
-  const [socialSettings, setSocialSettings] =
-    useState<Amity.SocialSettings>(null);
+  const [socialSettings, setSocialSettings] = useState<Amity.SocialSettings>(null);
   const [pendingCount, setPendingCount] = useState<number>(0);
   const { getImage } = useFileV4();
   const [avatar, setAvatar] = useState<string>(null);
+  const feedRef: MutableRefObject<FeedRefType | null> = useRef(null);
+  const galleryRef: MutableRefObject<FeedRefType | null> = useRef(null);
+  const scrollViewRef = useRef(null);
+
   const isMyProfile = !followStatus;
   const isBlocked = followStatus === 'blocked';
   const isUnfollowed = followStatus === 'none';
   const isPending = followStatus === 'pending';
   const isAccepted = followStatus === 'accepted';
+
   const shouldShowPrivateProfile =
     !isMyProfile &&
     !isAccepted &&
     socialSettings?.userPrivacySetting === 'private';
+
   const shouldShowPending = isMyProfile && pendingCount > 0;
-  const feedRef: MutableRefObject<FeedRefType | null> =
-    useRef<FeedRefType | null>(null);
-  const galleryRef: MutableRefObject<FeedRefType | null> =
-    useRef<FeedRefType | null>(null);
-  const scrollViewRef = useRef(null);
 
   const onEditProfileTap = () => {
-    navigation.navigate('EditProfile', {
-      user: user,
-    });
+    navigation.navigate('EditProfile', { user });
   };
+
   const onFollowTap = async () => {
-    const { data: followStatus } = await UserRepository.Relationship.follow(
-      userId
-    );
-    if (followStatus) {
-      setFollowStatus(followStatus.status);
-    }
+    const { data: followStatus } = await UserRepository.Relationship.follow(userId);
+    if (followStatus) setFollowStatus(followStatus.status);
   };
+
   const onUnblockUser = async () => {
     await UserRepository.Relationship.unBlockUser(userId);
     setFollowStatus('none');
   };
+
   useLayoutEffect(() => {
     navigation.setOptions({
-      // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () => (
         <TouchableOpacity
           onPress={() => {
@@ -120,6 +113,7 @@ export default function UserProfile({ route }: any) {
           <Image
             source={require('../../assets/icon/threeDot.png')}
             style={styles.dotIcon}
+            contentFit="contain"
           />
         </TouchableOpacity>
       ),
@@ -136,9 +130,7 @@ export default function UserProfile({ route }: any) {
   }, [client]);
 
   useEffect(() => {
-    if (!user?.avatarFileId) {
-      return setAvatar(defaultAvatarUri);
-    }
+    if (!user?.avatarFileId) return setAvatar(defaultAvatarUri);
     (async () => {
       const avatarUrl = await getImage({
         fileId: user.avatarFileId,
@@ -153,6 +145,7 @@ export default function UserProfile({ route }: any) {
     let userRsUnsubscribe: () => void;
     const unsubFollowing = subscribeTopic(getMyFollowingsTopic());
     const unsubFollower = subscribeTopic(getMyFollowersTopic());
+
     const unsubscribe = navigation.addListener('focus', () => {
       userRsUnsubscribe = UserRepository.Relationship.getFollowInfo(
         userId,
@@ -162,64 +155,48 @@ export default function UserProfile({ route }: any) {
             setFollowStatus(value.data.status);
             setFollowerCount(value.data.followerCount);
             setFollowingCount(value.data.followingCount);
-          } else {
           }
         }
       );
 
       userUnsubscribe = UserRepository.getUser(userId, ({ data, loading }) => {
-        if (!loading) {
-          setUser(data);
-        } else {
-        }
+        if (!loading) setUser(data);
       });
     });
 
     return () => {
       unsubscribe();
-      userUnsubscribe && userUnsubscribe();
-      userRsUnsubscribe && userRsUnsubscribe();
+      userUnsubscribe?.();
+      userRsUnsubscribe?.();
       unsubFollowing();
       unsubFollower();
     };
   }, [navigation, userId]);
-  const editProfileButton = () => {
-    return (
-      <TouchableOpacity
-        style={styles.editProfileButton}
-        onPress={onEditProfileTap}
-      >
-        <SvgXml width={24} height={20} xml={editIcon(theme.colors.base)} />
-        <Text style={styles.editProfileText}>Edit Profile</Text>
-      </TouchableOpacity>
-    );
-  };
-  const followButton = () => {
-    return (
-      <TouchableOpacity style={styles.followButton} onPress={onFollowTap}>
-        <Image
-          source={require('../../assets/icon/followPlus.png')}
-          style={styles.followIcon}
-        />
-        <Text style={styles.followText}>Follow</Text>
-      </TouchableOpacity>
-    );
-  };
-  const unBlockButton = () => {
-    return (
-      <TouchableOpacity
-        style={styles.editProfileButton}
-        onPress={onUnblockUser}
-      >
-        <SvgXml
-          width={24}
-          height={20}
-          xml={blockOrUnblock(theme.colors.base)}
-        />
-        <Text style={styles.editProfileText}>Unblock user</Text>
-      </TouchableOpacity>
-    );
-  };
+
+  const editProfileButton = () => (
+    <TouchableOpacity style={styles.editProfileButton} onPress={onEditProfileTap}>
+      <SvgXml width={24} height={20} xml={editIcon(theme.colors.base)} />
+      <Text style={styles.editProfileText}>Edit Profile</Text>
+    </TouchableOpacity>
+  );
+
+  const followButton = () => (
+    <TouchableOpacity style={styles.followButton} onPress={onFollowTap}>
+      <Image
+        source={require('../../assets/icon/followPlus.png')}
+        style={styles.followIcon}
+        contentFit="contain"
+      />
+      <Text style={styles.followText}>Follow</Text>
+    </TouchableOpacity>
+  );
+
+  const unBlockButton = () => (
+    <TouchableOpacity style={styles.editProfileButton} onPress={onUnblockUser}>
+      <SvgXml width={24} height={20} xml={blockOrUnblock(theme.colors.base)} />
+      <Text style={styles.editProfileText}>Unblock user</Text>
+    </TouchableOpacity>
+  );
 
   const cancelRequestButton = () => {
     const onCancelRequest = async () => {
@@ -227,35 +204,21 @@ export default function UserProfile({ route }: any) {
       setFollowStatus('none');
     };
     return (
-      <TouchableOpacity
-        style={styles.editProfileButton}
-        onPress={onCancelRequest}
-      >
-        <SvgXml
-          width={24}
-          height={20}
-          xml={cancelFollowRequest(theme.colors.base)}
-        />
+      <TouchableOpacity style={styles.editProfileButton} onPress={onCancelRequest}>
+        <SvgXml width={24} height={20} xml={cancelFollowRequest(theme.colors.base)} />
         <Text style={styles.editProfileText}>Cancel request</Text>
       </TouchableOpacity>
     );
   };
 
   const pendingCountButton = () => {
-    const onPressPending = () => {
-      navigation.navigate('UserPendingRequest');
-    };
-
+    const onPressPending = () => navigation.navigate('UserPendingRequest');
     return (
-      <TouchableOpacity
-        style={styles.pendingRequestContainer}
-        onPress={onPressPending}
-      >
+      <TouchableOpacity style={styles.pendingRequestContainer} onPress={onPressPending}>
         <View style={styles.rowContainer}>
           <SvgXml xml={primaryDot(theme.colors.primary)} />
           <Text style={styles.pendingRequestText}>Pending requests</Text>
         </View>
-
         <Text style={styles.pendingRequestSubText}>
           Your requests are waiting for review
         </Text>
@@ -265,26 +228,21 @@ export default function UserProfile({ route }: any) {
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
-
     const isScrollEndReached =
       layoutMeasurement.height + contentOffset.y + 200 >= contentSize.height;
 
-    if (isScrollEndReached) {
-      triggerLoadMoreFunction();
-    }
+    if (isScrollEndReached) triggerLoadMoreFunction();
   };
-  function triggerLoadMoreFunction() {
-    if (feedRef.current) {
-      feedRef.current.handleLoadMore(); // Call the function inside the child component
-    }
-    if (galleryRef.current) {
-      galleryRef.current.handleLoadMore();
-    }
-  }
+
+  const triggerLoadMoreFunction = () => {
+    feedRef.current?.handleLoadMore();
+    galleryRef.current?.handleLoadMore();
+  };
+
   const handleOnPressPostBtn = () => {
     dispatch(
       openPostTypeChoiceModal({
-        userId: userId,
+        userId,
         targetId: userId,
         targetName: 'My Timeline',
         targetType: PostTargetType.user,
@@ -300,36 +258,29 @@ export default function UserProfile({ route }: any) {
     return null;
   };
 
-  const renderPrivateProfile = () => {
-    return (
-      <View style={styles.privateProfileContainer}>
-        <SvgXml width={40} height={40} xml={privateUserProfile()} />
-        <Text style={styles.privateAccountTitle}>This account is private</Text>
-        <Text style={styles.privateAccountSubTitle}>
-          Follow this user to see all posts
-        </Text>
-      </View>
-    );
-  };
+  const renderPrivateProfile = () => (
+    <View style={styles.privateProfileContainer}>
+      <SvgXml width={40} height={40} xml={privateUserProfile()} />
+      <Text style={styles.privateAccountTitle}>This account is private</Text>
+      <Text style={styles.privateAccountSubTitle}>
+        Follow this user to see all posts
+      </Text>
+    </View>
+  );
 
   const renderTabs = () => {
     if (shouldShowPrivateProfile) return renderPrivateProfile();
     if (currentTab === TabName.Timeline)
       return <Feed targetType="user" targetId={userId} ref={feedRef} />;
     if (currentTab === TabName.Gallery)
-      return (
-        <GalleryComponent
-          targetId={userId}
-          ref={galleryRef}
-          targetType="user"
-        />
-      );
+      return <GalleryComponent targetId={userId} ref={galleryRef} targetType="user" />;
     return null;
   };
 
   const onPressFollowers = useCallback(() => {
     if (isMyProfile || isAccepted) navigation.navigate('FollowerList', user);
   }, [isAccepted, isMyProfile, navigation, user]);
+
   return (
     <View style={styles.container}>
       <ScrollView
@@ -340,13 +291,14 @@ export default function UserProfile({ route }: any) {
       >
         <View style={styles.profileContainer}>
           <View style={styles.userDetail}>
-            <Image style={styles.avatar} source={{ uri: avatar }} />
+            {avatar?.length>0 ? <Image style={styles.avatar} source={{ uri: avatar }} contentFit="cover" />
+              : <SvgXml width={64} height={64} xml={userIcon()} />}
+
+
             <View style={styles.userInfo}>
+
               <Text style={styles.title}>{user?.displayName}</Text>
-              <Pressable
-                style={styles.horizontalText}
-                onPress={onPressFollowers}
-              >
+              <Pressable style={styles.horizontalText} onPress={onPressFollowers}>
                 <Text style={styles.textComponent}>
                   {followingCount + ' Following '}
                 </Text>
@@ -359,9 +311,7 @@ export default function UserProfile({ route }: any) {
           <View style={styles.descriptionContainer}>
             {user?.description ? (
               <Text style={styles.descriptionText}> {user?.description}</Text>
-            ) : (
-              <View />
-            )}
+            ) : null}
           </View>
           {renderButtons()}
           {shouldShowPending && pendingCountButton()}
@@ -369,7 +319,7 @@ export default function UserProfile({ route }: any) {
         {!isBlocked && (
           <>
             <CustomTab
-              tabName={[TabName.Timeline, TabName.Gallery] as TabName[] }
+              tabName={[TabName.Timeline, TabName.Gallery]}
               onTabChange={setCurrentTab}
             />
             {renderTabs()}

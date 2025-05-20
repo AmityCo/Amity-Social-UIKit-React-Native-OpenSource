@@ -1,4 +1,4 @@
-import {  StyleSheet } from 'react-native';
+import {  Platform, StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 
@@ -10,6 +10,7 @@ export const useStyles = () => {
       justifyContent: 'space-between',
       alignItems: 'center',
       backgroundColor: theme.colors.background,
+      paddingTop: Platform.OS === 'android' ? 50 : 0,
     },
     inputWrap: {
       marginHorizontal: 16,

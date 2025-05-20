@@ -22,6 +22,11 @@
     "strict": false,
     "target": "esnext",
     "noImplicitAny": false,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "outDir": "lib/typescript",
+    "checkJs": false,
+    "noEmit": false,
   }
 }

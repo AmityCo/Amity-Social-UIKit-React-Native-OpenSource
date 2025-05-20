@@ -27,6 +27,7 @@ export const useAmityGlobalSearchViewModel = (
           displayName: searchValue,
           membership: 'notMember',
           limit: 20,
+          // @ts-ignore
           sortBy: 'displayName',
         },
         ({ error, loading, data, hasNextPage, onNextPage }) => {
@@ -41,6 +42,7 @@ export const useAmityGlobalSearchViewModel = (
     } else if (searchType === TabName.Users) {
       setSearchResult(null);
       const unsubscribeUser = UserRepository.getUsers(
+        // @ts-ignore
         { displayName: searchValue, limit: 20, sortBy: 'displayName' },
         ({ error, loading, data, hasNextPage, onNextPage }) => {
           if (error) return setSearchResult(null);

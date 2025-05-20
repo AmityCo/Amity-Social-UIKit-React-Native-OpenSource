@@ -172,7 +172,6 @@ const LoadingVideo = ({
       <VideoView
         player={player}
         ref={videoRef}
-        style={{display: 'none'}}
         onFullscreenExit={()=> setVideoSource('')}
         onFullscreenEnter={()=> player.play()}
 

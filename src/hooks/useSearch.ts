@@ -20,6 +20,7 @@ const useSearch = (
       return CommunityRepository.Membership.getMembers(
         {
           communityId: privateCommunityId,
+          // @ts-ignore
           search: text,
           limit: 5,
           sortBy: 'firstCreated',
@@ -44,6 +45,7 @@ const useSearch = (
 
   const searchAllUsers = useCallback((text: string) => {
     return UserRepository.getUsers(
+      // @ts-ignore
       { displayName: text, limit: 5, sortBy: 'displayName' },
       ({ data, error, hasNextPage, onNextPage }) => {
         if (error) return null;

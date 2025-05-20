@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, JSX } from 'react';
 // import { useTranslation } from 'react-i18next';
 
 import { View, Text, TouchableOpacity, Image, StyleProp, ImageStyle } from 'react-native';
@@ -10,7 +10,7 @@ import type { UserInterface } from '../../../types/user.interface';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import useAuth from '../../../hooks/useAuth';
-import MediaSection from '../../../components/MediaSection';
+import MediaSection from '../../MediaSection';
 
 import { PostRepository } from '@amityco/ts-sdk-react-native';
 import PersonIcon from '../../../svg/PersonIcon';
@@ -209,7 +209,7 @@ export default function PendingPostList({
             />
           ) : (
             <View style={styles.avatar}>
-              <PersonIcon width={20} height={20}/>
+              <PersonIcon width={20} height={20} />
             </View>
           )}
 

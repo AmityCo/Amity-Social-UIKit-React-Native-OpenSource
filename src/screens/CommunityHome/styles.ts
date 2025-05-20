@@ -137,7 +137,7 @@ export const useStyles = () => {
     pendingPostArea: {
       width: '100%',
       height: 62,
-      backgroundColor: theme.colors.secondary,
+      backgroundColor: '#ebecef',
       paddingVertical: 12,
       alignItems: 'center',
       borderRadius: 4,

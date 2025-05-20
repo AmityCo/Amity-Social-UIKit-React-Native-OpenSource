@@ -146,6 +146,7 @@ const AmityMentionInput: FC<IMentionInput> = ({
         {
           isBottomMentionSuggestionsRender,
           trigger: '@',
+          // @ts-ignore
           renderSuggestions,
           textStyle: styles.mentionText,
         },

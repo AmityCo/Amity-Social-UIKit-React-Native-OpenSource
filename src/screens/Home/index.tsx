@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import * as React from 'react';
 import { useCallback, useEffect, useState } from 'react';
-import { LogBox, SafeAreaView } from 'react-native';
+import { LogBox, Platform, SafeAreaView } from 'react-native';
 import Explore from '../Explore';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
@@ -104,16 +104,9 @@ export default function Home() {
       style={{
         flex: 1,
         backgroundColor: theme.colors.background,
+        paddingTop: Platform.OS === 'android' ? 50 : 0,
       }}
     >
-      {/* <CustomTab
-        tabName={
-          excludes.includes(ComponentID.StoryTab)
-            ? [TabName.NewsFeed, TabName.Explore]
-            : [TabName.NewsFeed, TabName.Explore, TabName.MyCommunities]
-        }
-        onTabChange={setActiveTab}
-      /> */}
       <AmitySocialHomeTopNavigationComponent currentTab={activeTab} />
       <CustomSocialTab
         tabNames={[newsFeedTab, exploreTab, myCommunitiesTab]}

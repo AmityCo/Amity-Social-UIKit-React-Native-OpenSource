@@ -53,7 +53,8 @@ function ImageViewing({
   const [headerTransform, footerTransform, toggleBarsVisible] =
     useAnimatedComponents();
   const videoRef = useRef(null);
-  const player = useVideoPlayer(videoSource);
+  const player = useVideoPlayer(videoSource, player => player.play());
+
 
 
   useEffect(() => {
@@ -72,14 +73,16 @@ function ImageViewing({
 
     const videoUri = `https://api.${apiRegion}.amity.co/api/v3/files/${videoPosts[currentImageIndex]?.videoFileId?.original}/download`;
     setVideoSource(videoUri)
-
-    if (videoRef) {
-      if (videoRef.current) {
-        videoRef.current.enterFullscreen();
-      }
-    }
   };
 
+  useEffect(() => {
+    if (videoRef && videoSource?.length>0) {
+      if (videoRef?.current) {
+        videoRef?.current?.enterFullscreen();
+      }
+    }
+  }, [videoSource])
+  
 
   if (!visible) {
     return null;
@@ -159,14 +162,7 @@ function ImageViewing({
         )}
       </View>
 
-      <VideoView
-        player={player}
-        ref={videoRef}
-        style={styles.videoContainer}
-        onFullscreenExit={()=> setVideoSource('')}
-        onFullscreenEnter={()=> player.play()}
-
-      />
+      <VideoView ref={videoRef}  player={player} allowsFullscreen allowsPictureInPicture         onFullscreenExit={()=> setVideoSource('')} />
 
     </Modal>
   );

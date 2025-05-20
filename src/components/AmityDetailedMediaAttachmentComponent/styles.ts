@@ -14,7 +14,7 @@ export const useStyles = (theme: MyMD3Theme) => {
       borderTopRightRadius: 20,
       backgroundColor: theme.colors.background,
       borderColor: theme.colors.baseShade4,
-      position: 'absolute',
+
       bottom: 0,
       paddingBottom: 14,
     },

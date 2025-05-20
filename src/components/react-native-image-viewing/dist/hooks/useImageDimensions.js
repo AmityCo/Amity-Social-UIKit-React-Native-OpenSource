@@ -28,14 +28,14 @@ const useImageDimensions = (image) => {
       // @ts-ignore
       if (image.uri) {
         const source = image;
-        const cacheKey = source.uri;
+        const cacheKey = source?.uri;
         const imageDimensions = imageDimensionsCache.get(cacheKey);
         if (imageDimensions) {
           resolve(imageDimensions);
         } else {
           // @ts-ignore
           Image.getSizeWithHeaders(
-            source.uri,
+            source?.uri,
             source.headers,
             (width, height) => {
               imageDimensionsCache.set(cacheKey, { width, height });

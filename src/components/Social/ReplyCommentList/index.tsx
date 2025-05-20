@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useRef, useState } from 'react';
+import React, { JSX, useEffect, useRef, useState } from 'react';
 // import { useTranslation } from 'react-i18next';
 
 import {
@@ -27,7 +27,7 @@ import {
   reportTargetById,
   unReportTargetById,
 } from '../../../providers/Social/feed-sdk';
-import EditCommentModal from '../../../components/EditCommentModal';
+import EditCommentModal from '../../EditCommentModal';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../../providers/amity-ui-kit-provider';
 
@@ -294,7 +294,7 @@ export default function ReplyCommentList({
           />
         ) : (
           <View style={styles.avatar}>
-          <PersonIcon width={20} height={16} />
+            <PersonIcon width={20} height={16} />
           </View>
         )}
         <View style={styles.rightSection}>
@@ -323,7 +323,7 @@ export default function ReplyCommentList({
               style={styles.likeBtn}
             >
               {isLike ? (
-                           <LikedIcon color={theme.colors.primary} width={20} height={16} />
+                <LikedIcon color={theme.colors.primary} width={20} height={16} />
               ) : (
                 <LikeIcon color={theme.colors.baseShade2} width={20} height={16} />
               )}
@@ -334,13 +334,13 @@ export default function ReplyCommentList({
             </TouchableOpacity>
 
             <TouchableOpacity onPress={openModal} style={styles.threeDots}>
-            <ThreeDotsIcon color={theme.colors.base}/>
+              <ThreeDotsIcon color={theme.colors.base} />
             </TouchableOpacity>
           </View>
           <View>
             {childrenComment.length > 0 && (
               <Pressable style={styles.viewMoreReplyBtn}>
-               <ExpandIcon/>
+                <ExpandIcon />
                 <Text style={styles.viewMoreText}>
                   View {childrenNumber} replies
                 </Text>
@@ -371,7 +371,7 @@ export default function ReplyCommentList({
               styles.modalContent,
               modalStyle,
               user?.userId === (client as Amity.Client).userId &&
-                styles.twoOptions,
+              styles.twoOptions,
             ]}
           >
             {user?.userId === (client as Amity.Client).userId ? (

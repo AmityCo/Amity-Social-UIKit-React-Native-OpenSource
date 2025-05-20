@@ -6,6 +6,7 @@ import React, {
   memo,
   useEffect,
   useCallback,
+  JSX,
 } from 'react';
 
 import { getAmityUser } from '../../providers/user-provider';

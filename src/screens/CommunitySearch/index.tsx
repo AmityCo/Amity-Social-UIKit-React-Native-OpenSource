@@ -70,7 +70,8 @@ export default function CommunitySearch() {
         displayName: text,
         membership: 'notMember',
         limit: 20,
-        sortBy: 'displayName',
+        // @ts-ignore
+        sortBy: 'displayName', 
       },
       (data) => {
         setCommunities(data);
@@ -84,6 +85,7 @@ export default function CommunitySearch() {
   const searchAccounts = (text: string = '') => {
     if (text.length > 2) {
       const unsubscribe = UserRepository.getUsers(
+        // @ts-ignore
         { displayName: text, limit: 20, sortBy: 'displayName' },
         (data) => {
           setUsersObject(data);

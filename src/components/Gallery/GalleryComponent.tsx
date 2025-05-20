@@ -10,7 +10,7 @@ import { useGallery } from '../../hooks/useGalleryV3';
 import { TabName } from '../../enum/tabNameState';
 
 import { useStyles } from './styles';
-import ImageView from '../../components/react-native-image-viewing/dist';
+import ImageView from '../react-native-image-viewing/dist';
 
 import GalleryTab from './GalleryTab';
 import { FeedRefType } from '../../screens/CommunityHome';

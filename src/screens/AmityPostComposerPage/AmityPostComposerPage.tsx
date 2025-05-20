@@ -456,7 +456,7 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
         if (permission.granted) {
           let result: ImagePicker.ImagePickerResult =
             await ImagePicker.launchCameraAsync({
-              mediaTypes: ImagePicker.MediaTypeOptions.All,
+              mediaTypes: ['images','videos'],
               allowsEditing: false,
               aspect: [4, 3],
             });
@@ -506,7 +506,7 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
         "You've reached the upload limit of 10 images. Any additional images will not be saved."
       );
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ['images'],
       allowsEditing: false,
       quality: 1,
       allowsMultipleSelection: true,
@@ -537,7 +537,7 @@ const AmityPostComposerPage: FC<AmityPostComposerPageType> = ({
         "You've reached the upload limit of 10 videos. Any additional videos will not be saved."
       );
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+      mediaTypes: ['videos'],
       allowsEditing: false,
       quality: 1,
       allowsMultipleSelection: true,

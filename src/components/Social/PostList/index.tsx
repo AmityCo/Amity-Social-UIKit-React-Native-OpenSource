@@ -32,10 +32,10 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import useAuth from '../../../hooks/useAuth';
-import EditPostModal from '../../../components/EditPostModal';
+import EditPostModal from '../../EditPostModal';
 import { useTheme } from 'react-native-paper';
 import type { MyMD3Theme } from '../../../providers/amity-ui-kit-provider';
-import MediaSection from '../../../components/MediaSection';
+import MediaSection from '../../MediaSection';
 import postDetailSlice from '../../../redux/slices/postDetailSlice';
 import { useDispatch } from 'react-redux';
 import globalFeedSlice from '../../../redux/slices/globalfeedSlice';
@@ -344,7 +344,7 @@ export default function PostList({
               styles.modalContent,
               modalStyle,
               user?.userId === (client as Amity.Client).userId &&
-                styles.twoOptions,
+              styles.twoOptions,
             ]}
           >
             {user?.userId === (client as Amity.Client).userId ? (

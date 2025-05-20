@@ -1,16 +1,16 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import {
-  Image,
   Text,
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
+import { Image } from 'expo-image';
 import { useStyles } from './styles';
 import useAuth from '../../hooks/useAuth';
 import { IVideoPost, MediaUri } from '../Social/PostList';
 import { getPostById } from '../../providers/Social/feed-sdk';
 import { useSelector } from 'react-redux';
-import ImageView from '../../components/react-native-image-viewing/dist';
+import ImageView from '../react-native-image-viewing/dist';
 import { RootState } from '../../redux/store';
 import PollSection from '../PollSection/PollSection';
 import PlayIcon from '../../svg/PlayIcon';
@@ -18,48 +18,38 @@ import PlayIcon from '../../svg/PlayIcon';
 interface IMediaSection {
   childrenPosts: string[];
 }
-const MediaSection: React.FC<IMediaSection> = ({ childrenPosts }) => {
 
+const MediaSection: React.FC<IMediaSection> = ({ childrenPosts }) => {
   const { apiRegion } = useAuth();
   const [imagePosts, setImagePosts] = useState<string[]>([]);
   const [videoPosts, setVideoPosts] = useState<IVideoPost[]>([]);
   const [pollIds, setPollIds] = useState<{ pollId: string }[]>([]);
-
   const [imagePostsFullSize, setImagePostsFullSize] = useState<MediaUri[]>([]);
   const [videoPostsFullSize, setVideoPostsFullSize] = useState<MediaUri[]>([]);
   const [visibleFullImage, setIsVisibleFullImage] = useState<boolean>(false);
   const [imageIndex, setImageIndex] = useState<number>(0);
-  
 
   const styles = useStyles();
-  let imageStyle: any =
-    styles.imageLargePost;
+  let imageStyle: any = styles.imageLargePost;
   let colStyle: any = styles.col2;
-  const { currentPostdetail } = useSelector(
-    (state: RootState) => state.postDetail
-  );
-  const { postList: postListGlobal } = useSelector(
-    (state: RootState) => state.globalFeed
-  );
+
+  const { currentPostdetail } = useSelector((state: RootState) => state.postDetail);
+  const { postList: postListGlobal } = useSelector((state: RootState) => state.globalFeed);
   const { postList } = useSelector((state: RootState) => state.feed);
 
   useEffect(() => {
     setImagePostsFullSize([]);
     setVideoPostsFullSize([]);
     if (imagePosts.length > 0) {
-      const updatedUrls: MediaUri[] = imagePosts.map((url: string) => {
-        return {
-          uri: url.replace('size=medium', 'size=large'),
-        };
-      });
+      const updatedUrls: MediaUri[] = imagePosts.map((url: string) => ({
+        uri: url.replace('size=medium', 'size=large'),
+      }));
       setImagePostsFullSize(updatedUrls);
     }
     if (videoPosts.length > 0) {
-      const updatedUrls: MediaUri[] = videoPosts.map((item: IVideoPost) => {
-        return {
-          uri: `https://api.${apiRegion}.amity.co/api/v3/files/${item?.thumbnailFileId}/download?size=large`,
-        };
-      });
+      const updatedUrls: MediaUri[] = videoPosts.map((item: IVideoPost) => ({
+        uri: `https://api.${apiRegion}.amity.co/api/v3/files/${item?.thumbnailFileId}/download?size=large`,
+      }));
       setVideoPostsFullSize(updatedUrls);
     }
   }, [imagePosts, videoPosts, apiRegion]);
@@ -72,24 +62,20 @@ const MediaSection: React.FC<IMediaSection> = ({ childrenPosts }) => {
           return { dataType: post.dataType, data: post.data };
         })
       );
+
       response.forEach((item) => {
         if (item.dataType === 'image') {
           const url: string = `https://api.${apiRegion}.amity.co/api/v3/files/${item?.data.fileId}/download?size=medium`;
-          setImagePosts((prev) => {
-            return !prev.includes(url) ? [...prev, url] : [...prev];
-          });
+          setImagePosts((prev) => (!prev.includes(url) ? [...prev, url] : prev));
         } else if (item.dataType === 'video') {
           setVideoPosts((prev) => {
             const isExisted = prev.some(
-              (video) =>
-                video.videoFileId.original === item.data.videoFileId.original
+              (video) => video.videoFileId.original === item.data.videoFileId.original
             );
-            return !isExisted ? [...prev, item.data] : [...prev];
+            return !isExisted ? [...prev, item.data] : prev;
           });
         } else if (item.dataType === 'poll') {
-          setPollIds((prev) => {
-            return !prev.includes(item.data) ? [...prev, item.data] : [...prev];
-          });
+          setPollIds((prev) => (!prev.includes(item.data) ? [...prev, item.data] : prev));
         }
       });
     } catch (error) {
@@ -102,31 +88,39 @@ const MediaSection: React.FC<IMediaSection> = ({ childrenPosts }) => {
   }, [childrenPosts, currentPostdetail, postList, postListGlobal, getPostInfo]);
 
   function onClickImage(index: number): void {
-      setIsVisibleFullImage(true);
-      setImageIndex(index);
+    setIsVisibleFullImage(true);
+    setImageIndex(index);
+  }
 
+  function renderPlayButton() {
+    return (
+      <View style={styles.playButton}>
+        <PlayIcon />
+      </View>
+    );
   }
 
   function renderMediaPosts() {
     const thumbnailFileIds: string[] =
       videoPosts.length > 0
-        ? videoPosts.map((item) => {
-          return `https://api.${apiRegion}.amity.co/api/v3/files/${item?.thumbnailFileId}/download?size=medium`;
-        })
+        ? videoPosts.map(
+            (item) =>
+              `https://api.${apiRegion}.amity.co/api/v3/files/${item?.thumbnailFileId}/download?size=medium`
+          )
         : [];
-    const mediaPosts =
-      [...imagePosts].length > 0 ? [...imagePosts] : [...thumbnailFileIds];
+
+    const mediaPosts = [...imagePosts].length > 0 ? [...imagePosts] : [...thumbnailFileIds];
+
     const imageElement = mediaPosts.map((item: string, index: number) => {
       if (mediaPosts.length === 1) {
         imageStyle = styles.imageLargePost;
         colStyle = styles.col6;
       } else if (mediaPosts.length === 2) {
         colStyle = styles.col3;
-        if (index === 0) {
-          imageStyle = [styles.imageLargePost, styles.imageMarginRight];
-        } else {
-          imageStyle = [styles.imageLargePost, styles.imageMarginLeft];
-        }
+        imageStyle =
+          index === 0
+            ? [styles.imageLargePost, styles.imageMarginRight]
+            : [styles.imageLargePost, styles.imageMarginLeft];
       } else if (mediaPosts.length === 3) {
         switch (index) {
           case 0:
@@ -135,40 +129,22 @@ const MediaSection: React.FC<IMediaSection> = ({ childrenPosts }) => {
             break;
           case 1:
             colStyle = styles.col3;
-            imageStyle = [
-              styles.imageMediumPost,
-              styles.imageMarginTop,
-              styles.imageMarginRight,
-            ];
+            imageStyle = [styles.imageMediumPost, styles.imageMarginTop, styles.imageMarginRight];
             break;
           case 2:
             colStyle = styles.col3;
-            imageStyle = [
-              styles.imageMediumPost,
-              styles.imageMarginTop,
-              styles.imageMarginLeft,
-            ];
-            break;
-
-          default:
+            imageStyle = [styles.imageMediumPost, styles.imageMarginTop, styles.imageMarginLeft];
             break;
         }
       } else {
         switch (index) {
           case 0:
             colStyle = styles.col6;
-            imageStyle = [
-              styles.imageMediumLargePost,
-              styles.imageMarginBottom,
-            ];
+            imageStyle = [styles.imageMediumLargePost, styles.imageMarginBottom];
             break;
           case 1:
             colStyle = styles.col2;
-            imageStyle = [
-              styles.imageSmallPost,
-              styles.imageMarginTop,
-              styles.imageMarginRight,
-            ];
+            imageStyle = [styles.imageSmallPost, styles.imageMarginTop, styles.imageMarginRight];
             break;
           case 2:
             colStyle = styles.col2;
@@ -181,13 +157,7 @@ const MediaSection: React.FC<IMediaSection> = ({ childrenPosts }) => {
             break;
           case 3:
             colStyle = styles.col2;
-            imageStyle = [
-              styles.imageSmallPost,
-              styles.imageMarginTop,
-              styles.imageMarginLeft,
-            ];
-            break;
-          default:
+            imageStyle = [styles.imageSmallPost, styles.imageMarginTop, styles.imageMarginLeft];
             break;
         }
       }
@@ -199,14 +169,13 @@ const MediaSection: React.FC<IMediaSection> = ({ childrenPosts }) => {
               {videoPosts.length > 0 && renderPlayButton()}
               <Image
                 style={imageStyle}
-                source={{
-                  uri: item,
-                }}
+                source={item || undefined}
+                contentFit="cover"
+                transition={300}
               />
               {index === 3 && imagePosts.length > 4 && (
                 <View style={styles.overlay}>
-                  <Text style={styles.overlayText}>{`+ ${imagePosts.length - 3
-                    }`}</Text>
+                  <Text style={styles.overlayText}>{`+ ${imagePosts.length - 3}`}</Text>
                 </View>
               )}
             </View>
@@ -214,6 +183,7 @@ const MediaSection: React.FC<IMediaSection> = ({ childrenPosts }) => {
         </View>
       );
     });
+
     if (imageElement.length < 3) {
       return (
         <View style={styles.imagesWrap}>
@@ -222,7 +192,7 @@ const MediaSection: React.FC<IMediaSection> = ({ childrenPosts }) => {
       );
     } else if (imageElement.length === 3) {
       return (
-        <View style={[styles.imagesWrap]}>
+        <View style={styles.imagesWrap}>
           <View style={styles.row}>{imageElement.slice(0, 1)}</View>
           <View style={styles.row}>{imageElement.slice(1, 3)}</View>
         </View>
@@ -237,14 +207,6 @@ const MediaSection: React.FC<IMediaSection> = ({ childrenPosts }) => {
     }
   }
 
-  function renderPlayButton() {
-    return (
-      <View style={styles.playButton}>
-        <PlayIcon />
-      </View>
-    );
-  }
-
   return (
     <View>
       {pollIds.length > 0 ? (
@@ -254,14 +216,12 @@ const MediaSection: React.FC<IMediaSection> = ({ childrenPosts }) => {
       )}
       <ImageView
         images={
-          imagePostsFullSize.length > 0
-            ? imagePostsFullSize
-            : videoPostsFullSize
+          imagePostsFullSize.length > 0 ? imagePostsFullSize : videoPostsFullSize
         }
         imageIndex={imageIndex}
         visible={visibleFullImage}
         onRequestClose={() => setIsVisibleFullImage(false)}
-        isVideoButton={videoPosts.length > 0 ? true : false}
+        isVideoButton={videoPosts.length > 0}
         videoPosts={videoPosts}
       />
     </View>
