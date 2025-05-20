@@ -4,7 +4,7 @@ import * as React from 'react';
 import { AmityUiKitProvider, AmityUiKitSocial } from '@amityco/react-native-social-ui-kit';
 
 import config from '../uikit.config.json';
-import { Text } from 'react-native';
+
 
 
 export default function App() {
@@ -12,11 +12,11 @@ export default function App() {
   return (
     <AmityUiKitProvider
       configs={config} //put your config json object
-      apiKey="b3babb0b3a89f4341d31dc1a01091edcd70f8de7b23d697f"
-      apiRegion="sg"
-      userId="topAmity2"
-      displayName="topAmity2"
-      apiEndpoint="https://api.sg.amity.co"
+      apiKey="YOUR_API_KEY" // Put your apiKey
+      apiRegion="API_REGION" // Put your apiRegion
+      userId="USER_ID" // Put your UserId
+      displayName="DISPLAYNAME" // Put your displayName
+      apiEndpoint="API_ENDPOINT" //"https://api.{apiRegion}.amity.co" e.g "https://api.eu.amity.co"
     >
       <AmityUiKitSocial/>
     </AmityUiKitProvider>
