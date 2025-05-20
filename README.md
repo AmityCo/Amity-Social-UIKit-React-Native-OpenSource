@@ -22,6 +22,7 @@ Before you begin, ensure your development environment meets the following requir
 
 - **Expo SDK**: version **53**
 - **Node.js**: version **22** or above
+-  **React Navigation**: version **7** or above
 
 
 ##  Metro Config for React Native 0.76+
